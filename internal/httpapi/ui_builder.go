@@ -10,6 +10,7 @@ import (
 	"math"
 	"sort"
 	"strconv"
+	"time"
 	"strings"
 
 	"wesmk/internal/model"
@@ -256,10 +257,16 @@ func (s *Server) buildStudentDashboard(doc map[string]any, shell ui.RoleShell, u
 
 	hasDisp := false
 	for _, dMap := range asMapSlice(doc["dispensations"]) {
-		if strVal(dMap, "studentId") == student.ID {
-			hasDisp = true
-			break
+		if strVal(dMap, "studentId") != student.ID {
+			continue
 		}
+		if vu := strVal(dMap, "validUntil"); vu != "" {
+			if t, err := time.Parse(time.RFC3339, vu); err == nil && time.Now().After(t) {
+				continue
+			}
+		}
+		hasDisp = true
+		break
 	}
 	isCleared := !hasInvoice || invoice.IsPaid || hasDisp
 
