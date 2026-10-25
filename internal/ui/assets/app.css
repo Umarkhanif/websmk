@@ -1450,4 +1450,38 @@ textarea.input {
   .page {
     padding: 16px;
   }
+  .topbar {
+    padding: 12px 16px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .topbar-heading {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .topbar-heading h1 {
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .topbar-actions {
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .session-note,
+  .topbar-link {
+    display: none;
+  }
+  .user-menu summary {
+    padding: 4px 8px;
+    gap: 6px;
+  }
+  .user-menu-copy span {
+    display: none;
+  }
+  .user-menu-copy strong {
+    font-size: 0.8rem;
+  }
 }
