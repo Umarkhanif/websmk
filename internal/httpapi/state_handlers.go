@@ -1,0 +1,248 @@
+package httpapi
+
+import (
+	"encoding/json"
+	"errors"
+	"log"
+	"net/http"
+	"time"
+
+	"wesmk/internal/model"
+	"wesmk/internal/state"
+	"wesmk/internal/store"
+)
+
+const (
+	maxStateBytes           = 2 << 20
+	maxStateWritesPerMinute = 120
+)
+
+func scopeFor(user *model.User) (access state.Access, scoped bool, linked bool) {
+	if !state.IsScopedRole(user.Role) {
+		return state.Access{}, false, true
+	}
+	if user.StudentProfileID == "" {
+		return state.Access{}, true, false
+	}
+	return state.Access{Role: user.Role, StudentID: user.StudentProfileID}, true, true
+}
+
+func decodeState(data []byte) (map[string]any, error) {
+	var document map[string]any
+	if err := json.Unmarshal(data, &document); err != nil {
+		return nil, err
+	}
+	return document, nil
+}
+
+// updateState applies a server-authoritative mutation inside one locked
+// transaction and returns its result. Lost updates and double settlement are
+// prevented by the row lock in Postgres.UpdateState.
+func (s *Server) updateState(w http.ResponseWriter, r *http.Request, apply func(map[string]any) (any, error)) {
+	var result any
+	_, err := s.storeDB.UpdateState(r.Context(), func(raw json.RawMessage) (json.RawMessage, error) {
+		document, err := decodeState(raw)
+		if err != nil {
+			return nil, err
+		}
+		value, err := apply(document)
+		if err != nil {
+			return nil, err
+		}
+		result = value
+		return json.Marshal(document)
+	})
+	if err != nil {
+		writeStateError(w, err)
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]any{"result": result})
+}
+
+func writeStateError(w http.ResponseWriter, err error) {
+	switch {
+	case errors.Is(err, store.ErrNoState):
+		writeError(w, http.StatusConflict, "Data sekolah belum diinisialisasi di server.")
+	case errors.Is(err, state.ErrNotFound):
+		writeError(w, http.StatusNotFound, "Data yang diminta tidak ditemukan.")
+	case errors.Is(err, state.ErrConflict):
+		writeError(w, http.StatusConflict, "Data sudah berubah. Muat ulang lalu coba lagi.")
+	case errors.Is(err, state.ErrInvalid):
+		writeError(w, http.StatusBadRequest, "Data yang dikirim tidak valid.")
+	case errors.Is(err, state.ErrUnavailable):
+		writeError(w, http.StatusServiceUnavailable, "Data pendukung belum tersedia di server.")
+	default:
+		log.Printf("state mutation failed: %v", err)
+		writeError(w, http.StatusInternalServerError, "Gagal menyimpan data.")
+	}
+}
+
+func (s *Server) handleGetState(w http.ResponseWriter, r *http.Request) {
+	authValue, ok := requireUser(w, r)
+	if !ok {
+		return
+	}
+
+	access, scoped, linked := scopeFor(authValue.user)
+	if scoped && !linked {
+		writeError(w, http.StatusForbidden, "Akun belum terhubung ke profil siswa.")
+		return
+	}
+
+	data, err := s.storeDB.GetState(r.Context())
+	if err != nil {
+		log.Printf("read state failed: %v", err)
+		writeError(w, http.StatusInternalServerError, "Gagal membaca state.")
+		return
+	}
+	if data == nil {
+		writeJSON(w, http.StatusOK, map[string]any{"state": nil})
+		return
+	}
+
+	if !scoped {
+		if authValue.user.Role != "headmaster" {
+			var doc map[string]any
+			if err := json.Unmarshal(data, &doc); err == nil {
+				delete(doc, "activeHeadmasterOtp")
+				if redacted, err := json.Marshal(doc); err == nil {
+					data = redacted
+				}
+			}
+		}
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.WriteHeader(http.StatusOK)
+		_ = json.NewEncoder(w).Encode(map[string]json.RawMessage{"state": data})
+		return
+	}
+
+	document, err := decodeState(data)
+	if err != nil {
+		log.Printf("decode state failed: %v", err)
+		writeError(w, http.StatusInternalServerError, "Format state tidak valid.")
+		return
+	}
+
+	view := state.ScopedView(document, access)
+	if students, ok := view["students"].([]any); !ok || len(students) == 0 {
+		writeError(w, http.StatusForbidden, "Profil siswa tidak ditemukan pada data sekolah.")
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]any{"state": view})
+}
+
+func (s *Server) handlePutState(w http.ResponseWriter, r *http.Request) {
+	authValue, ok := requireUser(w, r)
+	if !ok {
+		return
+	}
+
+	writes, err := s.cache.IncrementCounter(r.Context(), "ratelimit:state:"+authValue.user.ID, time.Minute)
+	if err != nil {
+		log.Printf("state rate limit failed: %v", err)
+		writeError(w, http.StatusInternalServerError, "Terjadi kesalahan pada server.")
+		return
+	}
+	if writes > maxStateWritesPerMinute {
+		writeError(w, http.StatusTooManyRequests, "Terlalu banyak penyimpanan data. Tunggu sebentar lalu coba lagi.")
+		return
+	}
+
+	access, scoped, linked := scopeFor(authValue.user)
+	if scoped && !linked {
+		writeError(w, http.StatusForbidden, "Akun belum terhubung ke profil siswa.")
+		return
+	}
+
+	var payload struct {
+		State json.RawMessage `json:"state"`
+	}
+	if !decodeJSON(w, r, &payload) {
+		return
+	}
+	if len(payload.State) == 0 || string(payload.State) == "null" {
+		writeError(w, http.StatusBadRequest, "State harus berupa objek.")
+		return
+	}
+
+	var object map[string]json.RawMessage
+	if err := json.Unmarshal(payload.State, &object); err != nil || object == nil {
+		writeError(w, http.StatusBadRequest, "State harus berupa objek.")
+		return
+	}
+	if len(object) == 0 {
+		writeError(w, http.StatusBadRequest, "State tidak boleh kosong.")
+		return
+	}
+	if len(object) > 64 {
+		writeError(w, http.StatusBadRequest, "Terlalu banyak field pada state.")
+		return
+	}
+	if len(payload.State) > maxStateBytes {
+		writeError(w, http.StatusRequestEntityTooLarge, "Ukuran state melebihi batas 2 MB.")
+		return
+	}
+
+	dataToSave := []byte(payload.State)
+	if scoped {
+		incoming, err := decodeState(payload.State)
+		if err != nil {
+			writeError(w, http.StatusBadRequest, "State tidak valid.")
+			return
+		}
+
+		existingRaw, err := s.storeDB.GetState(r.Context())
+		if err != nil {
+			log.Printf("read state for merge failed: %v", err)
+			writeError(w, http.StatusInternalServerError, "Gagal menyimpan state.")
+			return
+		}
+
+		existing := map[string]any{}
+		if existingRaw != nil {
+			existing, err = decodeState(existingRaw)
+			if err != nil {
+				log.Printf("decode existing state failed: %v", err)
+				writeError(w, http.StatusInternalServerError, "Format state tidak valid.")
+				return
+			}
+		}
+
+		merged, err := state.MergeOwned(existing, incoming, access)
+		if err != nil {
+			writeError(w, http.StatusForbidden, "Akun belum terhubung ke profil siswa.")
+			return
+		}
+		dataToSave, err = json.Marshal(merged)
+		if err != nil {
+			writeError(w, http.StatusInternalServerError, "Gagal menyimpan state.")
+			return
+		}
+		if len(dataToSave) > maxStateBytes {
+			writeError(w, http.StatusRequestEntityTooLarge, "Ukuran state melebihi batas 2 MB.")
+			return
+		}
+	}
+
+	if err := s.storeDB.PutState(r.Context(), dataToSave); err != nil {
+		log.Printf("save state failed: %v", err)
+		writeError(w, http.StatusInternalServerError, "Gagal menyimpan state.")
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]string{
+		"status":    "saved",
+		"updatedAt": timestampNow(),
+	})
+}
+
+func (s *Server) handleResetState(w http.ResponseWriter, r *http.Request) {
+	if _, ok := requireRole(w, r, "headmaster", "admin_tu"); !ok {
+		return
+	}
+	if err := s.storeDB.PutState(r.Context(), state.DefaultStateBytes()); err != nil {
+		log.Printf("reset state failed: %v", err)
+		writeError(w, http.StatusInternalServerError, "Gagal mereset state.")
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]string{"status": "reset"})
+}

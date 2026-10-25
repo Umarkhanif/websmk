@@ -1,0 +1,300 @@
+package pages
+
+import (
+	"fmt"
+	"strconv"
+
+	"wesmk/internal/ui"
+)
+
+templ AdminTuPortal(data ui.AdminTuPortalPage) {
+	<div class="page-stack">
+		if data.Tab == "master-data" {
+			<section class="card form-stack">
+				<span class="eyebrow">Tata Usaha &amp; Buku Induk Sekolah</span>
+				<h2>Master Data SMK &amp; Meja Verifikasi Dokumen Siswa</h2>
+
+				<div class="grid-4">
+					for _, m := range data.Majors {
+						<article class="info-strip">
+							<span class="badge badge-teal">{ m.Code }</span>
+							<strong>{ m.Name }</strong>
+							<span class="muted">Kaprog: { m.HeadOfMajor }</span>
+							<span class="mono">{ strconv.Itoa(m.StudentCount) } Siswa · { strconv.Itoa(m.DudiPartnerCount) } Mitra DUDI</span>
+						</article>
+					}
+				</div>
+
+				<h3>Antrean Berkas Siswa &amp; Verifikasi TU ({ strconv.Itoa(len(data.Documents)) })</h3>
+				<div class="table-wrap">
+					<table class="data-table">
+						<thead>
+							<tr>
+								<th>Siswa</th>
+								<th>Jenis Dokumen</th>
+								<th>Nama Berkas</th>
+								<th>Status</th>
+								<th>Tindakan Verifikasi TU</th>
+							</tr>
+						</thead>
+						<tbody>
+							for _, d := range data.Documents {
+								<tr>
+									<td><strong>{ d.StudentName }</strong></td>
+									<td>{ d.DocName } ({ d.DocType })</td>
+									<td class="mono">{ d.FileName } ({ strconv.Itoa(d.FileSizeKB) } KB)</td>
+									<td><span class="badge badge-neutral">{ d.Status }</span></td>
+									<td>
+										<form method="post" action="/admin/document/verify" class="leader-actions">
+											<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+											<input type="hidden" name="doc_id" value={ d.ID }/>
+											<input class="input" type="text" name="reject_reason" placeholder="Alasan jika ditolak..."/>
+											<button type="submit" name="decision" value="approve" class="button button-primary button-small">Setujui</button>
+											<button type="submit" name="decision" value="reject" class="button button-danger button-small">Tolak</button>
+										</form>
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</section>
+
+			<div class="grid-2">
+				<section class="card form-stack">
+					<span class="eyebrow">Registrasi Peserta Didik Baru / Mutasi</span>
+					<h3>Tambah Data Siswa ke Buku Induk &amp; Terbitkan VA SPP</h3>
+					<form method="post" action="/admin/student/add" class="form-stack">
+						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+						<label class="field">
+							<span class="field-label">Nama Lengkap Siswa</span>
+							<input class="input" type="text" name="full_name" placeholder="Nama lengkap sesuai ijazah..." required/>
+						</label>
+						<div class="form-row">
+							<label class="field">
+								<span class="field-label">NISN (10 Digit)</span>
+								<input class="input input-mono" type="text" name="nisn" placeholder="0058471299" required/>
+							</label>
+							<label class="field">
+								<span class="field-label">Rombongan Belajar</span>
+								<input class="input" type="text" name="classroom_name" value="XII TKJ 1" required/>
+							</label>
+							<label class="field">
+								<span class="field-label">Jurusan</span>
+								<select class="input" name="major_code">
+									<option value="TKJ">TKJ</option>
+									<option value="RPL">RPL</option>
+									<option value="TKR">TKR</option>
+									<option value="AKL">AKL</option>
+								</select>
+							</label>
+						</div>
+						<button type="submit" class="button button-primary">Simpan Siswa &amp; Terbitkan Tagihan SPP</button>
+					</form>
+				</section>
+
+				<section class="card form-stack">
+					<span class="eyebrow">Direktori Pendidik</span>
+					<h3>Data Induk Pendidik &amp; Tenaga Kependidikan ({ strconv.Itoa(len(data.Teachers)) })</h3>
+					<div class="table-wrap">
+						<table class="data-table">
+							<thead>
+								<tr>
+									<th>Nama Guru</th>
+									<th>NIP</th>
+									<th>Mata Pelajaran</th>
+									<th>Skor Impact</th>
+								</tr>
+							</thead>
+							<tbody>
+								for _, t := range data.Teachers {
+									<tr>
+										<td><strong>{ t.TeacherName }</strong></td>
+										<td class="mono">{ t.NIP }</td>
+										<td>{ t.Subject }</td>
+										<td class="mono">{ fmt.Sprintf("%.1f", t.FinalImpactScore) }</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</section>
+			</div>
+		} else if data.Tab == "dapodik-erapor" {
+			<section class="card form-stack">
+				<div class="stat-card-head">
+					<div>
+						<span class="eyebrow">Interoperabilitas Nasional</span>
+						<h2>Ekspor File Nilai e-Rapor (.CSV / Excel) &amp; Sinkronisasi Dapodik</h2>
+					</div>
+					<div class="leader-actions">
+						<a href="/admin/erapor/export.csv" class="button button-secondary button-small">Unduh CSV Nilai e-Rapor 360°</a>
+						<form method="post" action="/admin/dapodik/sync">
+							<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+							<button type="submit" class="button button-primary button-small">Sinkronisasi Dapodik 1-Klik</button>
+						</form>
+					</div>
+				</div>
+
+				<div class="table-wrap">
+					<table class="data-table">
+						<thead>
+							<tr>
+								<th>Waktu Sinkronisasi</th>
+								<th>Entitas Tersinkronisasi</th>
+								<th>Jumlah Record</th>
+								<th>Status</th>
+							</tr>
+						</thead>
+						<tbody>
+							for _, logItem := range data.DapodikLogs {
+								<tr>
+									<td class="mono">{ logItem.SyncTimestamp }</td>
+									<td><strong>{ logItem.EntitySynced }</strong></td>
+									<td class="mono">{ strconv.Itoa(logItem.RecordsCount) }</td>
+									<td><span class="badge badge-success">{ logItem.Status }</span></td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</section>
+
+			<section class="card form-stack">
+				<span class="eyebrow">Tata Persuratan Elektronik Ber-HMAC</span>
+				<h3>Penerbitan Surat Resmi 1-Klik Bervalidasi HMAC-SHA256</h3>
+				<form method="post" action="/admin/letter/create" class="form-row">
+					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+					<label class="field">
+						<span class="field-label">Jenis Surat Resmi</span>
+						<select class="input" name="letter_type">
+							<option value="SURAT_PENGANTAR_PKL">Surat Pengantar Magang PKL DUDI</option>
+							<option value="SURAT_KETERANGAN_AKTIF">Surat Keterangan Siswa Aktif</option>
+							<option value="SURAT_REKOMENDASI_BEASISWA">Surat Rekomendasi Beasiswa Vokasi</option>
+						</select>
+					</label>
+					<label class="field">
+						<span class="field-label">Nama Siswa</span>
+						<input class="input" type="text" name="student_name" value="Muhammad Budi Santoso" required/>
+					</label>
+					<label class="field">
+						<span class="field-label">Tujuan / Instansi Penerima</span>
+						<input class="input" type="text" name="recipient" value="HRD PT Telkom Akses Regional Jawa Barat" required/>
+					</label>
+					<div class="field">
+						<span class="field-label">Terbitkan</span>
+						<button type="submit" class="button button-primary">Terbitkan Surat Resmi</button>
+					</div>
+				</form>
+
+				<div class="table-wrap">
+					<table class="data-table">
+						<thead>
+							<tr>
+								<th>Nomor Surat</th>
+								<th>Jenis</th>
+								<th>Nama Siswa</th>
+								<th>Tujuan</th>
+								<th>Hash HMAC-SHA256</th>
+							</tr>
+						</thead>
+						<tbody>
+							for _, l := range data.Letters {
+								<tr>
+									<td class="mono">{ l.LetterNumber }</td>
+									<td><span class="badge badge-teal">{ l.LetterType }</span></td>
+									<td><strong>{ l.StudentName }</strong></td>
+									<td>{ l.Recipient }</td>
+									<td class="mono"><a href={ "/verify?q=" + l.HmacHash }>{ l.HmacHash }</a></td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</section>
+		} else if data.Tab == "pkl-bkk" {
+			<div class="grid-2">
+				<section class="card form-stack">
+					<span class="eyebrow">Kemitraan Industri (DUDI)</span>
+					<h3>Tambah Mitra PKL &amp; Geofence Haversine</h3>
+					<form method="post" action="/admin/pkl/add" class="form-stack">
+						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+						<input class="input" type="text" name="company_name" placeholder="Nama Perusahaan Mitra DUDI..." required/>
+						<div class="form-row">
+							<input class="input" type="text" name="sector" value="Telekomunikasi &amp; Jaringan" required/>
+							<input class="input" type="text" name="address" placeholder="Alamat kawasan industri..." required/>
+						</div>
+						<div class="form-row">
+							<input class="input input-mono" type="text" name="lat" value="-6.9147" required/>
+							<input class="input input-mono" type="text" name="lng" value="107.6098" required/>
+							<input class="input input-mono" type="number" name="radius" value="120" required/>
+							<input class="input input-mono" type="text" name="pin" value="778899" placeholder="PIN 6 Digit" required/>
+						</div>
+						<button type="submit" class="button button-primary">Simpan Mitra DUDI &amp; PIN Supervisor</button>
+					</form>
+
+					<div class="table-wrap">
+						<table class="data-table">
+							<thead>
+								<tr>
+									<th>Perusahaan</th>
+									<th>Sektor</th>
+									<th>Radius GPS</th>
+									<th>PIN DUDI</th>
+								</tr>
+							</thead>
+							<tbody>
+								for _, p := range data.PklPlacements {
+									<tr>
+										<td><strong>{ p.CompanyName }</strong><br/><span class="muted">{ p.Address }</span></td>
+										<td>{ p.IndustrySector }</td>
+										<td class="mono">{ strconv.Itoa(p.RadiusMeters) }m</td>
+										<td class="mono">{ p.SupervisorPin }</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</section>
+
+				<section class="card form-stack">
+					<span class="eyebrow">Bursa Kerja Khusus (BKK) SMK</span>
+					<h3>Tambah Lowongan Kerja Mitra Industri</h3>
+					<form method="post" action="/admin/bkk/add" class="form-stack">
+						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+						<input class="input" type="text" name="company_name" placeholder="Nama Perusahaan Rekruter..." required/>
+						<input class="input" type="text" name="job_title" placeholder="Posisi Lowongan (mis. Junior NOC Engineer)..." required/>
+						<div class="form-row">
+							<input class="input" type="text" name="salary_range" value="Rp 4.800.000 - Rp 5.600.000" required/>
+							<input class="input" type="text" name="majors" value="TKJ, RPL" required/>
+						</div>
+						<button type="submit" class="button button-primary">Publikasikan Lowongan BKK</button>
+					</form>
+
+					<div class="table-wrap">
+						<table class="data-table">
+							<thead>
+								<tr>
+									<th>Posisi</th>
+									<th>Perusahaan</th>
+									<th>Jurusan</th>
+									<th>Pelamar</th>
+								</tr>
+							</thead>
+							<tbody>
+								for _, j := range data.BkkJobs {
+									<tr>
+										<td><strong>{ j.JobTitle }</strong></td>
+										<td>{ j.CompanyName }</td>
+										<td><span class="badge badge-teal">{ j.TargetedMajors }</span></td>
+										<td class="mono">{ strconv.Itoa(j.ApplicantCount) } siswa</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</section>
+			</div>
+		}
+	</div>
+}

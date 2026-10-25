@@ -1,0 +1,374 @@
+package pages
+
+import (
+	"strconv"
+
+	"wesmk/internal/ui"
+	"wesmk/internal/ui/components"
+)
+
+templ TeacherPortal(data ui.TeacherPortalPage) {
+	<div class="page-stack">
+		if data.Tab == "dashboard" {
+			<section class="identity-card">
+				<div class="identity-main">
+					<span class="avatar avatar-lg">{ data.Shell.Initials }</span>
+					<div class="identity-copy">
+						<span class="eyebrow">Ruang Kerja Pendidik &amp; Instruktur Vokasi</span>
+						<h2>Selamat Mengajar, { data.Shell.FullName }</h2>
+						<p class="identity-meta mono">NIP { data.Shell.Username } · Wali Kelas XII TKJ 1 &amp; Pengawas CBT</p>
+					</div>
+				</div>
+				<form method="post" action="/teacher/alert-piket">
+					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+					<button type="submit" class="button button-danger">
+						@components.Icon("radio", "icon")
+						<span>1-Klik Sinyal Izin Darurat ke Guru Piket</span>
+					</button>
+				</form>
+			</section>
+
+			<div class="dashboard-grid">
+				<article class="card stat-card">
+					<span class="eyebrow">Jam Ke-1 s.d. Ke-4 · Lab TKJ 1</span>
+					<p class="stat-title">XII TKJ 1 • Administrasi Jaringan</p>
+					<p class="stat-note">Topik Aktif: { data.Journal.Topic }</p>
+					<div class="stat-card-foot">
+						<span>Validasi Ketua Kelas</span>
+						<span class={ "badge " + statusBadgeClass(data.Journal.LeaderStatus) }>{ ui.StatusLabel(data.Journal.LeaderStatus) }</span>
+					</div>
+				</article>
+
+				<article class="card stat-card">
+					<span class="eyebrow">Jam Ke-5 s.d. Ke-8 · Bengkel Fiber</span>
+					<p class="stat-title">XI TKJ 2 • Troubleshooting WAN</p>
+					<p class="stat-note">Praktik penyambungan serat optik &amp; pengukuran redaman OPM.</p>
+					<div class="stat-card-foot">
+						<span>Status Ruang</span>
+						<span class="badge badge-success">Siap Praktik</span>
+					</div>
+				</article>
+
+				<article class="card stat-card">
+					<span class="eyebrow">Kinerja Mengajar &amp; Bimbingan</span>
+					<p class="stat-title">Pemantauan Siswa Wali &amp; PKL</p>
+					<p class="stat-note">{ strconv.Itoa(len(data.PklJournals)) } jurnal magang siswa &amp; { strconv.Itoa(len(data.ExamQuestions)) } soal master aktif.</p>
+					<div class="stat-card-foot">
+						<a href="/teacher/classroom" class="text-link">Buka Agenda &amp; Presensi Kelas</a>
+					</div>
+				</article>
+			</div>
+		} else if data.Tab == "classroom" {
+			<section class="card form-stack">
+				<span class="eyebrow">Jurnal Mengajar &amp; Generator Modul Praktik AI</span>
+				<h2>Agenda Mengajar Kelas XII TKJ 1</h2>
+				<form method="post" action="/teacher/journal" class="form-stack">
+					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+					<label class="field">
+						<span class="field-label">Topik Silabus &amp; Kompetensi Dasar Hari Ini</span>
+						<input class="input" type="text" name="topic" value={ data.Journal.Topic } required/>
+					</label>
+					<label class="field">
+						<span class="field-label">Catatan Instruktur</span>
+						<textarea class="input" name="notes" required>{ data.TeacherNotes }</textarea>
+					</label>
+					<label class="field">
+						<span class="field-label">Langkah Praktik Bengkel (AI Smart Notes)</span>
+						<textarea class="input" name="ai_notes" required>{ data.AiSmartNotes }</textarea>
+					</label>
+					<button type="submit" class="button button-primary">Simpan Agenda &amp; Perbarui Topik Kuis Harian</button>
+				</form>
+			</section>
+
+			<section class="card form-stack">
+				<span class="eyebrow">Presensi Terintegrasi RFID Gerbang &amp; Izin Orang Tua</span>
+				<h3>Daftar Siswa Kelas XII TKJ 1</h3>
+				<div class="table-wrap">
+					<table class="data-table">
+						<thead>
+							<tr>
+								<th>Nama Siswa</th>
+								<th>NISN</th>
+								<th>Jam Gerbang</th>
+								<th>Sumber Verifikasi</th>
+								<th>Status Kehadiran</th>
+								<th>Tindakan Guru</th>
+							</tr>
+						</thead>
+						<tbody>
+							for _, a := range data.Attendances {
+								<tr>
+									<td><strong>{ a.StudentName }</strong></td>
+									<td class="mono">{ a.NISN }</td>
+									<td class="mono">{ a.GateTapTime }</td>
+									<td>{ a.VerifiedSource }</td>
+									<td><span class={ "badge " + attendanceBadgeClass(a.Status) }>{ a.StatusLabel }</span></td>
+									<td>
+										<form method="post" action="/teacher/attendance/toggle">
+											<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+											<input type="hidden" name="attendance_id" value={ a.ID }/>
+											if a.Status == "ALPA_BOLOS" {
+												<button type="submit" class="button button-secondary button-small">Pulihkan Hadir</button>
+											} else {
+												<button type="submit" class="button button-danger button-small">Tandai Alpa / Bolos</button>
+											}
+										</form>
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</section>
+		} else if data.Tab == "question-bank" {
+			<section class="card form-stack">
+				<span class="eyebrow">Penyusunan Soal Kejuruan Berbasis KD</span>
+				<h2>Bank Soal Administrasi Infrastruktur Jaringan ({ strconv.Itoa(len(data.ExamQuestions)) } Soal Master)</h2>
+				<form method="post" action="/teacher/question/add" class="form-stack">
+					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+					<div class="form-row">
+						<label class="field">
+							<span class="field-label">Tipe Soal</span>
+							<select class="input" name="question_type">
+								<option value="MULTIPLE_CHOICE">Pilihan Ganda (A/B/C/D)</option>
+								<option value="ESSAY">Esai / Uraian Analisis</option>
+							</select>
+						</label>
+						<label class="field">
+							<span class="field-label">Kunci Jawaban Benar (Untuk PG)</span>
+							<select class="input" name="correct_key">
+								<option value="A">Opsi A</option>
+								<option value="B">Opsi B</option>
+								<option value="C">Opsi C</option>
+								<option value="D">Opsi D</option>
+							</select>
+						</label>
+					</div>
+					<label class="field">
+						<span class="field-label">Teks Pertanyaan / Studi Kasus Bengkel</span>
+						<textarea class="input" name="question_text" placeholder="Tuliskan skenario gangguan jaringan atau pertanyaan kompetensi..." required></textarea>
+					</label>
+					<div class="form-row">
+						<input class="input" type="text" name="opt_a" placeholder="Pilihan A"/>
+						<input class="input" type="text" name="opt_b" placeholder="Pilihan B"/>
+						<input class="input" type="text" name="opt_c" placeholder="Pilihan C"/>
+						<input class="input" type="text" name="opt_d" placeholder="Pilihan D"/>
+					</div>
+					<input class="input" type="text" name="essay_rubric" placeholder="Rubrik penilaian esai (jika soal uraian)..."/>
+					<button type="submit" class="button button-primary">Tambahkan ke Bank Soal Master</button>
+				</form>
+
+				<div class="table-wrap">
+					<table class="data-table">
+						<thead>
+							<tr>
+								<th>No</th>
+								<th>Tipe</th>
+								<th>Pertanyaan</th>
+								<th>Kunci / Rubrik Server</th>
+								<th>Hapus</th>
+							</tr>
+						</thead>
+						<tbody>
+							for _, q := range data.ExamQuestions {
+								<tr>
+									<td class="mono">#{ strconv.Itoa(q.QuestionNumber) }</td>
+									<td><span class="badge badge-neutral">{ q.QuestionType }</span></td>
+									<td><strong>{ q.QuestionText }</strong></td>
+									<td class="mono">
+										if q.QuestionType == "ESSAY" {
+											{ q.EssayRubric }
+										} else {
+											Kunci: { q.CorrectKey }
+										}
+									</td>
+									<td>
+										<form method="post" action="/teacher/question/delete">
+											<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+											<input type="hidden" name="question_id" value={ q.ID }/>
+											<button type="submit" class="button button-danger button-small">Hapus</button>
+										</form>
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</section>
+		} else if data.Tab == "exam-control" {
+			<section class="card form-stack">
+				<div class="stat-card-head">
+					<div>
+						<span class="eyebrow">Live Proctoring &amp; Kendali Ruang Ujian CBT</span>
+						<h2>Pengawasan Ujian Siswa Real-Time</h2>
+					</div>
+					<form method="post" action="/teacher/proctor/mass-unlock">
+						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+						<button type="submit" class="button button-secondary button-small">Mass Unlock Ruangan (Pemulihan WiFi Lab)</button>
+					</form>
+				</div>
+
+				<div class="table-wrap">
+					<table class="data-table">
+						<thead>
+							<tr>
+								<th>Nama Peserta</th>
+								<th>NISN</th>
+								<th>Progres</th>
+								<th>Status Kiosk</th>
+								<th>Catatan Pelanggaran / Token</th>
+								<th>Tindakan Pengawas</th>
+							</tr>
+						</thead>
+						<tbody>
+							for _, p := range data.ProctorStudents {
+								<tr>
+									<td><strong>{ p.Name }</strong></td>
+									<td class="mono">{ p.NISN }</td>
+									<td class="mono">{ p.Progress }</td>
+									<td>
+										if p.Status == "LOCKED" {
+											<span class="badge badge-danger">TERKUNCI ({ strconv.Itoa(p.LockCount) }x)</span>
+										} else if p.Status == "SUBMITTED" {
+											<span class="badge badge-success">SELESAI</span>
+										} else {
+											<span class="badge badge-teal">{ p.Status }</span>
+										}
+									</td>
+									<td>
+										<span>{ p.LastViolation }</span>
+										if p.UnlockToken != "" {
+											<br/><span class="mono">Token: { p.UnlockToken }</span>
+										}
+									</td>
+									<td>
+										<div class="leader-actions">
+											<form method="post" action="/teacher/proctor/unlock">
+												<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+												<input type="hidden" name="student_id" value={ p.StudentID }/>
+												<button type="submit" class="button button-primary button-small">Buka Kunci Sesi</button>
+											</form>
+											<form method="post" action="/teacher/proctor/emergency-ticket">
+												<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+												<input type="hidden" name="student_id" value={ p.StudentID }/>
+												<button type="submit" class="button button-secondary button-small">Tiket Darurat 2 Jam</button>
+											</form>
+										</div>
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</section>
+
+			<section class="card form-stack">
+				<span class="eyebrow">Penilaian Berbasis Rubrik Objektif</span>
+				<h3>Koreksi Jawaban Esai Siswa ({ data.ActiveStudent.FullName }) Berdasarkan Rubrik Resmi</h3>
+				<form method="post" action="/teacher/essay/grade" class="form-row">
+					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+					<input type="hidden" name="student_id" value={ data.ActiveStudent.ID }/>
+					<label class="field">
+						<span class="field-label">Nilai Akhir CBT &amp; Esai Terkalibrasi (0–100)</span>
+						<input class="input input-mono" type="number" name="score" value={ strconv.Itoa(data.CbtScore) } min="0" max="100" required/>
+					</label>
+					<div class="field">
+						<span class="field-label">Simpan ke Rapor 360°</span>
+						<button type="submit" class="button button-primary">Sahkan Nilai CBT ke Rapor</button>
+					</div>
+				</form>
+			</section>
+		} else if data.Tab == "homeroom-pkl" {
+			<section class="card form-stack">
+				<span class="eyebrow">Algoritma Median Absolute Deviation (MAD)</span>
+				<h2>Kuesioner Sikap Cepat &amp; Outlier Consensus Filter (Anti-Guru Baper)</h2>
+				<p class="muted">Jika terdapat 1 nilai ekstrem rendah tanpa catatan pelanggaran resmi di Kesiswaan, bobotnya direduksi otomatis menjadi 0.15 agar nasib rapor siswa tetap terlindungi secara objektif.</p>
+
+				<form method="post" action="/teacher/homeroom/attitude" class="form-stack">
+					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+					<input type="hidden" name="student_id" value={ data.ActiveStudent.ID }/>
+					<h4>Input Nilai Sikap 5 Guru Mapel untuk: { data.ActiveStudent.FullName } (Skor Saat Ini: { strconv.Itoa(data.ActiveStudent.AttitudeScore) })</h4>
+					<div class="form-row">
+						<label class="field">
+							<span class="field-label">Guru Produktif TKJ</span>
+							<input class="input input-mono" type="number" name="s1" value="94" min="0" max="100" required/>
+						</label>
+						<label class="field">
+							<span class="field-label">Guru Matematika</span>
+							<input class="input input-mono" type="number" name="s2" value="92" min="0" max="100" required/>
+						</label>
+						<label class="field">
+							<span class="field-label">Guru Bahasa Inggris</span>
+							<input class="input input-mono" type="number" name="s3" value="93" min="0" max="100" required/>
+						</label>
+						<label class="field">
+							<span class="field-label">Guru Kewirausahaan</span>
+							<input class="input input-mono" type="number" name="s4" value="95" min="0" max="100" required/>
+						</label>
+						<label class="field">
+							<span class="field-label">Guru Mapel Lain (Uji Outlier)</span>
+							<input class="input input-mono" type="number" name="s5" value="45" min="0" max="100" required/>
+						</label>
+					</div>
+					<label class="field">
+						<span class="field-label">Catatan Apresiasi Wali Kelas di Rapor &amp; Portal Orang Tua</span>
+						<input class="input" type="text" name="homeroom_note" value={ data.ActiveStudent.HomeroomNote } required/>
+					</label>
+					<button type="submit" class="button button-primary">Hitung Filter Konsensus MAD &amp; Simpan ke Rapor</button>
+				</form>
+			</section>
+
+			<section class="card form-stack">
+				<div class="stat-card-head">
+					<div>
+						<span class="eyebrow">Pemantauan Guru Pembimbing PKL</span>
+						<h3>Log Presensi Haversine GPS &amp; Bulk ACC Jurnal Mingguan Siswa</h3>
+					</div>
+					<form method="post" action="/teacher/pkl/bulk-approve">
+						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+						<button type="submit" class="button button-primary button-small">Bulk ACC Seluruh Jurnal PKL</button>
+					</form>
+				</div>
+
+				<div class="table-wrap">
+					<table class="data-table">
+						<thead>
+							<tr>
+								<th>Tanggal</th>
+								<th>Siswa</th>
+								<th>Mitra DUDI</th>
+								<th>Aktivitas &amp; Kompetensi</th>
+								<th>Status DUDI</th>
+								<th>Status Guru Pembimbing</th>
+							</tr>
+						</thead>
+						<tbody>
+							for _, j := range data.PklJournals {
+								<tr>
+									<td class="mono">{ j.Date }</td>
+									<td><strong>{ j.StudentName }</strong></td>
+									<td>{ j.CompanyName }</td>
+									<td><strong>{ j.ActivityTitle }</strong><br/><span class="muted">{ j.CompetencyLearned }</span></td>
+									<td>
+										if j.SupervisorApproved {
+											<span class="badge badge-success">Disetujui DUDI</span>
+										} else {
+											<span class="badge badge-warning">Menunggu DUDI</span>
+										}
+									</td>
+									<td>
+										if j.TeacherApproved {
+											<span class="badge badge-success">Sudah di-ACC</span>
+										} else {
+											<span class="badge badge-neutral">Menunggu ACC</span>
+										}
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</section>
+		}
+	</div>
+}

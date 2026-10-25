@@ -1,0 +1,17 @@
+# Go
+/wesmk-server
+*.exe
+*.test
+*.out
+vendor/
+
+# local env
+.env
+.env.local
+
+# editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store

@@ -1,0 +1,195 @@
+package pages
+
+import (
+	"strconv"
+
+	"wesmk/internal/ui"
+	"wesmk/internal/ui/components"
+)
+
+templ PublicVerify(data ui.PublicVerifyPage) {
+	<!DOCTYPE html>
+	<html lang="id">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<meta name="color-scheme" content="light"/>
+			<meta name="theme-color" content="#0B1730"/>
+			<title>Verifikasi Publik &amp; Portal DUDI — WESMK</title>
+			<link rel="icon" type="image/svg+xml" href="/ui-assets/favicon.svg"/>
+			<link rel="preconnect" href="https://fonts.googleapis.com"/>
+			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+			<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+			<link rel="stylesheet" href="/ui-assets/app.css"/>
+			<script src="/ui-assets/htmx.min.js" defer></script>
+			<script src="/ui-assets/app.js" defer></script>
+		</head>
+		<body class="app-body">
+			<main class="page">
+				<div class="page-stack">
+					<section class="identity-card">
+						<div class="identity-main">
+							<span class="brand-mark brand-mark-lg">W</span>
+							<div class="identity-copy">
+								<span class="eyebrow">Portal Publik Verifikasi &amp; Mitra Industri (PUB-02)</span>
+								<h2>Verifikasi Keaslian Kwitansi, Surat Resmi &amp; Jurnal Magang DUDI</h2>
+								<p class="muted">SMK Negeri 1 Rekayasa · Validasi tanda tangan kriptografi HMAC-SHA256 secara real-time di server.</p>
+							</div>
+						</div>
+						<a href="/login" class="button button-secondary button-small">Kembali ke Portal</a>
+					</section>
+
+					<div class="login-tabs" role="tablist">
+						<a href="/verify?tab=verify" class={ loginTabClass(data.ActiveTab, "verify") }>Verifikasi Surat &amp; Kwitansi (HMAC)</a>
+						<a href="/verify?tab=dudi" class={ loginTabClass(data.ActiveTab, "dudi") }>Persetujuan Jurnal Magang DUDI (PIN)</a>
+					</div>
+
+					if data.Error != "" {
+						<div class="alert alert-danger" role="alert">
+							@components.Icon("alert", "icon")
+							<span>{ data.Error }</span>
+						</div>
+					}
+					if data.Notice != "" {
+						<div class="alert alert-success" role="status">
+							@components.Icon("check", "icon")
+							<span>{ data.Notice }</span>
+						</div>
+					}
+
+					if data.ActiveTab == "dudi" {
+						<section class="card form-stack">
+							<div>
+								<span class="eyebrow">Portal Supervisor Mitra Industri (DUDI)</span>
+								<h3>Persetujuan Jurnal Harian &amp; Kehadiran Siswa Magang</h3>
+								<p class="muted">Masukkan 6-digit PIN resmi mitra industri untuk mengesahkan jurnal kompetensi siswa tanpa perlu membuat akun.</p>
+							</div>
+
+							<form method="post" action="/verify/dudi-approve" class="form-stack">
+								<input type="hidden" name="_csrf" value={ data.CSRFToken }/>
+								<label class="field">
+									<span class="field-label">Pilih Jurnal Harian Siswa Magang</span>
+									<select class="input" name="journal_id">
+										for _, j := range data.PklJournals {
+											<option value={ j.ID }>{ j.StudentName } — { j.ActivityTitle } ({ j.Date })</option>
+										}
+									</select>
+								</label>
+								<label class="field">
+									<span class="field-label">PIN 6-Digit Supervisor Mitra DUDI</span>
+									<input class="input input-mono" type="password" name="pin" placeholder="Contoh demo: 445566" required/>
+									<span class="field-hint">PIN demo PT Telkom Akses: 445566 · PT Astra Honda Motor: 112233</span>
+								</label>
+								<button type="submit" class="button button-primary">
+									@components.Icon("check", "icon")
+									<span>Sahkan Jurnal Magang dengan PIN DUDI</span>
+								</button>
+							</form>
+
+							<div class="table-wrap">
+								<table class="data-table">
+									<thead>
+										<tr>
+											<th>Tanggal</th>
+											<th>Nama Siswa</th>
+											<th>Perusahaan DUDI</th>
+											<th>Aktivitas &amp; Kompetensi</th>
+											<th>Status DUDI</th>
+											<th>Status Guru</th>
+										</tr>
+									</thead>
+									<tbody>
+										for _, j := range data.PklJournals {
+											<tr>
+												<td class="mono">{ j.Date }</td>
+												<td><strong>{ j.StudentName }</strong></td>
+												<td>{ j.CompanyName }</td>
+												<td><strong>{ j.ActivityTitle }</strong><br/><span class="muted">{ j.CompetencyLearned }</span></td>
+												<td>
+													if j.SupervisorApproved {
+														<span class="badge badge-success">Disetujui DUDI</span>
+													} else {
+														<span class="badge badge-warning">Menunggu PIN</span>
+													}
+												</td>
+												<td>
+													if j.TeacherApproved {
+														<span class="badge badge-success">ACC Pembimbing</span>
+													} else {
+														<span class="badge badge-neutral">Menunggu Guru</span>
+													}
+												</td>
+											</tr>
+										}
+									</tbody>
+								</table>
+							</div>
+						</section>
+					} else {
+						<section class="card form-stack">
+							<form method="get" action="/verify" class="form-stack">
+								<label class="field">
+									<span class="field-label">Nomor Surat Resmi / Nomor Kwitansi / Hash HMAC-SHA256</span>
+									<input class="input input-mono" type="text" name="q" value={ data.Query } placeholder="Masukkan nomor surat, nomor kwitansi, atau kode hash HMAC..." required/>
+								</label>
+								<button type="submit" class="button button-primary">
+									@components.Icon("file-check", "icon")
+									<span>Periksa Keaslian di Buku Induk Server</span>
+								</button>
+							</form>
+
+							<div class="leader-actions">
+								for _, l := range data.Letters {
+									<a class="button button-secondary button-small" href={ "/verify?q=" + l.HmacHash }>Cek Surat: { l.LetterNumber }</a>
+								}
+								for _, item := range data.Ledger {
+									<a class="button button-secondary button-small" href={ "/verify?q=" + item.ReceiptNumber }>Cek Kwitansi: { item.ReceiptNumber }</a>
+								}
+							</div>
+						</section>
+
+						if data.VerifiedLetter != nil {
+							<section class="card form-stack">
+								<div class="stat-card-head">
+									<span class="badge badge-success">SURAT ASLI &amp; TERVERIFIKASI BUKU INDUK SEKOLAH</span>
+									<span class="mono">{ data.VerifiedLetter.LetterNumber }</span>
+								</div>
+								<h3>{ data.VerifiedLetter.LetterType } — { data.VerifiedLetter.StudentName }</h3>
+								<p class="muted">Tujuan: { data.VerifiedLetter.Recipient } · Tanggal Terbit: { data.VerifiedLetter.IssueDate }</p>
+								<div class="info-strip">
+									<span class="info-strip-label">Pejabat Penandatangan Elektronik</span>
+									<strong>{ data.VerifiedLetter.SignerName } ({ data.VerifiedLetter.SignerRole })</strong>
+									<span class="mono">HMAC-SHA256: { data.VerifiedLetter.HmacHash }</span>
+								</div>
+							</section>
+						}
+
+						if data.VerifiedReceipt != nil {
+							<section class="card form-stack">
+								<div class="stat-card-head">
+									<span class="badge badge-success">KWITANSI PEMBAYARAN SAH &amp; TERCATAT DI BUKU KAS</span>
+									<span class="mono">{ data.VerifiedReceipt.ReceiptNumber }</span>
+								</div>
+								<h3>{ data.VerifiedReceipt.StudentName } — { ui.FormatRupiah(data.VerifiedReceipt.AmountDelta) }</h3>
+								<p class="muted">Jenis Transaksi: { data.VerifiedReceipt.TxType } · Petugas/Kanal: { data.VerifiedReceipt.ActorName } · Waktu: { ui.FormatDateID(data.VerifiedReceipt.CreatedAt) }</p>
+								<div class="info-strip">
+									<span class="info-strip-label">Segel Kriptografi Buku Kas (Append-Only Ledger #{ strconv.FormatInt(data.VerifiedReceipt.ID, 10) })</span>
+									<span class="mono">{ data.VerifiedReceipt.SignatureHmac }</span>
+								</div>
+							</section>
+						}
+
+						if data.NotFound {
+							<section class="card">
+								<div class="alert alert-danger">
+									@components.Icon("alert", "icon")
+									<span>Dokumen atau kwitansi dengan kode "{ data.Query }" tidak ditemukan di buku induk server.</span>
+								</div>
+							</section>
+						}
+					}
+				</div>
+			</main>
+		</body>
+	</html>
+}

@@ -1,0 +1,51 @@
+package components
+
+import "wesmk/internal/ui"
+
+templ MobileNav(shell ui.RoleShell) {
+	<nav class="mobile-nav" aria-label="Navigasi seluler">
+		for _, item := range ui.MobileItems(shell.Nav) {
+			<a href={ item.Href } class={ mobileNavClass(item, shell.ActiveTab) } aria-current={ ui.AriaCurrent(item, shell.ActiveTab) }>
+				@Icon(item.Icon, "icon")
+				<span>{ item.ShortLabel }</span>
+			</a>
+		}
+		if ui.HasMore(shell.Nav) {
+			<button type="button" class={ mobileMoreClass(shell.Nav, shell.ActiveTab) } data-drawer-toggle aria-controls="mobile-drawer" aria-expanded="false">
+				@Icon("menu", "icon")
+				<span>Lainnya</span>
+			</button>
+		}
+	</nav>
+
+	<div id="mobile-drawer-backdrop" class="drawer-backdrop" hidden data-drawer-close></div>
+	<div id="mobile-drawer" class="mobile-drawer" hidden aria-label="Menu lainnya">
+		<div class="drawer-head">
+			<div>
+				<span class="eyebrow">{ shell.RoleLabel }</span>
+				<strong>Menu lainnya</strong>
+			</div>
+			<button type="button" class="icon-button" data-drawer-close aria-label="Tutup menu">
+				@Icon("x", "icon")
+			</button>
+		</div>
+		<nav class="drawer-nav" aria-label="Semua menu">
+			for _, item := range shell.Nav {
+				<a href={ item.Href } class={ ui.NavClass(item, shell.ActiveTab) } aria-current={ ui.AriaCurrent(item, shell.ActiveTab) } data-drawer-close>
+					@Icon(item.Icon, "icon")
+					<span class="nav-copy">{ item.Label }</span>
+					if item.Badge != "" {
+						<span class="nav-badge">{ item.Badge }</span>
+					}
+				</a>
+			}
+		</nav>
+		<form method="post" action="/logout" class="drawer-logout">
+			<input type="hidden" name="_csrf" value={ shell.CSRFToken }/>
+			<button type="submit" class="button button-secondary button-block">
+				@Icon("logout", "icon")
+				<span>Keluar dari portal</span>
+			</button>
+		</form>
+	</div>
+}

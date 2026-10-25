@@ -1,0 +1,989 @@
+{
+  "majors": [
+    {
+      "code": "TKJ",
+      "name": "Teknik Komputer & Jaringan",
+      "headOfMajor": "Ir. Hendro Wijaya, S.T., M.Kom.",
+      "workshopRoom": "Lab Fiber Optik & Cisco-MikroTik Lt. 2",
+      "studentCount": 360,
+      "dudiPartnerCount": 16
+    },
+    {
+      "code": "RPL",
+      "name": "Rekayasa Perangkat Lunak",
+      "headOfMajor": "Dewi Lestari, S.Pd., M.Kom.",
+      "workshopRoom": "Lab Software Engineering & Cloud Lt. 3",
+      "studentCount": 320,
+      "dudiPartnerCount": 14
+    },
+    {
+      "code": "TKR",
+      "name": "Teknik Kendaraan Ringan Otomotif",
+      "headOfMajor": "Joko Susilo, M.T.",
+      "workshopRoom": "Bengkel Otomotif Standar Astra Blok B",
+      "studentCount": 380,
+      "dudiPartnerCount": 11
+    },
+    {
+      "code": "AKL",
+      "name": "Akuntansi & Keuangan Lembaga",
+      "headOfMajor": "Hj. Ratna Sari, S.E.",
+      "workshopRoom": "Lab Bank Mini & Pajak Digital Lt. 1",
+      "studentCount": 280,
+      "dudiPartnerCount": 7
+    }
+  ],
+  "students": [
+    {
+      "id": "std-budi-01",
+      "userId": "usr-student-1",
+      "nisn": "0058471290",
+      "nik": "3201284509050001",
+      "fullName": "Muhammad Budi Santoso",
+      "classroomId": "cls-xii-tkj-1",
+      "classroomName": "XII TKJ 1",
+      "majorCode": "TKJ",
+      "parentId": "usr-parent-1",
+      "parentName": "Bapak Ahmad Santoso",
+      "parentPhone": "081234567800",
+      "isKetuaKelas": true,
+      "isSekretaris": false,
+      "isAlumni": false,
+      "scholarshipType": "NONE",
+      "discountPercent": 0,
+      "attitudeScore": 92,
+      "cbtScore": 88,
+      "dailyQuizAvg": 95,
+      "attendanceConductScore": 98,
+      "activeBadge": "Si Paling Presisi Troubleshooting Jaringan",
+      "activeBadgeReason": "Mampu mendeteksi error konfigurasi BGP router dan VLAN trunking dalam <3 menit dengan rasio keberhasilan 98%.",
+      "homeroomNote": "Budi, ketelitianmu saat menyelesaikan terminasi serat optik di ODC Tomang membuktikan etos kerja yang kuat. Pertahankan kejujuran ini.",
+      "bmwChoice": "BEKERJA"
+    },
+    {
+      "id": "std-rahma-02",
+      "userId": "usr-student-2",
+      "nisn": "0058471291",
+      "nik": "3201284509050002",
+      "fullName": "Siti Rahmawati",
+      "classroomId": "cls-xii-tkj-1",
+      "classroomName": "XII TKJ 1",
+      "majorCode": "TKJ",
+      "parentId": "usr-parent-2",
+      "parentName": "Ibu Siti Aminah",
+      "parentPhone": "081234567809",
+      "isKetuaKelas": false,
+      "isSekretaris": true,
+      "isAlumni": false,
+      "scholarshipType": "KIP",
+      "discountPercent": 43,
+      "attitudeScore": 96,
+      "cbtScore": 91,
+      "dailyQuizAvg": 94,
+      "attendanceConductScore": 100,
+      "activeBadge": "Si Paling Rapi Dokumentasi Topologi & Kabel",
+      "activeBadgeReason": "Selalu menyusun manajemen kabel patch-cord rack server dan dokumentasi skema IP dengan akurasi standar industri.",
+      "homeroomNote": "Siti menunjukkan dedikasi luar biasa sebagai Sekretaris Kelas dan teknisi jaringan yang sangat teliti.",
+      "bmwChoice": "MELANJUTKAN"
+    },
+    {
+      "id": "std-deni-03",
+      "userId": "usr-student-3",
+      "nisn": "0058471292",
+      "nik": "3201284509050003",
+      "fullName": "Deni Kurniawan",
+      "classroomId": "cls-xii-tkj-1",
+      "classroomName": "XII TKJ 1",
+      "majorCode": "TKJ",
+      "parentId": "usr-parent-3",
+      "parentName": "Bapak Hendra Kurniawan",
+      "parentPhone": "081234567810",
+      "isKetuaKelas": false,
+      "isSekretaris": false,
+      "isAlumni": false,
+      "scholarshipType": "PRESTASI",
+      "discountPercent": 25,
+      "attitudeScore": 89,
+      "cbtScore": 85,
+      "dailyQuizAvg": 88,
+      "attendanceConductScore": 94,
+      "activeBadge": "Si Paling Cepat Splicing Fiber Optik",
+      "activeBadgeReason": "Meraih redaman splice loss terendah 0.01 dB pada praktik ODC.",
+      "homeroomNote": "Terus tingkatkan ketahanan fisik dan konsistensi latihan konfigurasi routing.",
+      "bmwChoice": "BEKERJA"
+    },
+    {
+      "id": "std-fajar-04",
+      "userId": "usr-student-4",
+      "nisn": "0058471293",
+      "nik": "3201284509050004",
+      "fullName": "Fajar Nugroho",
+      "classroomId": "cls-xii-tkj-1",
+      "classroomName": "XII TKJ 1",
+      "majorCode": "TKJ",
+      "parentId": "usr-parent-4",
+      "parentName": "Bapak Wahyu Nugroho",
+      "parentPhone": "081234567811",
+      "isKetuaKelas": false,
+      "isSekretaris": false,
+      "isAlumni": false,
+      "scholarshipType": "NONE",
+      "discountPercent": 0,
+      "attitudeScore": 85,
+      "cbtScore": 80,
+      "dailyQuizAvg": 84,
+      "attendanceConductScore": 90,
+      "activeBadge": "Si Paling Mandiri Merakit Mikrokontroler IoT",
+      "activeBadgeReason": "Inovatif merancang sensor suhu ruang server berbasis ESP32.",
+      "homeroomNote": "Punya bakat wirausaha jasa jaringan lokal yang sangat menjanjikan.",
+      "bmwChoice": "WIRAUSAHA"
+    }
+  ],
+  "invoices": [
+    {
+      "id": "inv-oct-2026",
+      "invoiceNumber": "INV/2026/10/0847",
+      "studentId": "std-budi-01",
+      "studentName": "Muhammad Budi Santoso",
+      "periodMonthYear": "Oktober 2026",
+      "baseAmount": 350000,
+      "scholarshipDeduction": 0,
+      "finalAmount": 350000,
+      "paidAmount": 350000,
+      "status": "PAID",
+      "vaNumber": "880190058471290",
+      "gatewayProvider": "Bank Mandiri (Midtrans)",
+      "createdAt": "2026-10-01T00:05:00Z"
+    },
+    {
+      "id": "inv-nov-2026",
+      "invoiceNumber": "INV/2026/11/0847",
+      "studentId": "std-budi-01",
+      "studentName": "Muhammad Budi Santoso",
+      "periodMonthYear": "November 2026",
+      "baseAmount": 350000,
+      "scholarshipDeduction": 0,
+      "finalAmount": 350000,
+      "paidAmount": 0,
+      "status": "UNPAID",
+      "vaNumber": "880190058471290",
+      "gatewayProvider": "Bank Mandiri (Midtrans)",
+      "createdAt": "2026-11-01T00:05:00Z"
+    },
+    {
+      "id": "inv-std2-nov",
+      "invoiceNumber": "INV/2026/11/0848",
+      "studentId": "std-rahma-02",
+      "studentName": "Siti Rahmawati",
+      "periodMonthYear": "November 2026",
+      "baseAmount": 350000,
+      "scholarshipDeduction": 150000,
+      "finalAmount": 200000,
+      "paidAmount": 0,
+      "status": "UNPAID",
+      "vaNumber": "880190058471291",
+      "gatewayProvider": "BRI (Xendit)",
+      "createdAt": "2026-11-01T00:05:00Z"
+    },
+    {
+      "id": "inv-std3-nov",
+      "invoiceNumber": "INV/2026/11/0849",
+      "studentId": "std-deni-03",
+      "studentName": "Deni Kurniawan",
+      "periodMonthYear": "November 2026",
+      "baseAmount": 350000,
+      "scholarshipDeduction": 87500,
+      "finalAmount": 262500,
+      "paidAmount": 100000,
+      "status": "PARTIAL",
+      "vaNumber": "880190058471292",
+      "gatewayProvider": "BNI Virtual Account",
+      "createdAt": "2026-11-01T00:05:00Z"
+    }
+  ],
+  "dispensations": [
+    {
+      "id": "disp-001",
+      "studentId": "std-rahma-02",
+      "studentName": "Siti Rahmawati",
+      "examPeriod": "Penilaian Akhir Semester Ganjil 2026",
+      "clearanceType": "DISPENSATION_7D",
+      "reasonCategory": "Surat Perjanjian Komitmen Orang Tua (Menunggu Panen)",
+      "agreementDocUrl": "https://r2.wesmk.sch.id/dispensations/disp_rahma_surat_perjanjian.pdf",
+      "validUntil": "2026-11-15T23:59:59Z",
+      "grantedBy": "Hj. Ratna Sari, S.E. (Bendahara)"
+    }
+  ],
+  "ledger": [
+    {
+      "id": 1001,
+      "invoiceId": "inv-oct-2026",
+      "receiptNumber": "KWT-2026-10-0982",
+      "txType": "PAYMENT_VA",
+      "amountDelta": 350000,
+      "studentName": "Muhammad Budi Santoso",
+      "actorUserId": "system-webhook",
+      "actorName": "Midtrans VA Auto-Webhook",
+      "treasurerPinVerified": true,
+      "signatureHmac": "hmac_sha256_e8b91a72f04d9c",
+      "createdAt": "2026-10-02T08:14:22Z"
+    },
+    {
+      "id": 1002,
+      "invoiceId": "inv-oct-2026-b",
+      "receiptNumber": "KWT-2026-10-0983",
+      "txType": "PAYMENT_CASH",
+      "amountDelta": 350000,
+      "studentName": "Rifki Pratama (XII TKR 1)",
+      "actorUserId": "usr-treasurer-1",
+      "actorName": "Hj. Ratna Sari, S.E.",
+      "treasurerPinVerified": true,
+      "signatureHmac": "hmac_sha256_b3f71c9902a11b",
+      "createdAt": "2026-10-03T10:30:15Z"
+    }
+  ],
+  "reversalRequests": [
+    {
+      "id": "rev-01",
+      "ledgerId": 1002,
+      "txId": "#1002",
+      "cashierName": "Hj. Ratna Sari, S.E. (Bendahara)",
+      "amountOriginal": 350000,
+      "amountCorrected": 0,
+      "reason": "Salah input siswa di loket tunai (seharusnya kelas XI TKR)",
+      "studentName": "Rifki Pratama (XII TKR 1)",
+      "status": "MENUNGGU_OTP"
+    }
+  ],
+  "examQuestions": [
+    {
+      "id": "q-01",
+      "examId": "exam-cbt-tkj-01",
+      "questionNumber": 1,
+      "questionType": "MCQ",
+      "renderShadowCanvas": true,
+      "templateContent": "Sebuah switch Catalyst 2960 menghubungkan VLAN {{vlan_keu}} (Keuangan) dan VLAN {{vlan_tek}} (Teknik). Jika interface Gi0/1 menuju router MikroTik diset ke port mode {{port_mode}}, encapsulation apa yang wajib diaktifkan pada sub-interface router?",
+      "dynamicVars": {
+        "vlan_keu": 10,
+        "vlan_tek": 20,
+        "port_mode": "trunk"
+      },
+      "options": [
+        {
+          "key": "A",
+          "text": "IEEE 802.1Q (dot1q)"
+        },
+        {
+          "key": "B",
+          "text": "ISL (Inter-Switch Link)"
+        },
+        {
+          "key": "C",
+          "text": "PPPoE Client Interface"
+        },
+        {
+          "key": "D",
+          "text": "GRE Tunneling Encapsulation"
+        },
+        {
+          "key": "E",
+          "text": "RIPv2 Routing Protocol"
+        }
+      ],
+      "correctKey": "A",
+      "competencyTag": "VLAN Trunking & Routing"
+    },
+    {
+      "id": "q-02",
+      "examId": "exam-cbt-tkj-01",
+      "questionNumber": 2,
+      "questionType": "MCQ",
+      "renderShadowCanvas": false,
+      "templateContent": "Diberikan network ID 192.168.{{subnet_id}}.0/{{cidr_prefix}}. Berapakah jumlah host yang valid dapat dialokasikan pada subnet tersebut dan berapa subnet mask desimalnya?",
+      "dynamicVars": {
+        "subnet_id": 42,
+        "cidr_prefix": 26
+      },
+      "options": [
+        {
+          "key": "A",
+          "text": "62 host, mask 255.255.255.192"
+        },
+        {
+          "key": "B",
+          "text": "64 host, mask 255.255.255.128"
+        },
+        {
+          "key": "C",
+          "text": "30 host, mask 255.255.255.224"
+        },
+        {
+          "key": "D",
+          "text": "126 host, mask 255.255.255.192"
+        },
+        {
+          "key": "E",
+          "text": "62 host, mask 255.255.255.240"
+        }
+      ],
+      "correctKey": "A",
+      "competencyTag": "Subnetting CIDR Kelas C"
+    },
+    {
+      "id": "q-03",
+      "examId": "exam-cbt-tkj-01",
+      "questionNumber": 3,
+      "questionType": "ESSAY",
+      "renderShadowCanvas": false,
+      "templateContent": "Jelaskan prosedur troubleshooting jika seluruh PC client di Lab TKJ (VLAN {{vlan_lab}}) tidak memperoleh IP address otomatis dari DHCP Server MikroTik (indikator IP {{apipa_prefix}} APIPA). Sebutkan minimal 3 langkah verifikasi berurutan beserta analisis penyebabnya.",
+      "dynamicVars": {
+        "vlan_lab": 30,
+        "apipa_prefix": "169.254.x.x"
+      },
+      "essayRubric": "Harus memuat: verifikasi physical cable/link light, verifikasi DHCP Pool/Lease MikroTik, firewall filter block UDP 67/68, dan IP helper address jika lintas VLAN.",
+      "competencyTag": "Troubleshooting DHCP & APIPA"
+    }
+  ],
+  "proctorStudents": [
+    {
+      "id": "ps-1",
+      "studentId": "std-budi-01",
+      "name": "Muhammad Budi Santoso",
+      "nisn": "0058471290",
+      "progress": "3/40",
+      "status": "ACTIVE",
+      "warnCount": 0,
+      "lockCount": 0,
+      "lastViolation": ""
+    },
+    {
+      "id": "ps-2",
+      "studentId": "std-rahma-02",
+      "name": "Siti Rahmawati",
+      "nisn": "0058471291",
+      "progress": "35/40",
+      "status": "ACTIVE",
+      "warnCount": 0,
+      "lockCount": 0,
+      "lastViolation": ""
+    },
+    {
+      "id": "ps-3",
+      "studentId": "std-deni-03",
+      "name": "Deni Kurniawan",
+      "nisn": "0058471292",
+      "progress": "22/40",
+      "status": "WARN",
+      "warnCount": 1,
+      "lockCount": 0,
+      "lastViolation": "Focus lost 0.8s (notifikasi baterai)"
+    },
+    {
+      "id": "ps-4",
+      "studentId": "std-fajar-04",
+      "name": "Fajar Nugroho",
+      "nisn": "0058471293",
+      "progress": "19/40",
+      "status": "LOCKED",
+      "warnCount": 2,
+      "lockCount": 1,
+      "lastViolation": "Split-screen keluar jendela 3.2s",
+      "unlockToken": "UNK-1293-8841"
+    }
+  ],
+  "classJournal": {
+    "id": "jr-today-01",
+    "scheduleId": "sch-aij-01",
+    "subjectName": "Administrasi Infrastruktur Jaringan",
+    "className": "XII TKJ 1",
+    "teacherId": "usr-teacher-1",
+    "teacherName": "Ir. Hendro Wijaya, S.T., M.Kom.",
+    "teachDate": "2026-10-24",
+    "syllabusTopic": "Konfigurasi BGP Multihoming & Routing Failover",
+    "teacherNotes": "Siswa praktik menghubungkan 2 ISP simulasi di router MikroTik RB750Gr3. Evaluasi routing table dan backup gateway otomatis.",
+    "voiceAudioUrl": "https://r2.wesmk.sch.id/voice/audio_hendro_20261024.mp3",
+    "voiceTranscript": "Halo anak-anak XII TKJ 1, hari ini kita tuntaskan konfigurasi BGP Dual Multi-Home. Pastikan AS number tidak bentrok dan load balance recursive routing berjalan.",
+    "leaderValidationStatus": "VALID_FULL",
+    "validatedByStudentId": "std-budi-01",
+    "validatedAt": "2026-10-24T10:15:00Z",
+    "aiSmartNotes": {
+      "summary": "BGP (Border Gateway Protocol) adalah protokol routing eksterior standar internet untuk menukar informasi routing antar Autonomous System (AS). Praktik hari ini fokus pada teknik Failover otomatis saat link ISP utama mati.",
+      "workshopSteps": [
+        "Pasang kabel console ke port router MikroTik RB750Gr3 dan jalankan Winbox.",
+        "Tentukan AS Number private (misal 65001) pada menu /routing bgp instance.",
+        "Tambahkan IP Peer ISP Utama dan ISP Backup di menu /routing bgp peer.",
+        "Konfigurasi BGP weight atau local-preference agar traffic keluar mengutamakan ISP Utama.",
+        "Uji cabut kabel ISP Utama dan catat waktu konvergensi failover ke ISP Backup (<3 detik)."
+      ],
+      "industryCase": "Data Center Tokopedia/Telkomsel menggunakan BGP multi-homing agar aplikasi tidak pernah down saat salah satu penyedia kabel fiber optik bawah laut putus."
+    }
+  },
+  "attendances": [
+    {
+      "id": "att-01",
+      "scheduleId": "sch-aij-01",
+      "studentId": "std-budi-01",
+      "studentName": "Muhammad Budi Santoso",
+      "status": "HADIR_GERBANG",
+      "verifiedSource": "Tap Kartu RFID Gerbang Pukul 06:48 WIB",
+      "updatedAt": "2026-10-24T06:48:15Z"
+    },
+    {
+      "id": "att-02",
+      "scheduleId": "sch-aij-01",
+      "studentId": "std-rahma-02",
+      "studentName": "Siti Rahmawati",
+      "status": "HADIR_GERBANG",
+      "verifiedSource": "Tap Kartu RFID Gerbang Pukul 06:52 WIB",
+      "updatedAt": "2026-10-24T06:52:00Z"
+    },
+    {
+      "id": "att-03",
+      "scheduleId": "sch-aij-01",
+      "studentId": "std-deni-03",
+      "studentName": "Deni Kurniawan",
+      "status": "SAKIT_ORTU",
+      "verifiedSource": "Form Sakit Resmi Akun Ortu + Surat Dokter Klinik Medika",
+      "updatedAt": "2026-10-24T06:30:00Z"
+    },
+    {
+      "id": "att-04",
+      "scheduleId": "sch-aij-01",
+      "studentId": "std-fajar-04",
+      "studentName": "Fajar Nugroho",
+      "status": "IZIN_ORTU",
+      "verifiedSource": "Form Izin Resmi Akun Ortu (Acara Keluarga di Luar Kota)",
+      "updatedAt": "2026-10-23T20:10:00Z"
+    },
+    {
+      "id": "att-05",
+      "scheduleId": "sch-aij-01",
+      "studentId": "std-rifki-05",
+      "studentName": "Rifki Pratama",
+      "status": "ALPA_BOLOS",
+      "verifiedSource": "Tidak Ada di Kursi Kelas",
+      "updatedAt": "2026-10-24T08:00:00Z"
+    }
+  ],
+  "dailyQuiz": {
+    "id": "qz-today-01",
+    "journalId": "jr-today-01",
+    "subjectName": "Administrasi Infrastruktur Jaringan",
+    "topic": "BGP Multihoming & Routing Failover",
+    "deadlineAt": "2026-10-24T23:59:59Z",
+    "questions": [
+      {
+        "id": "dq-01",
+        "questionText": "Protokol routing BGP (Border Gateway Protocol) bekerja pada transport layer menggunakan port TCP nomor berapa?",
+        "options": [
+          {
+            "key": "A",
+            "text": "TCP 179"
+          },
+          {
+            "key": "B",
+            "text": "UDP 520"
+          },
+          {
+            "key": "C",
+            "text": "TCP 80"
+          },
+          {
+            "key": "D",
+            "text": "UDP 67"
+          }
+        ],
+        "correctKey": "A",
+        "explanation": "BGP menggunakan TCP port 179 untuk membangun sesi peering yang reliable antar Autonomous System."
+      },
+      {
+        "id": "dq-02",
+        "questionText": "Pada konfigurasi jaringan lokal (LAN), subnet mask 255.255.255.0 setara dengan notasi CIDR berapa prefix-nya?",
+        "options": [
+          {
+            "key": "A",
+            "text": "/24"
+          },
+          {
+            "key": "B",
+            "text": "/16"
+          },
+          {
+            "key": "C",
+            "text": "/28"
+          },
+          {
+            "key": "D",
+            "text": "/30"
+          }
+        ],
+        "correctKey": "A",
+        "explanation": "Subnet mask 255.255.255.0 memiliki 24 bit network aktif, sehingga dituliskan sebagai prefix /24."
+      },
+      {
+        "id": "dq-03",
+        "questionText": "Berapakah rentang nomor Autonomous System (AS Number) private 16-bit yang bebas digunakan untuk simulasi internal lab?",
+        "options": [
+          {
+            "key": "A",
+            "text": "64512 hingga 65534"
+          },
+          {
+            "key": "B",
+            "text": "1 hingga 1024"
+          },
+          {
+            "key": "C",
+            "text": "10000 hingga 20000"
+          },
+          {
+            "key": "D",
+            "text": "50000 hingga 60000"
+          }
+        ],
+        "correctKey": "A",
+        "explanation": "RFC 6996 mengalokasikan AS Number 64512 - 65534 sebagai rentang Private 16-bit."
+      }
+    ]
+  },
+  "studentReflection": {
+    "id": "ref-budi-01",
+    "journalId": "jr-today-01",
+    "studentId": "std-budi-01",
+    "studentName": "Muhammad Budi Santoso",
+    "understandingLevel": "UNDERSTOOD",
+    "privateComplaintText": "Tadi sempat bingung saat peering iBGP vs eBGP time to live (TTL), tapi setelah dipraktikkan langsung connect!",
+    "empathyParentTranslation": "Ananda Budi hari ini menunjukkan antusiasme tinggi dalam menyelesaikan lab jaringan BGP dan berhasil memecahkan kendala teknis secara mandiri.",
+    "adviceForParent": "Bapak/Ibu, ananda hari ini sedikit berkutat pada materi Routing BGP & OSPF. Alih-alih bertanya \"Nilaimu berapa?\", coba sapa: \"Gimana tadi cara bikin dua komputer kantor saling ngobrol lewat kabel serat optik? Seru ya?\"",
+    "createdAt": "2026-10-24T14:35:00Z"
+  },
+  "studentDocuments": [
+    {
+      "id": "doc-1",
+      "studentId": "std-budi-01",
+      "studentDisplay": "Muhammad Budi Santoso (NISN: 0058471290)",
+      "docType": "KK",
+      "docName": "Kartu Keluarga (KK)",
+      "status": "VALID_DISETUJUI",
+      "fileSizeKb": 240,
+      "fileName": "0058471290_KK_c91823.pdf",
+      "mimeHeaderHex": "25504446 (PDF Valid)",
+      "uploadedAt": "2026-08-01"
+    },
+    {
+      "id": "doc-2",
+      "studentId": "std-budi-01",
+      "studentDisplay": "Muhammad Budi Santoso (NISN: 0058471290)",
+      "docType": "AKTA",
+      "docName": "Akta Kelahiran",
+      "status": "VALID_DISETUJUI",
+      "fileSizeKb": 310,
+      "fileName": "0058471290_AKTA_b81726.pdf",
+      "mimeHeaderHex": "25504446 (PDF Valid)",
+      "uploadedAt": "2026-08-01"
+    },
+    {
+      "id": "doc-3",
+      "studentId": "std-budi-01",
+      "studentDisplay": "Muhammad Budi Santoso (NISN: 0058471290)",
+      "docType": "IJAZAH",
+      "docName": "Ijazah SMP Asli / Legalisir",
+      "status": "MENUNGGU_CEK",
+      "fileSizeKb": 420,
+      "fileName": "0058471290_IJAZAH_d76152.pdf",
+      "mimeHeaderHex": "25504446 (PDF Valid)",
+      "uploadedAt": "2026-10-20"
+    },
+    {
+      "id": "doc-4",
+      "studentId": "std-budi-01",
+      "studentDisplay": "Muhammad Budi Santoso (NISN: 0058471290)",
+      "docType": "PAS_FOTO",
+      "docName": "Pas Foto Resmi Seragam SMK (3x4)",
+      "status": "VALID_DISETUJUI",
+      "fileSizeKb": 180,
+      "fileName": "0058471290_PASFOTO_a19283.jpg",
+      "mimeHeaderHex": "FFD8FFE0 (JPEG Valid)",
+      "uploadedAt": "2026-08-01"
+    },
+    {
+      "id": "doc-5",
+      "studentId": "std-budi-01",
+      "studentDisplay": "Muhammad Budi Santoso (NISN: 0058471290)",
+      "docType": "KIP",
+      "docName": "Kartu Indonesia Pintar (KIP / PIP)",
+      "status": "BELUM_UPLOAD",
+      "fileSizeKb": 0,
+      "fileName": ""
+    },
+    {
+      "id": "doc-6",
+      "studentId": "std-budi-01",
+      "studentDisplay": "Muhammad Budi Santoso (NISN: 0058471290)",
+      "docType": "SURAT_DOKTER",
+      "docName": "Surat Keterangan Sehat Dokter",
+      "status": "VALID_DISETUJUI",
+      "fileSizeKb": 280,
+      "fileName": "0058471290_SKD_f82710.pdf",
+      "mimeHeaderHex": "25504446 (PDF Valid)",
+      "uploadedAt": "2026-08-02"
+    },
+    {
+      "id": "doc-7",
+      "studentId": "std-rahma-02",
+      "studentDisplay": "Siti Rahmawati (NISN: 0058471291)",
+      "docType": "KK",
+      "docName": "Kartu Keluarga & Akta Kelahiran",
+      "status": "MENUNGGU_CEK",
+      "fileSizeKb": 280,
+      "fileName": "0058471291_KK_AKTA_siti.pdf",
+      "mimeHeaderHex": "25504446 (PDF Valid)",
+      "uploadedAt": "2026-10-24"
+    }
+  ],
+  "taskSubmissions": [
+    {
+      "id": "tsk-01",
+      "studentId": "std-budi-01",
+      "studentName": "Muhammad Budi Santoso",
+      "subjectName": "Administrasi Infrastruktur Jaringan",
+      "taskTitle": "Laporan Topologi BGP Dual-Homing (.pkt / PDF)",
+      "fileName": "0058471290_TUGAS_BGP_91a8f2.pdf",
+      "fileSizeKb": 312,
+      "submittedAt": "2026-10-24 09:15 WIB",
+      "status": "DINILAI_GURU",
+      "score": 96
+    }
+  ],
+  "pklPlacements": [
+    {
+      "id": "pkl-telkom-01",
+      "companyName": "PT Telkom Akses Regional 2",
+      "industrySector": "Telekomunikasi & Jaringan Fiber Optik",
+      "address": "Jl. Letjen S. Parman No. 8, Tomang, Jakarta Barat",
+      "gpsLat": -6.1754,
+      "gpsLng": 106.8272,
+      "radiusMeters": 100,
+      "supervisorName": "Bagus Wicaksono, S.T. (Senior Network Engineer)",
+      "supervisorPhone": "081198765432",
+      "supervisorPin": "829104"
+    },
+    {
+      "id": "pkl-astra-02",
+      "companyName": "PT Astra Honda Motor (Plant Karawang)",
+      "industrySector": "Manufaktur Otomotif & Otomasi Industri",
+      "address": "Kawasan Industri Indotaisei, Cikampek, Karawang",
+      "gpsLat": -6.4025,
+      "gpsLng": 107.4475,
+      "radiusMeters": 150,
+      "supervisorName": "Ir. Bambang Prasetyo (Lead Maintenance)",
+      "supervisorPhone": "081122334455",
+      "supervisorPin": "654321"
+    }
+  ],
+  "pklAttendanceLogs": [
+    {
+      "id": "pkl-att-01",
+      "studentId": "std-budi-01",
+      "studentName": "Muhammad Budi Santoso",
+      "placementId": "pkl-telkom-01",
+      "companyName": "PT Telkom Akses Regional 2",
+      "checkinTime": "2026-10-24T07:45:00Z",
+      "gpsLat": -6.17539,
+      "gpsLng": 106.82718,
+      "distanceMeters": 14,
+      "isWithinRadius": true,
+      "selfieUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300"
+    }
+  ],
+  "pklJournals": [
+    {
+      "id": "pkl-jrn-01",
+      "studentId": "std-budi-01",
+      "studentName": "Muhammad Budi Santoso",
+      "placementId": "pkl-telkom-01",
+      "companyName": "PT Telkom Akses Regional 2",
+      "date": "2026-10-24",
+      "activityTitle": "Splicing Kabel Fiber Optik Core 24 di ODC Tomang",
+      "competencyLearned": "Menggunakan Fusion Splicer Fujikura 90S, mengukur loss kabel dengan OTDR (<0.02 dB per joint), dan terminasi pigtail SC-UPC.",
+      "workPhotoUrl": "https://images.unsplash.com/photo-1544717305-2782549b5136?w=400",
+      "supervisorApproved": false,
+      "teacherApproved": false
+    },
+    {
+      "id": "pkl-jrn-02",
+      "studentId": "std-rahma-02",
+      "studentName": "Siti Rahmawati",
+      "placementId": "pkl-telkom-01",
+      "companyName": "PT Telkom Akses Regional 2",
+      "date": "2026-10-23",
+      "activityTitle": "Konfigurasi ONT GPON Huawei & Pengecekan Redaman ODP",
+      "competencyLearned": "Melakukan provisioning serial number ONT pelanggan baru pada OLT dan memastikan redaman optik berada di rentang -18 dBm.",
+      "workPhotoUrl": "https://images.unsplash.com/photo-1544717305-2782549b5136?w=400",
+      "supervisorApproved": true,
+      "teacherApproved": true,
+      "approvedAt": "2026-10-23T17:00:00Z"
+    }
+  ],
+  "bkkJobs": [
+    {
+      "id": "job-01",
+      "companyName": "PT Astra Honda Motor",
+      "jobTitle": "Junior Automation & Network Technician",
+      "targetedMajors": [
+        "TKJ",
+        "RPL",
+        "TKR"
+      ],
+      "salaryRange": "Rp 5.200.000 - Rp 6.800.000",
+      "deadlineDate": "2026-11-30",
+      "requirements": [
+        "Lulusan SMK Jurusan Teknik",
+        "Nilai Rapor Holistik Kompetensi Min. 80",
+        "Bebas Buta Warna"
+      ],
+      "applicantCount": 28
+    },
+    {
+      "id": "job-02",
+      "companyName": "PT Tokopedia (GoTo)",
+      "jobTitle": "NOC Network Operator Intern / Junior",
+      "targetedMajors": [
+        "TKJ",
+        "RPL"
+      ],
+      "salaryRange": "Rp 5.500.000 - Rp 7.500.000",
+      "deadlineDate": "2026-12-15",
+      "requirements": [
+        "Memahami TCP/IP & MikroTik/Cisco",
+        "Memiliki Lencana Si Paling Troubleshooting atau setara",
+        "Siap Shift 24/7"
+      ],
+      "applicantCount": 42
+    }
+  ],
+  "bkkApplications": [
+    {
+      "id": "app-01",
+      "jobId": "job-02",
+      "jobTitle": "NOC Network Operator Intern / Junior",
+      "companyName": "PT Tokopedia (GoTo)",
+      "studentId": "std-rahma-02",
+      "studentName": "Siti Rahmawati",
+      "appliedDate": "2026-10-22",
+      "status": "INTERVIEW_DUDI"
+    }
+  ],
+  "careerConsultations": [
+    {
+      "id": "bmw-01",
+      "studentId": "std-rahma-02",
+      "studentName": "Siti Rahmawati",
+      "parentName": "Ibu Siti Aminah",
+      "chosenPath": "Melanjutkan Kuliah Politeknik (SNBP Vokasi)",
+      "topicNote": "Konsultasi pendaftaran jalur SNBP D4 Teknik Informatika Politeknik Negeri.",
+      "status": "TERJADWAL_BK",
+      "createdAt": "2026-10-20"
+    }
+  ],
+  "studentExpenses": [
+    {
+      "id": "exp-01",
+      "studentId": "std-budi-01",
+      "category": "LAPTOP_HARDWARE",
+      "itemTitle": "Upgrade RAM 16GB & NVMe SSD untuk Lab Jaringan",
+      "amount": 850000,
+      "date": "2026-08-15",
+      "receiptNote": "Pembelian toko komputer Harco Glodok untuk kebutuhan simulasi EVE-NG"
+    },
+    {
+      "id": "exp-02",
+      "studentId": "std-budi-01",
+      "category": "ALAT_BENGKEL",
+      "itemTitle": "Crimping Tool RJ45 Pro & LAN Tester Digital",
+      "amount": 220000,
+      "date": "2026-09-02",
+      "receiptNote": "Perlengkapan standar praktikum jaringan kabel"
+    }
+  ],
+  "teacherImpacts": [
+    {
+      "teacherId": "usr-teacher-1",
+      "nip": "197804152005011003",
+      "teacherName": "Ir. Hendro Wijaya, S.T., M.Kom.",
+      "subjectName": "Administrasi Infrastruktur Jaringan",
+      "calibratedScoreGrowth": 86.4,
+      "lowConfusionRate": 91.2,
+      "leaderValidationRate": 100,
+      "substituteBonusPoints": 6,
+      "finalImpactScore": 92.8
+    },
+    {
+      "teacherId": "usr-teacher-2",
+      "nip": "198407222010012008",
+      "teacherName": "Dewi Lestari, S.Pd., M.Kom.",
+      "subjectName": "Pemrograman Web & Perangkat Bergerak",
+      "calibratedScoreGrowth": 81,
+      "lowConfusionRate": 85.5,
+      "leaderValidationRate": 96,
+      "substituteBonusPoints": 2,
+      "finalImpactScore": 86.1
+    },
+    {
+      "teacherId": "usr-teacher-3",
+      "nip": "198011032008011005",
+      "teacherName": "Joko Susilo, M.T.",
+      "subjectName": "Teknologi Layanan Jaringan (TLJ)",
+      "calibratedScoreGrowth": 78.5,
+      "lowConfusionRate": 79,
+      "leaderValidationRate": 88,
+      "substituteBonusPoints": 0,
+      "finalImpactScore": 80.2
+    }
+  ],
+  "officialLetters": [
+    {
+      "id": "ltr-001",
+      "letterNumber": "421.5/084/SMK-TI/X/2026",
+      "letterType": "SURAT_KETERANGAN_AKTIF",
+      "studentName": "Muhammad Budi Santoso",
+      "recipient": "Orang Tua / PT BPJS Ketenagakerjaan",
+      "issueDate": "2026-10-18",
+      "signerName": "Dr. H. Sulaiman Effendi, M.Pd.",
+      "signerRole": "Kepala Sekolah",
+      "hmacHash": "9a72b0c4f81e3d62a98f102345bcdef9",
+      "isVerified": true
+    },
+    {
+      "id": "ltr-002",
+      "letterNumber": "421.5/112/SMK-PKL/IX/2026",
+      "letterType": "SURAT_PENGANTAR_PKL",
+      "studentName": "Muhammad Budi Santoso",
+      "recipient": "Pimpinan PT Telkom Akses Regional 2",
+      "issueDate": "2026-09-01",
+      "signerName": "Dr. H. Sulaiman Effendi, M.Pd.",
+      "signerRole": "Kepala Sekolah",
+      "hmacHash": "b4a8e109df3c512398fa4c0291baec77",
+      "isVerified": true
+    }
+  ],
+  "piketClassrooms": [
+    {
+      "id": "cls-1",
+      "name": "XII TKJ 1",
+      "subject": "Administrasi Infrastruktur Jaringan",
+      "teacher": "Ir. Hendro Wijaya, S.T., M.Kom.",
+      "status": "GREEN",
+      "note": "Agenda dibuka & divalidasi Ketua Kelas tepat waktu"
+    },
+    {
+      "id": "cls-2",
+      "name": "XI RPL 2",
+      "subject": "Pemrograman Web & Basis Data",
+      "teacher": "Dewi Lestari, S.Pd.",
+      "status": "RED_EMPTY",
+      "note": "Alert 15 Menit: Guru dinas luar kota. Belum ada guru pengganti di bengkel!"
+    },
+    {
+      "id": "cls-3",
+      "name": "X TKR 1",
+      "subject": "Teknologi Dasar Otomotif",
+      "teacher": "Joko Susilo, M.T.",
+      "status": "GREEN",
+      "note": "Praktik tune-up mesin 4 tak sedang berlangsung"
+    },
+    {
+      "id": "cls-4",
+      "name": "XII AKL 2",
+      "subject": "Praktikum Akuntansi Perusahaan Jasa",
+      "teacher": "Hj. Ratna Sari, S.E.",
+      "status": "GREEN",
+      "note": "Siswa sedang mengerjakan modul siklus akuntansi"
+    }
+  ],
+  "piketGateLogs": [
+    {
+      "id": "gt-01",
+      "nisn": "0058471299",
+      "studentName": "Dimas Aditya (X RPL 2)",
+      "logType": "TERLAMBAT_MASUK",
+      "reason": "Ban motor bocor di perempatan jalan raya (Tiba pukul 07:18 WIB)",
+      "recordedAt": "2026-10-24 07:18 WIB",
+      "qrPassHash": "PASS-GATE-7712A"
+    }
+  ],
+  "peerReports": [
+    {
+      "id": "pr-01",
+      "targetStudentName": "Kevin Wardana (XII TKR 2)",
+      "targetStudentClass": "XII TKR 2",
+      "articleCategory": "Pemalakan Uang Saku & Perundungan di Area Kantin Barat",
+      "location": "Kantin Belakang Bengkel TKR",
+      "description": "Memaksa adik kelas X menyerahkan uang saku Rp 20.000 dengan ancaman kekerasan fisik.",
+      "reporterClusterHash": "cluster_hash_9a81f3b",
+      "distinctClusterCount": 12,
+      "status": "PENDING_ESCROW",
+      "createdAt": "2026-10-24T09:10:00Z"
+    }
+  ],
+  "violations": [
+    {
+      "id": "v-1",
+      "studentId": "std-rifki-05",
+      "studentName": "Rifki Pratama (XII TKR 1)",
+      "articleCode": "PASAL-14",
+      "articleTitle": "Membolos Jam Pelajaran Kejuruan",
+      "sourceType": "CLASS_ALPA",
+      "pointsDeducted": 15,
+      "status": "TERCATAT",
+      "createdAt": "2026-10-24T08:30:00Z"
+    },
+    {
+      "id": "v-2",
+      "studentId": "std-dimas-06",
+      "studentName": "Dimas Aditya (X RPL 2)",
+      "articleCode": "PASAL-02",
+      "articleTitle": "Keterlambatan Masuk Gerbang >15 Menit",
+      "sourceType": "GATE_TAP",
+      "pointsDeducted": 5,
+      "status": "TERCATAT",
+      "createdAt": "2026-10-24T07:18:00Z"
+    }
+  ],
+  "counselingSessions": [
+    {
+      "id": "cs-01",
+      "studentId": "std-7",
+      "studentName": "Bayu Saputra (XI TKJ 1)",
+      "counselorName": "Drs. Bambang Sudarmono",
+      "issueSummary": "Pemulihan Disiplin Kehadiran Pagi & Konseling Emosional",
+      "startMonitoringDate": "2026-09-15",
+      "endMonitoringDate": "2026-11-15",
+      "recoveryStatus": "MONITORING",
+      "dailyCheckinsCompleted": 39,
+      "notes": "Kehadiran membaik signifikan, skor Daily Quiz konsisten >85, tidak ada pelanggaran baru selama 39 hari."
+    },
+    {
+      "id": "cs-02",
+      "studentId": "std-8",
+      "studentName": "Aldi Firmansyah (X RPL 1)",
+      "counselorName": "Drs. Bambang Sudarmono",
+      "issueSummary": "Pemberdayaan Bakat Koding & Reduksi Sikap Agresif",
+      "startMonitoringDate": "2026-08-10",
+      "endMonitoringDate": "2026-10-10",
+      "recoveryStatus": "RECOVERED_SUCCESS",
+      "dailyCheckinsCompleted": 60,
+      "notes": "Sembuh total. Kini menjadi asisten tutor teman sebaya untuk materi dasar HTML/CSS."
+    }
+  ],
+  "dapodikLogs": [
+    {
+      "id": "sync-01",
+      "syncTimestamp": "2026-10-24 06:00 WIB",
+      "entitySynced": "Rombongan Belajar, Data Periodik Siswa & Nilai e-Rapor 360°",
+      "recordsCount": 1340,
+      "status": "SUKSES_100%"
+    }
+  ],
+  "activeHeadmasterOtp": "981240"
+}

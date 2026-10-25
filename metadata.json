@@ -1,0 +1,6 @@
+{
+  "name": "WESMK — Ekosistem ERP Sekolah Menengah Kejuruan Terpadu",
+  "description": "Ekosistem ERP SMK Terpadu dengan 8 Role RBAC, Rapor Holistik 360°, CBT Anti-Curang, Gatekeeper SPP Manusiawi, Kesiswaan Pisau Bermata Dua, dan Integrasi Gemini AI High Thinking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

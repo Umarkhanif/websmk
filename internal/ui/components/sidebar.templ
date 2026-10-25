@@ -1,0 +1,46 @@
+package components
+
+import "wesmk/internal/ui"
+
+templ Sidebar(shell ui.RoleShell) {
+	<aside class="sidebar" aria-label="Navigasi peran">
+		<div class="sidebar-brand">
+			<a class="brand-link" href={ ui.RoleHome(shell.Role) } aria-label="Kembali ke beranda peran">
+				<span class="brand-mark" aria-hidden="true">W</span>
+				<span class="brand-copy">
+					<strong>WESMK</strong>
+					<span>SMK Negeri 1 Rekayasa</span>
+				</span>
+			</a>
+		</div>
+
+		<div class="sidebar-context">
+			<span class="sidebar-label">Ruang kerja</span>
+			<span class="role-pill">{ shell.RoleLabel }</span>
+		</div>
+
+		<nav class="sidebar-nav" aria-label="Menu utama">
+			<span class="sidebar-label">Menu utama</span>
+			for _, item := range shell.Nav {
+				<a href={ item.Href } class={ ui.NavClass(item, shell.ActiveTab) } aria-current={ ui.AriaCurrent(item, shell.ActiveTab) }>
+					@Icon(item.Icon, "icon")
+					<span class="nav-copy">{ item.Label }</span>
+					if item.Badge != "" {
+						<span class="nav-badge">{ item.Badge }</span>
+					}
+				</a>
+			}
+		</nav>
+
+		<div class="sidebar-footer">
+			<div class="school-card">
+				<span class="school-card-mark" aria-hidden="true">SMK</span>
+				<div>
+					<strong>SMK Negeri 1 Rekayasa</strong>
+					<p>Pusat layanan akademik dan administrasi terpadu.</p>
+				</div>
+			</div>
+			<p class="sidebar-meta">Tahun ajaran { shell.AcademicYear }</p>
+		</div>
+	</aside>
+}

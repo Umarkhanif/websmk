@@ -1,0 +1,161 @@
+package pages
+
+import (
+	"wesmk/internal/ui"
+	"wesmk/internal/ui/components"
+)
+
+templ Login(page ui.LoginPage) {
+	<!DOCTYPE html>
+	<html lang="id">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<meta name="color-scheme" content="light"/>
+			<meta name="theme-color" content="#0B1730"/>
+			<title>Masuk — WESMK</title>
+			<meta name="description" content="Masuk ke portal layanan SMK Negeri 1 Rekayasa."/>
+			<link rel="icon" type="image/svg+xml" href="/ui-assets/favicon.svg"/>
+			<link rel="preconnect" href="https://fonts.googleapis.com"/>
+			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+			<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+			<link rel="stylesheet" href="/ui-assets/app.css"/>
+			<script src="/ui-assets/app.js" defer></script>
+		</head>
+		<body class="login-body">
+			<main class="login-shell">
+				<section class="login-brand" aria-label="Identitas sekolah">
+					<div>
+						<div class="login-brand-top">
+							<span class="brand-mark brand-mark-lg" aria-hidden="true">W</span>
+							<div>
+								<strong class="login-product">WESMK</strong>
+								<span class="login-product-sub">Portal layanan sekolah</span>
+							</div>
+						</div>
+						<p class="login-kicker">SMK Negeri 1 Rekayasa</p>
+						<h1>Satu pintu untuk belajar, berkarya, dan tumbuh.</h1>
+						<p class="login-lead">
+							Akademik, keuangan, PKL, dan komunikasi sekolah dalam satu tempat yang tenang dan jelas.
+						</p>
+						<ul class="login-points">
+							<li>
+								<span class="point-icon">@components.Icon("lock", "icon")</span>
+								<span>Sesi tunggal per akun, disimpan aman di server.</span>
+							</li>
+							<li>
+								<span class="point-icon">@components.Icon("shield-alert", "icon")</span>
+								<span>Data murid dan orang tua dipisahkan sesuai peran.</span>
+							</li>
+							<li>
+								<span class="point-icon">@components.Icon("clock", "icon")</span>
+								<span>Portal dapat diakses kapan saja, termasuk dari ponsel.</span>
+							</li>
+						</ul>
+					</div>
+					<div class="login-brand-footer">
+						<span>SMK Negeri 1 Rekayasa</span>
+						<span>Tahun ajaran { page.AcademicYear }</span>
+					</div>
+				</section>
+
+				<section class="login-panel" aria-label="Form masuk">
+					<div class="login-panel-head">
+						<span class="eyebrow">Portal sekolah</span>
+						<h2>Masuk ke akun Anda</h2>
+						<p>Gunakan NISN, NIP, atau nomor WhatsApp orang tua yang terdaftar.</p>
+					</div>
+
+					<div class="login-tabs" role="tablist" aria-label="Jenis akun">
+						<a href="/login?tab=staff" class={ loginTabClass(page.Tab, "staff") } role="tab" aria-selected={ loginTabSelected(page.Tab, "staff") }>
+							Siswa &amp; Guru / Staf
+						</a>
+						<a href="/login?tab=parent" class={ loginTabClass(page.Tab, "parent") } role="tab" aria-selected={ loginTabSelected(page.Tab, "parent") }>
+							Orang Tua
+						</a>
+					</div>
+
+					if page.Error != "" {
+						<div class="alert alert-danger" role="alert">
+							@components.Icon("alert", "icon")
+							<span>{ page.Error }</span>
+						</div>
+					}
+					if page.Notice != "" {
+						<div class="alert alert-success" role="status">
+							@components.Icon("check", "icon")
+							<span>{ page.Notice }</span>
+						</div>
+					}
+
+					if page.Tab == "parent" {
+						<form method="post" action="/login/magic" class="form-stack">
+							<input type="hidden" name="_csrf" value={ page.CSRFToken }/>
+							<label class="field">
+								<span class="field-label">Nomor WhatsApp orang tua / wali</span>
+								<input class="input input-mono" type="tel" name="phone" value={ page.ParentWA } placeholder="081234567800" autocomplete="tel" required/>
+								<span class="field-hint">Tautan sekali pakai berlaku 5 menit. Nomor yang tidak terdaftar mendapat respons yang sama.</span>
+							</label>
+							<button class="button button-primary button-block" type="submit">
+								@components.Icon("mail", "icon")
+								<span>Kirim tautan WhatsApp</span>
+							</button>
+							if page.MagicLink != "" {
+								<div class="alert alert-info">
+									@components.Icon("external", "icon")
+									<span>Mode demo: <a href={ page.MagicLink }>buka tautan masuk</a>.</span>
+								</div>
+							}
+						</form>
+					} else {
+						<form method="post" action="/login" class="form-stack">
+							<input type="hidden" name="_csrf" value={ page.CSRFToken }/>
+							<label class="field">
+								<span class="field-label">NISN (siswa) atau NIP (guru / staf)</span>
+								<input class="input input-mono" type="text" name="identifier" value={ page.Identifier } placeholder="Masukkan NISN atau NIP" autocomplete="username" required/>
+							</label>
+							<label class="field">
+								<span class="field-label">Kata sandi</span>
+								<input class="input" type="password" name="password" placeholder="••••••••" autocomplete="current-password" required/>
+							</label>
+							<button class="button button-primary button-block" type="submit">
+								@components.Icon("arrow-right", "icon")
+								<span>Masuk ke portal</span>
+							</button>
+						</form>
+					}
+
+					if page.DemoMode {
+						<details class="demo-box">
+							<summary>
+								<span>Akun demonstrasi</span>
+								<span class="badge badge-gold">Mode demo</span>
+							</summary>
+							<div class="demo-box-body">
+								<p class="demo-hint">
+									Kata sandi akun demo: <strong class="mono">{ page.DemoPassword }</strong>. Hanya tersedia di lingkungan pengembangan.
+								</p>
+								<form method="post" action="/login/demo" class="demo-grid">
+									<input type="hidden" name="_csrf" value={ page.CSRFToken }/>
+									for _, account := range page.DemoAccounts {
+										<button type="submit" name="identifier" value={ account.Identifier } class="demo-account">
+											<span class="demo-account-label">{ account.Label }</span>
+											<span class="demo-account-group">{ account.Group }</span>
+										</button>
+									}
+								</form>
+							</div>
+						</details>
+					}
+
+					<div class="login-panel-footer">
+						<a href="/verify" class="text-link">
+							@components.Icon("external", "icon icon-xs")
+							<span>Verifikasi keaslian kwitansi, surat, dan mitra DUDI</span>
+						</a>
+					</div>
+				</section>
+			</main>
+		</body>
+	</html>
+}

@@ -1,0 +1,24 @@
+package pages
+
+import (
+	"wesmk/internal/ui"
+	"wesmk/internal/ui/components"
+)
+
+templ PlaceholderPage(data ui.PlaceholderPage) {
+	<div class="page-stack">
+		<section class="placeholder-card">
+			<span class="placeholder-mark">@components.Icon("sliders", "icon")</span>
+			<span class="eyebrow">Migrasi modul</span>
+			<h2>{ data.Title }</h2>
+			<p>{ data.Description }</p>
+			<div class="placeholder-meta">
+				<span class="badge badge-neutral">Go + templ + HTMX</span>
+				<span class="badge badge-gold">Bertahap</span>
+			</div>
+			<p class="placeholder-note">
+				Navigasi, hak akses, dan alur modul ini tetap sama. Konten sedang dipindahkan dari prototipe React ke server Go agar data tidak lagi disimpan di browser.
+			</p>
+		</section>
+	</div>
+}

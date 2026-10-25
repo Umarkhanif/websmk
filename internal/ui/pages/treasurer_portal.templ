@@ -1,0 +1,276 @@
+package pages
+
+import (
+	"strconv"
+
+	"wesmk/internal/ui"
+	"wesmk/internal/ui/components"
+)
+
+templ TreasurerPortal(data ui.TreasurerPortalPage) {
+	<div class="page-stack">
+		if data.Tab == "dashboard" {
+			<div class="grid-4">
+				<article class="card stat-card">
+					<span class="eyebrow">Total Tagihan SPP</span>
+					<p class="stat-value mono">{ ui.FormatRupiah(data.TotalBilled) }</p>
+					<p class="stat-note">Setelah potongan beasiswa</p>
+				</article>
+				<article class="card stat-card">
+					<span class="eyebrow">Realisasi Terkumpul</span>
+					<p class="stat-value mono">{ ui.FormatRupiah(data.TotalCollected) }</p>
+					<p class="stat-note">VA &amp; Kasir Tunai Terverifikasi</p>
+				</article>
+				<article class="card stat-card">
+					<span class="eyebrow">Sisa Tunggakan</span>
+					<p class="stat-value mono">{ ui.FormatRupiah(data.TotalArrears) }</p>
+					<p class="stat-note">Dipantau melalui skema dispensasi</p>
+				</article>
+				<article class="card stat-card">
+					<span class="eyebrow">Tingkat Kolektibilitas</span>
+					<p class="stat-value mono">{ strconv.Itoa(data.CollectionRate) }%</p>
+					<p class="stat-note">Target semester: 90%</p>
+				</article>
+			</div>
+
+			<div class="grid-2">
+				<section class="card form-stack">
+					<span class="eyebrow">Afirmasi &amp; Potongan Otomatis</span>
+					<h3>Manajemen Beasiswa KIP, Yatim &amp; Prestasi</h3>
+					<form method="post" action="/treasurer/scholarship" class="form-stack">
+						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+						<label class="field">
+							<span class="field-label">Pilih Siswa</span>
+							<select class="input" name="student_id">
+								for _, s := range data.Students {
+									<option value={ s.ID }>{ s.FullName } ({ s.ClassroomName }) — { s.ScholarshipType } (-{ strconv.Itoa(s.DiscountPercent) }%)</option>
+								}
+							</select>
+						</label>
+						<div class="form-row">
+							<label class="field">
+								<span class="field-label">Kategori Beasiswa</span>
+								<select class="input" name="scholarship_type">
+									<option value="KIP">KIP (Kartu Indonesia Pintar)</option>
+									<option value="YATIM">Santunan Yatim / Piatu</option>
+									<option value="PRESTASI">Beasiswa Prestasi Vokasi</option>
+									<option value="NONE">Reguler (Tanpa Potongan)</option>
+								</select>
+							</label>
+							<label class="field">
+								<span class="field-label">Persentase Potongan (%)</span>
+								<input class="input input-mono" type="number" name="discount_percent" value="50" min="0" max="100" required/>
+							</label>
+						</div>
+						<button type="submit" class="button button-primary">Terapkan Beasiswa &amp; Hitung Ulang Tagihan</button>
+					</form>
+				</section>
+
+				<section class="card form-stack">
+					<span class="eyebrow">Komunikasi Empatik Orang Tua</span>
+					<h3>Antrean Bot Pengingat WhatsApp Santun (H-3, H-0, H+3, H+7)</h3>
+					for _, inv := range data.Invoices {
+						if !inv.IsPaid {
+							<div class="info-strip">
+								<div class="stat-card-head">
+									<strong>{ inv.Period } · Sisa { ui.FormatRupiah(inv.Remaining) }</strong>
+									<span class="badge badge-warning">{ inv.StatusLabel }</span>
+								</div>
+								<span class="muted">VA { inv.Provider }: <span class="mono">{ inv.VANumber }</span></span>
+								<form method="post" action="/treasurer/wa-reminder">
+									<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+									<input type="hidden" name="invoice_id" value={ inv.ID }/>
+									<button type="submit" class="button button-secondary button-small">Kirim Pengingat WA Santun</button>
+								</form>
+							</div>
+						}
+					}
+				</section>
+			</div>
+		} else if data.Tab == "billing" {
+			<section class="card form-stack">
+				<span class="eyebrow">Loket Kasir Bendahara (Otorisasi PIN 6-Digit Server)</span>
+				<h2>Penerimaan Pembayaran Tunai Penuh / Cicilan Ber-PIN 6 Digit</h2>
+				<p class="muted">Setiap transaksi tunai wajib diverifikasi PIN Bendahara di server dan langsung menghasilkan Kwitansi QR bersegel HMAC-SHA256.</p>
+				<form method="post" action="/treasurer/cash-payment" class="form-stack">
+					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+					<div class="form-row">
+						<label class="field">
+							<span class="field-label">Pilih Tagihan SPP Siswa</span>
+							<select class="input" name="invoice_id">
+								for _, inv := range data.Invoices {
+									<option value={ inv.ID }>{ inv.Number } — Sisa { ui.FormatRupiah(inv.Remaining) } ({ inv.StatusLabel })</option>
+								}
+							</select>
+						</label>
+						<label class="field">
+							<span class="field-label">Nominal Tunai Diterima (Rp)</span>
+							<input class="input input-mono" type="number" name="amount" value="175000" min="10000" required/>
+						</label>
+						<label class="field">
+							<span class="field-label">PIN 6-Digit Kasir Bendahara</span>
+							<input class="input input-mono" type="password" name="pin" placeholder="Demo PIN: 123456" required/>
+						</label>
+					</div>
+					<button type="submit" class="button button-primary">
+						@components.Icon("receipt", "icon")
+						<span>Bukukan Pembayaran Tunai &amp; Terbitkan Kwitansi HMAC</span>
+					</button>
+				</form>
+			</section>
+
+			<section class="card form-stack">
+				<h3>Daftar Seluruh Tagihan SPP Siswa</h3>
+				<div class="table-wrap">
+					<table class="data-table">
+						<thead>
+							<tr>
+								<th>No. Tagihan</th>
+								<th>Periode</th>
+								<th>Tagihan Akhir</th>
+								<th>Sudah Dibayar</th>
+								<th>Sisa</th>
+								<th>Nomor VA</th>
+								<th>Status</th>
+							</tr>
+						</thead>
+						<tbody>
+							for _, inv := range data.Invoices {
+								<tr>
+									<td class="mono">{ inv.Number }</td>
+									<td>{ inv.Period }</td>
+									<td class="mono">{ ui.FormatRupiah(inv.FinalAmount) }</td>
+									<td class="mono">{ ui.FormatRupiah(inv.PaidAmount) }</td>
+									<td class="mono"><strong>{ ui.FormatRupiah(inv.Remaining) }</strong></td>
+									<td class="mono">{ inv.VANumber }</td>
+									<td><span class={ "badge " + statusBadgeClass(inv.Status) }>{ inv.StatusLabel }</span></td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</section>
+		} else if data.Tab == "exam-clearance" {
+			<section class="card form-stack">
+				<span class="eyebrow">Kebijakan Kemanusiaan Gatekeeper Ujian</span>
+				<h2>Daftar Siswa Tertahan Syarat Administrasi Ujian &amp; Penerbitan Dispensasi 7 Hari</h2>
+				<p class="muted">Membuka kunci pintu ujian CBT bagi siswa yang orang tuanya telah menandatangani komitmen cicilan tanpa memalsukan saldo kas.</p>
+				<form method="post" action="/treasurer/dispensation" class="form-row">
+					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+					<label class="field">
+						<span class="field-label">Pilih Siswa</span>
+						<select class="input" name="student_id">
+							for _, s := range data.Students {
+								<option value={ s.ID }>{ s.FullName } ({ s.ClassroomName } · NISN { s.NISN })</option>
+							}
+						</select>
+					</label>
+					<label class="field">
+						<span class="field-label">Dasar / Alasan Dispensasi 7 Hari</span>
+						<input class="input" type="text" name="reason" value="Surat Perjanjian Komitmen Cicilan Orang Tua Wali" required/>
+					</label>
+					<div class="field">
+						<span class="field-label">Otorisasi</span>
+						<button type="submit" class="button button-primary">Terbitkan Dispensasi 7 Hari</button>
+					</div>
+				</form>
+
+				<h3>Daftar Dispensasi Ujian Aktif ({ strconv.Itoa(len(data.Dispensations)) })</h3>
+				<div class="table-wrap">
+					<table class="data-table">
+						<thead>
+							<tr>
+								<th>Nama Siswa</th>
+								<th>Periode Ujian</th>
+								<th>Jenis Izin</th>
+								<th>Alasan / Dasar</th>
+								<th>Berlaku Sampai</th>
+								<th>Otorisator</th>
+							</tr>
+						</thead>
+						<tbody>
+							for _, d := range data.Dispensations {
+								<tr>
+									<td><strong>{ d.StudentName }</strong></td>
+									<td>{ d.ExamPeriod }</td>
+									<td><span class="badge badge-gold">{ d.ClearanceType }</span></td>
+									<td>{ d.Reason }</td>
+									<td class="mono">{ ui.FormatDateID(d.ValidUntil) }</td>
+									<td>{ d.GrantedBy }</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</section>
+		} else if data.Tab == "reports" {
+			<section class="card form-stack">
+				<div class="stat-card-head">
+					<div>
+						<span class="eyebrow">Buku Kas Append-Only (Anti-Hapus &amp; Anti-Manipulasi)</span>
+						<h2>Buku Kas Baku (Standar Akuntansi Sekolah)</h2>
+					</div>
+					<span class="badge badge-teal">Segel Kriptografi HMAC-SHA256</span>
+				</div>
+
+				<div class="table-wrap">
+					<table class="data-table">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>No. Kwitansi</th>
+								<th>Tipe</th>
+								<th>Siswa</th>
+								<th>Mutasi (Rp)</th>
+								<th>Otorisator</th>
+								<th>Hash HMAC</th>
+							</tr>
+						</thead>
+						<tbody>
+							for _, item := range data.Ledger {
+								<tr>
+									<td class="mono">#{ strconv.FormatInt(item.ID, 10) }</td>
+									<td class="mono"><a href={ "/verify?q=" + item.ReceiptNumber }>{ item.ReceiptNumber }</a></td>
+									<td><span class="badge badge-neutral">{ item.TxType }</span></td>
+									<td><strong>{ item.StudentName }</strong></td>
+									<td class="mono"><strong>{ ui.FormatRupiah(item.AmountDelta) }</strong></td>
+									<td>{ item.ActorName }</td>
+									<td class="mono">{ item.SignatureHmac }</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</section>
+
+			<section class="card form-stack">
+				<span class="eyebrow">Koreksi Kesalahan Kasir (Wajib OTP 6-Digit Kepala Sekolah)</span>
+				<h3>Eksekusi Jurnal Pembalik (Reversal Void)</h3>
+				<p class="muted">Transaksi di Buku Kas tidak pernah dapat dihapus. Kesalahan input dikoreksi melalui baris jurnal pembalik negatif dengan otorisasi OTP Kepala Sekolah (OTP aktif saat ini: <strong class="mono">{ data.ExpectedOTP }</strong>).</p>
+				<form method="post" action="/treasurer/reversal" class="form-row">
+					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+					<label class="field">
+						<span class="field-label">Pilih Transaksi Buku Kas</span>
+						<select class="input" name="ledger_id">
+							for _, item := range data.Ledger {
+								<option value={ strconv.FormatInt(item.ID, 10) }>#{ strconv.FormatInt(item.ID, 10) } — { item.ReceiptNumber } ({ item.StudentName } · { ui.FormatRupiah(item.AmountDelta) })</option>
+							}
+						</select>
+					</label>
+					<label class="field">
+						<span class="field-label">Alasan Jurnal Pembalik</span>
+						<input class="input" type="text" name="reason" value="Koreksi salah input nominal tunai di loket" required/>
+					</label>
+					<label class="field">
+						<span class="field-label">Kode OTP 6-Digit Kepala Sekolah</span>
+						<input class="input input-mono" type="text" name="otp" value={ data.ExpectedOTP } required/>
+					</label>
+					<div class="field">
+						<span class="field-label">Eksekusi</span>
+						<button type="submit" class="button button-danger">Posting Jurnal Pembalik</button>
+					</div>
+				</form>
+			</section>
+		}
+	</div>
+}

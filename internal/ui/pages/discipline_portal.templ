@@ -1,0 +1,164 @@
+package pages
+
+import (
+	"strconv"
+
+	"wesmk/internal/ui"
+)
+
+templ DisciplinePortal(data ui.DisciplinePortalPage) {
+	<div class="page-stack">
+		if data.Tab == "violations" {
+			<section class="card form-stack">
+				<span class="eyebrow">Kesiswaan &amp; Bimbingan Konseling (Pisau Bermata Dua)</span>
+				<h2>Pemantauan Tata Tertib, Escrow Perundungan &amp; Konsultasi BMW</h2>
+				<form method="post" action="/discipline/violation/add" class="form-row">
+					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+					<label class="field">
+						<span class="field-label">Nama Siswa &amp; Kelas</span>
+						<input class="input" type="text" name="student_name" placeholder="Nama Siswa (Kelas)..." required/>
+					</label>
+					<label class="field">
+						<span class="field-label">Pasal Tata Tertib</span>
+						<input class="input input-mono" type="text" name="article_code" value="PASAL-08" required/>
+					</label>
+					<label class="field">
+						<span class="field-label">Uraian Pelanggaran</span>
+						<input class="input" type="text" name="article_title" placeholder="Mis. Tidak memakai APD sepatu bengkel..." required/>
+					</label>
+					<label class="field">
+						<span class="field-label">Poin Pengurang</span>
+						<input class="input input-mono" type="number" name="points" value="10" min="1" max="100" required/>
+					</label>
+					<div class="field">
+						<span class="field-label">Simpan</span>
+						<button type="submit" class="button button-primary">Catat Pelanggaran</button>
+					</div>
+				</form>
+
+				<div class="table-wrap">
+					<table class="data-table">
+						<thead>
+							<tr>
+								<th>Siswa</th>
+								<th>Pasal &amp; Uraian</th>
+								<th>Sumber</th>
+								<th>Poin</th>
+								<th>Status &amp; Surat Panggilan</th>
+								<th>Aksi</th>
+							</tr>
+						</thead>
+						<tbody>
+							for _, v := range data.Violations {
+								<tr>
+									<td><strong>{ v.StudentName }</strong></td>
+									<td><span class="mono">{ v.ArticleCode }</span> — { v.ArticleTitle }</td>
+									<td><span class="badge badge-neutral">{ v.SourceType }</span></td>
+									<td class="mono">-{ strconv.Itoa(v.PointsDeducted) }</td>
+									<td>
+										<span class="badge badge-warning">{ v.Status }</span>
+										if v.SummonLetterHash != "" {
+											<br/><a class="mono" href={ "/verify?q=" + v.SummonLetterHash }>Cek HMAC Surat</a>
+										}
+									</td>
+									<td>
+										<form method="post" action="/discipline/violation/summon">
+											<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+											<input type="hidden" name="violation_id" value={ v.ID }/>
+											<button type="submit" class="button button-secondary button-small">Terbitkan Surat Panggilan HMAC</button>
+										</form>
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</section>
+
+			<div class="grid-2">
+				<section class="card form-stack">
+					<span class="eyebrow">Escrow Kriptografi Anonim</span>
+					<h3>Kasus Perundungan Berat Berstatus Escrow (&gt;=10 Pelapor dari &gt;=3 Klaster)</h3>
+					for _, pr := range data.PeerReports {
+						<div class="info-strip">
+							<div class="stat-card-head">
+								<strong>{ pr.TargetStudentName } ({ pr.Location })</strong>
+								<span class="badge badge-danger">{ pr.Status }</span>
+							</div>
+							<span><strong>{ pr.ArticleCategory }</strong>: { pr.Description }</span>
+							<span class="muted mono">Klaster: { pr.ReporterClusterHash } · { strconv.Itoa(pr.DistinctClusterCount) } Pelapor Independen</span>
+							<form method="post" action="/discipline/peer-report/resolve" class="leader-actions">
+								<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+								<input type="hidden" name="report_id" value={ pr.ID }/>
+								<button type="submit" name="status" value="INVESTIGATING_BK" class="button button-secondary button-small">Investigasi BK</button>
+								<button type="submit" name="status" value="RESOLVED" class="button button-primary button-small">Tandai Selesai Dibina</button>
+							</form>
+						</div>
+					}
+				</section>
+
+				<section class="card form-stack">
+					<span class="eyebrow">Layanan Konseling Orang Tua</span>
+					<h3>Antrean Tiket Konsultasi Karir BMW dari Orang Tua Wali</h3>
+					for _, c := range data.Consultations {
+						<div class="info-strip">
+							<div class="stat-card-head">
+								<strong>{ c.StudentName } ({ c.ParentName })</strong>
+								<span class="badge badge-gold">{ c.Status }</span>
+							</div>
+							<span>Jalur: <strong>{ c.ChosenPath }</strong> — { c.TopicNote }</span>
+							<form method="post" action="/discipline/consultation/schedule">
+								<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+								<input type="hidden" name="consult_id" value={ c.ID }/>
+								<button type="submit" class="button button-primary button-small">Jadwalkan Sesi BK</button>
+							</form>
+						</div>
+					}
+				</section>
+			</div>
+		} else if data.Tab == "transformation-index" {
+			<div class="dashboard-grid">
+				<article class="card stat-card">
+					<span class="eyebrow">Indeks Transformasi Sikap</span>
+					<p class="stat-value mono">{ data.TransformationScore }/100</p>
+					<p class="stat-note">Tren Pemulihan: <strong>{ data.TransformationTrend }</strong></p>
+				</article>
+				<article class="card stat-card">
+					<span class="eyebrow">Siswa Sembuh / Pulih Total</span>
+					<p class="stat-value mono">{ strconv.Itoa(data.RecoveredCount) } Siswa</p>
+					<p class="stat-note">Disiplin kembali positif selama 30–60 hari</p>
+				</article>
+				<article class="card stat-card">
+					<span class="eyebrow">Dalam Pemantauan Aktif</span>
+					<p class="stat-value mono">{ strconv.Itoa(data.ActiveCount) } Siswa</p>
+					<p class="stat-note">Pendampingan harian oleh Guru BK</p>
+				</article>
+			</div>
+
+			<section class="card form-stack">
+				<span class="eyebrow">Evaluasi Pemulihan Karakter</span>
+				<h3>Meja Konseling BK: Daftar Siswa dalam Pembinaan Aktif (Evaluasi 30-60 Hari)</h3>
+				for _, cs := range data.CounselingSessions {
+					<div class="info-strip form-stack">
+						<div class="stat-card-head">
+							<strong>{ cs.StudentName } — { cs.IssueSummary }</strong>
+							<span class="badge badge-teal">{ cs.RecoveryStatus } ({ strconv.Itoa(cs.DailyCheckinsCompleted) } Hari Check-in)</span>
+						</div>
+						<p class="muted">Periode: <span class="mono">{ cs.StartDate } s.d. { cs.EndDate }</span> · Konselor: { cs.CounselorName }</p>
+						<p>{ cs.Notes }</p>
+						<form method="post" action="/discipline/counseling/update" class="form-row">
+							<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+							<input type="hidden" name="session_id" value={ cs.ID }/>
+							<input class="input" type="text" name="notes" value={ cs.Notes } required/>
+							<select class="input" name="status">
+								<option value="MONITORING">MONITORING (Lanjut Pembinaan)</option>
+								<option value="RECOVERED_SUCCESS">RECOVERED_SUCCESS (Pulih Total)</option>
+							</select>
+							<button type="submit" class="button button-primary button-small">Catat Check-in &amp; Perbarui Status</button>
+						</form>
+					</div>
+				}
+			</section>
+		}
+	</div>
+}

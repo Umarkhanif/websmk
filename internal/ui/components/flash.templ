@@ -1,0 +1,8 @@
+package components
+
+templ Flash(message string, kind string) {
+	<div class={ flashClass(kind) } role="status">
+		@Icon(flashIcon(kind), "icon")
+		<span>{ message }</span>
+	</div>
+}

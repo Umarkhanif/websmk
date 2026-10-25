@@ -1,0 +1,273 @@
+package pages
+
+import (
+	"strconv"
+
+	"wesmk/internal/ui"
+	"wesmk/internal/ui/components"
+)
+
+templ StudentDashboardPage(data ui.StudentDashboard) {
+	<div class="page-stack">
+		<section class="identity-card">
+			<div class="identity-main">
+				<span class="avatar avatar-lg" aria-hidden="true">{ ui.Initials(data.Student.FullName) }</span>
+				<div class="identity-copy">
+					<div class="identity-title-row">
+						<h2>{ data.Student.FullName }</h2>
+						<span class="badge badge-neutral">{ data.Student.ClassroomName }</span>
+						if data.Student.IsKetuaKelas {
+							<span class="badge badge-teal">
+								@components.Icon("shield-alert", "icon icon-xs")
+								Ketua Kelas
+							</span>
+						}
+						if data.Student.IsSekretaris {
+							<span class="badge badge-neutral">Sekretaris Kelas</span>
+						}
+						if data.Student.ScholarshipType != "" && data.Student.ScholarshipType != "NONE" {
+							<span class="badge badge-gold">Beasiswa { data.Student.ScholarshipType } · -{ strconv.Itoa(data.Student.DiscountPercent) }%</span>
+						}
+					</div>
+					<p class="identity-meta mono">NISN { data.Student.NISN } · NIK { data.Student.NIK }</p>
+					<p class="identity-parent">Wali: { data.Student.ParentName }</p>
+				</div>
+			</div>
+			<div class="appreciation-card">
+				<span class="appreciation-icon">@components.Icon("award", "icon")</span>
+				<div>
+					<span class="eyebrow">Apresiasi vokasi</span>
+					<strong>{ data.Student.ActiveBadge }</strong>
+					<p>“{ data.Student.ActiveBadgeReason }”</p>
+				</div>
+			</div>
+		</section>
+
+		<div class="dashboard-grid">
+			@FinanceCard(data)
+
+			<article class="card stat-card">
+				<div class="stat-card-head">
+					<span class="eyebrow">Presensi gerbang</span>
+					<span class={ "badge " + attendanceBadgeClass(data.Attendance.Status) }>
+						@components.Icon(attendanceIcon(data.Attendance.Status), "icon icon-xs")
+						{ data.Attendance.StatusLabel }
+					</span>
+				</div>
+				<p class="stat-value mono">{ data.Attendance.Time }</p>
+				<p class="stat-note">{ data.Attendance.Source }</p>
+				<div class="info-strip">
+					<span class="info-strip-label">Notifikasi orang tua</span>
+					<span>Pesan kehadiran dikirim otomatis ke { data.Student.ParentName }.</span>
+				</div>
+				<div class="stat-card-foot">
+					<span>Poin sikap terproteksi</span>
+					<strong class="mono">{ strconv.Itoa(data.Student.AttitudeScore) }/100</strong>
+				</div>
+			</article>
+
+			<article class="card stat-card">
+				<div class="stat-card-head">
+					<span class="eyebrow">Kuis harian</span>
+					<span class="badge badge-neutral">
+						@components.Icon("flame", "icon icon-xs")
+						Rata-rata { strconv.Itoa(data.Quiz.Average) }
+					</span>
+				</div>
+				<p class="stat-title">{ data.Quiz.Subject }</p>
+				<p class="stat-note">Topik: { data.Quiz.Topic }</p>
+				<div class="info-strip">
+					@components.Icon("clock", "icon icon-xs")
+					<span>{ strconv.Itoa(data.Quiz.QuestionCount) } soal · batas 45 detik per soal</span>
+				</div>
+				<div class="stat-card-foot stat-card-foot-action">
+					if data.Quiz.Attempted {
+						<span class="success-inline">
+							@components.Icon("check", "icon icon-xs")
+							Selesai · skor { strconv.Itoa(data.Quiz.Score) }/100
+						</span>
+					} else if data.Quiz.QuestionCount > 0 {
+						<button type="button" class="button button-primary button-block" data-modal-open="#quiz-modal">
+							@components.Icon("arrow-right", "icon")
+							<span>Mulai kuis harian</span>
+						</button>
+					} else {
+						<span class="muted">Belum ada kuis untuk hari ini.</span>
+					}
+				</div>
+			</article>
+		</div>
+
+		if data.ShowLeaderPanel {
+			@LeaderPanel(data)
+		}
+
+		if data.Student.HomeroomNote != "" {
+			<section class="note-card">
+				<div class="note-icon">@components.Icon("heart", "icon")</div>
+				<div>
+					<span class="eyebrow">Catatan wali kelas</span>
+					<p>{ data.Student.HomeroomNote }</p>
+				</div>
+			</section>
+		}
+	</div>
+
+	@QuizModal(data)
+}
+
+templ FinanceCard(data ui.StudentDashboard) {
+	<article id="finance-card" class="card stat-card">
+		<div class="stat-card-head">
+			<span class="eyebrow">Keuangan &amp; gerbang ujian</span>
+			if data.IsCleared {
+				<span class="badge badge-success">
+					@components.Icon("check", "icon icon-xs")
+					if data.HasDispensation && !data.Invoice.IsPaid {
+						Dispensasi aktif
+					} else {
+						Pintu CBT terbuka
+					}
+				</span>
+			} else {
+				<span class="badge badge-danger">
+					@components.Icon("lock", "icon icon-xs")
+					Tertahan gatekeeper
+				</span>
+			}
+		</div>
+		if data.HasInvoice {
+			<p class="stat-title">SPP { data.Invoice.Period }</p>
+			<p class="stat-value mono">{ ui.FormatRupiah(data.Invoice.Remaining) }</p>
+			<p class="stat-note">Sisa tagihan · status { data.Invoice.StatusLabel }</p>
+			<div class="va-box">
+				<span class="info-strip-label">Virtual account · { data.Invoice.Provider }</span>
+				<strong class="mono">{ data.Invoice.VANumber }</strong>
+			</div>
+			if !data.Invoice.IsPaid && data.Shell.DemoMode {
+				<form method="post" action="/student/invoice/pay" hx-post="/student/invoice/pay" hx-target="#finance-card" hx-swap="outerHTML" class="inline-form">
+					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+					<input type="hidden" name="invoice_id" value={ data.Invoice.ID }/>
+					<button type="submit" class="button button-secondary button-small">
+						@components.Icon("wallet", "icon icon-xs")
+						<span>Simulasi bayar VA</span>
+					</button>
+				</form>
+			}
+		} else {
+			<p class="stat-title">Belum ada tagihan</p>
+			<p class="stat-note">Tagihan SPP akan muncul di sini setelah diterbitkan bendahara.</p>
+		}
+		<div class="stat-card-foot">
+			<span>Total dibayar</span>
+			<strong class="mono">{ ui.FormatRupiah(data.Invoice.PaidAmount) }</strong>
+		</div>
+	</article>
+}
+
+templ LeaderPanel(data ui.StudentDashboard) {
+	<section id="leader-panel" class="card leader-card">
+		<div class="leader-head">
+			<div class="leader-title">
+				@components.Icon("shield-alert", "icon")
+				<div>
+					<h3>Validasi pengurus kelas</h3>
+					<p>Pastikan kegiatan belajar hari ini benar-benar berlangsung.</p>
+				</div>
+			</div>
+			<span class={ "badge " + statusBadgeClass(data.LeaderStatus) }>{ ui.StatusLabel(data.LeaderStatus) }</span>
+		</div>
+
+		<div class="leader-actions">
+			<form method="post" action="/student/leader-validation" hx-post="/student/leader-validation" hx-target="#leader-panel" hx-swap="outerHTML">
+				<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+				<input type="hidden" name="status" value="VALID_FULL"/>
+				<button type="submit" class={ leaderButtonClass(data.LeaderStatus, "VALID_FULL") }>
+					@components.Icon("check", "icon icon-xs")
+					Guru hadir &amp; mengajar penuh
+				</button>
+			</form>
+			<form method="post" action="/student/leader-validation" hx-post="/student/leader-validation" hx-target="#leader-panel" hx-swap="outerHTML">
+				<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+				<input type="hidden" name="status" value="TASK_ONLY"/>
+				<button type="submit" class={ leaderButtonClass(data.LeaderStatus, "TASK_ONLY") }>
+					@components.Icon("alert", "icon icon-xs")
+					Guru hanya memberi tugas
+				</button>
+			</form>
+			<form method="post" action="/student/leader-validation" hx-post="/student/leader-validation" hx-target="#leader-panel" hx-swap="outerHTML">
+				<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+				<input type="hidden" name="status" value="EMPTY_CLASS"/>
+				<button type="submit" class={ leaderButtonClass(data.LeaderStatus, "EMPTY_CLASS") }>
+					@components.Icon("alert", "icon icon-xs")
+					Kelas kosong
+				</button>
+			</form>
+		</div>
+
+		if data.LeaderFeedback != "" {
+			<div class="leader-feedback" role="status">{ data.LeaderFeedback }</div>
+		}
+	</section>
+}
+
+templ QuizModal(data ui.StudentDashboard) {
+	<div id="quiz-modal" class="modal" hidden>
+		<div class="modal-backdrop" data-modal-close></div>
+		<div class="modal-panel modal-panel-lg" role="dialog" aria-modal="true" aria-labelledby="quiz-modal-title">
+			<div class="modal-head">
+				<div>
+					<span class="eyebrow">Kuis harian</span>
+					<h2 id="quiz-modal-title">{ data.Quiz.Subject }</h2>
+				</div>
+				<button type="button" class="icon-button" data-modal-close aria-label="Tutup kuis">
+					@components.Icon("x", "icon")
+				</button>
+			</div>
+
+			<div id="quiz-modal-body">
+				if len(data.QuizQuestions) == 0 {
+					<div class="empty-state">
+						@components.Icon("book", "icon")
+						<h3>Belum ada kuis</h3>
+						<p>Kuis harian akan muncul setelah guru menutup agenda kelas.</p>
+					</div>
+				} else {
+					<form class="quiz-form" hx-post="/student/quiz" hx-target="#quiz-modal-body" hx-swap="innerHTML">
+						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+						<div class="quiz-progress-row">
+							<span class="eyebrow" data-quiz-progress>Soal 1 dari { strconv.Itoa(len(data.QuizQuestions)) }</span>
+							<span class="quiz-timer mono" data-quiz-timer>45s</span>
+						</div>
+						<div class="quiz-progress-track"><span data-quiz-progress-bar style="width:100%"></span></div>
+
+						for index, question := range data.QuizQuestions {
+							<fieldset class={ quizStepClass(index) } data-quiz-step data-index={ strconv.Itoa(index) }>
+								<legend class="sr-only">Soal { strconv.Itoa(index + 1) }</legend>
+								<p class="quiz-question">{ question.Text }</p>
+								<div class="quiz-options">
+									for _, option := range question.Options {
+										<label class="quiz-option">
+											<input type="radio" name={ "q_" + question.ID } value={ option.Key }/>
+											<span class="quiz-option-key">{ option.Key }</span>
+											<span>{ option.Text }</span>
+										</label>
+									}
+								</div>
+							</fieldset>
+						}
+
+						<div class="quiz-actions">
+							<span class="quiz-hint">Navigasi satu arah untuk objektivitas pengerjaan.</span>
+							<div class="quiz-actions-right">
+								<button type="button" class="button button-secondary button-small" data-quiz-prev hidden>Kembali</button>
+								<button type="button" class="button button-primary button-small" data-quiz-next>Soal berikutnya</button>
+								<button type="submit" class="button button-primary button-small" data-quiz-submit hidden>Kirim jawaban</button>
+							</div>
+						</div>
+					</form>
+				}
+			</div>
+		</div>
+	</div>
+}
