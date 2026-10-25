@@ -246,6 +246,7 @@ templ TeacherPortal(data ui.TeacherPortalPage) {
 											<form method="post" action="/teacher/proctor/unlock">
 												<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 												<input type="hidden" name="student_id" value={ p.StudentID }/>
+												<input class="input input-mono" name="unlock_token" placeholder="Token siswa" required/>
 												<button type="submit" class="button button-primary button-small">Buka Kunci Sesi</button>
 											</form>
 											<form method="post" action="/teacher/proctor/emergency-ticket">

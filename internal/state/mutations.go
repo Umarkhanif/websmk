@@ -669,13 +669,25 @@ func DeleteExamQuestion(doc map[string]any, questionID string) {
 
 // UnlockProctorStudent unlocks a locked CBT student session.
 func UnlockProctorStudent(doc map[string]any, studentID string) {
+	UnlockProctorStudentWithToken(doc, studentID, "")
+}
+
+// UnlockProctorStudentWithToken verifies the student's QR unlock token before
+// restoring the session.
+func UnlockProctorStudentWithToken(doc map[string]any, studentID, token string) bool {
 	for _, item := range asList(doc["proctorStudents"]) {
 		ps := asMap(item)
-		if ps != nil && text(ps["studentId"]) == studentID {
-			ps["status"] = "ACTIVE"
-			ps["lastViolation"] = "Telah di-unlock oleh Pengawas"
+		if ps == nil || text(ps["studentId"]) != studentID {
+			continue
 		}
+		if token != "" && text(ps["unlockToken"]) != strings.TrimSpace(token) {
+			return false
+		}
+		ps["status"] = "ACTIVE"
+		ps["lastViolation"] = "Telah di-unlock oleh Pengawas"
+		return true
 	}
+	return false
 }
 
 // MassUnlockProctor unlocks all student sessions in the lab at once.

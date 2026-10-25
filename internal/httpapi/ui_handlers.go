@@ -1011,10 +1011,17 @@ func (s *Server) handleTeacherProctorUnlockForm(w http.ResponseWriter, r *http.R
 		return
 	}
 	_ = r.ParseForm()
+	studentID := strings.TrimSpace(r.FormValue("student_id"))
+	token := strings.TrimSpace(r.FormValue("unlock_token"))
+	unlocked := false
 	_ = s.mutateStateDoc(r.Context(), func(doc map[string]any) error {
-		state.UnlockProctorStudent(doc, r.FormValue("student_id"))
+		unlocked = state.UnlockProctorStudentWithToken(doc, studentID, token)
 		return nil
 	})
+	if !unlocked {
+		redirectWithFlash(w, r, "/teacher/exam-control", "Token unlock tidak valid. Minta siswa menunjukkan kode token.", "danger")
+		return
+	}
 	redirectWithFlash(w, r, "/teacher/exam-control", "Kunci layar ujian CBT siswa berhasil dibuka oleh Pengawas.", "success")
 }
 
