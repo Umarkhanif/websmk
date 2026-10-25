@@ -105,3 +105,29 @@ func (s *Server) handleSubmitExam(w http.ResponseWriter, r *http.Request) {
 		return state.SubmitExam(doc, studentID, payload.Answers, now)
 	})
 }
+
+// handleStartExam records a server-side CBT deadline (90 minutes) for the
+// student. Repeated calls keep the first deadline.
+func (s *Server) handleStartExam(w http.ResponseWriter, r *http.Request) {
+	studentID, ok := studentScopedID(w, r, "student")
+	if !ok {
+		return
+	}
+	if !s.allowDomainWrite(w, r, "exam") {
+		return
+	}
+	var deadline time.Time
+	err := s.mutateStateDoc(r.Context(), func(doc map[string]any) error {
+		value, err := state.StartExam(doc, studentID, time.Now(), 90*time.Minute)
+		if err != nil {
+			return err
+		}
+		deadline = value
+		return nil
+	})
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "Gagal memulai ujian.")
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]string{"deadline": deadline.UTC().Format(time.RFC3339)})
+}

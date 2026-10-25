@@ -82,6 +82,7 @@ func (s *Server) routes() {
 
 	s.mux.HandleFunc("POST /api/learning/quiz/submit", s.handleSubmitQuiz)
 	s.mux.HandleFunc("POST /api/learning/exam/submit", s.handleSubmitExam)
+	s.mux.HandleFunc("POST /api/learning/exam/start", s.handleStartExam)
 
 	s.mux.HandleFunc("POST /api/payments/intent", s.handleCreatePaymentIntent)
 	s.mux.HandleFunc("POST /api/payments/pay", s.handlePayInvoice)

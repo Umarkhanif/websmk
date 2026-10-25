@@ -146,6 +146,9 @@ func SubmitExam(doc map[string]any, studentID string, answers []ExamAnswer, now 
 	if student == nil {
 		return ExamResult{}, fmt.Errorf("%w: profil siswa", ErrNotFound)
 	}
+	if deadline, ok := ExamDeadline(doc, studentID); ok && now.After(deadline) {
+		return ExamResult{}, fmt.Errorf("%w: waktu ujian habis", ErrInvalid)
+	}
 	questions := asList(doc["examQuestions"])
 	if len(questions) == 0 {
 		return ExamResult{}, fmt.Errorf("%w: bank soal ujian", ErrUnavailable)
@@ -302,4 +305,35 @@ func intValue(value any) int {
 		return int(parsed)
 	}
 	return 0
+}
+
+// StartExam records a server-side CBT deadline for a student. Repeated calls
+// keep the first deadline so a refresh cannot extend the timer.
+func StartExam(doc map[string]any, studentID string, now time.Time, duration time.Duration) (time.Time, error) {
+	student := findStudent(doc, studentID)
+	if student == nil {
+		return time.Time{}, fmt.Errorf("%w: profil siswa", ErrNotFound)
+	}
+	if existing := text(student["examDeadlineAt"]); existing != "" {
+		if parsed, err := time.Parse(time.RFC3339, existing); err == nil {
+			return parsed, nil
+		}
+	}
+	deadline := now.Add(duration).UTC()
+	student["examStartedAt"] = now.UTC().Format(time.RFC3339)
+	student["examDeadlineAt"] = deadline.Format(time.RFC3339)
+	return deadline, nil
+}
+
+// ExamDeadline returns the server-side CBT deadline, if any.
+func ExamDeadline(doc map[string]any, studentID string) (time.Time, bool) {
+	student := findStudent(doc, studentID)
+	if student == nil {
+		return time.Time{}, false
+	}
+	parsed, err := time.Parse(time.RFC3339, text(student["examDeadlineAt"]))
+	if err != nil {
+		return time.Time{}, false
+	}
+	return parsed, true
 }

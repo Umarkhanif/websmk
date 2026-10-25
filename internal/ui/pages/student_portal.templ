@@ -201,6 +201,7 @@ templ StudentPortal(data ui.StudentPortalPage) {
 					</div>
 				</section>
 			} else {
+				<div hx-post="/api/learning/exam/start" hx-trigger="load" hx-swap="none" hidden></div>
 				<form id="cbt-violation-form" method="post" action="/student/proctor-status" hidden>
 					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 					<input type="hidden" name="status" value="LOCKED"/>
