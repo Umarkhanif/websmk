@@ -1396,6 +1396,29 @@ textarea.input {
   flex: 1;
 }
 
+@media (max-width: 600px) {
+  .topbar {
+    padding: 10px 14px;
+    gap: 6px;
+  }
+  .topbar-heading h1 {
+    font-size: 0.85rem;
+  }
+  .user-menu summary {
+    padding: 4px 8px;
+    gap: 6px;
+    min-height: 36px;
+  }
+  .user-menu-copy strong {
+    font-size: 0.75rem;
+  }
+  .user-menu-panel {
+    width: 90vw;
+    max-width: 300px;
+    right: 5vw;
+  }
+}
+
 @media (max-width: 960px) {
   .sidebar {
     display: none;
