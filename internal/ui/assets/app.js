@@ -636,11 +636,14 @@
     var hintEl = container.querySelector("[data-cbt-orb-hint]");
     var pillEl = container.querySelector("[data-cbt-tier-pill]");
     var tierNameEl = container.querySelector("[data-cbt-tier-name]");
-    var testerBtns = Array.prototype.slice.call(container.querySelectorAll("[data-cbt-set-tier]"));
+    var subjectScoresCard = container.querySelector("[data-cbt-subject-scores]");
+    var toggleScoresBtn = container.querySelector("[data-cbt-toggle-scores]");
 
+    var isUnlocked = container.getAttribute("data-unlocked") === "true";
     var currentTier = container.getAttribute("data-tier") || "stellar";
-    var currentScore = parseInt(container.getAttribute("data-score") || "95", 10);
+    var currentScore = parseInt(container.getAttribute("data-score") || "93", 10);
     var clickStage = 0; // 0: hidden ?, 1: aura glowing, 2: revealed score
+    var isScoresMasked = false;
 
     var tierInfo = {
       stellar: {
@@ -680,7 +683,35 @@
 
     applyTier(currentTier, currentScore);
 
+    var shakeTimer = null;
     function triggerClick() {
+      // 1. STRICT LOCK CHECK: If not all exams are completed & graded, circle MUST remain locked!
+      if (!isUnlocked) {
+        if (orbBtn) {
+          orbBtn.classList.remove("is-shaking");
+          void orbBtn.offsetWidth; // force reflow
+          orbBtn.classList.add("is-shaking");
+          if (shakeTimer) clearTimeout(shakeTimer);
+          shakeTimer = setTimeout(function () {
+            if (orbBtn) orbBtn.classList.remove("is-shaking");
+          }, 600);
+        }
+        if (navigator.vibrate) {
+          navigator.vibrate([80, 40, 80]);
+        }
+        if (hintEl) {
+          hintEl.textContent = "🔒 Nilai Terkunci! Anda belum menyelesaikan seluruh 4 mata pelajaran dan guru belum selesai menilai.";
+          hintEl.classList.add("text-danger");
+          setTimeout(function () {
+            if (hintEl) {
+              hintEl.classList.remove("text-danger");
+              hintEl.textContent = "Nilai rata-rata masih terkunci. Selesaikan seluruh 4 mata pelajaran dan tunggu penilaian guru.";
+            }
+          }, 3500);
+        }
+        return;
+      }
+
       var info = tierInfo[currentTier] || tierInfo.stellar;
 
       if (clickStage === 0) {
@@ -692,8 +723,9 @@
         if (scoreEl) scoreEl.setAttribute("hidden", "");
         if (pillEl) pillEl.setAttribute("hidden", "");
         if (hintEl) hintEl.textContent = info.auraHint;
+        if (navigator.vibrate) navigator.vibrate(60);
       } else if (clickStage === 1) {
-        // Stage 2: Reveal the actual average score!
+        // Stage 2: Reveal the actual average score & unlock individual subject scores breakdown!
         clickStage = 2;
         orbBtn.classList.add("is-revealed");
         if (symbolEl) symbolEl.setAttribute("hidden", "");
@@ -703,7 +735,14 @@
           pillEl.className = "cbt-tier-pill " + info.pillCls;
         }
         if (tierNameEl) tierNameEl.textContent = info.name;
-        if (hintEl) hintEl.textContent = "Nilai rata-rata seluruh ujian: " + currentScore + "/100 (Ketuk lagi untuk ulang)";
+        if (hintEl) hintEl.textContent = "Nilai rata-rata seluruh ujian: " + currentScore + "/100 (Ketuk lagi untuk mengulang animasi)";
+        if (navigator.vibrate) navigator.vibrate([100, 50, 120]);
+
+        // Reveal Subject Scores Breakdown
+        if (subjectScoresCard) {
+          subjectScoresCard.removeAttribute("hidden");
+          subjectScoresCard.classList.add("is-revealed");
+        }
       } else {
         // Stage 3: Reset so user can play animation again!
         clickStage = 0;
@@ -711,7 +750,7 @@
         if (symbolEl) symbolEl.removeAttribute("hidden");
         if (scoreEl) scoreEl.setAttribute("hidden", "");
         if (pillEl) pillEl.setAttribute("hidden", "");
-        if (hintEl) hintEl.textContent = "Ketuk lingkaran untuk mendeteksi aura nilai!";
+        if (hintEl) hintEl.textContent = "Ketuk lingkaran misteri untuk mendeteksi aura nilai!";
       }
     }
 
@@ -719,20 +758,43 @@
       orbBtn.addEventListener("click", triggerClick);
     }
 
-    // Tester buttons for immediate verification of all 4 aura colors
-    testerBtns.forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var t = btn.getAttribute("data-cbt-set-tier");
-        var s = parseInt(btn.getAttribute("data-test-score") || "90", 10);
-        testerBtns.forEach(function (b) { b.classList.remove("is-active"); });
-        btn.classList.add("is-active");
+    // Toggle Privacy: Hide / Show Individual Subject Scores
+    if (toggleScoresBtn) {
+      toggleScoresBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        isScoresMasked = !isScoresMasked;
 
-        applyTier(t, s);
-        // Reset to initial and immediately trigger Stage 1 so user immediately sees the aura!
-        clickStage = 0;
-        triggerClick();
+        var valEls = Array.prototype.slice.call(container.querySelectorAll("[data-cbt-score-val]"));
+        var maskEls = Array.prototype.slice.call(container.querySelectorAll("[data-cbt-score-mask]"));
+        var iconVisible = toggleScoresBtn.querySelector("[data-icon-visible]");
+        var iconHidden = toggleScoresBtn.querySelector("[data-icon-hidden]");
+        var labelEl = toggleScoresBtn.querySelector("[data-cbt-toggle-text]");
+
+        valEls.forEach(function (el) {
+          if (isScoresMasked) el.setAttribute("hidden", "");
+          else el.removeAttribute("hidden");
+        });
+
+        maskEls.forEach(function (el) {
+          if (isScoresMasked) el.removeAttribute("hidden");
+          else el.setAttribute("hidden", "");
+        });
+
+        if (labelEl) {
+          labelEl.textContent = isScoresMasked ? "Tampilkan" : "Sembunyikan";
+        }
+        if (iconVisible && iconHidden) {
+          if (isScoresMasked) {
+            iconVisible.setAttribute("hidden", "");
+            iconHidden.removeAttribute("hidden");
+          } else {
+            iconVisible.removeAttribute("hidden");
+            iconHidden.setAttribute("hidden", "");
+          }
+        }
       });
-    });
+    }
   }
 
   // Global delegated click listener

@@ -21,3 +21,9 @@ Masalah: Siswa membutuhkan visualisasi gamifikasi nilai rata-rata ujian bertahap
 Penyebab: Nilai ujian sebelumnya langsung muncul tanpa suspense atau umpan balik emosional.
 Perbaikan: Buat mystery orb lingkaran 2-tahap klik dengan 4 tingkatan aura cahaya (Stellar Jade, Emas, Biru, Hijau).
 Verifikasi: `templ generate`, `go test ./...`, HTTP 200 OK.
+
+## 2026-10-26 — mystery-orb-lock-breakdown
+Masalah: Lingkaran rata-rata bisa dibuka saat belum semua mapel selesai & tester mengotori tampilan.
+Penyebab: `AllExamsGraded` hanya mengecek mapel 1 & JS tidak mengecek `data-unlocked`.
+Perbaikan: Hapus tester box, kunci ketat orb jika belum selesai dinilai, dan buat rincian nilai per mapel dengan opsi sembunyikan nilai setelah orb terbuka.
+Verifikasi: `templ generate`, `go test ./...`, HTTP 200 OK.

@@ -337,6 +337,7 @@ type StudentPortalPage struct {
 	ExamAverageScore        int
 	AllExamsGraded          bool
 	ExamTier                string
+	IsDemoGraded            bool
 	Proctor                 ProctorSessionView
 	ExamSubmitted           bool
 	ExamScore               int

@@ -358,7 +358,8 @@ func (s *Server) buildStudentDashboard(doc map[string]any, shell ui.RoleShell, u
 	}
 }
 
-func (s *Server) buildStudentPortal(doc map[string]any, shell ui.RoleShell, user *model.User, tab string) ui.StudentPortalPage {
+func (s *Server) buildStudentPortal(doc map[string]any, shell ui.RoleShell, user *model.User, tab string, demoGraded ...bool) ui.StudentPortalPage {
+	isDemoGraded := len(demoGraded) > 0 && demoGraded[0]
 	dash := s.buildStudentDashboard(doc, shell, user)
 	stdMap := findStudentMap(doc, dash.Student.ID)
 	cbtScore := intVal(stdMap, "cbtScore")
@@ -476,6 +477,81 @@ func (s *Server) buildStudentPortal(doc map[string]any, shell ui.RoleShell, user
 				ActionURL:     actionUrl,
 				Note:          strVal(sm, "note"),
 			})
+		}
+	} else if isDemoGraded {
+		sch1Score := examScore
+		if sch1Score <= 0 {
+			sch1Score = 96
+		}
+		schedules = []ui.ExamScheduleView{
+			{
+				ID:            "exam-sch-01",
+				SubjectName:   "Administrasi Infrastruktur Jaringan",
+				TeacherName:   "Ir. Hendro Wijaya",
+				DateLabel:     "Hari Ini (Senin, 26 Okt 2026)",
+				TimeSlot:      "08.00 - 09.30 WIB",
+				DurationMin:   90,
+				QuestionCount: len(examQs),
+				Room:          "Lab Komputer TKJ 1",
+				SessionNumber: 1,
+				Status:        "SUBMITTED",
+				StatusBadge:   "Sudah Selesai",
+				BadgeClass:    "badge-teal",
+				Score:         sch1Score,
+				ActionURL:     "",
+				Note:          "Sesi 1 Pagi Hari Ini (Materi: VLAN, Routing OSPF, DHCP)",
+			},
+			{
+				ID:            "exam-sch-02",
+				SubjectName:   "Keamanan Jaringan & Sistem Otomasi",
+				TeacherName:   "Ir. Hendro Wijaya",
+				DateLabel:     "Hari Ini (Senin, 26 Okt 2026)",
+				TimeSlot:      "10.30 - 12.00 WIB",
+				DurationMin:   90,
+				QuestionCount: 40,
+				Room:          "Lab Komputer TKJ 1",
+				SessionNumber: 2,
+				Status:        "SUBMITTED",
+				StatusBadge:   "Sudah Selesai",
+				BadgeClass:    "badge-teal",
+				Score:         94,
+				ActionURL:     "",
+				Note:          "Sesi 2 Hari Ini (Penilaian guru selesai)",
+			},
+			{
+				ID:            "exam-sch-03",
+				SubjectName:   "Teknologi Layanan Jaringan",
+				TeacherName:   "Rian Pratama, S.Pd.",
+				DateLabel:     "Kemarin (Jumat, 23 Okt 2026)",
+				TimeSlot:      "08.00 - 09.30 WIB",
+				DurationMin:   90,
+				QuestionCount: 35,
+				Room:          "Lab Komputer TKJ 2",
+				SessionNumber: 1,
+				Status:        "SUBMITTED",
+				StatusBadge:   "Sudah Selesai",
+				BadgeClass:    "badge-teal",
+				Score:         92,
+				ActionURL:     "",
+				Note:          "Jawaban telah selesai dinilai oleh server",
+			},
+			{
+				ID:            "exam-sch-04",
+				SubjectName:   "Produk Kreatif & Kewirausahaan",
+				TeacherName:   "Hj. Ratna Sari, S.E.",
+				DateLabel:     "Hari Ini (Senin, 26 Okt 2026)",
+				TimeSlot:      "13.00 - 14.30 WIB",
+				DurationMin:   90,
+				QuestionCount: 30,
+				Room:          "Ruang Teori 12 TKJ 1",
+				SessionNumber: 1,
+				Status:        "SUBMITTED",
+				StatusBadge:   "Sudah Selesai",
+				BadgeClass:    "badge-teal",
+				Score:         90,
+				ActionURL:     "",
+				Note:          "Ruang ujian dan penilaian guru selesai",
+			},
 		}
 	} else {
 		sch1Status := "READY"
@@ -642,10 +718,20 @@ func (s *Server) buildStudentPortal(doc map[string]any, shell ui.RoleShell, user
 		}
 	}
 
-	allGraded := examSubmitted
-	avgScore := 93
-	if examSubmitted && examScore > 0 {
-		avgScore = (examScore + 92) / 2
+	allGraded := len(schedules) > 0
+	totalScore := 0
+	gradedCount := 0
+	for _, sc := range schedules {
+		if sc.Status != "SUBMITTED" {
+			allGraded = false
+		} else {
+			totalScore += sc.Score
+			gradedCount++
+		}
+	}
+	avgScore := 0
+	if gradedCount > 0 {
+		avgScore = totalScore / gradedCount
 	}
 	tier := "stellar"
 	if avgScore >= 91 {
@@ -681,6 +767,7 @@ func (s *Server) buildStudentPortal(doc map[string]any, shell ui.RoleShell, user
 		ExamAverageScore:       avgScore,
 		AllExamsGraded:         allGraded,
 		ExamTier:               tier,
+		IsDemoGraded:           isDemoGraded,
 		Proctor:                proctor,
 		ExamSubmitted:          examSubmitted,
 		ExamScore:              examScore,

@@ -482,7 +482,8 @@ func (s *Server) handleStudentPage(w http.ResponseWriter, r *http.Request) {
 		renderComponent(w, r, http.StatusOK, layout.Base(shell, pages.StudentDashboardPage(data)))
 		return
 	}
-	data := s.buildStudentPortal(doc, shell, authVal.user, tab)
+	isDemoGraded := r.URL.Query().Get("demo_graded") == "true"
+	data := s.buildStudentPortal(doc, shell, authVal.user, tab, isDemoGraded)
 	renderComponent(w, r, http.StatusOK, layout.Base(shell, pages.StudentPortal(data)))
 }
 

@@ -178,7 +178,7 @@ templ StudentPortal(data ui.StudentPortalPage) {
 				<!-- Right Sidebar: Lingkaran Nilai Rata-Rata + Jadwal Mata Pelajaran -->
 				<aside class="card form-stack cbt-lobby-sidebar">
 					<!-- Mystery Average Score Circle (Reveal System) -->
-					<div class="cbt-mystery-container" data-cbt-orb-container data-tier={ data.ExamTier } data-score={ strconv.Itoa(data.ExamAverageScore) }>
+					<div class="cbt-mystery-container" data-cbt-orb-container data-unlocked={ fmt.Sprintf("%t", data.AllExamsGraded) } data-tier={ data.ExamTier } data-score={ strconv.Itoa(data.ExamAverageScore) }>
 						<div class="stat-card-head">
 							<div>
 								<span class="eyebrow">Rata-Rata Asesmen</span>
@@ -186,19 +186,23 @@ templ StudentPortal(data ui.StudentPortalPage) {
 							</div>
 							<span class="badge badge-neutral mono font-bold" data-cbt-orb-status-badge>
 								if data.AllExamsGraded {
-									<span>Siap Dibuka</span>
+									<span>✨ Siap Dibuka</span>
 								} else {
-									<span>Terkunci</span>
+									<span>🔒 Terkunci</span>
 								}
 							</span>
 						</div>
 
 						<div class="cbt-orb-stage">
-							<button type="button" class="cbt-mystery-orb" data-cbt-mystery-orb aria-label="Buka Nilai Rata-rata Ujian">
+							<button type="button" class={ "cbt-mystery-orb", templ.KV("is-locked", !data.AllExamsGraded) } data-cbt-mystery-orb aria-label="Buka Nilai Rata-rata Ujian">
 								<div class="cbt-orb-ring"></div>
 								<div class="cbt-orb-aura"></div>
 								<div class="cbt-orb-core">
-									<span class="cbt-orb-symbol font-bold" data-cbt-orb-symbol>?</span>
+									if !data.AllExamsGraded {
+										<span class="cbt-orb-symbol font-bold" data-cbt-orb-symbol>🔒</span>
+									} else {
+										<span class="cbt-orb-symbol font-bold" data-cbt-orb-symbol>?</span>
+									}
 									<span class="cbt-orb-score mono font-bold" data-cbt-orb-score hidden>{ strconv.Itoa(data.ExamAverageScore) }</span>
 								</div>
 							</button>
@@ -206,22 +210,61 @@ templ StudentPortal(data ui.StudentPortalPage) {
 
 						<div class="cbt-orb-caption">
 							<p class="cbt-orb-hint muted" data-cbt-orb-hint>
-								Ketuk lingkaran misteri untuk mendeteksi aura nilai!
+								if data.AllExamsGraded {
+									Ketuk lingkaran misteri untuk mendeteksi aura nilai!
+								} else {
+									Nilai rata-rata masih terkunci. Selesaikan seluruh 4 mata pelajaran dan tunggu penilaian guru.
+								}
 							</p>
 							<div class="cbt-tier-pill" data-cbt-tier-pill hidden>
 								<span class="cbt-tier-name font-bold" data-cbt-tier-name>-</span>
 							</div>
 						</div>
 
-						<!-- Quick Aura Tier Preview Switcher (Uji Coba Warna Cahaya) -->
-						<div class="cbt-tier-tester">
-							<span class="cbt-tester-label">Uji Coba Efek Cahaya:</span>
-							<div class="cbt-tester-btns">
-								<button type="button" class="cbt-tester-btn btn-stellar" data-cbt-set-tier="stellar" data-test-score="95" title="91 - 100: Stellar Jade (Honkai: Star Rail)">Stellar (95)</button>
-								<button type="button" class="cbt-tester-btn btn-gold" data-cbt-set-tier="gold" data-test-score="88" title="81 - 90: Cahaya Emas">Emas (88)</button>
-								<button type="button" class="cbt-tester-btn btn-blue" data-cbt-set-tier="blue" data-test-score="78" title="71 - 80: Cahaya Biru">Biru (78)</button>
-								<button type="button" class="cbt-tester-btn btn-green" data-cbt-set-tier="green" data-test-score="68" title="1 - 70: Cahaya Hijau">Hijau (68)</button>
+						<!-- Rincian Nilai Masing-Masing Pelajaran (Hanya muncul setelah membuka nilai rata-rata) -->
+						<div class="cbt-subject-scores-card" data-cbt-subject-scores hidden>
+							<div class="cbt-scores-head">
+								<div>
+									<span class="eyebrow">Rincian Hasil</span>
+									<h4>Nilai Per Pelajaran</h4>
+								</div>
+								<button type="button" class="cbt-score-toggle-btn" data-cbt-toggle-scores title="Sembunyikan atau Tampilkan Nilai">
+									<span class="cbt-toggle-icon" data-icon-visible>
+										@components.Icon("eye-off", "icon-sm")
+									</span>
+									<span class="cbt-toggle-icon" data-icon-hidden hidden>
+										@components.Icon("eye", "icon-sm")
+									</span>
+									<span class="cbt-toggle-label" data-cbt-toggle-text>Sembunyikan</span>
+								</button>
 							</div>
+							<div class="cbt-scores-list" data-cbt-scores-list>
+								for _, s := range data.ExamSchedules {
+									<div class="cbt-score-item">
+										<div class="cbt-score-item-info">
+											<strong class="cbt-score-item-title">{ s.SubjectName }</strong>
+											<span class="cbt-score-item-sub muted">{ s.TeacherName }</span>
+										</div>
+										<div class="cbt-score-item-val-wrap">
+											<span class="cbt-score-val mono font-bold" data-cbt-score-val>{ strconv.Itoa(s.Score) }</span>
+											<span class="cbt-score-masked mono font-bold" data-cbt-score-mask hidden>••••</span>
+										</div>
+									</div>
+								}
+							</div>
+						</div>
+
+						<!-- Demo Simulation Quick Action (Hanya untuk keperluan pengujian) -->
+						<div class="cbt-sim-box">
+							if !data.AllExamsGraded {
+								<a href="/student/exam-lobby?demo_graded=true" class="cbt-sim-pill">
+									⚡ Simulasi: Guru Selesai Menilai Semua
+								</a>
+							} else if data.IsDemoGraded {
+								<a href="/student/exam-lobby" class="cbt-sim-pill cbt-sim-pill-reset">
+									↺ Kembalikan ke Status Belum Selesai (Terkunci)
+								</a>
+							}
 						</div>
 					</div>
 
