@@ -440,6 +440,129 @@ func (s *Server) buildStudentPortal(doc map[string]any, shell ui.RoleShell, user
 		}
 	}
 
+	schedulesRaw := asMapSlice(doc["examSchedules"])
+	schedules := make([]ui.ExamScheduleView, 0)
+	if len(schedulesRaw) > 0 {
+		for _, sm := range schedulesRaw {
+			status := strVal(sm, "status")
+			statusBadge := strVal(sm, "statusBadge")
+			badgeClass := strVal(sm, "badgeClass")
+			actionUrl := strVal(sm, "actionUrl")
+			score := intVal(sm, "score")
+			id := strVal(sm, "id")
+
+			if id == "exam-sch-01" && examSubmitted {
+				status = "SUBMITTED"
+				statusBadge = "Sudah Selesai"
+				badgeClass = "badge-teal"
+				score = examScore
+				actionUrl = ""
+			}
+
+			schedules = append(schedules, ui.ExamScheduleView{
+				ID:            id,
+				SubjectName:   strVal(sm, "subjectName"),
+				TeacherName:   strVal(sm, "teacherName"),
+				DateLabel:     strVal(sm, "dateLabel"),
+				TimeSlot:      strVal(sm, "timeSlot"),
+				DurationMin:   intVal(sm, "durationMin"),
+				QuestionCount: intVal(sm, "questionCount"),
+				Room:          strVal(sm, "room"),
+				SessionNumber: intVal(sm, "sessionNumber"),
+				Status:        status,
+				StatusBadge:   statusBadge,
+				BadgeClass:    badgeClass,
+				Score:         score,
+				ActionURL:     actionUrl,
+				Note:          strVal(sm, "note"),
+			})
+		}
+	} else {
+		sch1Status := "READY"
+		sch1Badge := "Siap Dikerjakan"
+		sch1Class := "badge-success"
+		sch1Url := "/student/exam-kiosk"
+		sch1Score := 0
+		if examSubmitted {
+			sch1Status = "SUBMITTED"
+			sch1Badge = "Sudah Selesai"
+			sch1Class = "badge-teal"
+			sch1Url = ""
+			sch1Score = examScore
+		}
+
+		schedules = []ui.ExamScheduleView{
+			{
+				ID:            "exam-sch-01",
+				SubjectName:   "Administrasi Infrastruktur Jaringan",
+				TeacherName:   "Ir. Hendro Wijaya",
+				DateLabel:     "Hari Ini (Senin, 26 Okt 2026)",
+				TimeSlot:      "08.00 - 09.30 WIB",
+				DurationMin:   90,
+				QuestionCount: len(examQs),
+				Room:          "Lab Komputer TKJ 1",
+				SessionNumber: 1,
+				Status:        sch1Status,
+				StatusBadge:   sch1Badge,
+				BadgeClass:    sch1Class,
+				Score:         sch1Score,
+				ActionURL:     sch1Url,
+				Note:          "Sesi 1 Pagi Hari Ini (Materi: VLAN, Routing OSPF, DHCP)",
+			},
+			{
+				ID:            "exam-sch-02",
+				SubjectName:   "Keamanan Jaringan & Sistem Otomasi",
+				TeacherName:   "Ir. Hendro Wijaya",
+				DateLabel:     "Hari Ini (Senin, 26 Okt 2026)",
+				TimeSlot:      "10.30 - 12.00 WIB",
+				DurationMin:   90,
+				QuestionCount: 40,
+				Room:          "Lab Komputer TKJ 1",
+				SessionNumber: 2,
+				Status:        "WAITING",
+				StatusBadge:   "Menunggu Sesi (10.30 WIB)",
+				BadgeClass:    "badge-warning",
+				Score:         0,
+				ActionURL:     "",
+				Note:          "Sesi 2 Hari Ini (Akan otomatis dibuka pengawas pukul 10:30 WIB)",
+			},
+			{
+				ID:            "exam-sch-03",
+				SubjectName:   "Teknologi Layanan Jaringan",
+				TeacherName:   "Rian Pratama, S.Pd.",
+				DateLabel:     "Kemarin (Jumat, 23 Okt 2026)",
+				TimeSlot:      "08.00 - 09.30 WIB",
+				DurationMin:   90,
+				QuestionCount: 35,
+				Room:          "Lab Komputer TKJ 2",
+				SessionNumber: 1,
+				Status:        "SUBMITTED",
+				StatusBadge:   "Sudah Selesai Dikumpulkan",
+				BadgeClass:    "badge-teal",
+				Score:         92,
+				ActionURL:     "",
+				Note:          "Jawaban telah selesai dinilai oleh server",
+			},
+			{
+				ID:            "exam-sch-04",
+				SubjectName:   "Produk Kreatif & Kewirausahaan",
+				TeacherName:   "Hj. Ratna Sari, S.E.",
+				DateLabel:     "Besok (Selasa, 27 Okt 2026)",
+				TimeSlot:      "08.00 - 09.30 WIB",
+				DurationMin:   90,
+				QuestionCount: 30,
+				Room:          "Ruang Teori 12 TKJ 1",
+				SessionNumber: 1,
+				Status:        "UPCOMING",
+				StatusBadge:   "Belum Dibuka Guru (Besok)",
+				BadgeClass:    "badge-neutral",
+				Score:         0,
+				ActionURL:     "",
+				Note:          "Ruang ujian belum dibuka oleh guru pengampu",
+			},
+		}
+	}
+
 	docs := make([]ui.StudentDocView, 0)
 	for _, dm := range asMapSlice(doc["studentDocuments"]) {
 		if strVal(dm, "studentId") == dash.Student.ID {
@@ -538,6 +661,7 @@ func (s *Server) buildStudentPortal(doc map[string]any, shell ui.RoleShell, user
 		ReflectionLevel:        strVal(refMap, "understandingLevel"),
 		ReflectionComplaint:    strVal(refMap, "privateComplaintText"),
 		ExamQuestions:          examQs,
+		ExamSchedules:          schedules,
 		Proctor:                proctor,
 		ExamSubmitted:          examSubmitted,
 		ExamScore:              examScore,

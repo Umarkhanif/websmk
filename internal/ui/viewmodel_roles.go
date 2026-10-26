@@ -133,6 +133,24 @@ type ExamQuestionView struct {
 	EssayRubric    string
 }
 
+type ExamScheduleView struct {
+	ID            string
+	SubjectName   string
+	TeacherName   string
+	DateLabel     string
+	TimeSlot      string
+	DurationMin   int
+	QuestionCount int
+	Room          string
+	SessionNumber int
+	Status        string // "READY", "SUBMITTED", "WAITING", "UPCOMING"
+	StatusBadge   string
+	BadgeClass    string
+	Score         int
+	ActionURL     string
+	Note          string
+}
+
 type ProctorSessionView struct {
 	ID             string
 	StudentID      string
@@ -315,6 +333,7 @@ type StudentPortalPage struct {
 	ReflectionLevel         string
 	ReflectionComplaint     string
 	ExamQuestions           []ExamQuestionView
+	ExamSchedules           []ExamScheduleView
 	Proctor                 ProctorSessionView
 	ExamSubmitted           bool
 	ExamScore               int

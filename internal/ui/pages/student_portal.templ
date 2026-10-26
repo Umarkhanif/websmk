@@ -3,6 +3,7 @@ package pages
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"wesmk/internal/ui"
 	"wesmk/internal/ui/components"
@@ -119,49 +120,151 @@ templ StudentPortal(data ui.StudentPortalPage) {
 				</form>
 			</section>
 		} else if data.Tab == "exam-lobby" {
-			<section class="card form-stack">
+			<section class="card form-stack cbt-lobby-header">
 				<div class="stat-card-head">
-					<span class="eyebrow">Ruang Persiapan Ujian (Gatekeeper)</span>
+					<div>
+						<span class="eyebrow">Pusat Asesmen &amp; Ujian CBT</span>
+						<h2>Penilaian Akhir Semester (PAS) Ganjil 2026/2027</h2>
+					</div>
 					if data.IsCleared {
-						<span class="badge badge-success">Pintu CBT Terbuka</span>
+						<span class="badge badge-success font-bold">
+							@components.Icon("check", "icon icon-xs")
+							<span>Pintu CBT Terbuka</span>
+						</span>
 					} else {
-						<span class="badge badge-danger">Tertahan Gatekeeper SPP</span>
+						<span class="badge badge-danger font-bold">
+							@components.Icon("lock", "icon icon-xs")
+							<span>Tertahan Gatekeeper SPP</span>
+						</span>
 					}
 				</div>
-				<h2>Penilaian Akhir Semester (PAS) Ganjil 2026</h2>
-				<p class="muted">Mata Uji: Administrasi Infrastruktur Jaringan · Waktu: 90 Menit · Mode: Kiosk Anti-Curang</p>
-
-				<div class="grid-2">
-					<div class="info-strip">
-						<span class="info-strip-label">Status Administrasi &amp; Dispensasi</span>
-						if data.IsCleared {
-							<strong>Izinkan Masuk Kiosk Ujian CBT</strong>
-							<span>Tagihan SPP lunas atau memiliki surat dispensasi aktif dari Bendahara/Pengawas.</span>
-						} else {
-							<strong>Menunggu Penyelesaian SPP / Dispensasi 7 Hari</strong>
-							<span>Silakan ajukan dispensasi 7 hari di loket Bendahara atau minta Tiket Darurat 2 Jam ke Pengawas Ruangan.</span>
-						}
-					</div>
-					<div class="info-strip">
-						<span class="info-strip-label">Checklist Kesiapan Masuk Kiosk</span>
-						<span>1. Kunci jawaban tidak pernah dikirim ke browser (Zero-Key Exposure).</span>
-						<span>2. Pindah tab/aplikasi &gt;1,5 detik akan mengunci layar ujian dan membutuhkan QR Pengawas.</span>
-					</div>
-				</div>
-
-				if data.IsCleared {
-					<div class="leader-actions">
-						<a href="/student/exam-kiosk" class="button button-primary">
-							@components.Icon("monitor", "icon")
-							<span>Masuk Ruang Ujian CBT Sekarang</span>
-						</a>
-					</div>
-				} else {
+				<p class="muted">
+					SMK Negeri 1 Rekayasa · Tahun Ajaran 2026/2027 · Sistem Ujian Terkunci (Zero-Key Kiosk)
+				</p>
+				if !data.IsCleared {
 					<div class="alert alert-warning">
 						@components.Icon("lock", "icon")
-						<span>Akses ruang ujian terkunci sementara karena tunggakan SPP ({ ui.FormatRupiah(data.Invoice.Remaining) }).</span>
+						<span>Akses ruang ujian terkunci karena tunggakan SPP ({ ui.FormatRupiah(data.Invoice.Remaining) }). Hubungi Bendahara untuk Dispensasi 7 Hari atau Pengawas untuk Tiket Darurat 2 Jam.</span>
 					</div>
 				}
+			</section>
+
+			<section class="form-stack">
+				<div class="stat-card-head cbt-schedule-header">
+					<div>
+						<span class="eyebrow">Jadwal Asesmen</span>
+						<h3>Daftar Mata Pelajaran Ujian</h3>
+					</div>
+					<span class="badge badge-teal mono font-bold">{ strconv.Itoa(len(data.ExamSchedules)) } Mata Pelajaran</span>
+				</div>
+
+				<div class="cbt-schedule-grid">
+					for _, s := range data.ExamSchedules {
+						<div class={ "card cbt-exam-card cbt-card-" + strings.ToLower(s.Status) }>
+							<div class="stat-card-head">
+								<span class="badge badge-neutral cbt-session-badge">
+									@components.Icon("calendar", "icon icon-xs")
+									<span>{ s.DateLabel }</span>
+								</span>
+								<span class={ "badge " + s.BadgeClass + " font-bold" }>
+									if s.Status == "READY" {
+										@components.Icon("sparkles", "icon icon-xs")
+									} else if s.Status == "SUBMITTED" {
+										@components.Icon("check", "icon icon-xs")
+									} else if s.Status == "WAITING" {
+										@components.Icon("clock", "icon icon-xs")
+									} else {
+										@components.Icon("lock", "icon icon-xs")
+									}
+									<span>{ s.StatusBadge }</span>
+								</span>
+							</div>
+
+							<div class="cbt-mapel-head">
+								<h3 class="cbt-mapel-title">{ s.SubjectName }</h3>
+								<p class="cbt-mapel-teacher muted">Guru Pengampu: <strong>{ s.TeacherName }</strong></p>
+							</div>
+
+							<div class="cbt-exam-meta-grid">
+								<div class="cbt-meta-item">
+									<span class="cbt-meta-label">Waktu Sesi</span>
+									<span class="cbt-meta-value mono">{ s.TimeSlot }</span>
+								</div>
+								<div class="cbt-meta-item">
+									<span class="cbt-meta-label">Durasi &amp; Butir</span>
+									<span class="cbt-meta-value mono">{ strconv.Itoa(s.DurationMin) } Menit ({ strconv.Itoa(s.QuestionCount) } Soal)</span>
+								</div>
+								<div class="cbt-meta-item">
+									<span class="cbt-meta-label">Ruang Ujian</span>
+									<span class="cbt-meta-value">{ s.Room }</span>
+								</div>
+							</div>
+
+							<div class="cbt-exam-note">
+								@components.Icon("help", "icon icon-xs")
+								<span>{ s.Note }</span>
+							</div>
+
+							<div class="cbt-exam-card-action">
+								if s.Status == "READY" {
+									if data.IsCleared {
+										<a href={ templ.SafeURL(s.ActionURL) } class="button button-primary button-block cbt-btn-ready">
+											@components.Icon("monitor", "icon")
+											<span>Masuk Ruang Ujian CBT Sekarang</span>
+										</a>
+									} else {
+										<button type="button" class="button button-secondary button-block" disabled>
+											@components.Icon("lock", "icon")
+											<span>Selesaikan Syarat SPP / Dispensasi</span>
+										</button>
+									}
+								} else if s.Status == "SUBMITTED" {
+									<div class="cbt-card-done-box">
+										@components.Icon("check", "icon text-teal")
+										<div>
+											<strong>Ujian Telah Selesai Dikumpulkan</strong>
+											<div class="cbt-score-line">
+												<span>Nilai Pilihan Ganda: <strong class="mono text-teal">{ strconv.Itoa(s.Score) }/100</strong></span>
+												<span class="badge badge-neutral">Esai dalam Koreksi Guru</span>
+											</div>
+										</div>
+									</div>
+								} else if s.Status == "WAITING" {
+									<div class="cbt-card-waiting-box form-stack">
+										<button type="button" class="button button-secondary button-block" disabled>
+											@components.Icon("clock", "icon")
+											<span>Menunggu Waktu Sesi (Dibuka { s.TimeSlot })</span>
+										</button>
+										<span class="field-hint">Mata pelajaran ini dijadwalkan pada sesi ke-2 hari ini. Tombol ujian akan otomatis terbuka saat sesi dimulai.</span>
+									</div>
+								} else {
+									<button type="button" class="button button-secondary button-block text-muted" disabled>
+										@components.Icon("lock", "icon")
+										<span>Ruang Ujian Belum Dibuka oleh Guru</span>
+									</button>
+								}
+							</div>
+						</div>
+					}
+				</div>
+			</section>
+
+			<section class="card form-stack cbt-rules-card">
+				<div class="stat-card-head">
+					<span class="eyebrow">Panduan &amp; Standar Operasional CBT</span>
+					<span class="badge badge-neutral">Protokol Keamanan Ujian</span>
+				</div>
+				<h4>Ketentuan Pelaksanaan Ujian Daring Terkunci (Kiosk Mode)</h4>
+				<div class="grid-2">
+					<div class="info-strip">
+						<span class="info-strip-label">Proteksi Soal &amp; Jawaban (Zero-Key Exposure)</span>
+						<span>Kunci jawaban dan rubrik penilaian tidak pernah dikirim ke peramban siswa. Seluruh evaluasi diproses secara aman di server sekolah.</span>
+					</div>
+					<div class="info-strip">
+						<span class="info-strip-label">Sistem Deteksi Anti-Curang Multi-Perangkat</span>
+						<span>Meninggalkan aplikasi, beralih tab, membagi layar (split-screen), atau membuka jendela lain terdeteksi otomatis dan dapat mengunci sesi ujian secara permanen.</span>
+					</div>
+				</div>
 			</section>
 		} else if data.Tab == "exam-kiosk" {
 			if !data.IsCleared {

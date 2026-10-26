@@ -255,6 +255,73 @@
       "status": "MENUNGGU_OTP"
     }
   ],
+  "examSchedules": [
+    {
+      "id": "exam-sch-01",
+      "subjectName": "Administrasi Infrastruktur Jaringan",
+      "teacherName": "Ir. Hendro Wijaya",
+      "dateLabel": "Hari Ini (Senin, 26 Okt 2026)",
+      "timeSlot": "08.00 - 09.30 WIB",
+      "durationMin": 90,
+      "questionCount": 7,
+      "room": "Lab Komputer TKJ 1",
+      "sessionNumber": 1,
+      "status": "READY",
+      "statusBadge": "Siap Dikerjakan",
+      "badgeClass": "badge-success",
+      "actionUrl": "/student/exam-kiosk",
+      "note": "Sesi 1 Pagi Hari Ini (Materi: VLAN, Routing OSPF, DHCP)"
+    },
+    {
+      "id": "exam-sch-02",
+      "subjectName": "Keamanan Jaringan & Sistem Otomasi",
+      "teacherName": "Ir. Hendro Wijaya",
+      "dateLabel": "Hari Ini (Senin, 26 Okt 2026)",
+      "timeSlot": "10.30 - 12.00 WIB",
+      "durationMin": 90,
+      "questionCount": 40,
+      "room": "Lab Komputer TKJ 1",
+      "sessionNumber": 2,
+      "status": "WAITING",
+      "statusBadge": "Menunggu Sesi (10.30 WIB)",
+      "badgeClass": "badge-warning",
+      "actionUrl": "",
+      "note": "Sesi 2 Hari Ini (Akan dibuka otomatis pukul 10:30 WIB)"
+    },
+    {
+      "id": "exam-sch-03",
+      "subjectName": "Teknologi Layanan Jaringan",
+      "teacherName": "Rian Pratama, S.Pd.",
+      "dateLabel": "Kemarin (Jumat, 23 Okt 2026)",
+      "timeSlot": "08.00 - 09.30 WIB",
+      "durationMin": 90,
+      "questionCount": 35,
+      "room": "Lab Komputer TKJ 2",
+      "sessionNumber": 1,
+      "status": "SUBMITTED",
+      "statusBadge": "Sudah Selesai Dikumpulkan",
+      "badgeClass": "badge-teal",
+      "score": 92,
+      "actionUrl": "",
+      "note": "Jawaban telah dinilai oleh server"
+    },
+    {
+      "id": "exam-sch-04",
+      "subjectName": "Produk Kreatif & Kewirausahaan",
+      "teacherName": "Hj. Ratna Sari, S.E.",
+      "dateLabel": "Besok (Selasa, 27 Okt 2026)",
+      "timeSlot": "08.00 - 09.30 WIB",
+      "durationMin": 90,
+      "questionCount": 30,
+      "room": "Ruang Teori 12 TKJ 1",
+      "sessionNumber": 1,
+      "status": "UPCOMING",
+      "statusBadge": "Belum Dibuka oleh Guru",
+      "badgeClass": "badge-neutral",
+      "actionUrl": "",
+      "note": "Ruang ujian belum dibuka oleh guru pengampu"
+    }
+  ],
   "examQuestions": [
     {
       "id": "q-01",

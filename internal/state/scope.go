@@ -76,7 +76,7 @@ func ScopedView(doc map[string]any, access Access) map[string]any {
 	// Class-wide material the student portal renders: journal, quiz, lowongan,
 	// exam kiosk, and the single PKL placement. These carry no other students'
 	// personal records.
-	for _, key := range []string{"classJournal", "bkkJobs", "pklPlacements"} {
+	for _, key := range []string{"classJournal", "bkkJobs", "pklPlacements", "examSchedules"} {
 		if value, ok := doc[key]; ok {
 			out[key] = value
 		}
