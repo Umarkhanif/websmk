@@ -15,3 +15,9 @@ Masalah: Ruang persiapan ujian kosong melompong di HP & hanya punya 1 tombol sta
 Penyebab: Ketiadaan struktur jadwal multi-sesi harian & pembeda visual status ujian per mapel.
 Perbaikan: Buat kartu jadwal mapel responsive dengan 4 status visual (Bisa Dikerjakan, Selesai, Menunggu Sesi, Belum Dibuka).
 Verifikasi: `templ generate`, `go test ./...`, HTTP 200 OK.
+
+## 2026-10-26 — mystery-orb-reveal
+Masalah: Siswa membutuhkan visualisasi gamifikasi nilai rata-rata ujian bertahap yang interaktif.
+Penyebab: Nilai ujian sebelumnya langsung muncul tanpa suspense atau umpan balik emosional.
+Perbaikan: Buat mystery orb lingkaran 2-tahap klik dengan 4 tingkatan aura cahaya (Stellar Jade, Emas, Biru, Hijau).
+Verifikasi: `templ generate`, `go test ./...`, HTTP 200 OK.
