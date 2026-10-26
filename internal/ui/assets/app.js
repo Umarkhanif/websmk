@@ -114,18 +114,140 @@
     renderStep();
   }
 
-  // 4. CBT Exam Kiosk question navigator + anti-cheat focus guard
+  // 4. CBT Exam Kiosk question navigator + anti-cheat focus guard & fullscreen
   function initCbtKiosk() {
     var kiosk = document.querySelector("[data-cbt-kiosk]");
     if (!kiosk || kiosk._bound) return;
     kiosk._bound = true;
 
+    // Enter kiosk isolation mode (hides ERP sidebar and topbar)
+    document.body.classList.add("is-cbt-active");
+
     var steps = Array.prototype.slice.call(kiosk.querySelectorAll("[data-cbt-question]"));
-    var navBtns = Array.prototype.slice.call(kiosk.querySelectorAll("[data-cbt-goto]"));
     var prevBtn = kiosk.querySelector("[data-cbt-prev]");
     var nextBtn = kiosk.querySelector("[data-cbt-next]");
     var timerEl = kiosk.querySelector("[data-cbt-timer]");
+    var fsGate = document.querySelector("[data-cbt-fullscreen-gate]");
+    var enterFsBtn = document.querySelector("[data-cbt-enter-fullscreen]");
+    var reenterFsBtn = document.querySelector("[data-cbt-reenter-fullscreen]");
+    var questionsModal = document.querySelector("[data-cbt-questions-dialog]");
+    var toggleQuestionsBtn = kiosk.querySelector("[data-cbt-toggle-questions]");
+    var closeQuestionsBtns = Array.prototype.slice.call(document.querySelectorAll("[data-cbt-close-questions]"));
+    var warnForm = document.getElementById("cbt-violation-form");
+    var reasonInput = warnForm ? warnForm.querySelector("input[name='reason']") : null;
     var currentIdx = 0;
+    var violationTriggered = false;
+
+    // Helper: detect if browser is currently in fullscreen
+    function isFullscreen() {
+      return Boolean(
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement
+      );
+    }
+
+    // Helper: request fullscreen mode
+    function enterFullscreen() {
+      var docEl = document.documentElement;
+      var req =
+        docEl.requestFullscreen ||
+        docEl.webkitRequestFullscreen ||
+        docEl.mozRequestFullScreen ||
+        docEl.msRequestFullscreen;
+      if (req) {
+        try {
+          var p = req.call(docEl);
+          if (p && p.then) {
+            p.then(function () {
+              if (fsGate) fsGate.setAttribute("hidden", "");
+            }).catch(function (err) {
+              console.warn("Fullscreen request error:", err);
+            });
+          } else if (fsGate) {
+            fsGate.setAttribute("hidden", "");
+          }
+        } catch (e) {
+          console.warn("Fullscreen call exception:", e);
+        }
+      }
+    }
+
+    if (enterFsBtn) {
+      enterFsBtn.addEventListener("click", function () {
+        enterFullscreen();
+      });
+    }
+    if (reenterFsBtn) {
+      reenterFsBtn.addEventListener("click", function () {
+        enterFullscreen();
+      });
+    }
+
+    // Toggle Questions dialog / modal
+    if (toggleQuestionsBtn && questionsModal) {
+      toggleQuestionsBtn.addEventListener("click", function () {
+        questionsModal.removeAttribute("hidden");
+      });
+    }
+    closeQuestionsBtns.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        if (questionsModal) questionsModal.setAttribute("hidden", "");
+      });
+    });
+
+    // Helper: submit anti-cheat violation to lock exam
+    function triggerAntiCheat(reason) {
+      var locked = kiosk.getAttribute("data-cbt-locked") === "true";
+      if (locked || violationTriggered) return;
+      violationTriggered = true;
+      if (reasonInput) {
+        reasonInput.value = reason;
+      }
+      if (warnForm) {
+        if (warnForm.requestSubmit) warnForm.requestSubmit();
+        else warnForm.submit();
+      }
+    }
+
+    // Update navigation buttons, question badges, and answer letters
+    function updatePalette() {
+      var totalAnswered = 0;
+      steps.forEach(function (stepEl, i) {
+        var answered = false;
+        var choice = "-";
+        if (stepEl) {
+          var checked = stepEl.querySelector("input[type='radio']:checked");
+          var area = stepEl.querySelector("textarea");
+          if (checked) {
+            answered = true;
+            choice = checked.value;
+          } else if (area && area.value.trim().length > 0) {
+            answered = true;
+            choice = "✓";
+          }
+        }
+        if (answered) totalAnswered++;
+
+        var matchingBtns = document.querySelectorAll("[data-cbt-goto='" + i + "']");
+        matchingBtns.forEach(function (btn) {
+          btn.classList.toggle("is-current", i === currentIdx);
+          btn.classList.toggle("is-answered", answered);
+          var badge = btn.querySelector("[data-cbt-ans-badge]");
+          if (badge) {
+            badge.textContent = choice;
+          }
+        });
+      });
+
+      var countBadges = document.querySelectorAll(
+        "[data-cbt-answered-count], [data-cbt-answered-badge]"
+      );
+      countBadges.forEach(function (b) {
+        b.textContent = totalAnswered + "/" + steps.length + " Terjawab";
+      });
+    }
 
     function showQuestion(idx) {
       if (!steps.length) return;
@@ -139,26 +261,25 @@
           el.classList.remove("is-active");
         }
       });
-      navBtns.forEach(function (btn, i) {
-        btn.classList.toggle("is-current", i === currentIdx);
-        var stepEl = steps[i];
-        var answered = false;
-        if (stepEl) {
-          var checked = stepEl.querySelector("input[type='radio']:checked");
-          var area = stepEl.querySelector("textarea");
-          answered = Boolean(checked || (area && area.value.trim().length > 0));
-        }
-        btn.classList.toggle("is-answered", answered);
-      });
       if (prevBtn) prevBtn.disabled = currentIdx === 0;
       if (nextBtn) nextBtn.disabled = currentIdx >= steps.length - 1;
+      updatePalette();
     }
 
-    navBtns.forEach(function (btn, i) {
+    // Attach click listener to all question buttons (both in aside and in modal)
+    var allGotoBtns = Array.prototype.slice.call(
+      document.querySelectorAll("[data-cbt-goto]")
+    );
+    allGotoBtns.forEach(function (btn) {
       btn.addEventListener("click", function () {
-        showQuestion(i);
+        var targetIdx = parseInt(btn.getAttribute("data-cbt-goto"), 10);
+        if (!isNaN(targetIdx)) {
+          showQuestion(targetIdx);
+          if (questionsModal) questionsModal.setAttribute("hidden", "");
+        }
       });
     });
+
     if (prevBtn) {
       prevBtn.addEventListener("click", function () {
         showQuestion(currentIdx - 1);
@@ -170,12 +291,173 @@
       });
     }
     kiosk.addEventListener("change", function () {
-      showQuestion(currentIdx);
+      updatePalette();
     });
     kiosk.addEventListener("input", function () {
-      showQuestion(currentIdx);
+      updatePalette();
     });
+
     showQuestion(0);
+
+    // Initial fullscreen status check
+    if (isFullscreen()) {
+      if (fsGate) fsGate.setAttribute("hidden", "");
+    } else {
+      if (fsGate) fsGate.removeAttribute("hidden");
+    }
+
+    // Fullscreen exit detection
+    var everFullscreen = isFullscreen();
+    function onFullscreenChange() {
+      if (isFullscreen()) {
+        everFullscreen = true;
+        if (fsGate) fsGate.setAttribute("hidden", "");
+      } else {
+        if (fsGate) fsGate.removeAttribute("hidden");
+        if (everFullscreen) {
+          triggerAntiCheat(
+            "Keluar dari mode Layar Penuh (Fullscreen Exit) tanpa izin pengawas"
+          );
+        }
+      }
+    }
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    document.addEventListener("webkitfullscreenchange", onFullscreenChange);
+    document.addEventListener("mozfullscreenchange", onFullscreenChange);
+
+    // Anti-cheat window blur guard (catches switching to other apps or windows)
+    var blurTimer = null;
+    window.addEventListener("blur", function () {
+      if (!everFullscreen && !isFullscreen()) return;
+      blurTimer = setTimeout(function () {
+        triggerAntiCheat("Pindah aplikasi / jendela lain (Window Blur) terdeteksi");
+      }, 1000);
+    });
+    window.addEventListener("focus", function () {
+      if (blurTimer) {
+        clearTimeout(blurTimer);
+        blurTimer = null;
+      }
+    });
+
+    // Anti-cheat tab switch detector (visibilitychange)
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) {
+        triggerAntiCheat("Pindah tab peramban (Tab Switch) terdeteksi");
+      }
+    });
+
+    // Prevent prohibited shortcuts & DevTools keys
+    document.addEventListener("keydown", function (e) {
+      var locked = kiosk.getAttribute("data-cbt-locked") === "true";
+      if (locked || violationTriggered) return;
+
+      var key = e.key;
+      var ctrlOrMeta = e.ctrlKey || e.metaKey;
+
+      // Block F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+U (Inspect / DevTools)
+      if (
+        key === "F12" ||
+        (ctrlOrMeta &&
+          e.shiftKey &&
+          (key === "I" ||
+            key === "i" ||
+            key === "J" ||
+            key === "j" ||
+            key === "C" ||
+            key === "c")) ||
+        (ctrlOrMeta && (key === "u" || key === "U"))
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+        triggerAntiCheat(
+          "Mencoba membuka Developer Tools / Inspeksi kode sumber (" + key + ")"
+        );
+        return false;
+      }
+
+      // Block Alt+Tab or Alt+F4
+      if (e.altKey && (key === "Tab" || key === "F4")) {
+        e.preventDefault();
+        triggerAntiCheat("Mencoba beralih aplikasi (Alt+" + key + ")");
+        return false;
+      }
+
+      // Block Ctrl+N, Ctrl+T, Ctrl+W
+      if (
+        ctrlOrMeta &&
+        (key === "n" ||
+          key === "N" ||
+          key === "t" ||
+          key === "T" ||
+          key === "w" ||
+          key === "W")
+      ) {
+        e.preventDefault();
+        triggerAntiCheat("Mencoba navigasi tab peramban (" + key + ")");
+        return false;
+      }
+
+      // Block Copy/Cut/Paste shortcuts outside essay textarea
+      if (
+        ctrlOrMeta &&
+        (key === "c" ||
+          key === "C" ||
+          key === "x" ||
+          key === "X" ||
+          key === "v" ||
+          key === "V" ||
+          key === "a" ||
+          key === "A")
+      ) {
+        var tag =
+          e.target && e.target.tagName ? e.target.tagName.toLowerCase() : "";
+        if (tag !== "textarea") {
+          e.preventDefault();
+          return false;
+        }
+      }
+
+      // Prevent F11 native browser toggle
+      if (key === "F11") {
+        e.preventDefault();
+        return false;
+      }
+    });
+
+    // Disable context menu (right click)
+    document.addEventListener("contextmenu", function (e) {
+      e.preventDefault();
+      return false;
+    });
+
+    // Block clipboard copy/cut outside textarea
+    document.addEventListener("copy", function (e) {
+      var tag =
+        e.target && e.target.tagName ? e.target.tagName.toLowerCase() : "";
+      if (tag !== "textarea") {
+        e.preventDefault();
+        return false;
+      }
+    });
+    document.addEventListener("cut", function (e) {
+      var tag =
+        e.target && e.target.tagName ? e.target.tagName.toLowerCase() : "";
+      if (tag !== "textarea") {
+        e.preventDefault();
+        return false;
+      }
+    });
+
+    // Confirmation on accidental tab close / navigation
+    window.addEventListener("beforeunload", function (e) {
+      var locked = kiosk.getAttribute("data-cbt-locked") === "true";
+      if (!locked && !violationTriggered) {
+        e.preventDefault();
+        e.returnValue = "Ujian sedang berlangsung! Yakin ingin keluar?";
+        return e.returnValue;
+      }
+    });
 
     // Countdown timer (default 90 minutes)
     if (timerEl) {
@@ -188,25 +470,6 @@
           (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
       }, 1000);
     }
-
-    // Anti-cheat tab switch detector (>1.5s blur triggers proctor status)
-    var blurTimer = null;
-    document.addEventListener("visibilitychange", function () {
-      var locked = kiosk.getAttribute("data-cbt-locked") === "true";
-      if (locked) return;
-      if (document.hidden) {
-        blurTimer = setTimeout(function () {
-          var warnForm = document.getElementById("cbt-violation-form");
-          if (warnForm) {
-            if (warnForm.requestSubmit) warnForm.requestSubmit();
-            else warnForm.submit();
-          }
-        }, 1500);
-      } else if (blurTimer) {
-        clearTimeout(blurTimer);
-        blurTimer = null;
-      }
-    });
   }
 
   // 5. Rewind Story slides

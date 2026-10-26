@@ -69,6 +69,8 @@ func writeStateError(w http.ResponseWriter, err error) {
 		writeError(w, http.StatusConflict, "Data sudah berubah. Muat ulang lalu coba lagi.")
 	case errors.Is(err, state.ErrInvalid):
 		writeError(w, http.StatusBadRequest, "Data yang dikirim tidak valid.")
+	case errors.Is(err, state.ErrForbidden):
+		writeError(w, http.StatusForbidden, "Akses ditolak: sesi ujian sedang terkunci oleh sistem anti-curang.")
 	case errors.Is(err, state.ErrUnavailable):
 		writeError(w, http.StatusServiceUnavailable, "Data pendukung belum tersedia di server.")
 	default:

@@ -644,11 +644,15 @@ func (s *Server) handleStudentExamForm(w http.ResponseWriter, r *http.Request) {
 		studentID = "std-budi-01"
 	}
 	var res state.ExamResult
-	_ = s.mutateStateDoc(r.Context(), func(doc map[string]any) error {
+	err := s.mutateStateDoc(r.Context(), func(doc map[string]any) error {
 		var err error
 		res, err = state.SubmitExam(doc, studentID, answers, time.Now())
 		return err
 	})
+	if err != nil {
+		redirectWithFlash(w, r, "/student/exam-kiosk", fmt.Sprintf("Gagal mengumpulkan ujian: %v", err), "danger")
+		return
+	}
 	redirectWithFlash(w, r, "/student/exam-kiosk", fmt.Sprintf("Jawaban ujian CBT berhasil dikumpulkan dan dinilai di server (Skor PG: %d/100).", res.McqScore), "success")
 }
 

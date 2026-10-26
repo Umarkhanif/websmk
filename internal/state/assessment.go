@@ -14,6 +14,7 @@ var (
 	ErrConflict    = errors.New("konflik data")
 	ErrUnavailable = errors.New("data belum tersedia")
 	ErrInvalid     = errors.New("data tidak valid")
+	ErrForbidden   = errors.New("akses ditolak")
 )
 
 type QuizAnswer struct {
@@ -148,6 +149,15 @@ func SubmitExam(doc map[string]any, studentID string, answers []ExamAnswer, now 
 	}
 	if deadline, ok := ExamDeadline(doc, studentID); ok && now.After(deadline) {
 		return ExamResult{}, fmt.Errorf("%w: waktu ujian habis", ErrInvalid)
+	}
+	for _, item := range asList(doc["proctorStudents"]) {
+		ps := asMap(item)
+		if ps != nil && text(ps["studentId"]) == studentID {
+			if text(ps["status"]) == "LOCKED" {
+				return ExamResult{}, fmt.Errorf("%w: sesi ujian sedang terkunci oleh sistem anti-curang", ErrForbidden)
+			}
+			break
+		}
 	}
 	questions := asList(doc["examQuestions"])
 	if len(questions) == 0 {

@@ -208,6 +208,68 @@ templ StudentPortal(data ui.StudentPortalPage) {
 					<input type="hidden" name="reason" value="Pindah tab / kehilangan fokus layar > 1,5 detik"/>
 				</form>
 
+				<!-- Fullscreen Enforcement Gate Overlay -->
+				<div id="cbt-fullscreen-gate" class="cbt-fullscreen-gate" data-cbt-fullscreen-gate>
+					<div class="cbt-fullscreen-card card form-stack">
+						<div class="stat-card-head">
+							<span class="badge badge-danger">KEAMANAN UJIAN CBT DIWAJIBKAN</span>
+							<span class="badge badge-teal">Zero-Key Anti-Curang</span>
+						</div>
+						<h2>Mode Layar Penuh (Fullscreen Required)</h2>
+						<p class="muted">
+							Ujian diselenggarakan dalam lingkungan terkunci (Kiosk Mode). Anda <strong>wajib mengaktifkan layar penuh</strong> untuk mengerjakan soal ujian.
+						</p>
+						<div class="info-strip">
+							<span class="info-strip-label">Ketentuan Anti-Curang Selama Ujian:</span>
+							<span>• Dilarang keluar dari mode layar penuh (Fullscreen) selama ujian berlangsung.</span>
+							<span>• Dilarang beralih ke jendela lain, aplikasi lain, atau berpindah tab peramban.</span>
+							<span>• Tombol pintasan keyboard (Alt+Tab, F12, DevTools) dan klik kanan dinonaktifkan.</span>
+							<span>• Pelanggaran fokus layar akan otomatis mengunci sesi ujian dan memerlukan verifikasi Pengawas.</span>
+						</div>
+						<div class="leader-actions">
+							<button type="button" class="button button-primary button-large" data-cbt-enter-fullscreen>
+								@components.Icon("maximize", "icon")
+								<span>Aktifkan Layar Penuh &amp; Masuk Ujian</span>
+							</button>
+							<a href="/student/exam-lobby" class="button button-secondary">Kembali ke Ruang Persiapan</a>
+						</div>
+					</div>
+				</div>
+
+				<!-- Questions Palette Modal (Accessible via 'Questions' Button) -->
+				<div id="cbt-questions-modal" class="cbt-questions-dialog" hidden data-cbt-questions-dialog>
+					<div class="cbt-questions-backdrop" data-cbt-close-questions></div>
+					<div class="cbt-questions-sheet card form-stack">
+						<div class="stat-card-head">
+							<div>
+								<span class="eyebrow">Daftar Nomor Soal (Questions)</span>
+								<h3>Navigasi Soal PAS CBT</h3>
+							</div>
+							<button type="button" class="button button-ghost button-small" data-cbt-close-questions aria-label="Tutup Daftar Soal">
+								@components.Icon("x", "icon")
+							</button>
+						</div>
+						<div class="cbt-legend">
+							<span class="cbt-legend-item"><span class="cbt-legend-dot is-answered"></span> Sudah Terjawab</span>
+							<span class="cbt-legend-item"><span class="cbt-legend-dot is-current"></span> Soal Aktif</span>
+							<span class="cbt-legend-item"><span class="cbt-legend-dot"></span> Belum Terjawab</span>
+						</div>
+						<div class="cbt-num-grid cbt-num-grid-modal">
+							for idx, q := range data.ExamQuestions {
+								<button type="button" class="cbt-num-btn" data-cbt-goto={ strconv.Itoa(idx) } title={ "Menuju Soal #" + strconv.Itoa(q.QuestionNumber) }>
+									<span class="cbt-num-ans" data-cbt-ans-badge="-">-</span>
+									<span class="cbt-num-val">{ strconv.Itoa(q.QuestionNumber) }</span>
+								</button>
+							}
+						</div>
+						<div class="info-strip">
+							<span class="info-strip-label">Keterangan:</span>
+							<span>Huruf pilihan jawaban yang telah Anda pilih ditampilkan tepat di atas nomor masing-masing soal.</span>
+						</div>
+						<button type="button" class="button button-secondary button-block" data-cbt-close-questions>Kembali ke Lembar Soal</button>
+					</div>
+				</div>
+
 				<section class="card form-stack" data-cbt-kiosk data-cbt-locked="false">
 					<div class="stat-card-head">
 						<div>
@@ -215,12 +277,21 @@ templ StudentPortal(data ui.StudentPortalPage) {
 							<h2>PAS Ganjil — Administrasi Infrastruktur Jaringan</h2>
 						</div>
 						<div class="leader-actions">
+							<button type="button" class="button button-secondary button-small cbt-questions-btn" data-cbt-toggle-questions title="Buka Daftar Nomor Soal">
+								@components.Icon("list", "icon")
+								<span>Questions</span>
+								<span class="badge badge-teal mono" data-cbt-answered-count>0/{ strconv.Itoa(len(data.ExamQuestions)) }</span>
+							</button>
 							<span class="quiz-timer mono" data-cbt-timer data-seconds="5400">90:00</span>
+							<button type="button" class="button button-ghost button-small" data-cbt-reenter-fullscreen title="Pastikan Layar Penuh">
+								@components.Icon("maximize", "icon")
+								<span>Layar Penuh</span>
+							</button>
 							<form method="post" action="/student/proctor-status">
 								<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 								<input type="hidden" name="status" value="LOCKED"/>
 								<input type="hidden" name="reason" value="Simulasi Pindah Tab > 1,5 Detik (Anti-Cheat Trigger)"/>
-								<button type="submit" class="button button-danger button-small">Simulasi Blur / Kunci Layar</button>
+								<button type="submit" class="button button-danger button-small">Simulasi Kunci</button>
 							</form>
 						</div>
 					</div>
@@ -261,10 +332,20 @@ templ StudentPortal(data ui.StudentPortalPage) {
 						</div>
 
 						<aside class="card form-stack">
-							<span class="eyebrow">Navigasi Nomor Soal</span>
+							<div class="stat-card-head">
+								<span class="eyebrow">Navigasi Nomor Soal</span>
+								<span class="badge badge-teal mono" data-cbt-answered-badge>0/{ strconv.Itoa(len(data.ExamQuestions)) }</span>
+							</div>
+							<div class="cbt-legend">
+								<span class="cbt-legend-item"><span class="cbt-legend-dot is-answered"></span> Terjawab</span>
+								<span class="cbt-legend-item"><span class="cbt-legend-dot is-current"></span> Aktif</span>
+							</div>
 							<div class="cbt-num-grid">
 								for idx, q := range data.ExamQuestions {
-									<button type="button" class="cbt-num-btn" data-cbt-goto={ strconv.Itoa(idx) }>{ strconv.Itoa(q.QuestionNumber) }</button>
+									<button type="button" class="cbt-num-btn" data-cbt-goto={ strconv.Itoa(idx) } title={ "Menuju Soal #" + strconv.Itoa(q.QuestionNumber) }>
+										<span class="cbt-num-ans" data-cbt-ans-badge="-">-</span>
+										<span class="cbt-num-val">{ strconv.Itoa(q.QuestionNumber) }</span>
+									</button>
 								}
 							</div>
 							<div class="info-strip">

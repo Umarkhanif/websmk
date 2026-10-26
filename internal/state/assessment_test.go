@@ -128,3 +128,21 @@ func TestSubmitExamIgnoresDuplicateAnswers(t *testing.T) {
 		t.Fatalf("result = %+v, want duplicates collapsed to 1/2 = 50", result)
 	}
 }
+
+func TestSubmitExamBlockedWhenProctorLocked(t *testing.T) {
+	doc := mustDoc(t, `{
+		"students": [{"id": "std-1", "fullName": "Budi", "nisn": "0058471290"}],
+		"examQuestions": [
+			{"id": "e1", "examId": "exam-1", "questionNumber": 1, "questionType": "MCQ", "correctKey": "A"}
+		],
+		"proctorStudents": [{"id": "ps-1", "studentId": "std-1", "status": "LOCKED", "warnCount": 2}],
+		"examSubmissions": []
+	}`)
+
+	_, err := SubmitExam(doc, "std-1", []ExamAnswer{
+		{QuestionNumber: 1, Answer: "A"},
+	}, time.Now())
+	if !errors.Is(err, ErrForbidden) {
+		t.Fatalf("locked student error = %v, want ErrForbidden", err)
+	}
+}

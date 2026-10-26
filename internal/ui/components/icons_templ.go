@@ -224,13 +224,23 @@ func Icon(name string, class string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
+		} else if name == "list" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<line x1=\"8\" y1=\"6\" x2=\"21\" y2=\"6\"></line> <line x1=\"8\" y1=\"12\" x2=\"21\" y2=\"12\"></line> <line x1=\"8\" y1=\"18\" x2=\"21\" y2=\"18\"></line> <line x1=\"3\" y1=\"6\" x2=\"3.01\" y2=\"6\"></line> <line x1=\"3\" y1=\"12\" x2=\"3.01\" y2=\"12\"></line> <line x1=\"3\" y1=\"18\" x2=\"3.01\" y2=\"18\"></line>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else if name == "maximize" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<path d=\"M8 3H5a2 2 0 0 0-2 2v3\"></path> <path d=\"M21 8V5a2 2 0 0 0-2-2h-3\"></path> <path d=\"M3 16v3a2 2 0 0 0 2 2h3\"></path> <path d=\"M16 21h3a2 2 0 0 0 2-2v-3\"></path>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<circle cx=\"12\" cy=\"12\" r=\"9\"></circle> <path d=\"M12 8v4\"></path> <path d=\"M12 16h.01\"></path>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<circle cx=\"12\" cy=\"12\" r=\"9\"></circle> <path d=\"M12 8v4\"></path> <path d=\"M12 16h.01\"></path>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "</svg>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</svg>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

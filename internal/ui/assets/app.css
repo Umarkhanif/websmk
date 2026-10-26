@@ -1317,6 +1317,25 @@ textarea.input {
 }
 
 /* CBT Kiosk */
+/* CBT Kiosk Enhanced Anti-Cheat & Questions Palette */
+body.is-cbt-active .sidebar,
+body.is-cbt-active .topbar,
+body.is-cbt-active .mobile-nav,
+body.is-cbt-active .skip-link {
+  display: none !important;
+}
+
+body.is-cbt-active .app-shell {
+  display: block !important;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+body.is-cbt-active .app-main {
+  padding: 0 !important;
+}
+
 .cbt-grid {
   display: grid;
   grid-template-columns: 1fr 280px;
@@ -1330,25 +1349,186 @@ textarea.input {
 }
 
 .cbt-num-btn {
-  min-height: 42px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
   border-radius: 8px;
   border: 1px solid var(--border-strong);
   background: var(--surface);
   font-family: var(--font-mono);
-  font-weight: 700;
   cursor: pointer;
+  position: relative;
+  padding: 4px 2px;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.cbt-num-btn:hover {
+  border-color: var(--teal);
+  transform: translateY(-1px);
+}
+
+.cbt-num-ans {
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  min-height: 13px;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  margin-bottom: 3px;
+}
+
+.cbt-num-val {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text);
 }
 
 .cbt-num-btn.is-current {
   border-color: var(--navy);
   background: var(--navy);
   color: #fff;
+  box-shadow: 0 0 0 2px var(--gold);
+}
+
+.cbt-num-btn.is-current .cbt-num-val {
+  color: #fff;
+}
+
+.cbt-num-btn.is-current .cbt-num-ans {
+  color: var(--gold);
+  font-weight: 800;
 }
 
 .cbt-num-btn.is-answered:not(.is-current) {
   background: var(--teal-soft);
   border-color: var(--teal);
+}
+
+.cbt-num-btn.is-answered:not(.is-current) .cbt-num-val {
+  color: var(--navy);
+}
+
+.cbt-num-btn.is-answered:not(.is-current) .cbt-num-ans {
   color: var(--teal);
+  font-weight: 800;
+}
+
+/* Legend in Questions palette */
+.cbt-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 8px 12px;
+  background: var(--bg-alt, #F8FAFC);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.cbt-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cbt-legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+}
+
+.cbt-legend-dot.is-answered {
+  background: var(--teal-soft);
+  border-color: var(--teal);
+}
+
+.cbt-legend-dot.is-current {
+  background: var(--navy);
+  border-color: var(--navy);
+  box-shadow: 0 0 0 1px var(--gold);
+}
+
+/* Questions Dialog / Modal */
+.cbt-questions-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.cbt-questions-dialog[hidden] {
+  display: none !important;
+}
+
+.cbt-questions-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 23, 48, 0.65);
+  backdrop-filter: blur(4px);
+}
+
+.cbt-questions-sheet {
+  position: relative;
+  z-index: 1001;
+  width: 100%;
+  max-width: 580px;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: var(--surface);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  padding: 24px;
+}
+
+.cbt-num-grid-modal {
+  grid-template-columns: repeat(auto-fill, minmax(54px, 1fr));
+  gap: 10px;
+  max-height: 45vh;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.cbt-questions-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Fullscreen Overlay Gate */
+.cbt-fullscreen-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(11, 23, 48, 0.95);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.cbt-fullscreen-gate[hidden] {
+  display: none !important;
+}
+
+.cbt-fullscreen-card {
+  max-width: 600px;
+  width: 100%;
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
 }
 
 /* Mobile Nav & Drawer */
