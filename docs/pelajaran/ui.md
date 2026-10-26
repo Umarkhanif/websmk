@@ -27,3 +27,9 @@ Masalah: Lingkaran rata-rata bisa dibuka saat belum semua mapel selesai & tester
 Penyebab: `AllExamsGraded` hanya mengecek mapel 1 & JS tidak mengecek `data-unlocked`.
 Perbaikan: Hapus tester box, kunci ketat orb jika belum selesai dinilai, dan buat rincian nilai per mapel dengan opsi sembunyikan nilai setelah orb terbuka.
 Verifikasi: `templ generate`, `go test ./...`, HTTP 200 OK.
+
+## 2026-10-27 — mystery-orb-2stage-spin
+Masalah: Orb masih bisa dibuka karena cache browser aset lama & ikon gembok tidak diinginkan user.
+Penyebab: Header cache 1 jam tanpa query versioning pada app.js/css serta icon gembok menggantikan tanda tanya.
+Perbaikan: Kembalikan simbol permanen ?, pasang cache-busting v=20261027b, nolkan nilai rata-rata jika belum selesai dinilai, dan terapkan alur klik 1 berputar sedikit warna & klik 2 baru berwarna penuh.
+Verifikasi: `templ generate`, `go test ./...`, HTTP 200 OK.

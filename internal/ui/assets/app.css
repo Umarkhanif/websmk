@@ -1376,10 +1376,9 @@ textarea.input {
 }
 
 .cbt-mystery-orb.is-locked {
-  border-color: #E2E8F0;
-  background: radial-gradient(circle at 35% 35%, #F8FAFC 0%, #F1F5F9 60%, #E2E8F0 100%);
-  box-shadow: none;
-  opacity: 0.92;
+  border-color: #CBD5E1;
+  background: radial-gradient(circle at 35% 35%, #FFFFFF 0%, #F8FAFC 55%, #E2E8F0 100%);
+  box-shadow: 0 4px 16px rgba(11, 23, 48, 0.04);
 }
 
 .cbt-mystery-orb.is-locked:hover {
@@ -1387,8 +1386,8 @@ textarea.input {
 }
 
 .cbt-mystery-orb.is-locked .cbt-orb-symbol {
-  font-size: 42px;
-  color: #94A3B8;
+  font-size: 56px;
+  color: #64748B;
 }
 
 /* Locked vibration shake animation */
@@ -1453,14 +1452,26 @@ textarea.input {
   100% { transform: scale(1); opacity: 1; }
 }
 
-/* Click 1: Active Glowing Aura States */
-.cbt-mystery-orb.is-aura-active {
-  transform: scale(1.05);
+/* ========================================================
+   KLIK 1: is-spinning-aura ("hanya ada sedikit warna dan berputar")
+   ======================================================== */
+.cbt-mystery-orb.is-spinning-aura {
+  transform: scale(1.02);
 }
 
-.cbt-mystery-orb.is-aura-active .cbt-orb-ring {
+.cbt-mystery-orb.is-spinning-aura .cbt-orb-ring {
   border-style: solid;
-  animation: ringSpin 8s linear infinite;
+  border-width: 2.5px;
+  animation: ringSpin 2.4s linear infinite;
+}
+
+.cbt-mystery-orb.is-spinning-aura .cbt-orb-symbol {
+  animation: symbolPulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes symbolPulse {
+  0% { transform: scale(1); opacity: 0.85; }
+  100% { transform: scale(1.08); opacity: 1; }
 }
 
 @keyframes ringSpin {
@@ -1468,24 +1479,93 @@ textarea.input {
   to { transform: rotate(360deg); }
 }
 
+/* Klik 1 - Sedikit warna per Tier */
+.cbt-tier-stellar .cbt-mystery-orb.is-spinning-aura {
+  border-color: rgba(56, 189, 248, 0.6);
+  background: radial-gradient(circle at 35% 35%, #FFFFFF 0%, #F0F9FF 65%, #E0F2FE 100%);
+  box-shadow: 0 0 14px rgba(0, 242, 254, 0.35);
+}
+.cbt-tier-stellar .cbt-mystery-orb.is-spinning-aura .cbt-orb-ring {
+  border-color: rgba(56, 189, 248, 0.7);
+  border-top-color: #C084FC;
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.4);
+}
+.cbt-tier-stellar .cbt-mystery-orb.is-spinning-aura .cbt-orb-symbol {
+  color: #0284C7;
+}
+
+.cbt-tier-gold .cbt-mystery-orb.is-spinning-aura {
+  border-color: rgba(245, 158, 11, 0.6);
+  background: radial-gradient(circle at 35% 35%, #FFFFFF 0%, #FFFBEB 65%, #FEF3C7 100%);
+  box-shadow: 0 0 14px rgba(245, 158, 11, 0.35);
+}
+.cbt-tier-gold .cbt-mystery-orb.is-spinning-aura .cbt-orb-ring {
+  border-color: rgba(245, 158, 11, 0.7);
+  border-top-color: #FDE047;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+}
+.cbt-tier-gold .cbt-mystery-orb.is-spinning-aura .cbt-orb-symbol {
+  color: #D97706;
+}
+
+.cbt-tier-blue .cbt-mystery-orb.is-spinning-aura {
+  border-color: rgba(59, 130, 246, 0.6);
+  background: radial-gradient(circle at 35% 35%, #FFFFFF 0%, #EFF6FF 65%, #DBEAFE 100%);
+  box-shadow: 0 0 14px rgba(59, 130, 246, 0.35);
+}
+.cbt-tier-blue .cbt-mystery-orb.is-spinning-aura .cbt-orb-ring {
+  border-color: rgba(59, 130, 246, 0.7);
+  border-top-color: #93C5FD;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+}
+.cbt-tier-blue .cbt-mystery-orb.is-spinning-aura .cbt-orb-symbol {
+  color: #2563EB;
+}
+
+.cbt-tier-green .cbt-mystery-orb.is-spinning-aura {
+  border-color: rgba(16, 185, 129, 0.6);
+  background: radial-gradient(circle at 35% 35%, #FFFFFF 0%, #ECFDF5 65%, #D1FAE5 100%);
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.35);
+}
+.cbt-tier-green .cbt-mystery-orb.is-spinning-aura .cbt-orb-ring {
+  border-color: rgba(16, 185, 129, 0.7);
+  border-top-color: #6EE7B7;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+.cbt-tier-green .cbt-mystery-orb.is-spinning-aura .cbt-orb-symbol {
+  color: #059669;
+}
+
+/* ========================================================
+   KLIK 2: is-aura-full ("setelah klik dua kali baru berwarna")
+   Full radiant vibrant aura burst + score reveal
+   ======================================================== */
+.cbt-mystery-orb.is-aura-full {
+  transform: scale(1.06);
+}
+
+.cbt-mystery-orb.is-aura-full .cbt-orb-ring {
+  border-style: solid;
+  border-width: 3px;
+  animation: ringSpin 5s linear infinite;
+}
+
 /* Tier 1: Stellar Jade (Honkai: Star Rail) -> 91 - 100 */
-.cbt-tier-stellar .cbt-mystery-orb.is-aura-active {
+.cbt-tier-stellar .cbt-mystery-orb.is-aura-full {
   border-color: #00F2FE;
   background: radial-gradient(circle at 35% 35%, #FFFFFF 0%, #E0F2FE 40%, #C084FC 80%, #38BDF8 100%);
-  box-shadow: 0 0 25px rgba(0, 242, 254, 0.8), 0 0 50px rgba(168, 85, 247, 0.6), 0 0 75px rgba(236, 72, 153, 0.4);
+  box-shadow: 0 0 28px rgba(0, 242, 254, 0.85), 0 0 55px rgba(168, 85, 247, 0.65), 0 0 80px rgba(236, 72, 153, 0.45);
   animation: stellarShimmer 2.2s infinite alternate;
 }
-.cbt-tier-stellar .cbt-mystery-orb.is-aura-active .cbt-orb-ring {
+.cbt-tier-stellar .cbt-mystery-orb.is-aura-full .cbt-orb-ring {
   border-color: #38BDF8;
-  box-shadow: 0 0 16px rgba(0, 242, 254, 0.7);
-}
-.cbt-tier-stellar .cbt-mystery-orb.is-aura-active .cbt-orb-symbol {
-  color: #0284C7;
-  text-shadow: 0 0 12px rgba(56, 189, 248, 0.8), 0 0 20px rgba(168, 85, 247, 0.6);
+  border-top-color: #E879F9;
+  border-bottom-color: #00F2FE;
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.8), 0 0 35px rgba(168, 85, 247, 0.5);
 }
 .cbt-tier-stellar .cbt-mystery-orb.is-revealed .cbt-orb-score {
   color: #0369A1;
-  text-shadow: 0 0 12px rgba(56, 189, 248, 0.8);
+  text-shadow: 0 0 16px rgba(56, 189, 248, 0.9), 0 0 28px rgba(168, 85, 247, 0.7);
 }
 
 @keyframes stellarShimmer {
@@ -1495,23 +1575,20 @@ textarea.input {
 }
 
 /* Tier 2: Emas / Gold -> 81 - 90 */
-.cbt-tier-gold .cbt-mystery-orb.is-aura-active {
+.cbt-tier-gold .cbt-mystery-orb.is-aura-full {
   border-color: #F59E0B;
   background: radial-gradient(circle at 35% 35%, #FFFFFF 0%, #FEF9C3 45%, #FDE047 75%, #F59E0B 100%);
-  box-shadow: 0 0 25px rgba(245, 158, 11, 0.85), 0 0 50px rgba(251, 191, 36, 0.6), 0 0 70px rgba(217, 119, 6, 0.35);
+  box-shadow: 0 0 28px rgba(245, 158, 11, 0.9), 0 0 55px rgba(251, 191, 36, 0.7), 0 0 75px rgba(217, 119, 6, 0.4);
   animation: goldPulse 1.8s infinite alternate;
 }
-.cbt-tier-gold .cbt-mystery-orb.is-aura-active .cbt-orb-ring {
+.cbt-tier-gold .cbt-mystery-orb.is-aura-full .cbt-orb-ring {
   border-color: #F59E0B;
-  box-shadow: 0 0 16px rgba(245, 158, 11, 0.6);
-}
-.cbt-tier-gold .cbt-mystery-orb.is-aura-active .cbt-orb-symbol {
-  color: #B45309;
-  text-shadow: 0 0 12px rgba(245, 158, 11, 0.8);
+  border-top-color: #FCD34D;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.8);
 }
 .cbt-tier-gold .cbt-mystery-orb.is-revealed .cbt-orb-score {
   color: #92400E;
-  text-shadow: 0 0 12px rgba(251, 191, 36, 0.7);
+  text-shadow: 0 0 16px rgba(251, 191, 36, 0.8);
 }
 
 @keyframes goldPulse {
@@ -1520,23 +1597,20 @@ textarea.input {
 }
 
 /* Tier 3: Biru / Azure Blue -> 71 - 80 */
-.cbt-tier-blue .cbt-mystery-orb.is-aura-active {
+.cbt-tier-blue .cbt-mystery-orb.is-aura-full {
   border-color: #3B82F6;
   background: radial-gradient(circle at 35% 35%, #FFFFFF 0%, #DBEAFE 45%, #93C5FD 75%, #3B82F6 100%);
-  box-shadow: 0 0 25px rgba(59, 130, 246, 0.85), 0 0 50px rgba(96, 165, 250, 0.6);
+  box-shadow: 0 0 28px rgba(59, 130, 246, 0.9), 0 0 55px rgba(96, 165, 250, 0.65);
   animation: bluePulse 1.8s infinite alternate;
 }
-.cbt-tier-blue .cbt-mystery-orb.is-aura-active .cbt-orb-ring {
+.cbt-tier-blue .cbt-mystery-orb.is-aura-full .cbt-orb-ring {
   border-color: #3B82F6;
-  box-shadow: 0 0 16px rgba(59, 130, 246, 0.6);
-}
-.cbt-tier-blue .cbt-mystery-orb.is-aura-active .cbt-orb-symbol {
-  color: #1D4ED8;
-  text-shadow: 0 0 12px rgba(59, 130, 246, 0.8);
+  border-top-color: #BFDBFE;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.8);
 }
 .cbt-tier-blue .cbt-mystery-orb.is-revealed .cbt-orb-score {
   color: #1E40AF;
-  text-shadow: 0 0 12px rgba(59, 130, 246, 0.7);
+  text-shadow: 0 0 16px rgba(59, 130, 246, 0.8);
 }
 
 @keyframes bluePulse {
@@ -1545,23 +1619,20 @@ textarea.input {
 }
 
 /* Tier 4: Hijau / Emerald Green -> 1 - 70 */
-.cbt-tier-green .cbt-mystery-orb.is-aura-active {
+.cbt-tier-green .cbt-mystery-orb.is-aura-full {
   border-color: #10B981;
   background: radial-gradient(circle at 35% 35%, #FFFFFF 0%, #D1FAE5 45%, #6EE7B7 75%, #10B981 100%);
-  box-shadow: 0 0 25px rgba(16, 185, 129, 0.85), 0 0 50px rgba(52, 211, 153, 0.6);
+  box-shadow: 0 0 28px rgba(16, 185, 129, 0.9), 0 0 55px rgba(52, 211, 153, 0.65);
   animation: greenPulse 1.8s infinite alternate;
 }
-.cbt-tier-green .cbt-mystery-orb.is-aura-active .cbt-orb-ring {
+.cbt-tier-green .cbt-mystery-orb.is-aura-full .cbt-orb-ring {
   border-color: #10B981;
-  box-shadow: 0 0 16px rgba(16, 185, 129, 0.6);
-}
-.cbt-tier-green .cbt-mystery-orb.is-aura-active .cbt-orb-symbol {
-  color: #047857;
-  text-shadow: 0 0 12px rgba(16, 185, 129, 0.8);
+  border-top-color: #A7F3D0;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.8);
 }
 .cbt-tier-green .cbt-mystery-orb.is-revealed .cbt-orb-score {
   color: #065F46;
-  text-shadow: 0 0 12px rgba(16, 185, 129, 0.7);
+  text-shadow: 0 0 16px rgba(16, 185, 129, 0.8);
 }
 
 @keyframes greenPulse {

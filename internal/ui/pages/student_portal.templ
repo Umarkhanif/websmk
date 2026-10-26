@@ -188,7 +188,7 @@ templ StudentPortal(data ui.StudentPortalPage) {
 								if data.AllExamsGraded {
 									<span>✨ Siap Dibuka</span>
 								} else {
-									<span>🔒 Terkunci</span>
+									<span>Terkunci</span>
 								}
 							</span>
 						</div>
@@ -198,12 +198,12 @@ templ StudentPortal(data ui.StudentPortalPage) {
 								<div class="cbt-orb-ring"></div>
 								<div class="cbt-orb-aura"></div>
 								<div class="cbt-orb-core">
-									if !data.AllExamsGraded {
-										<span class="cbt-orb-symbol font-bold" data-cbt-orb-symbol>🔒</span>
+									<span class="cbt-orb-symbol font-bold" data-cbt-orb-symbol>?</span>
+									if data.AllExamsGraded {
+										<span class="cbt-orb-score mono font-bold" data-cbt-orb-score hidden>{ strconv.Itoa(data.ExamAverageScore) }</span>
 									} else {
-										<span class="cbt-orb-symbol font-bold" data-cbt-orb-symbol>?</span>
+										<span class="cbt-orb-score mono font-bold" data-cbt-orb-score hidden>-</span>
 									}
-									<span class="cbt-orb-score mono font-bold" data-cbt-orb-score hidden>{ strconv.Itoa(data.ExamAverageScore) }</span>
 								</div>
 							</button>
 						</div>

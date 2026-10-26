@@ -170,8 +170,10 @@ func (s *Server) handleUIAsset(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/javascript; charset=utf-8")
 	case "app.js":
 		w.Header().Set("Content-Type", "application/javascript; charset=utf-8")
+		w.Header().Set("Cache-Control", "no-cache, must-revalidate")
 	case "app.css":
 		w.Header().Set("Content-Type", "text/css; charset=utf-8")
+		w.Header().Set("Cache-Control", "no-cache, must-revalidate")
 	case "favicon.svg":
 		w.Header().Set("Content-Type", "image/svg+xml")
 	default:
@@ -183,7 +185,9 @@ func (s *Server) handleUIAsset(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	w.Header().Set("Cache-Control", "public, max-age=3600")
+	if name != "app.js" && name != "app.css" {
+		w.Header().Set("Cache-Control", "public, max-age=3600")
+	}
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write(data)
 }

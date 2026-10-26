@@ -639,10 +639,9 @@
     var subjectScoresCard = container.querySelector("[data-cbt-subject-scores]");
     var toggleScoresBtn = container.querySelector("[data-cbt-toggle-scores]");
 
-    var isUnlocked = container.getAttribute("data-unlocked") === "true";
     var currentTier = container.getAttribute("data-tier") || "stellar";
-    var currentScore = parseInt(container.getAttribute("data-score") || "93", 10);
-    var clickStage = 0; // 0: hidden ?, 1: aura glowing, 2: revealed score
+    var currentScore = parseInt(container.getAttribute("data-score") || "0", 10);
+    var clickStage = 0; // 0: netral ?, 1: sedikit warna & berputar, 2: baru berwarna penuh & reveal
     var isScoresMasked = false;
 
     var tierInfo = {
@@ -650,25 +649,29 @@
         cls: "cbt-tier-stellar",
         pillCls: "pill-stellar",
         name: "✦ TIER STELLAR JADE (91 - 100) ✦",
-        auraHint: "✨ Cahaya Prisma Stellar Jade (Honkai: Star Rail) terdeteksi! Ketuk sekali lagi untuk membuka nilai..."
+        spinHint: "✨ Kilau prisma mulai berputar halus... Ketuk sekali lagi untuk mengungkap nilai!",
+        fullHint: "Nilai rata-rata seluruh ujian: " + currentScore + "/100 (Ketuk lagi untuk mengulang animasi)"
       },
       gold: {
         cls: "cbt-tier-gold",
         pillCls: "pill-gold",
         name: "★ TIER EMAS (81 - 90) ★",
-        auraHint: "✨ Cahaya Emas Murni memancar! Ketuk sekali lagi untuk membuka nilai..."
+        spinHint: "✨ Kilau emas mulai berputar halus... Ketuk sekali lagi untuk mengungkap nilai!",
+        fullHint: "Nilai rata-rata seluruh ujian: " + currentScore + "/100 (Ketuk lagi untuk mengulang animasi)"
       },
       blue: {
         cls: "cbt-tier-blue",
         pillCls: "pill-blue",
         name: "◆ TIER BIRU (71 - 80) ◆",
-        auraHint: "✨ Cahaya Biru Terang memancar! Ketuk sekali lagi untuk membuka nilai..."
+        spinHint: "✨ Kilau biru mulai berputar halus... Ketuk sekali lagi untuk mengungkap nilai!",
+        fullHint: "Nilai rata-rata seluruh ujian: " + currentScore + "/100 (Ketuk lagi untuk mengulang animasi)"
       },
       green: {
         cls: "cbt-tier-green",
         pillCls: "pill-green",
         name: "● TIER HIJAU (1 - 70) ●",
-        auraHint: "✨ Cahaya Hijau Zamrud memancar! Ketuk sekali lagi untuk membuka nilai..."
+        spinHint: "✨ Kilau hijau mulai berputar halus... Ketuk sekali lagi untuk mengungkap nilai!",
+        fullHint: "Nilai rata-rata seluruh ujian: " + currentScore + "/100 (Ketuk lagi untuk mengulang animasi)"
       }
     };
 
@@ -678,14 +681,20 @@
       container.classList.remove("cbt-tier-stellar", "cbt-tier-gold", "cbt-tier-blue", "cbt-tier-green");
       var info = tierInfo[currentTier] || tierInfo.stellar;
       container.classList.add(info.cls);
-      if (scoreEl) scoreEl.textContent = currentScore;
+      if (scoreEl && currentScore > 0) scoreEl.textContent = currentScore;
     }
 
     applyTier(currentTier, currentScore);
 
     var shakeTimer = null;
-    function triggerClick() {
-      // 1. STRICT LOCK CHECK: If not all exams are completed & graded, circle MUST remain locked!
+    function triggerClick(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      // 1. STRICT LOCK CHECK: Dicek dinamis setiap klik! Tak bisa dibuka jika belum semua ujian selesai.
+      var isUnlocked = container.getAttribute("data-unlocked") === "true";
       if (!isUnlocked) {
         if (orbBtn) {
           orbBtn.classList.remove("is-shaking");
@@ -700,7 +709,7 @@
           navigator.vibrate([80, 40, 80]);
         }
         if (hintEl) {
-          hintEl.textContent = "🔒 Nilai Terkunci! Anda belum menyelesaikan seluruh 4 mata pelajaran dan guru belum selesai menilai.";
+          hintEl.textContent = "Nilai belum dapat dibuka. Harap selesaikan seluruh ujian dan tunggu penilaian guru.";
           hintEl.classList.add("text-danger");
           setTimeout(function () {
             if (hintEl) {
@@ -709,27 +718,31 @@
             }
           }, 3500);
         }
-        return;
+        return; // Hentikan di sini!
       }
 
       var info = tierInfo[currentTier] || tierInfo.stellar;
 
       if (clickStage === 0) {
-        // Stage 1: Aura glows with tier color!
+        // Klik 1: "di klik pertama hanya ada sedikit warna dan berputar"
         clickStage = 1;
-        orbBtn.classList.add("is-aura-active");
-        orbBtn.classList.remove("is-revealed");
-        if (symbolEl) symbolEl.removeAttribute("hidden");
+        orbBtn.classList.remove("is-aura-full", "is-revealed");
+        orbBtn.classList.add("is-spinning-aura");
+        if (symbolEl) symbolEl.removeAttribute("hidden"); // Tanda tanya ? tetap terlihat
         if (scoreEl) scoreEl.setAttribute("hidden", "");
         if (pillEl) pillEl.setAttribute("hidden", "");
-        if (hintEl) hintEl.textContent = info.auraHint;
+        if (hintEl) hintEl.textContent = info.spinHint;
         if (navigator.vibrate) navigator.vibrate(60);
       } else if (clickStage === 1) {
-        // Stage 2: Reveal the actual average score & unlock individual subject scores breakdown!
+        // Klik 2: "setelah klik dua kali baru berwarna" & reveal nilai rata-rata + mapel
         clickStage = 2;
-        orbBtn.classList.add("is-revealed");
+        orbBtn.classList.remove("is-spinning-aura");
+        orbBtn.classList.add("is-aura-full", "is-revealed");
         if (symbolEl) symbolEl.setAttribute("hidden", "");
-        if (scoreEl) scoreEl.removeAttribute("hidden");
+        if (scoreEl) {
+          scoreEl.textContent = currentScore;
+          scoreEl.removeAttribute("hidden");
+        }
         if (pillEl) {
           pillEl.removeAttribute("hidden");
           pillEl.className = "cbt-tier-pill " + info.pillCls;
@@ -738,15 +751,15 @@
         if (hintEl) hintEl.textContent = "Nilai rata-rata seluruh ujian: " + currentScore + "/100 (Ketuk lagi untuk mengulang animasi)";
         if (navigator.vibrate) navigator.vibrate([100, 50, 120]);
 
-        // Reveal Subject Scores Breakdown
+        // Munculkan rincian nilai per mapel di bawahnya
         if (subjectScoresCard) {
           subjectScoresCard.removeAttribute("hidden");
           subjectScoresCard.classList.add("is-revealed");
         }
       } else {
-        // Stage 3: Reset so user can play animation again!
+        // Klik 3: Reset agar siswa bisa mengulang animasinya
         clickStage = 0;
-        orbBtn.classList.remove("is-aura-active", "is-revealed");
+        orbBtn.classList.remove("is-spinning-aura", "is-aura-full", "is-revealed");
         if (symbolEl) symbolEl.removeAttribute("hidden");
         if (scoreEl) scoreEl.setAttribute("hidden", "");
         if (pillEl) pillEl.setAttribute("hidden", "");

@@ -443,42 +443,7 @@ func (s *Server) buildStudentPortal(doc map[string]any, shell ui.RoleShell, user
 
 	schedulesRaw := asMapSlice(doc["examSchedules"])
 	schedules := make([]ui.ExamScheduleView, 0)
-	if len(schedulesRaw) > 0 {
-		for _, sm := range schedulesRaw {
-			status := strVal(sm, "status")
-			statusBadge := strVal(sm, "statusBadge")
-			badgeClass := strVal(sm, "badgeClass")
-			actionUrl := strVal(sm, "actionUrl")
-			score := intVal(sm, "score")
-			id := strVal(sm, "id")
-
-			if id == "exam-sch-01" && examSubmitted {
-				status = "SUBMITTED"
-				statusBadge = "Sudah Selesai"
-				badgeClass = "badge-teal"
-				score = examScore
-				actionUrl = ""
-			}
-
-			schedules = append(schedules, ui.ExamScheduleView{
-				ID:            id,
-				SubjectName:   strVal(sm, "subjectName"),
-				TeacherName:   strVal(sm, "teacherName"),
-				DateLabel:     strVal(sm, "dateLabel"),
-				TimeSlot:      strVal(sm, "timeSlot"),
-				DurationMin:   intVal(sm, "durationMin"),
-				QuestionCount: intVal(sm, "questionCount"),
-				Room:          strVal(sm, "room"),
-				SessionNumber: intVal(sm, "sessionNumber"),
-				Status:        status,
-				StatusBadge:   statusBadge,
-				BadgeClass:    badgeClass,
-				Score:         score,
-				ActionURL:     actionUrl,
-				Note:          strVal(sm, "note"),
-			})
-		}
-	} else if isDemoGraded {
+	if isDemoGraded {
 		sch1Score := examScore
 		if sch1Score <= 0 {
 			sch1Score = 96
@@ -552,6 +517,41 @@ func (s *Server) buildStudentPortal(doc map[string]any, shell ui.RoleShell, user
 				ActionURL:     "",
 				Note:          "Ruang ujian dan penilaian guru selesai",
 			},
+		}
+	} else if len(schedulesRaw) > 0 {
+		for _, sm := range schedulesRaw {
+			status := strVal(sm, "status")
+			statusBadge := strVal(sm, "statusBadge")
+			badgeClass := strVal(sm, "badgeClass")
+			actionUrl := strVal(sm, "actionUrl")
+			score := intVal(sm, "score")
+			id := strVal(sm, "id")
+
+			if id == "exam-sch-01" && examSubmitted {
+				status = "SUBMITTED"
+				statusBadge = "Sudah Selesai"
+				badgeClass = "badge-teal"
+				score = examScore
+				actionUrl = ""
+			}
+
+			schedules = append(schedules, ui.ExamScheduleView{
+				ID:            id,
+				SubjectName:   strVal(sm, "subjectName"),
+				TeacherName:   strVal(sm, "teacherName"),
+				DateLabel:     strVal(sm, "dateLabel"),
+				TimeSlot:      strVal(sm, "timeSlot"),
+				DurationMin:   intVal(sm, "durationMin"),
+				QuestionCount: intVal(sm, "questionCount"),
+				Room:          strVal(sm, "room"),
+				SessionNumber: intVal(sm, "sessionNumber"),
+				Status:        status,
+				StatusBadge:   statusBadge,
+				BadgeClass:    badgeClass,
+				Score:         score,
+				ActionURL:     actionUrl,
+				Note:          strVal(sm, "note"),
+			})
 		}
 	} else {
 		sch1Status := "READY"
@@ -730,8 +730,8 @@ func (s *Server) buildStudentPortal(doc map[string]any, shell ui.RoleShell, user
 		}
 	}
 	avgScore := 0
-	if gradedCount > 0 {
-		avgScore = totalScore / gradedCount
+	if allGraded && len(schedules) > 0 {
+		avgScore = totalScore / len(schedules)
 	}
 	tier := "stellar"
 	if avgScore >= 91 {
