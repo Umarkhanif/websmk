@@ -186,11 +186,14 @@
     }
 
     // Toggle Questions dialog / modal
-    if (toggleQuestionsBtn && questionsModal) {
-      toggleQuestionsBtn.addEventListener("click", function () {
-        questionsModal.removeAttribute("hidden");
+    var toggleQuestionsBtns = Array.prototype.slice.call(
+      document.querySelectorAll("[data-cbt-toggle-questions]")
+    );
+    toggleQuestionsBtns.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        if (questionsModal) questionsModal.removeAttribute("hidden");
       });
-    }
+    });
     closeQuestionsBtns.forEach(function (btn) {
       btn.addEventListener("click", function () {
         if (questionsModal) questionsModal.setAttribute("hidden", "");

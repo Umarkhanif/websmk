@@ -379,13 +379,27 @@ func (s *Server) buildStudentPortal(doc map[string]any, shell ui.RoleShell, user
 		for _, om := range asMapSlice(qm["options"]) {
 			opts = append(opts, ui.QuizOptionView{Key: strVal(om, "key"), Text: strVal(om, "text")})
 		}
+		qText := strVal(qm, "questionText")
+		if qText == "" {
+			qText = strVal(qm, "templateContent")
+			if dynVars, ok := qm["dynamicVars"].(map[string]any); ok {
+				for k, v := range dynVars {
+					placeholder := "{{" + k + "}}"
+					qText = strings.ReplaceAll(qText, placeholder, fmt.Sprintf("%v", v))
+				}
+			}
+		}
+		tag := strVal(qm, "kdCode")
+		if tag == "" {
+			tag = strVal(qm, "competencyTag")
+		}
 		examQs = append(examQs, ui.ExamQuestionView{
 			ID:             strVal(qm, "id"),
 			QuestionNumber: intVal(qm, "questionNumber"),
 			QuestionType:   strVal(qm, "questionType"),
 			SubjectName:    strVal(qm, "subjectName"),
-			KdCode:         strVal(qm, "kdCode"),
-			QuestionText:   strVal(qm, "questionText"),
+			KdCode:         tag,
+			QuestionText:   qText,
 			Options:        opts,
 		})
 	}
@@ -687,13 +701,27 @@ func (s *Server) buildTeacherPortal(doc map[string]any, shell ui.RoleShell, tab 
 
 	examQs := make([]ui.ExamQuestionView, 0)
 	for _, qm := range asMapSlice(doc["examQuestions"]) {
+		qText := strVal(qm, "questionText")
+		if qText == "" {
+			qText = strVal(qm, "templateContent")
+			if dynVars, ok := qm["dynamicVars"].(map[string]any); ok {
+				for k, v := range dynVars {
+					placeholder := "{{" + k + "}}"
+					qText = strings.ReplaceAll(qText, placeholder, fmt.Sprintf("%v", v))
+				}
+			}
+		}
+		tag := strVal(qm, "kdCode")
+		if tag == "" {
+			tag = strVal(qm, "competencyTag")
+		}
 		examQs = append(examQs, ui.ExamQuestionView{
 			ID:             strVal(qm, "id"),
 			QuestionNumber: intVal(qm, "questionNumber"),
 			QuestionType:   strVal(qm, "questionType"),
 			SubjectName:    strVal(qm, "subjectName"),
-			KdCode:         strVal(qm, "kdCode"),
-			QuestionText:   strVal(qm, "questionText"),
+			KdCode:         tag,
+			QuestionText:   qText,
 			CorrectKey:     strVal(qm, "correctKey"),
 			EssayRubric:    strVal(qm, "essayRubric"),
 		})

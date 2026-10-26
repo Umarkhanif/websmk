@@ -270,20 +270,23 @@ templ StudentPortal(data ui.StudentPortalPage) {
 					</div>
 				</div>
 
-				<section class="card form-stack" data-cbt-kiosk data-cbt-locked="false">
-					<div class="stat-card-head">
-						<div>
-							<span class="eyebrow">Kiosk Ujian CBT Anti-Curang · Zero-Key Payload</span>
+				<div class="cbt-fullscreen-wrapper" data-cbt-kiosk data-cbt-locked="false">
+					<header class="cbt-kiosk-navbar">
+						<div class="cbt-kiosk-brand">
+							<span class="eyebrow">WESMK CBT ANTI-CURANG · ZERO-KEY SECURE KIOSK</span>
 							<h2>PAS Ganjil — Administrasi Infrastruktur Jaringan</h2>
 						</div>
+						<div class="cbt-timer-box">
+							@components.Icon("clock", "icon")
+							<span class="quiz-timer mono" data-cbt-timer data-seconds="5400">90:00</span>
+						</div>
 						<div class="leader-actions">
-							<button type="button" class="button button-secondary button-small cbt-questions-btn" data-cbt-toggle-questions title="Buka Daftar Nomor Soal">
+							<button type="button" class="button button-gold button-small cbt-questions-btn" data-cbt-toggle-questions title="Buka Daftar Nomor Soal">
 								@components.Icon("list", "icon")
-								<span>Questions</span>
+								<span>Questions (Daftar Soal)</span>
 								<span class="badge badge-teal mono" data-cbt-answered-count>0/{ strconv.Itoa(len(data.ExamQuestions)) }</span>
 							</button>
-							<span class="quiz-timer mono" data-cbt-timer data-seconds="5400">90:00</span>
-							<button type="button" class="button button-ghost button-small" data-cbt-reenter-fullscreen title="Pastikan Layar Penuh">
+							<button type="button" class="button button-ghost button-small text-white" data-cbt-reenter-fullscreen title="Pastikan Layar Penuh">
 								@components.Icon("maximize", "icon")
 								<span>Layar Penuh</span>
 							</button>
@@ -294,22 +297,29 @@ templ StudentPortal(data ui.StudentPortalPage) {
 								<button type="submit" class="button button-danger button-small">Simulasi Kunci</button>
 							</form>
 						</div>
-					</div>
+					</header>
 
-					<form method="post" action="/student/exam" class="cbt-grid">
+					<form method="post" action="/student/exam" class="cbt-kiosk-body">
 						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-						<div class="form-stack">
+						<main class="cbt-question-pane">
 							for idx, q := range data.ExamQuestions {
-								<div class="card form-stack" data-cbt-question data-index={ strconv.Itoa(idx) }>
+								<div class="card cbt-question-card" data-cbt-question data-index={ strconv.Itoa(idx) }>
 									<div class="stat-card-head">
-										<span class="badge badge-teal">Soal #{ strconv.Itoa(q.QuestionNumber) } · { q.KdCode }</span>
-										<span class="badge badge-neutral">{ q.QuestionType }</span>
+										<div class="cbt-badges">
+											<span class="badge badge-teal font-bold">Soal #{ strconv.Itoa(q.QuestionNumber) }</span>
+											if q.KdCode != "" {
+												<span class="badge badge-neutral">{ q.KdCode }</span>
+											}
+											<span class="badge badge-gold">{ q.QuestionType }</span>
+										</div>
 									</div>
-									<p class="quiz-question">{ q.QuestionText }</p>
+									<div class="cbt-question-text">
+										<p>{ q.QuestionText }</p>
+									</div>
 									if q.QuestionType == "ESSAY" {
 										<label class="field">
 											<span class="field-label">Jawaban Uraian / Analisis Konfigurasi</span>
-											<textarea class="input input-mono" name={ "exam_q_" + strconv.Itoa(q.QuestionNumber) } placeholder="Tuliskan langkah analisis dan perintah konfigurasi jaringan secara lengkap..."></textarea>
+											<textarea class="input input-mono cbt-essay-input" rows="8" name={ "exam_q_" + strconv.Itoa(q.QuestionNumber) } placeholder="Tuliskan langkah analisis dan perintah konfigurasi jaringan secara lengkap..."></textarea>
 										</label>
 									} else {
 										<div class="quiz-options">
@@ -317,7 +327,7 @@ templ StudentPortal(data ui.StudentPortalPage) {
 												<label class="quiz-option">
 													<input type="radio" name={ "exam_q_" + strconv.Itoa(q.QuestionNumber) } value={ opt.Key }/>
 													<span class="quiz-option-key">{ opt.Key }</span>
-													<span>{ opt.Text }</span>
+													<span class="quiz-option-text">{ opt.Text }</span>
 												</label>
 											}
 										</div>
@@ -325,20 +335,34 @@ templ StudentPortal(data ui.StudentPortalPage) {
 								</div>
 							}
 
-							<div class="quiz-actions">
-								<button type="button" class="button button-secondary button-small" data-cbt-prev>Soal Sebelumnya</button>
-								<button type="button" class="button button-secondary button-small" data-cbt-next>Soal Berikutnya</button>
+							<div class="cbt-nav-actions">
+								<button type="button" class="button button-secondary" data-cbt-prev>
+									@components.Icon("arrow-right", "icon rotate-180")
+									<span>Soal Sebelumnya</span>
+								</button>
+								<button type="button" class="button button-secondary cbt-questions-btn" data-cbt-toggle-questions>
+									@components.Icon("list", "icon")
+									<span>Daftar Soal</span>
+								</button>
+								<button type="button" class="button button-primary" data-cbt-next>
+									<span>Soal Berikutnya</span>
+									@components.Icon("arrow-right", "icon")
+								</button>
 							</div>
-						</div>
+						</main>
 
-						<aside class="card form-stack">
+						<aside class="cbt-kiosk-sidebar card">
 							<div class="stat-card-head">
-								<span class="eyebrow">Navigasi Nomor Soal</span>
+								<div>
+									<span class="eyebrow">Navigasi Soal</span>
+									<h3>Nomor Soal</h3>
+								</div>
 								<span class="badge badge-teal mono" data-cbt-answered-badge>0/{ strconv.Itoa(len(data.ExamQuestions)) }</span>
 							</div>
 							<div class="cbt-legend">
 								<span class="cbt-legend-item"><span class="cbt-legend-dot is-answered"></span> Terjawab</span>
 								<span class="cbt-legend-item"><span class="cbt-legend-dot is-current"></span> Aktif</span>
+								<span class="cbt-legend-item"><span class="cbt-legend-dot"></span> Belum</span>
 							</div>
 							<div class="cbt-num-grid">
 								for idx, q := range data.ExamQuestions {
@@ -358,7 +382,7 @@ templ StudentPortal(data ui.StudentPortalPage) {
 							</button>
 						</aside>
 					</form>
-				</section>
+				</div>
 			}
 		} else if data.Tab == "documents" {
 			<section class="card form-stack">
