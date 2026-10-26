@@ -114,7 +114,7 @@
     renderStep();
   }
 
-  // 4. CBT Exam Kiosk question navigator + anti-cheat focus guard & fullscreen
+  // 4. CBT Exam Kiosk question navigator + cross-platform anti-cheat (HP, Tablet, Laptop)
   function initCbtKiosk() {
     var kiosk = document.querySelector("[data-cbt-kiosk]");
     if (!kiosk || kiosk._bound) return;
@@ -123,22 +123,33 @@
     // Enter kiosk isolation mode (hides ERP sidebar and topbar)
     document.body.classList.add("is-cbt-active");
 
+    var examForm = document.getElementById("cbt-exam-form") || kiosk.querySelector("form");
     var steps = Array.prototype.slice.call(kiosk.querySelectorAll("[data-cbt-question]"));
     var prevBtn = kiosk.querySelector("[data-cbt-prev]");
     var nextBtn = kiosk.querySelector("[data-cbt-next]");
+    var submitBtn = kiosk.querySelector("[data-cbt-submit-btn]");
+    var navIndicator = kiosk.querySelector("[data-cbt-nav-indicator]");
     var timerEl = kiosk.querySelector("[data-cbt-timer]");
     var fsGate = document.querySelector("[data-cbt-fullscreen-gate]");
     var enterFsBtn = document.querySelector("[data-cbt-enter-fullscreen]");
     var reenterFsBtn = document.querySelector("[data-cbt-reenter-fullscreen]");
     var questionsModal = document.querySelector("[data-cbt-questions-dialog]");
-    var toggleQuestionsBtn = kiosk.querySelector("[data-cbt-toggle-questions]");
-    var closeQuestionsBtns = Array.prototype.slice.call(document.querySelectorAll("[data-cbt-close-questions]"));
+    var modalSubmitBtn = document.querySelector("[data-cbt-trigger-submit]");
+    var strikeModal = document.querySelector("[data-cbt-strike-dialog]");
+    var strikeBadge = document.querySelector("[data-cbt-strike-badge]");
+    var strikeTitle = document.querySelector("[data-cbt-strike-title]");
+    var strikeDesc = document.querySelector("[data-cbt-strike-desc]");
+    var strikeResumeBtn = document.querySelector("[data-cbt-strike-resume]");
     var warnForm = document.getElementById("cbt-violation-form");
     var reasonInput = warnForm ? warnForm.querySelector("input[name='reason']") : null;
+
     var currentIdx = 0;
     var violationTriggered = false;
+    var strikeCount = 0;
+    var MAX_STRIKES = 3;
+    var everFullscreen = false;
 
-    // Helper: detect if browser is currently in fullscreen
+    // Helper: detect if browser is currently in native fullscreen
     function isFullscreen() {
       return Boolean(
         document.fullscreenElement ||
@@ -148,7 +159,7 @@
       );
     }
 
-    // Helper: request fullscreen mode
+    // Helper: enter fullscreen with fallback for mobile browsers (iOS Safari, Android WebApp)
     function enterFullscreen() {
       var docEl = document.documentElement;
       var req =
@@ -156,21 +167,32 @@
         docEl.webkitRequestFullscreen ||
         docEl.mozRequestFullScreen ||
         docEl.msRequestFullscreen;
+
       if (req) {
         try {
           var p = req.call(docEl);
           if (p && p.then) {
             p.then(function () {
+              everFullscreen = true;
               if (fsGate) fsGate.setAttribute("hidden", "");
-            }).catch(function (err) {
-              console.warn("Fullscreen request error:", err);
+            }).catch(function () {
+              // Graceful fallback for mobile browsers where requestFullscreen is restricted
+              everFullscreen = true;
+              if (fsGate) fsGate.setAttribute("hidden", "");
             });
-          } else if (fsGate) {
-            fsGate.setAttribute("hidden", "");
+          } else {
+            everFullscreen = true;
+            if (fsGate) fsGate.setAttribute("hidden", "");
           }
         } catch (e) {
-          console.warn("Fullscreen call exception:", e);
+          everFullscreen = true;
+          if (fsGate) fsGate.setAttribute("hidden", "");
         }
+      } else {
+        // iOS Safari or browser without standard fullscreen API
+        everFullscreen = true;
+        if (fsGate) fsGate.setAttribute("hidden", "");
+        window.scrollTo(0, 0);
       }
     }
 
@@ -185,7 +207,7 @@
       });
     }
 
-    // Toggle Questions dialog / modal
+    // Toggle Questions dialog / bottom sheet
     var toggleQuestionsBtns = Array.prototype.slice.call(
       document.querySelectorAll("[data-cbt-toggle-questions]")
     );
@@ -194,13 +216,37 @@
         if (questionsModal) questionsModal.removeAttribute("hidden");
       });
     });
+
+    var closeQuestionsBtns = Array.prototype.slice.call(
+      document.querySelectorAll("[data-cbt-close-questions]")
+    );
     closeQuestionsBtns.forEach(function (btn) {
       btn.addEventListener("click", function () {
         if (questionsModal) questionsModal.setAttribute("hidden", "");
       });
     });
 
-    // Helper: submit anti-cheat violation to lock exam
+    // Modal submit button triggers exam submission
+    if (modalSubmitBtn && examForm) {
+      modalSubmitBtn.addEventListener("click", function () {
+        if (confirm("Yakin ingin menyelesaikan dan mengumpulkan seluruh jawaban ujian sekarang?")) {
+          if (examForm.requestSubmit) examForm.requestSubmit();
+          else examForm.submit();
+        }
+      });
+    }
+
+    // Resume button from anti-cheat warning
+    if (strikeResumeBtn) {
+      strikeResumeBtn.addEventListener("click", function () {
+        if (strikeModal) strikeModal.setAttribute("hidden", "");
+        if (!isFullscreen() && (document.fullscreenEnabled || document.webkitFullscreenEnabled)) {
+          enterFullscreen();
+        }
+      });
+    }
+
+    // Lock exam permanently via server form
     function triggerAntiCheat(reason) {
       var locked = kiosk.getAttribute("data-cbt-locked") === "true";
       if (locked || violationTriggered) return;
@@ -214,7 +260,43 @@
       }
     }
 
-    // Update navigation buttons, question badges, and answer letters
+    // Strike management system (warn on strike 1 & 2, permanent lock on strike 3 or critical)
+    function handleViolation(reason, isCritical) {
+      var locked = kiosk.getAttribute("data-cbt-locked") === "true";
+      if (locked || violationTriggered) return;
+
+      if (isCritical) {
+        triggerAntiCheat(reason);
+        return;
+      }
+
+      strikeCount++;
+      if (strikeCount >= MAX_STRIKES) {
+        triggerAntiCheat(
+          "Pelanggaran anti-curang mencapai batas maksimal (" +
+            strikeCount +
+            "/" +
+            MAX_STRIKES +
+            "): " +
+            reason
+        );
+      } else {
+        if (strikeModal) {
+          if (strikeBadge) {
+            strikeBadge.textContent = "Pelanggaran " + strikeCount + "/" + MAX_STRIKES;
+          }
+          if (strikeTitle) {
+            strikeTitle.textContent = "Aktivitas Mencurigakan Terdeteksi!";
+          }
+          if (strikeDesc) {
+            strikeDesc.textContent = reason;
+          }
+          strikeModal.removeAttribute("hidden");
+        }
+      }
+    }
+
+    // Update navigation palette, question badges, answer letters & submit states
     function updatePalette() {
       var totalAnswered = 0;
       steps.forEach(function (stepEl, i) {
@@ -248,7 +330,7 @@
         "[data-cbt-answered-count], [data-cbt-answered-badge]"
       );
       countBadges.forEach(function (b) {
-        b.textContent = totalAnswered + "/" + steps.length + " Terjawab";
+        b.textContent = totalAnswered + "/" + steps.length;
       });
     }
 
@@ -264,9 +346,24 @@
           el.classList.remove("is-active");
         }
       });
+
       if (prevBtn) prevBtn.disabled = currentIdx === 0;
-      if (nextBtn) nextBtn.disabled = currentIdx >= steps.length - 1;
+
+      var isLast = currentIdx >= steps.length - 1;
+      if (nextBtn) {
+        if (isLast) nextBtn.setAttribute("hidden", "");
+        else nextBtn.removeAttribute("hidden");
+      }
+      if (submitBtn) {
+        if (isLast) submitBtn.removeAttribute("hidden");
+        else submitBtn.setAttribute("hidden", "");
+      }
+      if (navIndicator) {
+        navIndicator.textContent = "Soal " + (currentIdx + 1) + "/" + steps.length;
+      }
+
       updatePalette();
+      window.scrollTo(0, 0);
     }
 
     // Attach click listener to all question buttons (both in aside and in modal)
@@ -304,13 +401,13 @@
 
     // Initial fullscreen status check
     if (isFullscreen()) {
+      everFullscreen = true;
       if (fsGate) fsGate.setAttribute("hidden", "");
     } else {
       if (fsGate) fsGate.removeAttribute("hidden");
     }
 
-    // Fullscreen exit detection
-    var everFullscreen = isFullscreen();
+    // Native fullscreen exit detection
     function onFullscreenChange() {
       if (isFullscreen()) {
         everFullscreen = true;
@@ -318,9 +415,7 @@
       } else {
         if (fsGate) fsGate.removeAttribute("hidden");
         if (everFullscreen) {
-          triggerAntiCheat(
-            "Keluar dari mode Layar Penuh (Fullscreen Exit) tanpa izin pengawas"
-          );
+          handleViolation("Keluar dari mode Layar Penuh (Fullscreen Exit) tanpa izin pengawas", false);
         }
       }
     }
@@ -328,13 +423,34 @@
     document.addEventListener("webkitfullscreenchange", onFullscreenChange);
     document.addEventListener("mozfullscreenchange", onFullscreenChange);
 
-    // Anti-cheat window blur guard (catches switching to other apps or windows)
+    // Cross-Platform Anti-Cheat: Visibility & App-Switch Detection (HP, Tablet, Laptop)
+    var hideStartTime = null;
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) {
+        hideStartTime = Date.now();
+      } else {
+        if (hideStartTime) {
+          var elapsedSec = (Date.now() - hideStartTime) / 1000;
+          hideStartTime = null;
+          if (elapsedSec > 3.0) {
+            handleViolation(
+              "Meninggalkan aplikasi ujian selama " + Math.round(elapsedSec) + " detik (berpindah aplikasi/tab)",
+              true
+            );
+          } else {
+            handleViolation("Terdeteksi beralih aplikasi / tab peramban", false);
+          }
+        }
+      }
+    });
+
+    // Window Blur Guard (catches notification drawer pull or alt-tab)
     var blurTimer = null;
     window.addEventListener("blur", function () {
       if (!everFullscreen && !isFullscreen()) return;
       blurTimer = setTimeout(function () {
-        triggerAntiCheat("Pindah aplikasi / jendela lain (Window Blur) terdeteksi");
-      }, 1000);
+        handleViolation("Pindah jendela / aplikasi lain (Window Blur) terdeteksi", false);
+      }, 800);
     });
     window.addEventListener("focus", function () {
       if (blurTimer) {
@@ -343,14 +459,45 @@
       }
     });
 
-    // Anti-cheat tab switch detector (visibilitychange)
-    document.addEventListener("visibilitychange", function () {
-      if (document.hidden) {
-        triggerAntiCheat("Pindah tab peramban (Tab Switch) terdeteksi");
+    // Mobile / Tablet Split-Screen Detection on Resize
+    window.addEventListener("resize", function () {
+      var activeEl = document.activeElement;
+      var isInput = activeEl && (activeEl.tagName === "INPUT" || activeEl.tagName === "TEXTAREA");
+      // When keyboard is not active, detect abnormal viewport height compression
+      if (!isInput && window.innerHeight > 0) {
+        if (window.screen && window.screen.availHeight > 500) {
+          var ratio = window.innerHeight / window.screen.availHeight;
+          if (ratio < 0.55 && window.innerHeight < 380) {
+            handleViolation("Mode Layar Terbagi (Split-Screen / Floating Window) Terdeteksi! Harap gunakan satu layar penuh.", false);
+          }
+        }
       }
     });
 
-    // Prevent prohibited shortcuts & DevTools keys
+    // Mobile & Touch Gesture Trap: Prevent back gesture navigation
+    try {
+      history.pushState({ wesmkCbt: true }, "", location.href);
+      window.addEventListener("popstate", function () {
+        history.pushState({ wesmkCbt: true }, "", location.href);
+        handleViolation("Gestur / Tombol navigasi Kembali (Back) dinonaktifkan selama ujian", false);
+      });
+    } catch (e) {}
+
+    // Disable text selection and context menu on mobile touch and desktop click
+    document.addEventListener("selectstart", function (e) {
+      var tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : "";
+      if (tag !== "textarea" && tag !== "input") {
+        e.preventDefault();
+        return false;
+      }
+    });
+
+    document.addEventListener("contextmenu", function (e) {
+      e.preventDefault();
+      return false;
+    });
+
+    // Block keyboard shortcuts & DevTools on Laptop/Desktop
     document.addEventListener("keydown", function (e) {
       var locked = kiosk.getAttribute("data-cbt-locked") === "true";
       if (locked || violationTriggered) return;
@@ -358,63 +505,43 @@
       var key = e.key;
       var ctrlOrMeta = e.ctrlKey || e.metaKey;
 
-      // Block F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+U (Inspect / DevTools)
+      // Block F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+U
       if (
         key === "F12" ||
         (ctrlOrMeta &&
           e.shiftKey &&
-          (key === "I" ||
-            key === "i" ||
-            key === "J" ||
-            key === "j" ||
-            key === "C" ||
-            key === "c")) ||
+          (key === "I" || key === "i" || key === "J" || key === "j" || key === "C" || key === "c")) ||
         (ctrlOrMeta && (key === "u" || key === "U"))
       ) {
         e.preventDefault();
         e.stopPropagation();
-        triggerAntiCheat(
-          "Mencoba membuka Developer Tools / Inspeksi kode sumber (" + key + ")"
-        );
+        handleViolation("Mencoba membuka Developer Tools (" + key + ")", true);
         return false;
       }
 
       // Block Alt+Tab or Alt+F4
       if (e.altKey && (key === "Tab" || key === "F4")) {
         e.preventDefault();
-        triggerAntiCheat("Mencoba beralih aplikasi (Alt+" + key + ")");
+        handleViolation("Mencoba beralih aplikasi (Alt+" + key + ")", false);
         return false;
       }
 
-      // Block Ctrl+N, Ctrl+T, Ctrl+W
+      // Block Ctrl+N, Ctrl+T, Ctrl+W, Ctrl+R, F5
       if (
-        ctrlOrMeta &&
-        (key === "n" ||
-          key === "N" ||
-          key === "t" ||
-          key === "T" ||
-          key === "w" ||
-          key === "W")
+        (ctrlOrMeta && (key === "n" || key === "N" || key === "t" || key === "T" || key === "w" || key === "W" || key === "r" || key === "R")) ||
+        key === "F5"
       ) {
         e.preventDefault();
-        triggerAntiCheat("Mencoba navigasi tab peramban (" + key + ")");
+        handleViolation("Mencoba navigasi / reload halaman (" + key + ")", false);
         return false;
       }
 
       // Block Copy/Cut/Paste shortcuts outside essay textarea
       if (
         ctrlOrMeta &&
-        (key === "c" ||
-          key === "C" ||
-          key === "x" ||
-          key === "X" ||
-          key === "v" ||
-          key === "V" ||
-          key === "a" ||
-          key === "A")
+        (key === "c" || key === "C" || key === "x" || key === "X" || key === "v" || key === "V" || key === "a" || key === "A")
       ) {
-        var tag =
-          e.target && e.target.tagName ? e.target.tagName.toLowerCase() : "";
+        var tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : "";
         if (tag !== "textarea") {
           e.preventDefault();
           return false;
@@ -428,24 +555,16 @@
       }
     });
 
-    // Disable context menu (right click)
-    document.addEventListener("contextmenu", function (e) {
-      e.preventDefault();
-      return false;
-    });
-
     // Block clipboard copy/cut outside textarea
     document.addEventListener("copy", function (e) {
-      var tag =
-        e.target && e.target.tagName ? e.target.tagName.toLowerCase() : "";
+      var tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : "";
       if (tag !== "textarea") {
         e.preventDefault();
         return false;
       }
     });
     document.addEventListener("cut", function (e) {
-      var tag =
-        e.target && e.target.tagName ? e.target.tagName.toLowerCase() : "";
+      var tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : "";
       if (tag !== "textarea") {
         e.preventDefault();
         return false;

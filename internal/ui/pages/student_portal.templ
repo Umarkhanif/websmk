@@ -222,9 +222,9 @@ templ StudentPortal(data ui.StudentPortalPage) {
 						<div class="info-strip">
 							<span class="info-strip-label">Ketentuan Anti-Curang Selama Ujian:</span>
 							<span>• Dilarang keluar dari mode layar penuh (Fullscreen) selama ujian berlangsung.</span>
-							<span>• Dilarang beralih ke jendela lain, aplikasi lain, atau berpindah tab peramban.</span>
-							<span>• Tombol pintasan keyboard (Alt+Tab, F12, DevTools) dan klik kanan dinonaktifkan.</span>
-							<span>• Pelanggaran fokus layar akan otomatis mengunci sesi ujian dan memerlukan verifikasi Pengawas.</span>
+							<span>• Dilarang beralih ke jendela lain, aplikasi lain (seperti WhatsApp, Google, AI), atau membagi layar (split screen).</span>
+							<span>• Tombol pintasan keyboard, klik kanan, dan pemilihan teks dinonaktifkan.</span>
+							<span>• Pelanggaran fokus layar akan tercatat di sistem pengawas dan mengunci sesi ujian secara otomatis jika melampaui batas.</span>
 						</div>
 						<div class="leader-actions">
 							<button type="button" class="button button-primary button-large" data-cbt-enter-fullscreen>
@@ -236,14 +236,37 @@ templ StudentPortal(data ui.StudentPortalPage) {
 					</div>
 				</div>
 
-				<!-- Questions Palette Modal (Accessible via 'Questions' Button) -->
+				<!-- Anti-Cheat Strike Alert Modal -->
+				<div id="cbt-strike-modal" class="cbt-strike-dialog" hidden data-cbt-strike-dialog>
+					<div class="cbt-strike-backdrop"></div>
+					<div class="cbt-strike-card card form-stack">
+						<div class="stat-card-head">
+							<span class="badge badge-danger font-bold">⚠️ PERINGATAN SISTEM ANTI-CURANG</span>
+							<span class="badge badge-warning mono font-bold" data-cbt-strike-badge>Pelanggaran 1/3</span>
+						</div>
+						<h3 data-cbt-strike-title>Aktivitas Di Luar Ujian Terdeteksi!</h3>
+						<p class="muted" data-cbt-strike-desc>
+							Anda terdeteksi berpindah aplikasi, beralih jendela/tab, atau membagi layar.
+						</p>
+						<div class="alert alert-warning">
+							@components.Icon("shield-alert", "icon")
+							<span>Fokus layar Anda dialihkan dari lembar ujian. Tetap di aplikasi ini! Jika pelanggaran mencapai 3 kali, sesi ujian akan <strong>TERKUNCI OTOMATIS</strong> dan memerlukan kode pemulihan pengawas.</span>
+						</div>
+						<button type="button" class="button button-primary button-block button-large" data-cbt-strike-resume>
+							Saya Mengerti &amp; Lanjutkan Ujian
+						</button>
+					</div>
+				</div>
+
+				<!-- Questions Palette Modal / Bottom Sheet -->
 				<div id="cbt-questions-modal" class="cbt-questions-dialog" hidden data-cbt-questions-dialog>
 					<div class="cbt-questions-backdrop" data-cbt-close-questions></div>
 					<div class="cbt-questions-sheet card form-stack">
+						<div class="cbt-sheet-handle"></div>
 						<div class="stat-card-head">
 							<div>
-								<span class="eyebrow">Daftar Nomor Soal (Questions)</span>
-								<h3>Navigasi Soal PAS CBT</h3>
+								<span class="eyebrow">Navigasi Soal CBT</span>
+								<h3>Daftar Nomor Soal</h3>
 							</div>
 							<button type="button" class="button button-ghost button-small" data-cbt-close-questions aria-label="Tutup Daftar Soal">
 								@components.Icon("x", "icon")
@@ -264,53 +287,64 @@ templ StudentPortal(data ui.StudentPortalPage) {
 						</div>
 						<div class="info-strip">
 							<span class="info-strip-label">Keterangan:</span>
-							<span>Huruf pilihan jawaban yang telah Anda pilih ditampilkan tepat di atas nomor masing-masing soal.</span>
+							<span>Huruf pilihan jawaban atau tanda centang (esai) ditampilkan tepat di atas nomor masing-masing soal.</span>
 						</div>
-						<button type="button" class="button button-secondary button-block" data-cbt-close-questions>Kembali ke Lembar Soal</button>
+						<div class="cbt-modal-actions">
+							<button type="button" class="button button-secondary button-block" data-cbt-close-questions>Tutup Daftar Soal</button>
+							<button type="button" class="button button-primary button-block" data-cbt-trigger-submit>
+								@components.Icon("check", "icon")
+								<span>Kumpulkan Jawaban Ujian</span>
+							</button>
+						</div>
+						<div class="cbt-demo-lock-row">
+							<form method="post" action="/student/proctor-status">
+								<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+								<input type="hidden" name="status" value="LOCKED"/>
+								<input type="hidden" name="reason" value="Simulasi Uji Coba Kunci Layar (Demo Anti-Cheat)"/>
+								<button type="submit" class="button button-ghost button-small text-muted" title="Fitur Uji Pengawas">Simulasi Kunci Pengawas</button>
+							</form>
+						</div>
 					</div>
 				</div>
 
 				<div class="cbt-fullscreen-wrapper" data-cbt-kiosk data-cbt-locked="false">
 					<header class="cbt-kiosk-navbar">
 						<div class="cbt-kiosk-brand">
-							<span class="eyebrow">WESMK CBT ANTI-CURANG · ZERO-KEY SECURE KIOSK</span>
-							<h2>PAS Ganjil — Administrasi Infrastruktur Jaringan</h2>
+							<span class="cbt-badge-kiosk">PAS CBT</span>
+							<h2 class="cbt-title-kiosk">Administrasi Infrastruktur Jaringan</h2>
 						</div>
 						<div class="cbt-timer-box">
 							@components.Icon("clock", "icon")
 							<span class="quiz-timer mono" data-cbt-timer data-seconds="5400">90:00</span>
 						</div>
-						<div class="leader-actions">
+						<div class="cbt-navbar-actions">
 							<button type="button" class="button button-gold button-small cbt-questions-btn" data-cbt-toggle-questions title="Buka Daftar Nomor Soal">
 								@components.Icon("list", "icon")
-								<span>Questions (Daftar Soal)</span>
+								<span class="cbt-btn-label">Daftar Soal</span>
 								<span class="badge badge-teal mono" data-cbt-answered-count>0/{ strconv.Itoa(len(data.ExamQuestions)) }</span>
 							</button>
-							<button type="button" class="button button-ghost button-small text-white" data-cbt-reenter-fullscreen title="Pastikan Layar Penuh">
+							<button type="button" class="button button-ghost button-small text-white cbt-fs-btn" data-cbt-reenter-fullscreen title="Pastikan Layar Penuh">
 								@components.Icon("maximize", "icon")
-								<span>Layar Penuh</span>
 							</button>
-							<form method="post" action="/student/proctor-status">
-								<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-								<input type="hidden" name="status" value="LOCKED"/>
-								<input type="hidden" name="reason" value="Simulasi Pindah Tab > 1,5 Detik (Anti-Cheat Trigger)"/>
-								<button type="submit" class="button button-danger button-small">Simulasi Kunci</button>
-							</form>
 						</div>
 					</header>
 
-					<form method="post" action="/student/exam" class="cbt-kiosk-body">
+					<form id="cbt-exam-form" method="post" action="/student/exam" class="cbt-kiosk-body">
 						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 						<main class="cbt-question-pane">
 							for idx, q := range data.ExamQuestions {
 								<div class="card cbt-question-card" data-cbt-question data-index={ strconv.Itoa(idx) }>
-									<div class="stat-card-head">
+									<div class="stat-card-head cbt-q-header">
 										<div class="cbt-badges">
-											<span class="badge badge-teal font-bold">Soal #{ strconv.Itoa(q.QuestionNumber) }</span>
+											<span class="badge badge-teal font-bold">Soal { strconv.Itoa(q.QuestionNumber) } dari { strconv.Itoa(len(data.ExamQuestions)) }</span>
 											if q.KdCode != "" {
 												<span class="badge badge-neutral">{ q.KdCode }</span>
 											}
-											<span class="badge badge-gold">{ q.QuestionType }</span>
+											if q.QuestionType == "ESSAY" {
+												<span class="badge badge-gold">Uraian / Esai</span>
+											} else {
+												<span class="badge badge-neutral">Pilihan Ganda</span>
+											}
 										</div>
 									</div>
 									<div class="cbt-question-text">
@@ -318,8 +352,8 @@ templ StudentPortal(data ui.StudentPortalPage) {
 									</div>
 									if q.QuestionType == "ESSAY" {
 										<label class="field">
-											<span class="field-label">Jawaban Uraian / Analisis Konfigurasi</span>
-											<textarea class="input input-mono cbt-essay-input" rows="8" name={ "exam_q_" + strconv.Itoa(q.QuestionNumber) } placeholder="Tuliskan langkah analisis dan perintah konfigurasi jaringan secara lengkap..."></textarea>
+											<span class="field-label font-bold">Jawaban Uraian / Analisis Konfigurasi</span>
+											<textarea class="input input-mono cbt-essay-input" rows="8" name={ "exam_q_" + strconv.Itoa(q.QuestionNumber) } placeholder="Tuliskan analisis, langkah konfigurasi, atau jawaban Anda secara jelas di sini..."></textarea>
 										</label>
 									} else {
 										<div class="quiz-options">
@@ -336,17 +370,21 @@ templ StudentPortal(data ui.StudentPortalPage) {
 							}
 
 							<div class="cbt-nav-actions">
-								<button type="button" class="button button-secondary" data-cbt-prev>
+								<button type="button" class="button button-secondary cbt-nav-btn" data-cbt-prev>
 									@components.Icon("arrow-right", "icon rotate-180")
-									<span>Soal Sebelumnya</span>
+									<span class="cbt-nav-label">Sebelumnya</span>
 								</button>
-								<button type="button" class="button button-secondary cbt-questions-btn" data-cbt-toggle-questions>
+								<button type="button" class="button button-secondary cbt-nav-btn cbt-nav-center" data-cbt-toggle-questions>
 									@components.Icon("list", "icon")
-									<span>Daftar Soal</span>
+									<span data-cbt-nav-indicator>Soal 1 / { strconv.Itoa(len(data.ExamQuestions)) }</span>
 								</button>
-								<button type="button" class="button button-primary" data-cbt-next>
-									<span>Soal Berikutnya</span>
+								<button type="button" class="button button-primary cbt-nav-btn" data-cbt-next>
+									<span class="cbt-nav-label">Selanjutnya</span>
 									@components.Icon("arrow-right", "icon")
+								</button>
+								<button type="submit" class="button button-primary cbt-nav-btn cbt-submit-btn" data-cbt-submit-btn hidden>
+									@components.Icon("check", "icon")
+									<span>Kumpulkan Jawaban</span>
 								</button>
 							</div>
 						</main>
