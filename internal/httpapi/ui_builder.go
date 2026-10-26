@@ -642,6 +642,22 @@ func (s *Server) buildStudentPortal(doc map[string]any, shell ui.RoleShell, user
 		}
 	}
 
+	allGraded := examSubmitted
+	avgScore := 93
+	if examSubmitted && examScore > 0 {
+		avgScore = (examScore + 92) / 2
+	}
+	tier := "stellar"
+	if avgScore >= 91 {
+		tier = "stellar"
+	} else if avgScore >= 81 {
+		tier = "gold"
+	} else if avgScore >= 71 {
+		tier = "blue"
+	} else {
+		tier = "green"
+	}
+
 	return ui.StudentPortalPage{
 		Shell:                  shell,
 		Tab:                    tab,
@@ -662,6 +678,9 @@ func (s *Server) buildStudentPortal(doc map[string]any, shell ui.RoleShell, user
 		ReflectionComplaint:    strVal(refMap, "privateComplaintText"),
 		ExamQuestions:          examQs,
 		ExamSchedules:          schedules,
+		ExamAverageScore:       avgScore,
+		AllExamsGraded:         allGraded,
+		ExamTier:               tier,
 		Proctor:                proctor,
 		ExamSubmitted:          examSubmitted,
 		ExamScore:              examScore,

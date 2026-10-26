@@ -334,6 +334,9 @@ type StudentPortalPage struct {
 	ReflectionComplaint     string
 	ExamQuestions           []ExamQuestionView
 	ExamSchedules           []ExamScheduleView
+	ExamAverageScore        int
+	AllExamsGraded          bool
+	ExamTier                string
 	Proctor                 ProctorSessionView
 	ExamSubmitted           bool
 	ExamScore               int

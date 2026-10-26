@@ -1337,6 +1337,344 @@ textarea.input {
   box-shadow: 0 4px 16px rgba(11, 23, 48, 0.04);
 }
 
+/* Mystery Average Score Circle & Gacha Aura System */
+.cbt-mystery-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cbt-orb-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0 10px 0;
+  position: relative;
+}
+
+.cbt-mystery-orb {
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  border: 3px solid #CBD5E1;
+  background: radial-gradient(circle at 35% 35%, #FFFFFF 0%, #F8FAFC 55%, #E2E8F0 100%);
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 16px rgba(11, 23, 48, 0.06);
+  outline: none;
+  padding: 0;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cbt-mystery-orb:hover {
+  transform: translateY(-2px) scale(1.03);
+}
+
+.cbt-orb-ring {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 2px dashed rgba(203, 213, 225, 0.7);
+  pointer-events: none;
+  transition: all 0.4s ease;
+}
+
+.cbt-orb-aura {
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  opacity: 0;
+  filter: blur(14px);
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  z-index: 0;
+}
+
+.cbt-orb-core {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+.cbt-orb-symbol {
+  font-size: 56px;
+  font-weight: 800;
+  color: #64748B;
+  transition: all 0.3s ease;
+  line-height: 1;
+}
+
+.cbt-orb-score {
+  font-size: 44px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -1.5px;
+  animation: orbPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes orbPop {
+  0% { transform: scale(0.3); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Click 1: Active Glowing Aura States */
+.cbt-mystery-orb.is-aura-active {
+  transform: scale(1.05);
+}
+
+.cbt-mystery-orb.is-aura-active .cbt-orb-ring {
+  border-style: solid;
+  animation: ringSpin 8s linear infinite;
+}
+
+@keyframes ringSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Tier 1: Stellar Jade (Honkai: Star Rail) -> 91 - 100 */
+.cbt-tier-stellar .cbt-mystery-orb.is-aura-active {
+  border-color: #00F2FE;
+  background: radial-gradient(circle at 35% 35%, #FFFFFF 0%, #E0F2FE 40%, #C084FC 80%, #38BDF8 100%);
+  box-shadow: 0 0 25px rgba(0, 242, 254, 0.8), 0 0 50px rgba(168, 85, 247, 0.6), 0 0 75px rgba(236, 72, 153, 0.4);
+  animation: stellarShimmer 2.2s infinite alternate;
+}
+.cbt-tier-stellar .cbt-mystery-orb.is-aura-active .cbt-orb-ring {
+  border-color: #38BDF8;
+  box-shadow: 0 0 16px rgba(0, 242, 254, 0.7);
+}
+.cbt-tier-stellar .cbt-mystery-orb.is-aura-active .cbt-orb-symbol {
+  color: #0284C7;
+  text-shadow: 0 0 12px rgba(56, 189, 248, 0.8), 0 0 20px rgba(168, 85, 247, 0.6);
+}
+.cbt-tier-stellar .cbt-mystery-orb.is-revealed .cbt-orb-score {
+  color: #0369A1;
+  text-shadow: 0 0 12px rgba(56, 189, 248, 0.8);
+}
+
+@keyframes stellarShimmer {
+  0% { filter: hue-rotate(0deg) brightness(1); }
+  50% { filter: hue-rotate(25deg) brightness(1.15); }
+  100% { filter: hue-rotate(-20deg) brightness(1.05); }
+}
+
+/* Tier 2: Emas / Gold -> 81 - 90 */
+.cbt-tier-gold .cbt-mystery-orb.is-aura-active {
+  border-color: #F59E0B;
+  background: radial-gradient(circle at 35% 35%, #FFFFFF 0%, #FEF9C3 45%, #FDE047 75%, #F59E0B 100%);
+  box-shadow: 0 0 25px rgba(245, 158, 11, 0.85), 0 0 50px rgba(251, 191, 36, 0.6), 0 0 70px rgba(217, 119, 6, 0.35);
+  animation: goldPulse 1.8s infinite alternate;
+}
+.cbt-tier-gold .cbt-mystery-orb.is-aura-active .cbt-orb-ring {
+  border-color: #F59E0B;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.6);
+}
+.cbt-tier-gold .cbt-mystery-orb.is-aura-active .cbt-orb-symbol {
+  color: #B45309;
+  text-shadow: 0 0 12px rgba(245, 158, 11, 0.8);
+}
+.cbt-tier-gold .cbt-mystery-orb.is-revealed .cbt-orb-score {
+  color: #92400E;
+  text-shadow: 0 0 12px rgba(251, 191, 36, 0.7);
+}
+
+@keyframes goldPulse {
+  0% { transform: scale(1.04); box-shadow: 0 0 20px rgba(245, 158, 11, 0.7); }
+  100% { transform: scale(1.08); box-shadow: 0 0 38px rgba(245, 158, 11, 0.95), 0 0 60px rgba(251, 191, 36, 0.7); }
+}
+
+/* Tier 3: Biru / Azure Blue -> 71 - 80 */
+.cbt-tier-blue .cbt-mystery-orb.is-aura-active {
+  border-color: #3B82F6;
+  background: radial-gradient(circle at 35% 35%, #FFFFFF 0%, #DBEAFE 45%, #93C5FD 75%, #3B82F6 100%);
+  box-shadow: 0 0 25px rgba(59, 130, 246, 0.85), 0 0 50px rgba(96, 165, 250, 0.6);
+  animation: bluePulse 1.8s infinite alternate;
+}
+.cbt-tier-blue .cbt-mystery-orb.is-aura-active .cbt-orb-ring {
+  border-color: #3B82F6;
+  box-shadow: 0 0 16px rgba(59, 130, 246, 0.6);
+}
+.cbt-tier-blue .cbt-mystery-orb.is-aura-active .cbt-orb-symbol {
+  color: #1D4ED8;
+  text-shadow: 0 0 12px rgba(59, 130, 246, 0.8);
+}
+.cbt-tier-blue .cbt-mystery-orb.is-revealed .cbt-orb-score {
+  color: #1E40AF;
+  text-shadow: 0 0 12px rgba(59, 130, 246, 0.7);
+}
+
+@keyframes bluePulse {
+  0% { transform: scale(1.04); box-shadow: 0 0 20px rgba(59, 130, 246, 0.7); }
+  100% { transform: scale(1.08); box-shadow: 0 0 38px rgba(59, 130, 246, 0.95); }
+}
+
+/* Tier 4: Hijau / Emerald Green -> 1 - 70 */
+.cbt-tier-green .cbt-mystery-orb.is-aura-active {
+  border-color: #10B981;
+  background: radial-gradient(circle at 35% 35%, #FFFFFF 0%, #D1FAE5 45%, #6EE7B7 75%, #10B981 100%);
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.85), 0 0 50px rgba(52, 211, 153, 0.6);
+  animation: greenPulse 1.8s infinite alternate;
+}
+.cbt-tier-green .cbt-mystery-orb.is-aura-active .cbt-orb-ring {
+  border-color: #10B981;
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.6);
+}
+.cbt-tier-green .cbt-mystery-orb.is-aura-active .cbt-orb-symbol {
+  color: #047857;
+  text-shadow: 0 0 12px rgba(16, 185, 129, 0.8);
+}
+.cbt-tier-green .cbt-mystery-orb.is-revealed .cbt-orb-score {
+  color: #065F46;
+  text-shadow: 0 0 12px rgba(16, 185, 129, 0.7);
+}
+
+@keyframes greenPulse {
+  0% { transform: scale(1.04); box-shadow: 0 0 20px rgba(16, 185, 129, 0.7); }
+  100% { transform: scale(1.08); box-shadow: 0 0 38px rgba(16, 185, 129, 0.95); }
+}
+
+/* Captions & Tier Pills */
+.cbt-orb-caption {
+  text-align: center;
+  min-height: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.cbt-orb-hint {
+  font-size: 0.8rem;
+  margin: 0;
+  line-height: 1.4;
+  color: #64748B;
+  transition: all 0.2s ease;
+}
+
+.cbt-tier-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.pill-stellar {
+  background: linear-gradient(135deg, #E0F2FE 0%, #F3E8FF 100%);
+  color: #7E22CE;
+  border: 1px solid #C084FC;
+}
+
+.pill-gold {
+  background: #FEF3C7;
+  color: #92400E;
+  border: 1px solid #FCD34D;
+}
+
+.pill-blue {
+  background: #DBEAFE;
+  color: #1E40AF;
+  border: 1px solid #93C5FD;
+}
+
+.pill-green {
+  background: #D1FAE5;
+  color: #065F46;
+  border: 1px solid #6EE7B7;
+}
+
+/* Quick Tier Tester */
+.cbt-tier-tester {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 8px 10px;
+  margin-top: 4px;
+}
+
+.cbt-tester-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #64748B;
+}
+
+.cbt-tester-btns {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+
+.cbt-tester-btn {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 4px 2px;
+  border-radius: 6px;
+  border: 1px solid #CBD5E1;
+  background: #FFFFFF;
+  cursor: pointer;
+  color: #334155;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.cbt-tester-btn:hover {
+  transform: translateY(-1px);
+}
+
+.cbt-tester-btn.btn-stellar:hover, .cbt-tester-btn.btn-stellar.is-active {
+  background: #F3E8FF;
+  border-color: #A855F7;
+  color: #7E22CE;
+}
+
+.cbt-tester-btn.btn-gold:hover, .cbt-tester-btn.btn-gold.is-active {
+  background: #FEF3C7;
+  border-color: #F59E0B;
+  color: #92400E;
+}
+
+.cbt-tester-btn.btn-blue:hover, .cbt-tester-btn.btn-blue.is-active {
+  background: #DBEAFE;
+  border-color: #3B82F6;
+  color: #1E40AF;
+}
+
+.cbt-tester-btn.btn-green:hover, .cbt-tester-btn.btn-green.is-active {
+  background: #D1FAE5;
+  border-color: #10B981;
+  color: #065F46;
+}
+
+.cbt-sidebar-sep {
+  height: 1px;
+  background: #E2E8F0;
+  margin: 6px 0;
+  border: none;
+}
+
+.cbt-sidebar-schedule-wrap {
+  margin-top: 4px;
+}
+
 .cbt-sidebar-schedule-list {
   display: flex;
   flex-direction: column;

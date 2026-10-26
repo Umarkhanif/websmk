@@ -175,29 +175,82 @@ templ StudentPortal(data ui.StudentPortalPage) {
 					}
 				</section>
 
-				<!-- Right Sidebar: Jadwal Mata Pelajaran (Compact / Setengah Tinggi) -->
+				<!-- Right Sidebar: Lingkaran Nilai Rata-Rata + Jadwal Mata Pelajaran -->
 				<aside class="card form-stack cbt-lobby-sidebar">
-					<div class="stat-card-head">
-						<div>
-							<span class="eyebrow">Jadwal Ujian</span>
-							<h3>Mata Pelajaran</h3>
+					<!-- Mystery Average Score Circle (Reveal System) -->
+					<div class="cbt-mystery-container" data-cbt-orb-container data-tier={ data.ExamTier } data-score={ strconv.Itoa(data.ExamAverageScore) }>
+						<div class="stat-card-head">
+							<div>
+								<span class="eyebrow">Rata-Rata Asesmen</span>
+								<h3>Nilai Kelulusan</h3>
+							</div>
+							<span class="badge badge-neutral mono font-bold" data-cbt-orb-status-badge>
+								if data.AllExamsGraded {
+									<span>Siap Dibuka</span>
+								} else {
+									<span>Terkunci</span>
+								}
+							</span>
 						</div>
-						<span class="badge badge-teal mono font-bold">{ strconv.Itoa(len(data.ExamSchedules)) } Mapel</span>
+
+						<div class="cbt-orb-stage">
+							<button type="button" class="cbt-mystery-orb" data-cbt-mystery-orb aria-label="Buka Nilai Rata-rata Ujian">
+								<div class="cbt-orb-ring"></div>
+								<div class="cbt-orb-aura"></div>
+								<div class="cbt-orb-core">
+									<span class="cbt-orb-symbol font-bold" data-cbt-orb-symbol>?</span>
+									<span class="cbt-orb-score mono font-bold" data-cbt-orb-score hidden>{ strconv.Itoa(data.ExamAverageScore) }</span>
+								</div>
+							</button>
+						</div>
+
+						<div class="cbt-orb-caption">
+							<p class="cbt-orb-hint muted" data-cbt-orb-hint>
+								Ketuk lingkaran misteri untuk mendeteksi aura nilai!
+							</p>
+							<div class="cbt-tier-pill" data-cbt-tier-pill hidden>
+								<span class="cbt-tier-name font-bold" data-cbt-tier-name>-</span>
+							</div>
+						</div>
+
+						<!-- Quick Aura Tier Preview Switcher (Uji Coba Warna Cahaya) -->
+						<div class="cbt-tier-tester">
+							<span class="cbt-tester-label">Uji Coba Efek Cahaya:</span>
+							<div class="cbt-tester-btns">
+								<button type="button" class="cbt-tester-btn btn-stellar" data-cbt-set-tier="stellar" data-test-score="95" title="91 - 100: Stellar Jade (Honkai: Star Rail)">Stellar (95)</button>
+								<button type="button" class="cbt-tester-btn btn-gold" data-cbt-set-tier="gold" data-test-score="88" title="81 - 90: Cahaya Emas">Emas (88)</button>
+								<button type="button" class="cbt-tester-btn btn-blue" data-cbt-set-tier="blue" data-test-score="78" title="71 - 80: Cahaya Biru">Biru (78)</button>
+								<button type="button" class="cbt-tester-btn btn-green" data-cbt-set-tier="green" data-test-score="68" title="1 - 70: Cahaya Hijau">Hijau (68)</button>
+							</div>
+						</div>
 					</div>
 
-					<div class="cbt-sidebar-schedule-list">
-						for _, s := range data.ExamSchedules {
-							<div class={ "cbt-sidebar-item cbt-sidebar-item-" + strings.ToLower(s.Status) }>
-								<div class="cbt-sidebar-item-info">
-									<strong class="cbt-sidebar-subject">{ s.SubjectName }</strong>
-								</div>
-								<div class="cbt-sidebar-item-badge">
-									<span class={ "badge " + s.BadgeClass + " font-bold" }>
-										{ s.StatusBadge }
-									</span>
-								</div>
+					<div class="cbt-sidebar-sep"></div>
+
+					<!-- Jadwal Mata Pelajaran (Ditata Turun ke Bawah Lingkaran) -->
+					<div class="cbt-sidebar-schedule-wrap form-stack">
+						<div class="stat-card-head">
+							<div>
+								<span class="eyebrow">Jadwal Ujian</span>
+								<h3>Mata Pelajaran</h3>
 							</div>
-						}
+							<span class="badge badge-teal mono font-bold">{ strconv.Itoa(len(data.ExamSchedules)) } Mapel</span>
+						</div>
+
+						<div class="cbt-sidebar-schedule-list">
+							for _, s := range data.ExamSchedules {
+								<div class={ "cbt-sidebar-item cbt-sidebar-item-" + strings.ToLower(s.Status) }>
+									<div class="cbt-sidebar-item-info">
+										<strong class="cbt-sidebar-subject">{ s.SubjectName }</strong>
+									</div>
+									<div class="cbt-sidebar-item-badge">
+										<span class={ "badge " + s.BadgeClass + " font-bold" }>
+											{ s.StatusBadge }
+										</span>
+									</div>
+								</div>
+							}
+						</div>
 					</div>
 				</aside>
 			</div>

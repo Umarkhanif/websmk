@@ -624,6 +624,117 @@
     show(0);
   }
 
+  // 6. Gacha Mystery Orb for Average Exam Score with 2-Stage Click & Aura Lighting Tiers
+  function initMysteryOrb() {
+    var container = document.querySelector("[data-cbt-orb-container]");
+    if (!container || container._bound) return;
+    container._bound = true;
+
+    var orbBtn = container.querySelector("[data-cbt-mystery-orb]");
+    var symbolEl = container.querySelector("[data-cbt-orb-symbol]");
+    var scoreEl = container.querySelector("[data-cbt-orb-score]");
+    var hintEl = container.querySelector("[data-cbt-orb-hint]");
+    var pillEl = container.querySelector("[data-cbt-tier-pill]");
+    var tierNameEl = container.querySelector("[data-cbt-tier-name]");
+    var testerBtns = Array.prototype.slice.call(container.querySelectorAll("[data-cbt-set-tier]"));
+
+    var currentTier = container.getAttribute("data-tier") || "stellar";
+    var currentScore = parseInt(container.getAttribute("data-score") || "95", 10);
+    var clickStage = 0; // 0: hidden ?, 1: aura glowing, 2: revealed score
+
+    var tierInfo = {
+      stellar: {
+        cls: "cbt-tier-stellar",
+        pillCls: "pill-stellar",
+        name: "✦ TIER STELLAR JADE (91 - 100) ✦",
+        auraHint: "✨ Cahaya Prisma Stellar Jade (Honkai: Star Rail) terdeteksi! Ketuk sekali lagi untuk membuka nilai..."
+      },
+      gold: {
+        cls: "cbt-tier-gold",
+        pillCls: "pill-gold",
+        name: "★ TIER EMAS (81 - 90) ★",
+        auraHint: "✨ Cahaya Emas Murni memancar! Ketuk sekali lagi untuk membuka nilai..."
+      },
+      blue: {
+        cls: "cbt-tier-blue",
+        pillCls: "pill-blue",
+        name: "◆ TIER BIRU (71 - 80) ◆",
+        auraHint: "✨ Cahaya Biru Terang memancar! Ketuk sekali lagi untuk membuka nilai..."
+      },
+      green: {
+        cls: "cbt-tier-green",
+        pillCls: "pill-green",
+        name: "● TIER HIJAU (1 - 70) ●",
+        auraHint: "✨ Cahaya Hijau Zamrud memancar! Ketuk sekali lagi untuk membuka nilai..."
+      }
+    };
+
+    function applyTier(tier, score) {
+      currentTier = tier;
+      currentScore = score;
+      container.classList.remove("cbt-tier-stellar", "cbt-tier-gold", "cbt-tier-blue", "cbt-tier-green");
+      var info = tierInfo[currentTier] || tierInfo.stellar;
+      container.classList.add(info.cls);
+      if (scoreEl) scoreEl.textContent = currentScore;
+    }
+
+    applyTier(currentTier, currentScore);
+
+    function triggerClick() {
+      var info = tierInfo[currentTier] || tierInfo.stellar;
+
+      if (clickStage === 0) {
+        // Stage 1: Aura glows with tier color!
+        clickStage = 1;
+        orbBtn.classList.add("is-aura-active");
+        orbBtn.classList.remove("is-revealed");
+        if (symbolEl) symbolEl.removeAttribute("hidden");
+        if (scoreEl) scoreEl.setAttribute("hidden", "");
+        if (pillEl) pillEl.setAttribute("hidden", "");
+        if (hintEl) hintEl.textContent = info.auraHint;
+      } else if (clickStage === 1) {
+        // Stage 2: Reveal the actual average score!
+        clickStage = 2;
+        orbBtn.classList.add("is-revealed");
+        if (symbolEl) symbolEl.setAttribute("hidden", "");
+        if (scoreEl) scoreEl.removeAttribute("hidden");
+        if (pillEl) {
+          pillEl.removeAttribute("hidden");
+          pillEl.className = "cbt-tier-pill " + info.pillCls;
+        }
+        if (tierNameEl) tierNameEl.textContent = info.name;
+        if (hintEl) hintEl.textContent = "Nilai rata-rata seluruh ujian: " + currentScore + "/100 (Ketuk lagi untuk ulang)";
+      } else {
+        // Stage 3: Reset so user can play animation again!
+        clickStage = 0;
+        orbBtn.classList.remove("is-aura-active", "is-revealed");
+        if (symbolEl) symbolEl.removeAttribute("hidden");
+        if (scoreEl) scoreEl.setAttribute("hidden", "");
+        if (pillEl) pillEl.setAttribute("hidden", "");
+        if (hintEl) hintEl.textContent = "Ketuk lingkaran untuk mendeteksi aura nilai!";
+      }
+    }
+
+    if (orbBtn) {
+      orbBtn.addEventListener("click", triggerClick);
+    }
+
+    // Tester buttons for immediate verification of all 4 aura colors
+    testerBtns.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var t = btn.getAttribute("data-cbt-set-tier");
+        var s = parseInt(btn.getAttribute("data-test-score") || "90", 10);
+        testerBtns.forEach(function (b) { b.classList.remove("is-active"); });
+        btn.classList.add("is-active");
+
+        applyTier(t, s);
+        // Reset to initial and immediately trigger Stage 1 so user immediately sees the aura!
+        clickStage = 0;
+        triggerClick();
+      });
+    });
+  }
+
   // Global delegated click listener
   document.addEventListener("click", function (e) {
     var toggleBtn = e.target.closest("[data-drawer-toggle]");
@@ -673,10 +784,12 @@
   document.addEventListener("DOMContentLoaded", function () {
     initCbtKiosk();
     initRewindSlides();
+    initMysteryOrb();
   });
 
   document.addEventListener("htmx:afterSwap", function () {
     initCbtKiosk();
     initRewindSlides();
+    initMysteryOrb();
   });
 })();
