@@ -262,6 +262,7 @@
       "questionNumber": 1,
       "questionType": "MCQ",
       "renderShadowCanvas": true,
+      "questionText": "Sebuah switch Catalyst 2960 menghubungkan VLAN 10 (Keuangan) dan VLAN 20 (Teknik). Jika interface Gi0/1 menuju router MikroTik diset ke port mode trunk, encapsulation apa yang wajib diaktifkan pada sub-interface router?",
       "templateContent": "Sebuah switch Catalyst 2960 menghubungkan VLAN {{vlan_keu}} (Keuangan) dan VLAN {{vlan_tek}} (Teknik). Jika interface Gi0/1 menuju router MikroTik diset ke port mode {{port_mode}}, encapsulation apa yang wajib diaktifkan pada sub-interface router?",
       "dynamicVars": {
         "vlan_keu": 10,
@@ -291,7 +292,8 @@
         }
       ],
       "correctKey": "A",
-      "competencyTag": "VLAN Trunking & Routing"
+      "competencyTag": "VLAN Trunking & Routing",
+      "kdCode": "KD 3.1"
     },
     {
       "id": "q-02",
@@ -299,6 +301,7 @@
       "questionNumber": 2,
       "questionType": "MCQ",
       "renderShadowCanvas": false,
+      "questionText": "Diberikan network ID 192.168.42.0/26. Berapakah jumlah host yang valid dapat dialokasikan pada subnet tersebut dan berapa subnet mask desimalnya?",
       "templateContent": "Diberikan network ID 192.168.{{subnet_id}}.0/{{cidr_prefix}}. Berapakah jumlah host yang valid dapat dialokasikan pada subnet tersebut dan berapa subnet mask desimalnya?",
       "dynamicVars": {
         "subnet_id": 42,
@@ -327,21 +330,116 @@
         }
       ],
       "correctKey": "A",
-      "competencyTag": "Subnetting CIDR Kelas C"
+      "competencyTag": "Subnetting CIDR Kelas C",
+      "kdCode": "KD 3.2"
     },
     {
       "id": "q-03",
       "examId": "exam-cbt-tkj-01",
       "questionNumber": 3,
+      "questionType": "MCQ",
+      "renderShadowCanvas": false,
+      "questionText": "Pada router gateway MikroTik RouterOS, konfigurasi firewall NAT manakah yang tepat agar seluruh client pada jaringan lokal 192.168.10.0/24 dapat mengakses internet publik menggunakan IP publik yang terpasang pada interface ether1 WAN?",
+      "templateContent": "Pada router gateway MikroTik RouterOS, konfigurasi firewall NAT manakah yang tepat agar seluruh client pada jaringan lokal 192.168.10.0/24 dapat mengakses internet publik menggunakan IP publik yang terpasang pada interface ether1 WAN?",
+      "options": [
+        {
+          "key": "A",
+          "text": "/ip firewall nat add chain=srcnat out-interface=ether1 action=masquerade"
+        },
+        {
+          "key": "B",
+          "text": "/ip firewall nat add chain=dstnat in-interface=ether1 action=redirect to-ports=80"
+        },
+        {
+          "key": "C",
+          "text": "/ip firewall nat add chain=srcnat in-interface=ether1 action=accept"
+        },
+        {
+          "key": "D",
+          "text": "/ip firewall filter add chain=forward out-interface=ether1 action=drop"
+        },
+        {
+          "key": "E",
+          "text": "/ip firewall nat add chain=dstnat out-interface=ether1 action=masquerade"
+        }
+      ],
+      "correctKey": "A",
+      "competencyTag": "Firewall NAT Masquerade",
+      "kdCode": "KD 3.3"
+    },
+    {
+      "id": "q-04",
+      "examId": "exam-cbt-tkj-01",
+      "questionNumber": 4,
+      "questionType": "MCQ",
+      "renderShadowCanvas": false,
+      "questionText": "Dalam arsitektur routing dinamis OSPF multi-area, sebutan untuk router yang menghubungkan Area 0 (Backbone Area) dengan area non-backbone (seperti Area 10 atau Area 20) untuk merangkum dan mendistribusikan LSA adalah...",
+      "templateContent": "Dalam arsitektur routing dinamis OSPF multi-area, sebutan untuk router yang menghubungkan Area 0 (Backbone Area) dengan area non-backbone (seperti Area 10 atau Area 20) untuk merangkum dan mendistribusikan LSA adalah...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Autonomous System Boundary Router (ASBR)"
+        },
+        {
+          "key": "B",
+          "text": "Area Border Router (ABR)"
+        },
+        {
+          "key": "C",
+          "text": "Internal Designated Router (IDR)"
+        },
+        {
+          "key": "D",
+          "text": "Backbone Link Router (BLR)"
+        },
+        {
+          "key": "E",
+          "text": "Virtual Link Peer Router (VLPR)"
+        }
+      ],
+      "correctKey": "B",
+      "competencyTag": "Perutean Dinamis OSPF Multi-Area",
+      "kdCode": "KD 3.4"
+    },
+    {
+      "id": "q-05",
+      "examId": "exam-cbt-tkj-01",
+      "questionNumber": 5,
       "questionType": "ESSAY",
       "renderShadowCanvas": false,
+      "questionText": "Jelaskan prosedur troubleshooting jika seluruh PC client di Lab TKJ (VLAN 30) tidak memperoleh IP address otomatis dari DHCP Server MikroTik (indikator IP 169.254.x.x APIPA). Sebutkan minimal 3 langkah verifikasi berurutan beserta analisis penyebabnya.",
       "templateContent": "Jelaskan prosedur troubleshooting jika seluruh PC client di Lab TKJ (VLAN {{vlan_lab}}) tidak memperoleh IP address otomatis dari DHCP Server MikroTik (indikator IP {{apipa_prefix}} APIPA). Sebutkan minimal 3 langkah verifikasi berurutan beserta analisis penyebabnya.",
       "dynamicVars": {
         "vlan_lab": 30,
         "apipa_prefix": "169.254.x.x"
       },
       "essayRubric": "Harus memuat: verifikasi physical cable/link light, verifikasi DHCP Pool/Lease MikroTik, firewall filter block UDP 67/68, dan IP helper address jika lintas VLAN.",
-      "competencyTag": "Troubleshooting DHCP & APIPA"
+      "competencyTag": "Troubleshooting DHCP & APIPA",
+      "kdCode": "KD 4.1 (Praktik)"
+    },
+    {
+      "id": "q-06",
+      "examId": "exam-cbt-tkj-01",
+      "questionNumber": 6,
+      "questionType": "ESSAY",
+      "renderShadowCanvas": false,
+      "questionText": "Sebuah switch manageable di ruang server sekolah mendeteksi serangan MAC Address Table Flooding yang menyebabkan switch membroadcast frame ke semua port. Rancanglah implementasi fitur Port Security pada port switch tersebut! Jelaskan konfigurasi maximum MAC address, sticky learning, dan perbedaan aksi violation: 'protect', 'restrict', serta 'shutdown'!",
+      "templateContent": "Sebuah switch manageable di ruang server sekolah mendeteksi serangan MAC Address Table Flooding yang menyebabkan switch membroadcast frame ke semua port. Rancanglah implementasi fitur Port Security pada port switch tersebut! Jelaskan konfigurasi maximum MAC address, sticky learning, dan perbedaan aksi violation: 'protect', 'restrict', serta 'shutdown'!",
+      "essayRubric": "Harus memuat: perintah 'switchport port-security maximum', 'switchport port-security mac-address sticky', serta penjelasan bahwa protect (drop paket diam-diam), restrict (drop paket + kirim log/SNMP trap), dan shutdown (port masuk err-disable status).",
+      "competencyTag": "Keamanan Switch & Port Security",
+      "kdCode": "KD 4.2 (Praktik)"
+    },
+    {
+      "id": "q-07",
+      "examId": "exam-cbt-tkj-01",
+      "questionNumber": 7,
+      "questionType": "ESSAY",
+      "renderShadowCanvas": false,
+      "questionText": "SMK Negeri 1 memiliki total bandwidth internet 100 Mbps untuk melayani 3 divisi: Ruang Guru & TU (prioritas tertinggi), Lab Komputer Siswa (prioritas sedang), dan WiFi Tamu (prioritas terendah). Rancanglah skema manajemen bandwidth menggunakan Queue Tree atau Simple Queue MikroTik dengan parameter limit-at (CIR/jaminan) dan max-limit (MIR/puncak) agar lalu lintas data ujian tidak terganggu aktivitas streaming/unduhan!",
+      "templateContent": "SMK Negeri 1 memiliki total bandwidth internet 100 Mbps untuk melayani 3 divisi: Ruang Guru & TU (prioritas tertinggi), Lab Komputer Siswa (prioritas sedang), dan WiFi Tamu (prioritas terendah). Rancanglah skema manajemen bandwidth menggunakan Queue Tree atau Simple Queue MikroTik dengan parameter limit-at (CIR/jaminan) dan max-limit (MIR/puncak) agar lalu lintas data ujian tidak terganggu aktivitas streaming/unduhan!",
+      "essayRubric": "Harus memuat: Parent Queue 100 Mbps, pembagian limit-at minimal garansi (misal Guru 40M, Lab 40M, Tamu 10M), max-limit pembatasan saat jaringan sibuk, serta penentuan angka priority (priority 1 tertinggi untuk guru/administrasi, priority 4 untuk lab siswa, priority 8 untuk tamu).",
+      "competencyTag": "Manajemen Bandwidth & QoS",
+      "kdCode": "KD 4.3 (Praktik)"
     }
   ],
   "proctorStudents": [
