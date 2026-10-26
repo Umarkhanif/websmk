@@ -283,7 +283,7 @@
       "room": "Lab Komputer TKJ 1",
       "sessionNumber": 2,
       "status": "WAITING",
-      "statusBadge": "Menunggu Sesi (10.30 WIB)",
+      "statusBadge": "Menunggu (10.30 WIB)",
       "badgeClass": "badge-warning",
       "actionUrl": "",
       "note": "Sesi 2 Hari Ini (Akan dibuka otomatis pukul 10:30 WIB)"
@@ -299,7 +299,7 @@
       "room": "Lab Komputer TKJ 2",
       "sessionNumber": 1,
       "status": "SUBMITTED",
-      "statusBadge": "Sudah Selesai Dikumpulkan",
+      "statusBadge": "Sudah Selesai",
       "badgeClass": "badge-teal",
       "score": 92,
       "actionUrl": "",
@@ -316,7 +316,7 @@
       "room": "Ruang Teori 12 TKJ 1",
       "sessionNumber": 1,
       "status": "UPCOMING",
-      "statusBadge": "Belum Dibuka oleh Guru",
+      "statusBadge": "Belum Dibuka",
       "badgeClass": "badge-neutral",
       "actionUrl": "",
       "note": "Ruang ujian belum dibuka oleh guru pengampu"

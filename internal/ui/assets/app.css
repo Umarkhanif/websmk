@@ -1316,184 +1316,89 @@ textarea.input {
   color: var(--teal);
 }
 
-/* CBT Exam Lobby & Subject Schedule Grid */
-.cbt-lobby-header {
-  border-left: 4px solid var(--teal);
-}
-
-.cbt-schedule-header {
-  margin-top: 8px;
-}
-
-.cbt-schedule-grid {
+/* CBT Lobby 2-Column Layout (Main Exam Card + Compact Right Sidebar) */
+.cbt-lobby-layout {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-  gap: 18px;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+  align-items: start;
 }
 
-.cbt-exam-card {
+.cbt-lobby-main {
+  min-width: 0;
+}
+
+.cbt-lobby-sidebar {
+  min-width: 0;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(11, 23, 48, 0.04);
+}
+
+.cbt-sidebar-schedule-list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding: 22px;
-  border-radius: 16px;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.cbt-sidebar-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
   border: 1.5px solid #E2E8F0;
-  background: #FFFFFF;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(11, 23, 48, 0.04);
-}
-
-.cbt-card-ready {
-  border-color: #0A6C74;
-  border-left: 5px solid #0A6C74;
-  box-shadow: 0 6px 20px rgba(10, 108, 116, 0.1);
-  background: #FCFDFE;
-}
-
-.cbt-card-submitted {
-  border-left: 5px solid #0D9488;
   background: #F8FAFC;
+  transition: all 0.15s ease;
 }
 
-.cbt-card-waiting {
-  border-left: 5px solid #E8B84A;
+.cbt-sidebar-item-ready {
+  border-left: 4px solid #0A6C74;
+  border-color: #0A6C74;
+  background: #F0FDFA;
+}
+
+.cbt-sidebar-item-waiting {
+  border-left: 4px solid #E8B84A;
   background: #FFFDF8;
 }
 
-.cbt-card-upcoming {
-  border-left: 5px solid #CBD5E1;
+.cbt-sidebar-item-submitted {
+  border-left: 4px solid #0D9488;
   background: #F8FAFC;
-  opacity: 0.92;
 }
 
-.cbt-session-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.8rem;
-  font-weight: 600;
+.cbt-sidebar-item-upcoming {
+  border-left: 4px solid #CBD5E1;
+  background: #F8FAFC;
+  opacity: 0.85;
 }
 
-.cbt-mapel-head {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.cbt-mapel-title {
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: #0F172A;
-  margin: 0;
+.cbt-sidebar-subject {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #1E293B;
   line-height: 1.35;
 }
 
-.cbt-mapel-teacher {
-  font-size: 0.88rem;
-  margin: 0;
+.cbt-sidebar-item-badge {
+  flex-shrink: 0;
 }
 
-.cbt-exam-meta-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  padding: 12px 14px;
-  background: #F1F5F9;
-  border-radius: 10px;
+.cbt-sidebar-item-badge .badge {
+  font-size: 0.75rem;
+  padding: 3px 8px;
+  white-space: nowrap;
 }
 
-.cbt-meta-item {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.cbt-meta-label {
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #64748B;
-  font-weight: 700;
-}
-
-.cbt-meta-value {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #1E293B;
-}
-
-.cbt-exam-note {
-  display: flex;
-  align-items: flex-start;
-  gap: 6px;
-  font-size: 0.82rem;
-  color: #64748B;
-  line-height: 1.45;
-  margin: 0;
-}
-
-.cbt-exam-card-action {
-  margin-top: auto;
-  padding-top: 6px;
-}
-
-.cbt-btn-ready {
-  min-height: 48px;
-  font-size: 0.95rem;
-  font-weight: 700;
-  border-radius: 10px;
-}
-
-.cbt-card-done-box {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background: #CCFBF1;
-  border: 1px solid #99F6E4;
-  border-radius: 10px;
-  font-size: 0.88rem;
-  color: #0F766E;
-}
-
-.cbt-score-line {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 4px;
-  font-size: 0.82rem;
-  flex-wrap: wrap;
-}
-
-.cbt-card-waiting-box {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.cbt-rules-card {
-  margin-top: 12px;
-}
-
-@media (max-width: 640px) {
-  .cbt-schedule-grid {
+@media (max-width: 960px) {
+  .cbt-lobby-layout {
     grid-template-columns: 1fr;
-    gap: 14px;
-  }
-
-  .cbt-exam-card {
-    padding: 16px;
-    border-radius: 14px;
-  }
-
-  .cbt-mapel-title {
-    font-size: 1.05rem;
-  }
-
-  .cbt-exam-meta-grid {
-    grid-template-columns: 1fr;
-    gap: 8px;
-    padding: 10px 12px;
+    gap: 16px;
   }
 }
 
