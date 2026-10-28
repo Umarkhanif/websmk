@@ -431,140 +431,153 @@ func (s *Server) buildStudentPortal(doc map[string]any, shell ui.RoleShell, user
 		}
 	}
 
-	examSubmitted := proctor.Status == "SUBMITTED"
+	submittedScores := map[string]int{}
 	examScore := cbtScore
 	for _, sub := range asMapSlice(doc["examSubmissions"]) {
 		if strVal(sub, "studentId") == dash.Student.ID {
-			examSubmitted = true
-			examScore = intVal(sub, "mcqScore")
-			break
+			sc := intVal(sub, "mcqScore")
+			examScore = sc
+			eid := strVal(sub, "examId")
+			if eid == "" || eid == "exam-cbt-tkj-01" || eid == "exam-active" || eid == "exam-sch-01" {
+				submittedScores["exam-sch-01"] = sc
+			} else {
+				submittedScores[eid] = sc
+			}
 		}
 	}
 
-	schedulesRaw := asMapSlice(doc["examSchedules"])
-	schedules := make([]ui.ExamScheduleView, 0)
+	sch1Done := false
+	sch1Score := 0
+	if sc, ok := submittedScores["exam-sch-01"]; ok {
+		sch1Done = true
+		sch1Score = sc
+	}
+	sch2Done := false
+	sch2Score := 0
+	if sc, ok := submittedScores["exam-sch-02"]; ok {
+		sch2Done = true
+		sch2Score = sc
+	}
+	sch4Done := false
+	sch4Score := 0
+	if sc, ok := submittedScores["exam-sch-04"]; ok {
+		sch4Done = true
+		sch4Score = sc
+	}
+
+	schedules := make([]ui.ExamScheduleView, 0, 4)
 	if isDemoGraded {
-		sch1Score := examScore
 		if sch1Score <= 0 {
 			sch1Score = 96
+		}
+		if sch2Score <= 0 {
+			sch2Score = 94
+		}
+		if sch4Score <= 0 {
+			sch4Score = 90
 		}
 		schedules = []ui.ExamScheduleView{
 			{
 				ID:            "exam-sch-01",
 				SubjectName:   "Administrasi Infrastruktur Jaringan",
 				TeacherName:   "Ir. Hendro Wijaya",
-				DateLabel:     "Hari Ini (Senin, 26 Okt 2026)",
+				DateLabel:     "Hari Ini",
 				TimeSlot:      "08.00 - 09.30 WIB",
 				DurationMin:   90,
 				QuestionCount: len(examQs),
-				Room:          "Lab Komputer TKJ 1",
+				Room:          "Lab TKJ 1",
 				SessionNumber: 1,
 				Status:        "SUBMITTED",
-				StatusBadge:   "Sudah Selesai",
+				StatusBadge:   "Selesai",
 				BadgeClass:    "badge-teal",
 				Score:         sch1Score,
-				ActionURL:     "",
-				Note:          "Sesi 1 Pagi Hari Ini (Materi: VLAN, Routing OSPF, DHCP)",
 			},
 			{
 				ID:            "exam-sch-02",
 				SubjectName:   "Keamanan Jaringan & Sistem Otomasi",
 				TeacherName:   "Ir. Hendro Wijaya",
-				DateLabel:     "Hari Ini (Senin, 26 Okt 2026)",
-				TimeSlot:      "10.30 - 12.00 WIB",
+				DateLabel:     "Hari Ini",
+				TimeSlot:      "10.00 - 11.30 WIB",
 				DurationMin:   90,
-				QuestionCount: 40,
-				Room:          "Lab Komputer TKJ 1",
+				QuestionCount: len(examQs),
+				Room:          "Lab TKJ 1",
 				SessionNumber: 2,
 				Status:        "SUBMITTED",
-				StatusBadge:   "Sudah Selesai",
+				StatusBadge:   "Selesai",
 				BadgeClass:    "badge-teal",
-				Score:         94,
-				ActionURL:     "",
-				Note:          "Sesi 2 Hari Ini (Penilaian guru selesai)",
+				Score:         sch2Score,
 			},
 			{
 				ID:            "exam-sch-03",
 				SubjectName:   "Teknologi Layanan Jaringan",
 				TeacherName:   "Rian Pratama, S.Pd.",
-				DateLabel:     "Kemarin (Jumat, 23 Okt 2026)",
+				DateLabel:     "Kemarin",
 				TimeSlot:      "08.00 - 09.30 WIB",
 				DurationMin:   90,
-				QuestionCount: 35,
-				Room:          "Lab Komputer TKJ 2",
+				QuestionCount: len(examQs),
+				Room:          "Lab TKJ 2",
 				SessionNumber: 1,
 				Status:        "SUBMITTED",
-				StatusBadge:   "Sudah Selesai",
+				StatusBadge:   "Selesai",
 				BadgeClass:    "badge-teal",
 				Score:         92,
-				ActionURL:     "",
-				Note:          "Jawaban telah selesai dinilai oleh server",
 			},
 			{
 				ID:            "exam-sch-04",
 				SubjectName:   "Produk Kreatif & Kewirausahaan",
 				TeacherName:   "Hj. Ratna Sari, S.E.",
-				DateLabel:     "Hari Ini (Senin, 26 Okt 2026)",
-				TimeSlot:      "13.00 - 14.30 WIB",
+				DateLabel:     "Besok",
+				TimeSlot:      "08.00 - 09.30 WIB",
 				DurationMin:   90,
-				QuestionCount: 30,
-				Room:          "Ruang Teori 12 TKJ 1",
+				QuestionCount: len(examQs),
+				Room:          "R. Teori 12",
 				SessionNumber: 1,
 				Status:        "SUBMITTED",
-				StatusBadge:   "Sudah Selesai",
+				StatusBadge:   "Selesai",
 				BadgeClass:    "badge-teal",
-				Score:         90,
-				ActionURL:     "",
-				Note:          "Ruang ujian dan penilaian guru selesai",
+				Score:         sch4Score,
 			},
-		}
-	} else if len(schedulesRaw) > 0 {
-		for _, sm := range schedulesRaw {
-			status := strVal(sm, "status")
-			statusBadge := strVal(sm, "statusBadge")
-			badgeClass := strVal(sm, "badgeClass")
-			actionUrl := strVal(sm, "actionUrl")
-			score := intVal(sm, "score")
-			id := strVal(sm, "id")
-
-			if id == "exam-sch-01" && examSubmitted {
-				status = "SUBMITTED"
-				statusBadge = "Sudah Selesai"
-				badgeClass = "badge-teal"
-				score = examScore
-				actionUrl = ""
-			}
-
-			schedules = append(schedules, ui.ExamScheduleView{
-				ID:            id,
-				SubjectName:   strVal(sm, "subjectName"),
-				TeacherName:   strVal(sm, "teacherName"),
-				DateLabel:     strVal(sm, "dateLabel"),
-				TimeSlot:      strVal(sm, "timeSlot"),
-				DurationMin:   intVal(sm, "durationMin"),
-				QuestionCount: intVal(sm, "questionCount"),
-				Room:          strVal(sm, "room"),
-				SessionNumber: intVal(sm, "sessionNumber"),
-				Status:        status,
-				StatusBadge:   statusBadge,
-				BadgeClass:    badgeClass,
-				Score:         score,
-				ActionURL:     actionUrl,
-				Note:          strVal(sm, "note"),
-			})
 		}
 	} else {
 		sch1Status := "READY"
-		sch1Badge := "Siap Dikerjakan"
+		sch1Badge := "Bisa Dikerjakan"
 		sch1Class := "badge-success"
-		sch1Url := "/student/exam-kiosk"
-		sch1Score := 0
-		if examSubmitted {
+		sch1URL := "/student/exam-kiosk?subject=exam-sch-01"
+		if sch1Done {
 			sch1Status = "SUBMITTED"
-			sch1Badge = "Sudah Selesai"
+			sch1Badge = "Selesai"
 			sch1Class = "badge-teal"
-			sch1Url = ""
-			sch1Score = examScore
+			sch1URL = ""
+		}
+
+		sch2Status := "WAITING"
+		sch2Badge := "Menunggu Giliran"
+		sch2Class := "badge-warning"
+		sch2URL := ""
+		if sch2Done {
+			sch2Status = "SUBMITTED"
+			sch2Badge = "Selesai"
+			sch2Class = "badge-teal"
+		} else if sch1Done {
+			sch2Status = "READY"
+			sch2Badge = "Bisa Dikerjakan"
+			sch2Class = "badge-success"
+			sch2URL = "/student/exam-kiosk?subject=exam-sch-02"
+		}
+
+		sch4Status := "UPCOMING"
+		sch4Badge := "Belum Dibuka"
+		sch4Class := "badge-neutral"
+		sch4URL := ""
+		if sch4Done {
+			sch4Status = "SUBMITTED"
+			sch4Badge = "Selesai"
+			sch4Class = "badge-teal"
+		} else if sch1Done && sch2Done {
+			sch4Status = "READY"
+			sch4Badge = "Bisa Dikerjakan"
+			sch4Class = "badge-success"
+			sch4URL = "/student/exam-kiosk?subject=exam-sch-04"
 		}
 
 		schedules = []ui.ExamScheduleView{
@@ -572,71 +585,94 @@ func (s *Server) buildStudentPortal(doc map[string]any, shell ui.RoleShell, user
 				ID:            "exam-sch-01",
 				SubjectName:   "Administrasi Infrastruktur Jaringan",
 				TeacherName:   "Ir. Hendro Wijaya",
-				DateLabel:     "Hari Ini (Senin, 26 Okt 2026)",
+				DateLabel:     "Hari Ini · Sesi 1",
 				TimeSlot:      "08.00 - 09.30 WIB",
 				DurationMin:   90,
 				QuestionCount: len(examQs),
-				Room:          "Lab Komputer TKJ 1",
+				Room:          "Lab TKJ 1",
 				SessionNumber: 1,
 				Status:        sch1Status,
 				StatusBadge:   sch1Badge,
 				BadgeClass:    sch1Class,
 				Score:         sch1Score,
-				ActionURL:     sch1Url,
-				Note:          "Sesi 1 Pagi Hari Ini (Materi: VLAN, Routing OSPF, DHCP)",
+				ActionURL:     sch1URL,
 			},
 			{
 				ID:            "exam-sch-02",
 				SubjectName:   "Keamanan Jaringan & Sistem Otomasi",
 				TeacherName:   "Ir. Hendro Wijaya",
-				DateLabel:     "Hari Ini (Senin, 26 Okt 2026)",
-				TimeSlot:      "10.30 - 12.00 WIB",
+				DateLabel:     "Hari Ini · Sesi 2",
+				TimeSlot:      "10.00 - 11.30 WIB",
 				DurationMin:   90,
-				QuestionCount: 40,
-				Room:          "Lab Komputer TKJ 1",
+				QuestionCount: len(examQs),
+				Room:          "Lab TKJ 1",
 				SessionNumber: 2,
-				Status:        "WAITING",
-				StatusBadge:   "Menunggu (10.30 WIB)",
-				BadgeClass:    "badge-warning",
-				Score:         0,
-				ActionURL:     "",
-				Note:          "Sesi 2 Hari Ini (Akan otomatis dibuka pengawas pukul 10:30 WIB)",
+				Status:        sch2Status,
+				StatusBadge:   sch2Badge,
+				BadgeClass:    sch2Class,
+				Score:         sch2Score,
+				ActionURL:     sch2URL,
 			},
 			{
 				ID:            "exam-sch-03",
 				SubjectName:   "Teknologi Layanan Jaringan",
 				TeacherName:   "Rian Pratama, S.Pd.",
-				DateLabel:     "Kemarin (Jumat, 23 Okt 2026)",
+				DateLabel:     "Kemarin · Sesi 1",
 				TimeSlot:      "08.00 - 09.30 WIB",
 				DurationMin:   90,
-				QuestionCount: 35,
-				Room:          "Lab Komputer TKJ 2",
+				QuestionCount: len(examQs),
+				Room:          "Lab TKJ 2",
 				SessionNumber: 1,
 				Status:        "SUBMITTED",
-				StatusBadge:   "Sudah Selesai",
+				StatusBadge:   "Selesai",
 				BadgeClass:    "badge-teal",
 				Score:         92,
-				ActionURL:     "",
-				Note:          "Jawaban telah selesai dinilai oleh server",
 			},
 			{
 				ID:            "exam-sch-04",
 				SubjectName:   "Produk Kreatif & Kewirausahaan",
 				TeacherName:   "Hj. Ratna Sari, S.E.",
-				DateLabel:     "Besok (Selasa, 27 Okt 2026)",
+				DateLabel:     "Jadwal Lanjutan",
 				TimeSlot:      "08.00 - 09.30 WIB",
 				DurationMin:   90,
-				QuestionCount: 30,
-				Room:          "Ruang Teori 12 TKJ 1",
+				QuestionCount: len(examQs),
+				Room:          "R. Teori 12",
 				SessionNumber: 1,
-				Status:        "UPCOMING",
-				StatusBadge:   "Belum Dibuka",
-				BadgeClass:    "badge-neutral",
-				Score:         0,
-				ActionURL:     "",
-				Note:          "Ruang ujian belum dibuka oleh guru pengampu",
+				Status:        sch4Status,
+				StatusBadge:   sch4Badge,
+				BadgeClass:    sch4Class,
+				Score:         sch4Score,
+				ActionURL:     sch4URL,
 			},
 		}
+	}
+
+	activeExamID := "exam-sch-01"
+	activeSubjectName := "Administrasi Infrastruktur Jaringan"
+	activeSubjectTeacher := "Ir. Hendro Wijaya"
+	activeSubjectRoom := "Lab TKJ 1"
+	activeSubjectTime := "08.00 - 09.30 WIB"
+	hasReadyExam := false
+	completedExamsCount := 0
+	for _, sc := range schedules {
+		if sc.Status == "SUBMITTED" {
+			completedExamsCount++
+		} else if sc.Status == "READY" && !hasReadyExam {
+			hasReadyExam = true
+			activeExamID = sc.ID
+			activeSubjectName = sc.SubjectName
+			activeSubjectTeacher = sc.TeacherName
+			activeSubjectRoom = sc.Room
+			activeSubjectTime = sc.TimeSlot
+		}
+	}
+
+	examSubmitted := !hasReadyExam && completedExamsCount == len(schedules)
+	if hasReadyExam && proctor.Status == "SUBMITTED" {
+		proctor.Status = "ACTIVE"
+	}
+	for i := range examQs {
+		examQs[i].SubjectName = activeSubjectName
 	}
 
 	docs := make([]ui.StudentDocView, 0)
@@ -764,6 +800,13 @@ func (s *Server) buildStudentPortal(doc map[string]any, shell ui.RoleShell, user
 		ReflectionComplaint:    strVal(refMap, "privateComplaintText"),
 		ExamQuestions:          examQs,
 		ExamSchedules:          schedules,
+		ActiveExamID:           activeExamID,
+		ActiveSubjectName:      activeSubjectName,
+		ActiveSubjectTeacher:   activeSubjectTeacher,
+		ActiveSubjectRoom:      activeSubjectRoom,
+		ActiveSubjectTime:      activeSubjectTime,
+		CompletedExamsCount:    completedExamsCount,
+		TotalExamsCount:        len(schedules),
 		ExamAverageScore:       avgScore,
 		AllExamsGraded:         allGraded,
 		ExamTier:               tier,

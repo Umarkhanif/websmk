@@ -143,6 +143,11 @@ type ExamResult struct {
 // SubmitExam archives the raw answers and scores multiple-choice questions on
 // the server. Essay answers are stored for the teacher's rubric review.
 func SubmitExam(doc map[string]any, studentID string, answers []ExamAnswer, now time.Time) (ExamResult, error) {
+	return SubmitExamForSubject(doc, studentID, "", answers, now)
+}
+
+// SubmitExamForSubject archives answers for a specific subject/exam schedule ID.
+func SubmitExamForSubject(doc map[string]any, studentID, subjectID string, answers []ExamAnswer, now time.Time) (ExamResult, error) {
 	student := findStudent(doc, studentID)
 	if student == nil {
 		return ExamResult{}, fmt.Errorf("%w: profil siswa", ErrNotFound)
@@ -172,10 +177,17 @@ func SubmitExam(doc map[string]any, studentID string, answers []ExamAnswer, now 
 	if examID == "" {
 		examID = "exam-active"
 	}
+	subjectID = strings.TrimSpace(subjectID)
+	if subjectID != "" && subjectID != "exam-sch-01" && subjectID != "exam-cbt-tkj-01" {
+		examID = subjectID
+	}
 	for _, item := range asList(doc["examSubmissions"]) {
 		record := asMap(item)
-		if record != nil && text(record["studentId"]) == studentID && text(record["examId"]) == examID {
-			return examResultFrom(record, true), nil
+		if record != nil && text(record["studentId"]) == studentID {
+			recExamID := text(record["examId"])
+			if recExamID == examID || (subjectID == "exam-sch-01" && (recExamID == "exam-cbt-tkj-01" || recExamID == "exam-sch-01")) {
+				return examResultFrom(record, true), nil
+			}
 		}
 	}
 

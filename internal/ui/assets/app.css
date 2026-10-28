@@ -1319,7 +1319,7 @@ textarea.input {
 /* CBT Lobby 2-Column Layout (Main Exam Card + Compact Right Sidebar) */
 .cbt-lobby-layout {
   display: grid;
-  grid-template-columns: 1fr 340px;
+  grid-template-columns: 1fr 370px;
   gap: 24px;
   align-items: start;
 }
@@ -1335,6 +1335,77 @@ textarea.input {
   border-radius: 16px;
   padding: 20px;
   box-shadow: 0 4px 16px rgba(11, 23, 48, 0.04);
+}
+
+.cbt-lobby-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.cbt-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+}
+
+.cbt-meta-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #64748B;
+}
+
+.cbt-meta-item strong {
+  font-size: 0.88rem;
+  color: #0F172A;
+}
+
+.cbt-rules-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cbt-rules-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.cbt-rule-chip {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 11px 14px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-left: 3px solid #0A6C74;
+  border-radius: 8px;
+}
+
+.cbt-rule-chip strong {
+  font-size: 0.82rem;
+  color: #0F172A;
+}
+
+.cbt-rule-chip span {
+  font-size: 0.76rem;
+  color: #64748B;
+  line-height: 1.4;
+}
+
+/* Report Card Top 2-Column Grid (Mystery Orb + Holistic Rapor) */
+.rapor-top-grid {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 24px;
+  align-items: stretch;
 }
 
 /* Mystery Average Score Circle & Gacha Aura System */
@@ -1902,11 +1973,23 @@ textarea.input {
   opacity: 0.85;
 }
 
+.cbt-sidebar-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
 .cbt-sidebar-subject {
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   font-weight: 700;
   color: #1E293B;
-  line-height: 1.35;
+  line-height: 1.3;
+}
+
+.cbt-sidebar-meta {
+  font-size: 0.72rem;
+  color: #64748B;
 }
 
 .cbt-sidebar-item-badge {
@@ -1920,9 +2003,15 @@ textarea.input {
 }
 
 @media (max-width: 960px) {
-  .cbt-lobby-layout {
+  .cbt-lobby-layout,
+  .rapor-top-grid {
     grid-template-columns: 1fr;
     gap: 16px;
+  }
+
+  .cbt-lobby-meta-grid,
+  .cbt-rules-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1981,6 +2070,19 @@ body.is-cbt-active .app-main {
   -webkit-touch-callout: none !important;
   -webkit-user-select: none !important;
   user-select: none !important;
+}
+
+.cbt-fullscreen-wrapper.is-gate-locked .cbt-kiosk-body {
+  filter: blur(18px);
+  pointer-events: none !important;
+  user-select: none !important;
+  opacity: 0.2;
+}
+
+@media print {
+  body.is-cbt-active {
+    display: none !important;
+  }
 }
 
 /* Kiosk Top Bar */

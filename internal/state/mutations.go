@@ -300,7 +300,7 @@ func UpdateProctorStatus(doc map[string]any, studentID, status, reason string, n
 			if status == "WARN" {
 				warnCnt++
 				ps["warnCount"] = warnCnt
-				if warnCnt >= 2 {
+				if warnCnt >= 3 {
 					status = "LOCKED"
 				}
 			}

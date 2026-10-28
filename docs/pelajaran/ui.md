@@ -33,3 +33,9 @@ Masalah: Orb masih bisa dibuka karena cache browser aset lama & ikon gembok tida
 Penyebab: Header cache 1 jam tanpa query versioning pada app.js/css serta icon gembok menggantikan tanda tanya.
 Perbaikan: Kembalikan simbol permanen ?, pasang cache-busting v=20261027b, nolkan nilai rata-rata jika belum selesai dinilai, dan terapkan alur klik 1 berputar sedikit warna & klik 2 baru berwarna penuh.
 Verifikasi: `templ generate`, `go test ./...`, HTTP 200 OK.
+
+## 2026-10-28 — cbt-multisubject-rapor-anticheat
+Masalah: Ruang ujian siswa terkunci setelah 1 mapel dikumpulkan meski masih ada mapel belum selesai, dan kartu nilai rata-rata berada di ruang persiapan.
+Penyebab: Flag `examSubmitted` bersifat global per siswa tanpa melacak progres per ID mapel (`exam-sch-01/02/04`), serta strike anti-curang belum tersimpan per peringatan di server.
+Perbaikan: Pindahkan kartu rata-rata ujian ke menu Rapor, buka otomatis mapel berikutnya yang belum selesai, sederhanakan teks UI, dan simpan setiap strike anti-curang ke server + blur soal sebelum layar penuh.
+Verifikasi: `templ generate`, `go vet ./...`, `go test ./...`, HTTP 200 OK.

@@ -617,10 +617,29 @@ func (s *Server) handleStudentProctorStatusForm(w http.ResponseWriter, r *http.R
 	if studentID == "" {
 		studentID = "std-budi-01"
 	}
+	status := strings.TrimSpace(r.FormValue("status"))
+	reason := strings.TrimSpace(r.FormValue("reason"))
+	if status == "UNLOCK_DEMO" && s.authSvc.DemoMode() {
+		_ = s.mutateStateDoc(r.Context(), func(doc map[string]any) error {
+			state.UnlockProctorStudent(doc, studentID)
+			for _, item := range asMapSlice(doc["proctorStudents"]) {
+				if strVal(item, "studentId") == studentID {
+					item["warnCount"] = 0
+				}
+			}
+			return nil
+		})
+		redirectWithFlash(w, r, "/student/exam-kiosk", "Sesi ujian berhasil dibuka kembali oleh Pengawas.", "success")
+		return
+	}
 	_ = s.mutateStateDoc(r.Context(), func(doc map[string]any) error {
-		return state.UpdateProctorStatus(doc, studentID, r.FormValue("status"), r.FormValue("reason"), time.Now())
+		return state.UpdateProctorStatus(doc, studentID, status, reason, time.Now())
 	})
-	redirectWithFlash(w, r, "/student/exam-kiosk", "Sistem Anti-Curang mendeteksi perpindahan fokus layar. Sesi ujian dikunci sementara.", "danger")
+	if r.FormValue("async") == "1" || r.Header.Get("X-Requested-With") == "XMLHttpRequest" {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+	redirectWithFlash(w, r, "/student/exam-kiosk", "Sistem Anti-Curang mendeteksi pelanggaran fokus layar. Sesi ujian dikunci sementara.", "danger")
 }
 
 func (s *Server) handleStudentExamForm(w http.ResponseWriter, r *http.Request) {
@@ -648,17 +667,19 @@ func (s *Server) handleStudentExamForm(w http.ResponseWriter, r *http.Request) {
 	if studentID == "" {
 		studentID = "std-budi-01"
 	}
+	examID := strings.TrimSpace(r.FormValue("exam_id"))
 	var res state.ExamResult
 	err := s.mutateStateDoc(r.Context(), func(doc map[string]any) error {
 		var err error
-		res, err = state.SubmitExam(doc, studentID, answers, time.Now())
+		res, err = state.SubmitExamForSubject(doc, studentID, examID, answers, time.Now())
 		return err
 	})
 	if err != nil {
 		redirectWithFlash(w, r, "/student/exam-kiosk", fmt.Sprintf("Gagal mengumpulkan ujian: %v", err), "danger")
 		return
 	}
-	redirectWithFlash(w, r, "/student/exam-kiosk", fmt.Sprintf("Jawaban ujian CBT berhasil dikumpulkan dan dinilai di server (Skor PG: %d/100).", res.McqScore), "success")
+	_ = res
+	redirectWithFlash(w, r, "/student/exam-lobby", "Jawaban ujian berhasil dikumpulkan dan tersimpan di server.", "success")
 }
 
 func (s *Server) handleStudentDocUploadForm(w http.ResponseWriter, r *http.Request) {

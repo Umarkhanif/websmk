@@ -121,179 +121,140 @@ templ StudentPortal(data ui.StudentPortalPage) {
 			</section>
 		} else if data.Tab == "exam-lobby" {
 			<div class="cbt-lobby-layout">
-				<!-- Left Column: Ruang Persiapan Ujian (Gatekeeper) -->
+				<!-- Left Main Card: Persiapan Ujian & Keamanan Perangkat -->
 				<section class="card form-stack cbt-lobby-main">
 					<div class="stat-card-head">
-						<span class="eyebrow">Ruang Persiapan Ujian (Gatekeeper)</span>
-						if data.IsCleared {
-							<span class="badge badge-success font-bold">
-								@components.Icon("check", "icon icon-xs")
-								<span>Pintu CBT Terbuka</span>
-							</span>
-						} else {
+						<div>
+							<span class="eyebrow">Persiapan Ujian CBT</span>
+							if data.ExamSubmitted {
+								<h2>Seluruh Mata Pelajaran Selesai</h2>
+							} else {
+								<h2>{ data.ActiveSubjectName }</h2>
+							}
+						</div>
+						if !data.IsCleared {
 							<span class="badge badge-danger font-bold">
 								@components.Icon("lock", "icon icon-xs")
-								<span>Tertahan Gatekeeper SPP</span>
+								<span>Menunggu SPP</span>
+							</span>
+						} else if data.Proctor.Status == "LOCKED" {
+							<span class="badge badge-danger font-bold">
+								@components.Icon("lock", "icon icon-xs")
+								<span>Sesi Terkunci</span>
+							</span>
+						} else if data.ExamSubmitted {
+							<span class="badge badge-teal font-bold">
+								@components.Icon("check", "icon icon-xs")
+								<span>Tuntas ({ strconv.Itoa(data.CompletedExamsCount) }/{ strconv.Itoa(data.TotalExamsCount) })</span>
+							</span>
+						} else {
+							<span class="badge badge-success font-bold">
+								@components.Icon("check", "icon icon-xs")
+								<span>Siap Dikerjakan</span>
 							</span>
 						}
 					</div>
-					<h2>Penilaian Akhir Semester (PAS) Ganjil 2026</h2>
-					<p class="muted">
-						Mata Uji Aktif: <strong>Administrasi Infrastruktur Jaringan</strong> · Waktu: 90 Menit · Mode: Kiosk Anti-Curang
-					</p>
 
-					<div class="grid-2">
-						<div class="info-strip">
-							<span class="info-strip-label">Status Administrasi &amp; Dispensasi</span>
-							if data.IsCleared {
-								<strong>Izinkan Masuk Kiosk Ujian CBT</strong>
-								<span>Tagihan SPP lunas atau memiliki surat dispensasi aktif dari Bendahara/Pengawas.</span>
-							} else {
-								<strong>Menunggu Penyelesaian SPP / Dispensasi 7 Hari</strong>
-								<span>Silakan ajukan dispensasi 7 hari di loket Bendahara atau minta Tiket Darurat 2 Jam ke Pengawas Ruangan.</span>
-							}
+					<div class="cbt-lobby-meta-grid">
+						<div class="cbt-meta-item">
+							<span class="cbt-meta-label">Ruang &amp; Pengampu</span>
+							<strong>{ data.ActiveSubjectRoom } · { data.ActiveSubjectTeacher }</strong>
 						</div>
-						<div class="info-strip">
-							<span class="info-strip-label">Checklist Kesiapan Masuk Kiosk</span>
-							<span>1. Kunci jawaban tidak pernah dikirim ke browser (Zero-Key Exposure).</span>
-							<span>2. Pindah tab/aplikasi &gt;1,5 detik akan mengunci layar ujian dan membutuhkan QR Pengawas.</span>
+						<div class="cbt-meta-item">
+							<span class="cbt-meta-label">Waktu &amp; Soal</span>
+							<strong class="mono">90 Menit · { strconv.Itoa(len(data.ExamQuestions)) } Soal</strong>
+						</div>
+						<div class="cbt-meta-item">
+							<span class="cbt-meta-label">Status Peserta</span>
+							if data.IsCleared {
+								<strong class="text-teal">Terverifikasi (Bebas Tunggakan)</strong>
+							} else {
+								<strong class="text-danger">Tertahan Administrasi</strong>
+							}
 						</div>
 					</div>
 
-					if data.IsCleared {
+					<div class="cbt-rules-box">
+						<span class="eyebrow">Sistem Pengawasan Anti-Curang</span>
+						<div class="cbt-rules-grid">
+							<div class="cbt-rule-chip">
+								<strong>1. Layar Penuh Wajib</strong>
+								<span>Soal hanya terbuka saat mode layar penuh aktif.</span>
+							</div>
+							<div class="cbt-rule-chip">
+								<strong>2. Kunci Fokus Layar</strong>
+								<span>Pindah tab, aplikasi, atau split-screen otomatis tercatat (maks. 3x).</span>
+							</div>
+							<div class="cbt-rule-chip">
+								<strong>3. Blokir Salin &amp; Tangkap</strong>
+								<span>Klik kanan, copy-paste, cetak layar, dan inspect ditutup.</span>
+							</div>
+							<div class="cbt-rule-chip">
+								<strong>4. Penilaian Server</strong>
+								<span>Kunci jawaban tersimpan aman di server pusat sekolah.</span>
+							</div>
+						</div>
+					</div>
+
+					if !data.IsCleared {
+						<div class="alert alert-warning">
+							@components.Icon("lock", "icon")
+							<span>Akses ujian terkunci karena tunggakan SPP ({ ui.FormatRupiah(data.Invoice.Remaining) }). Silakan lunasi di Beranda atau ajukan dispensasi ke Bendahara.</span>
+						</div>
+					} else if data.Proctor.Status == "LOCKED" {
 						<div class="leader-actions">
 							<a href="/student/exam-kiosk" class="button button-primary">
-								@components.Icon("monitor", "icon")
-								<span>Masuk Ruang Ujian CBT Sekarang</span>
+								@components.Icon("lock", "icon")
+								<span>Buka Halaman Pemulihan Sesi Ujian</span>
+							</a>
+						</div>
+					} else if data.ExamSubmitted {
+						<div class="leader-actions">
+							<a href="/student/academic" class="button button-primary">
+								@components.Icon("award", "icon")
+								<span>Semua Ujian Selesai — Lihat Nilai di Rapor</span>
 							</a>
 						</div>
 					} else {
-						<div class="alert alert-warning">
-							@components.Icon("lock", "icon")
-							<span>Akses ruang ujian terkunci sementara karena tunggakan SPP ({ ui.FormatRupiah(data.Invoice.Remaining) }).</span>
+						<div class="leader-actions">
+							<a href={ templ.SafeURL("/student/exam-kiosk?subject=" + data.ActiveExamID) } class="button button-primary button-large">
+								@components.Icon("monitor", "icon")
+								<span>Mulai Kerjakan Ujian Sekarang</span>
+							</a>
 						</div>
 					}
 				</section>
 
-				<!-- Right Sidebar: Lingkaran Nilai Rata-Rata + Jadwal Mata Pelajaran -->
+				<!-- Right Sidebar: Jadwal & Status Mata Pelajaran -->
 				<aside class="card form-stack cbt-lobby-sidebar">
-					<!-- Mystery Average Score Circle (Reveal System) -->
-					<div class="cbt-mystery-container" data-cbt-orb-container data-unlocked={ fmt.Sprintf("%t", data.AllExamsGraded) } data-tier={ data.ExamTier } data-score={ strconv.Itoa(data.ExamAverageScore) }>
-						<div class="stat-card-head">
-							<div>
-								<span class="eyebrow">Rata-Rata Asesmen</span>
-								<h3>Nilai Kelulusan</h3>
-							</div>
-							<span class="badge badge-neutral mono font-bold" data-cbt-orb-status-badge>
-								if data.AllExamsGraded {
-									<span>✨ Siap Dibuka</span>
-								} else {
-									<span>Terkunci</span>
-								}
-							</span>
+					<div class="stat-card-head">
+						<div>
+							<span class="eyebrow">Jadwal Ujian</span>
+							<h3>Mata Pelajaran</h3>
 						</div>
-
-						<div class="cbt-orb-stage">
-							<button type="button" class={ "cbt-mystery-orb", templ.KV("is-locked", !data.AllExamsGraded) } data-cbt-mystery-orb aria-label="Buka Nilai Rata-rata Ujian">
-								<div class="cbt-orb-ring"></div>
-								<div class="cbt-orb-aura"></div>
-								<div class="cbt-orb-core">
-									<span class="cbt-orb-symbol font-bold" data-cbt-orb-symbol>?</span>
-									if data.AllExamsGraded {
-										<span class="cbt-orb-score mono font-bold" data-cbt-orb-score hidden>{ strconv.Itoa(data.ExamAverageScore) }</span>
-									} else {
-										<span class="cbt-orb-score mono font-bold" data-cbt-orb-score hidden>-</span>
-									}
-								</div>
-							</button>
-						</div>
-
-						<div class="cbt-orb-caption">
-							<p class="cbt-orb-hint muted" data-cbt-orb-hint>
-								if data.AllExamsGraded {
-									Ketuk lingkaran misteri untuk mendeteksi aura nilai!
-								} else {
-									Nilai rata-rata masih terkunci. Selesaikan seluruh 4 mata pelajaran dan tunggu penilaian guru.
-								}
-							</p>
-							<div class="cbt-tier-pill" data-cbt-tier-pill hidden>
-								<span class="cbt-tier-name font-bold" data-cbt-tier-name>-</span>
-							</div>
-						</div>
-
-						<!-- Rincian Nilai Masing-Masing Pelajaran (Hanya muncul setelah membuka nilai rata-rata) -->
-						<div class="cbt-subject-scores-card" data-cbt-subject-scores hidden>
-							<div class="cbt-scores-head">
-								<div>
-									<span class="eyebrow">Rincian Hasil</span>
-									<h4>Nilai Per Pelajaran</h4>
-								</div>
-								<button type="button" class="cbt-score-toggle-btn" data-cbt-toggle-scores title="Sembunyikan atau Tampilkan Nilai">
-									<span class="cbt-toggle-icon" data-icon-visible>
-										@components.Icon("eye-off", "icon-sm")
-									</span>
-									<span class="cbt-toggle-icon" data-icon-hidden hidden>
-										@components.Icon("eye", "icon-sm")
-									</span>
-									<span class="cbt-toggle-label" data-cbt-toggle-text>Sembunyikan</span>
-								</button>
-							</div>
-							<div class="cbt-scores-list" data-cbt-scores-list>
-								for _, s := range data.ExamSchedules {
-									<div class="cbt-score-item">
-										<div class="cbt-score-item-info">
-											<strong class="cbt-score-item-title">{ s.SubjectName }</strong>
-											<span class="cbt-score-item-sub muted">{ s.TeacherName }</span>
-										</div>
-										<div class="cbt-score-item-val-wrap">
-											<span class="cbt-score-val mono font-bold" data-cbt-score-val>{ strconv.Itoa(s.Score) }</span>
-											<span class="cbt-score-masked mono font-bold" data-cbt-score-mask hidden>••••</span>
-										</div>
-									</div>
-								}
-							</div>
-						</div>
-
-						<!-- Demo Simulation Quick Action (Hanya untuk keperluan pengujian) -->
-						<div class="cbt-sim-box">
-							if !data.AllExamsGraded {
-								<a href="/student/exam-lobby?demo_graded=true" class="cbt-sim-pill">
-									⚡ Simulasi: Guru Selesai Menilai Semua
-								</a>
-							} else if data.IsDemoGraded {
-								<a href="/student/exam-lobby" class="cbt-sim-pill cbt-sim-pill-reset">
-									↺ Kembalikan ke Status Belum Selesai (Terkunci)
-								</a>
-							}
-						</div>
+						<span class="badge badge-teal mono font-bold">{ strconv.Itoa(data.CompletedExamsCount) }/{ strconv.Itoa(data.TotalExamsCount) } Selesai</span>
 					</div>
 
-					<div class="cbt-sidebar-sep"></div>
-
-					<!-- Jadwal Mata Pelajaran (Ditata Turun ke Bawah Lingkaran) -->
-					<div class="cbt-sidebar-schedule-wrap form-stack">
-						<div class="stat-card-head">
-							<div>
-								<span class="eyebrow">Jadwal Ujian</span>
-								<h3>Mata Pelajaran</h3>
-							</div>
-							<span class="badge badge-teal mono font-bold">{ strconv.Itoa(len(data.ExamSchedules)) } Mapel</span>
-						</div>
-
-						<div class="cbt-sidebar-schedule-list">
-							for _, s := range data.ExamSchedules {
-								<div class={ "cbt-sidebar-item cbt-sidebar-item-" + strings.ToLower(s.Status) }>
-									<div class="cbt-sidebar-item-info">
-										<strong class="cbt-sidebar-subject">{ s.SubjectName }</strong>
-									</div>
-									<div class="cbt-sidebar-item-badge">
+					<div class="cbt-sidebar-schedule-list">
+						for _, s := range data.ExamSchedules {
+							<div class={ "cbt-sidebar-item cbt-sidebar-item-" + strings.ToLower(s.Status) }>
+								<div class="cbt-sidebar-item-info">
+									<strong class="cbt-sidebar-subject">{ s.SubjectName }</strong>
+									<span class="cbt-sidebar-meta muted">{ s.DateLabel } · { s.TimeSlot }</span>
+								</div>
+								<div class="cbt-sidebar-item-badge">
+									if s.Status == "READY" && data.IsCleared {
+										<a href={ templ.SafeURL(s.ActionURL) } class="button button-primary button-small">
+											<span>Kerjakan</span>
+										</a>
+									} else {
 										<span class={ "badge " + s.BadgeClass + " font-bold" }>
 											{ s.StatusBadge }
 										</span>
-									</div>
+									}
 								</div>
-							}
-						</div>
+							</div>
+						}
 					</div>
 				</aside>
 			</div>
@@ -302,36 +263,47 @@ templ StudentPortal(data ui.StudentPortalPage) {
 				<section class="card form-stack">
 					<div class="alert alert-danger">
 						@components.Icon("lock", "icon")
-						<span>Anda belum memenuhi syarat Gatekeeper Ujian. Hubungi Bendahara untuk Dispensasi 7 Hari atau Pengawas untuk Tiket Darurat 2 Jam.</span>
+						<span>Anda belum memenuhi syarat administrasi ujian. Hubungi Bendahara untuk Dispensasi 7 Hari atau Pengawas untuk Tiket Darurat 2 Jam.</span>
 					</div>
 					<a href="/student/exam-lobby" class="button button-secondary">Kembali ke Ruang Persiapan</a>
 				</section>
 			} else if data.Proctor.Status == "LOCKED" {
 				<section class="card form-stack">
 					<div class="stat-card-head">
-						<span class="badge badge-danger">SISTEM ANTI-CURANG AKTIF</span>
-						<span class="mono">Kode Buka Kunci: { data.Proctor.UnlockToken }</span>
+						<span class="badge badge-danger font-bold">SESI TERKUNCI ANTI-CURANG</span>
+						<span class="badge badge-warning mono font-bold">Token: { data.Proctor.UnlockToken }</span>
 					</div>
-					<h3>Layar Ujian Terkunci Permanen</h3>
-					<p class="muted">Alasan penguncian: <strong>{ data.Proctor.LastViolation }</strong></p>
+					<h3>Sesi Ujian Dikunci Sementara</h3>
+					<p class="muted">Alasan: <strong>{ data.Proctor.LastViolation }</strong></p>
 					<div class="info-strip">
-						<span class="info-strip-label">Instruksi Pemulihan Sesi</span>
-						<span>Tunjukkan kode token <strong class="mono">{ data.Proctor.UnlockToken }</strong> kepada Guru Pengawas di ruangan untuk membuka kunci sesi ujian Anda dari panel Pengawasan Ujian.</span>
+						<span class="info-strip-label">Pemulihan Sesi</span>
+						<span>Tunjukkan kode token <strong class="mono">{ data.Proctor.UnlockToken }</strong> kepada Guru Pengawas untuk membuka kembali sesi ujian Anda.</span>
+					</div>
+					<div class="leader-actions">
+						<a href="/student/exam-lobby" class="button button-secondary">Kembali ke Persiapan</a>
+						if data.Shell.DemoMode {
+							<form method="post" action="/student/proctor-status">
+								<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+								<input type="hidden" name="status" value="UNLOCK_DEMO"/>
+								<button type="submit" class="button button-primary">Simulasi Pengawas: Buka Kunci Sesi</button>
+							</form>
+						}
 					</div>
 				</section>
 			} else if data.ExamSubmitted {
 				<section class="card form-stack">
 					<div class="stat-card-head">
-						<span class="badge badge-success">TERSIMPAN DI SERVER</span>
-						<span class="mono">Skor Pilihan Ganda: { strconv.Itoa(data.ExamScore) }/100</span>
+						<span class="badge badge-success font-bold">SELURUH UJIAN SELESAI</span>
+						<span class="mono font-bold">{ strconv.Itoa(data.CompletedExamsCount) }/{ strconv.Itoa(data.TotalExamsCount) } Mapel</span>
 					</div>
-					<h2>Ujian Selesai Dikumpulkan</h2>
-					<p class="muted">Jawaban pilihan ganda telah dinilai otomatis oleh server, dan jawaban esai telah diteruskan ke meja koreksi rubrik Guru Mapel.</p>
-					<div class="info-strip">
-						<span class="info-strip-label">Peta Penguasaan Konsep (Bekal Ilmu Pasca-Ujian)</span>
-						<span>• Konfigurasi VLAN &amp; Trunking IEEE 802.1Q: Sangat Baik (92%)</span>
-						<span>• Perutean Dinamis OSPF Multi-Area: Baik (85%)</span>
-						<span>• Diagnosis DHCP Relay &amp; Keamanan Port: Perlu Penguatan Praktik Bengkel</span>
+					<h2>Seluruh Ujian Telah Dikumpulkan</h2>
+					<p class="muted">Jawaban Anda telah tersimpan dan dinilai di server. Silakan buka menu Rapor untuk melihat hasil evaluasi ujian Anda.</p>
+					<div class="leader-actions">
+						<a href="/student/academic" class="button button-primary">
+							@components.Icon("award", "icon")
+							<span>Buka Rapor &amp; Nilai Ujian</span>
+						</a>
+						<a href="/student/exam-lobby" class="button button-secondary">Kembali ke Jadwal Ujian</a>
 					</div>
 				</section>
 			} else {
@@ -339,33 +311,36 @@ templ StudentPortal(data ui.StudentPortalPage) {
 				<form id="cbt-violation-form" method="post" action="/student/proctor-status" hidden>
 					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 					<input type="hidden" name="status" value="LOCKED"/>
-					<input type="hidden" name="reason" value="Pindah tab / kehilangan fokus layar > 1,5 detik"/>
+					<input type="hidden" name="reason" value="Pelanggaran fokus layar mencapai batas maksimal"/>
 				</form>
 
 				<!-- Fullscreen Enforcement Gate Overlay -->
 				<div id="cbt-fullscreen-gate" class="cbt-fullscreen-gate" data-cbt-fullscreen-gate>
 					<div class="cbt-fullscreen-card card form-stack">
 						<div class="stat-card-head">
-							<span class="badge badge-danger">KEAMANAN UJIAN CBT DIWAJIBKAN</span>
-							<span class="badge badge-teal">Zero-Key Anti-Curang</span>
+							<span class="badge badge-danger font-bold">MODE KIOSK TERKUNCI</span>
+							<span class="badge badge-teal font-bold">Anti-Curang Aktif</span>
 						</div>
-						<h2>Mode Layar Penuh (Fullscreen Required)</h2>
+						<h2>{ data.ActiveSubjectName }</h2>
 						<p class="muted">
-							Ujian diselenggarakan dalam lingkungan terkunci (Kiosk Mode). Anda <strong>wajib mengaktifkan layar penuh</strong> untuk mengerjakan soal ujian.
+							Aktifkan mode layar penuh untuk membuka soal ujian. Selama ujian berlangsung, aktivitas pindah tab/aplikasi dan tangkapan layar dipantau secara otomatis.
 						</p>
-						<div class="info-strip">
-							<span class="info-strip-label">Ketentuan Anti-Curang Selama Ujian:</span>
-							<span>• Dilarang keluar dari mode layar penuh (Fullscreen) selama ujian berlangsung.</span>
-							<span>• Dilarang beralih ke jendela lain, aplikasi lain (seperti WhatsApp, Google, AI), atau membagi layar (split screen).</span>
-							<span>• Tombol pintasan keyboard, klik kanan, dan pemilihan teks dinonaktifkan.</span>
-							<span>• Pelanggaran fokus layar akan tercatat di sistem pengawas dan mengunci sesi ujian secara otomatis jika melampaui batas.</span>
+						<div class="cbt-rules-grid">
+							<div class="cbt-rule-chip">
+								<strong>Wajib Layar Penuh</strong>
+								<span>Keluar dari layar penuh akan mengaburkan soal &amp; mencatat pelanggaran.</span>
+							</div>
+							<div class="cbt-rule-chip">
+								<strong>Dilarang Pindah Aplikasi</strong>
+								<span>Maksimal 3x peringatan fokus sebelum sesi terkunci otomatis.</span>
+							</div>
 						</div>
 						<div class="leader-actions">
 							<button type="button" class="button button-primary button-large" data-cbt-enter-fullscreen>
 								@components.Icon("maximize", "icon")
-								<span>Aktifkan Layar Penuh &amp; Masuk Ujian</span>
+								<span>Masuk Layar Penuh &amp; Mulai Ujian</span>
 							</button>
-							<a href="/student/exam-lobby" class="button button-secondary">Kembali ke Ruang Persiapan</a>
+							<a href="/student/exam-lobby" class="button button-secondary">Batal</a>
 						</div>
 					</div>
 				</div>
@@ -375,19 +350,19 @@ templ StudentPortal(data ui.StudentPortalPage) {
 					<div class="cbt-strike-backdrop"></div>
 					<div class="cbt-strike-card card form-stack">
 						<div class="stat-card-head">
-							<span class="badge badge-danger font-bold">⚠️ PERINGATAN SISTEM ANTI-CURANG</span>
+							<span class="badge badge-danger font-bold">⚠️ PERINGATAN ANTI-CURANG</span>
 							<span class="badge badge-warning mono font-bold" data-cbt-strike-badge>Pelanggaran 1/3</span>
 						</div>
-						<h3 data-cbt-strike-title>Aktivitas Di Luar Ujian Terdeteksi!</h3>
+						<h3 data-cbt-strike-title>Perpindahan Fokus Terdeteksi!</h3>
 						<p class="muted" data-cbt-strike-desc>
-							Anda terdeteksi berpindah aplikasi, beralih jendela/tab, atau membagi layar.
+							Anda terdeteksi keluar dari layar penuh atau berpindah jendela/aplikasi.
 						</p>
 						<div class="alert alert-warning">
 							@components.Icon("shield-alert", "icon")
-							<span>Fokus layar Anda dialihkan dari lembar ujian. Tetap di aplikasi ini! Jika pelanggaran mencapai 3 kali, sesi ujian akan <strong>TERKUNCI OTOMATIS</strong> dan memerlukan kode pemulihan pengawas.</span>
+							<span>Pelanggaran ini telah dicatat di server pengawas. Pada pelanggaran ke-3, sesi ujian akan <strong>dikunci otomatis</strong>.</span>
 						</div>
 						<button type="button" class="button button-primary button-block button-large" data-cbt-strike-resume>
-							Saya Mengerti &amp; Lanjutkan Ujian
+							Kembali ke Layar Penuh &amp; Lanjutkan
 						</button>
 					</div>
 				</div>
@@ -399,7 +374,7 @@ templ StudentPortal(data ui.StudentPortalPage) {
 						<div class="cbt-sheet-handle"></div>
 						<div class="stat-card-head">
 							<div>
-								<span class="eyebrow">Navigasi Soal CBT</span>
+								<span class="eyebrow">Navigasi Soal</span>
 								<h3>Daftar Nomor Soal</h3>
 							</div>
 							<button type="button" class="button button-ghost button-small" data-cbt-close-questions aria-label="Tutup Daftar Soal">
@@ -407,9 +382,9 @@ templ StudentPortal(data ui.StudentPortalPage) {
 							</button>
 						</div>
 						<div class="cbt-legend">
-							<span class="cbt-legend-item"><span class="cbt-legend-dot is-answered"></span> Sudah Terjawab</span>
-							<span class="cbt-legend-item"><span class="cbt-legend-dot is-current"></span> Soal Aktif</span>
-							<span class="cbt-legend-item"><span class="cbt-legend-dot"></span> Belum Terjawab</span>
+							<span class="cbt-legend-item"><span class="cbt-legend-dot is-answered"></span> Terjawab</span>
+							<span class="cbt-legend-item"><span class="cbt-legend-dot is-current"></span> Aktif</span>
+							<span class="cbt-legend-item"><span class="cbt-legend-dot"></span> Belum</span>
 						</div>
 						<div class="cbt-num-grid cbt-num-grid-modal">
 							for idx, q := range data.ExamQuestions {
@@ -419,33 +394,21 @@ templ StudentPortal(data ui.StudentPortalPage) {
 								</button>
 							}
 						</div>
-						<div class="info-strip">
-							<span class="info-strip-label">Keterangan:</span>
-							<span>Huruf pilihan jawaban atau tanda centang (esai) ditampilkan tepat di atas nomor masing-masing soal.</span>
-						</div>
 						<div class="cbt-modal-actions">
-							<button type="button" class="button button-secondary button-block" data-cbt-close-questions>Tutup Daftar Soal</button>
+							<button type="button" class="button button-secondary button-block" data-cbt-close-questions>Lanjut Mengerjakan</button>
 							<button type="button" class="button button-primary button-block" data-cbt-trigger-submit>
 								@components.Icon("check", "icon")
 								<span>Kumpulkan Jawaban Ujian</span>
 							</button>
 						</div>
-						<div class="cbt-demo-lock-row">
-							<form method="post" action="/student/proctor-status">
-								<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-								<input type="hidden" name="status" value="LOCKED"/>
-								<input type="hidden" name="reason" value="Simulasi Uji Coba Kunci Layar (Demo Anti-Cheat)"/>
-								<button type="submit" class="button button-ghost button-small text-muted" title="Fitur Uji Pengawas">Simulasi Kunci Pengawas</button>
-							</form>
-						</div>
 					</div>
 				</div>
 
-				<div class="cbt-fullscreen-wrapper" data-cbt-kiosk data-cbt-locked="false">
+				<div class="cbt-fullscreen-wrapper is-gate-locked" data-cbt-kiosk data-cbt-locked="false" data-cbt-warn-count={ strconv.Itoa(data.Proctor.WarnCount) } data-cbt-exam-id={ data.ActiveExamID }>
 					<header class="cbt-kiosk-navbar">
 						<div class="cbt-kiosk-brand">
-							<span class="cbt-badge-kiosk">PAS CBT</span>
-							<h2 class="cbt-title-kiosk">Administrasi Infrastruktur Jaringan</h2>
+							<span class="cbt-badge-kiosk">KIOSK CBT</span>
+							<h2 class="cbt-title-kiosk">{ data.ActiveSubjectName }</h2>
 						</div>
 						<div class="cbt-timer-box">
 							@components.Icon("clock", "icon")
@@ -465,6 +428,7 @@ templ StudentPortal(data ui.StudentPortalPage) {
 
 					<form id="cbt-exam-form" method="post" action="/student/exam" class="cbt-kiosk-body">
 						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+						<input type="hidden" name="exam_id" value={ data.ActiveExamID }/>
 						<main class="cbt-question-pane">
 							for idx, q := range data.ExamQuestions {
 								<div class="card cbt-question-card" data-cbt-question data-index={ strconv.Itoa(idx) }>
@@ -648,36 +612,133 @@ templ StudentPortal(data ui.StudentPortalPage) {
 				</div>
 			</section>
 		} else if data.Tab == "academic" {
-			<section class="card form-stack">
-				<div class="stat-card-head">
-					<div>
-						<span class="eyebrow">Rapor Holistik 360° (Tanpa Ranking Kaku 1–40)</span>
-						<h2>"The { data.Student.ActiveBadge }"</h2>
-						<p class="muted">“{ data.Student.ActiveBadgeReason }”</p>
+			<div class="rapor-top-grid">
+				<!-- Left Card: Rata-Rata Nilai Ujian & Rincian Per Mata Pelajaran (Dipindahkan ke Rapor) -->
+				<section class="card form-stack cbt-mystery-container" data-cbt-orb-container data-unlocked={ fmt.Sprintf("%t", data.AllExamsGraded) } data-tier={ data.ExamTier } data-score={ strconv.Itoa(data.ExamAverageScore) }>
+					<div class="stat-card-head">
+						<div>
+							<span class="eyebrow">Hasil Evaluasi Ujian</span>
+							<h3>Rata-Rata Nilai Ujian</h3>
+						</div>
+						<span class="badge badge-neutral mono font-bold" data-cbt-orb-status-badge>
+							if data.AllExamsGraded {
+								<span>✨ Siap Dibuka</span>
+							} else {
+								<span>Terkunci ({ strconv.Itoa(data.CompletedExamsCount) }/{ strconv.Itoa(data.TotalExamsCount) })</span>
+							}
+						</span>
 					</div>
-					<div class="stat-value mono">{ data.HolisticScore }/100</div>
-				</div>
 
-				<h4>Komposisi Rumus Rapor Holistik 360° (35% CBT + 25% Kuis + 25% Sikap + 15% Kehadiran)</h4>
-				<div class="grid-4">
-					<div class="info-strip">
-						<span class="info-strip-label">Ujian CBT (35%)</span>
-						<strong class="mono">{ strconv.Itoa(data.CbtScore) } / 100</strong>
+					<div class="cbt-orb-stage">
+						<button type="button" class={ "cbt-mystery-orb", templ.KV("is-locked", !data.AllExamsGraded) } data-cbt-mystery-orb aria-label="Buka Nilai Rata-rata Ujian">
+							<div class="cbt-orb-ring"></div>
+							<div class="cbt-orb-aura"></div>
+							<div class="cbt-orb-core">
+								<span class="cbt-orb-symbol font-bold" data-cbt-orb-symbol>?</span>
+								if data.AllExamsGraded {
+									<span class="cbt-orb-score mono font-bold" data-cbt-orb-score hidden>{ strconv.Itoa(data.ExamAverageScore) }</span>
+								} else {
+									<span class="cbt-orb-score mono font-bold" data-cbt-orb-score hidden>-</span>
+								}
+							</div>
+						</button>
 					</div>
-					<div class="info-strip">
-						<span class="info-strip-label">Rata-rata Kuis Harian (25%)</span>
-						<strong class="mono">{ strconv.Itoa(data.Student.DailyQuizAvg) } / 100</strong>
+
+					<div class="cbt-orb-caption">
+						<p class="cbt-orb-hint muted" data-cbt-orb-hint>
+							if data.AllExamsGraded {
+								Ketuk lingkaran untuk melihat aura &amp; nilai rata-rata.
+							} else {
+								Selesaikan seluruh ujian (4 mapel) untuk membuka nilai.
+							}
+						</p>
+						<div class="cbt-tier-pill" data-cbt-tier-pill hidden>
+							<span class="cbt-tier-name font-bold" data-cbt-tier-name>-</span>
+						</div>
 					</div>
-					<div class="info-strip">
-						<span class="info-strip-label">Sikap Terfilter MAD (25%)</span>
-						<strong class="mono">{ strconv.Itoa(data.Student.AttitudeScore) } / 100</strong>
+
+					<!-- Rincian Nilai Per Mata Pelajaran (Muncul setelah membuka rata-rata) -->
+					<div class="cbt-subject-scores-card" data-cbt-subject-scores hidden>
+						<div class="cbt-scores-head">
+							<div>
+								<span class="eyebrow">Rincian Nilai</span>
+								<h4>Mata Pelajaran</h4>
+							</div>
+							<button type="button" class="cbt-score-toggle-btn" data-cbt-toggle-scores title="Sembunyikan atau Tampilkan Nilai">
+								<span class="cbt-toggle-icon" data-icon-visible>
+									@components.Icon("eye-off", "icon-sm")
+								</span>
+								<span class="cbt-toggle-icon" data-icon-hidden hidden>
+									@components.Icon("eye", "icon-sm")
+								</span>
+								<span class="cbt-toggle-label" data-cbt-toggle-text>Sembunyikan</span>
+							</button>
+						</div>
+						<div class="cbt-scores-list" data-cbt-scores-list>
+							for _, s := range data.ExamSchedules {
+								<div class="cbt-score-item">
+									<div class="cbt-score-item-info">
+										<strong class="cbt-score-item-title">{ s.SubjectName }</strong>
+										<span class="cbt-score-item-sub muted">{ s.TeacherName }</span>
+									</div>
+									<div class="cbt-score-item-val-wrap">
+										<span class="cbt-score-val mono font-bold" data-cbt-score-val>{ strconv.Itoa(s.Score) }</span>
+										<span class="cbt-score-masked mono font-bold" data-cbt-score-mask hidden>••••</span>
+									</div>
+								</div>
+							}
+						</div>
 					</div>
-					<div class="info-strip">
-						<span class="info-strip-label">Presensi &amp; Disiplin (15%)</span>
-						<strong class="mono">{ strconv.Itoa(data.AttendanceConductScore) } / 100</strong>
+
+					<div class="cbt-sim-box">
+						if !data.AllExamsGraded {
+							<a href="/student/academic?demo_graded=true" class="cbt-sim-pill">
+								⚡ Simulasi: Semua Ujian Selesai Dinilai
+							</a>
+						} else if data.IsDemoGraded {
+							<a href="/student/academic" class="cbt-sim-pill cbt-sim-pill-reset">
+								↺ Kembalikan ke Status Asli
+							</a>
+						}
 					</div>
-				</div>
-			</section>
+				</section>
+
+				<!-- Right Card: Ringkasan Rapor Holistik 360° -->
+				<section class="card form-stack">
+					<div class="stat-card-head">
+						<div>
+							<span class="eyebrow">Rapor Holistik 360°</span>
+							<h2>"The { data.Student.ActiveBadge }"</h2>
+							<p class="muted">“{ data.Student.ActiveBadgeReason }”</p>
+						</div>
+						<div class="stat-value mono">{ data.HolisticScore }/100</div>
+					</div>
+
+					<div class="grid-2">
+						<div class="info-strip">
+							<span class="info-strip-label">Ujian CBT (35%)</span>
+							<strong class="mono">{ strconv.Itoa(data.CbtScore) } / 100</strong>
+						</div>
+						<div class="info-strip">
+							<span class="info-strip-label">Kuis Harian (25%)</span>
+							<strong class="mono">{ strconv.Itoa(data.Student.DailyQuizAvg) } / 100</strong>
+						</div>
+						<div class="info-strip">
+							<span class="info-strip-label">Sikap &amp; Etika (25%)</span>
+							<strong class="mono">{ strconv.Itoa(data.Student.AttitudeScore) } / 100</strong>
+						</div>
+						<div class="info-strip">
+							<span class="info-strip-label">Presensi (15%)</span>
+							<strong class="mono">{ strconv.Itoa(data.AttendanceConductScore) } / 100</strong>
+						</div>
+					</div>
+
+					<div class="info-strip">
+						<span class="info-strip-label">Catatan Wali Kelas</span>
+						<span>“{ data.Student.HomeroomNote }”</span>
+					</div>
+				</section>
+			</div>
 
 			<section class="card form-stack">
 				<div class="stat-card-head">

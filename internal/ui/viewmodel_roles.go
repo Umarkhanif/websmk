@@ -334,6 +334,13 @@ type StudentPortalPage struct {
 	ReflectionComplaint     string
 	ExamQuestions           []ExamQuestionView
 	ExamSchedules           []ExamScheduleView
+	ActiveExamID            string
+	ActiveSubjectName       string
+	ActiveSubjectTeacher    string
+	ActiveSubjectRoom       string
+	ActiveSubjectTime       string
+	CompletedExamsCount     int
+	TotalExamsCount         int
 	ExamAverageScore        int
 	AllExamsGraded          bool
 	ExamTier                string

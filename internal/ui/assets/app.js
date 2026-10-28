@@ -145,9 +145,30 @@
 
     var currentIdx = 0;
     var violationTriggered = false;
-    var strikeCount = 0;
     var MAX_STRIKES = 3;
     var everFullscreen = false;
+    var examStarted = false;
+    var lastViolationAt = 0;
+
+    var examId = kiosk.getAttribute("data-cbt-exam-id") || "exam-sch-01";
+    var storageKey = "wesmk_strikes_" + examId;
+    var serverWarnCount = parseInt(kiosk.getAttribute("data-cbt-warn-count") || "0", 10);
+    var savedStrikes = 0;
+    try {
+      savedStrikes = parseInt(sessionStorage.getItem(storageKey) || "0", 10) || 0;
+    } catch (e) {}
+    var strikeCount = Math.max(serverWarnCount, savedStrikes);
+
+    function unlockKioskView() {
+      everFullscreen = true;
+      examStarted = true;
+      kiosk.classList.remove("is-gate-locked");
+      if (fsGate) fsGate.setAttribute("hidden", "");
+    }
+
+    function lockKioskView() {
+      kiosk.classList.add("is-gate-locked");
+    }
 
     // Helper: detect if browser is currently in native fullscreen
     function isFullscreen() {
@@ -173,25 +194,18 @@
           var p = req.call(docEl);
           if (p && p.then) {
             p.then(function () {
-              everFullscreen = true;
-              if (fsGate) fsGate.setAttribute("hidden", "");
+              unlockKioskView();
             }).catch(function () {
-              // Graceful fallback for mobile browsers where requestFullscreen is restricted
-              everFullscreen = true;
-              if (fsGate) fsGate.setAttribute("hidden", "");
+              unlockKioskView();
             });
           } else {
-            everFullscreen = true;
-            if (fsGate) fsGate.setAttribute("hidden", "");
+            unlockKioskView();
           }
         } catch (e) {
-          everFullscreen = true;
-          if (fsGate) fsGate.setAttribute("hidden", "");
+          unlockKioskView();
         }
       } else {
-        // iOS Safari or browser without standard fullscreen API
-        everFullscreen = true;
-        if (fsGate) fsGate.setAttribute("hidden", "");
+        unlockKioskView();
         window.scrollTo(0, 0);
       }
     }
@@ -229,10 +243,19 @@
     // Modal submit button triggers exam submission
     if (modalSubmitBtn && examForm) {
       modalSubmitBtn.addEventListener("click", function () {
-        if (confirm("Yakin ingin menyelesaikan dan mengumpulkan seluruh jawaban ujian sekarang?")) {
+        if (confirm("Yakin ingin mengumpulkan seluruh jawaban ujian sekarang?")) {
+          violationTriggered = true;
+          try { sessionStorage.removeItem(storageKey); } catch (e) {}
           if (examForm.requestSubmit) examForm.requestSubmit();
           else examForm.submit();
         }
+      });
+    }
+
+    if (examForm) {
+      examForm.addEventListener("submit", function () {
+        violationTriggered = true;
+        try { sessionStorage.removeItem(storageKey); } catch (e) {}
       });
     }
 
@@ -240,10 +263,30 @@
     if (strikeResumeBtn) {
       strikeResumeBtn.addEventListener("click", function () {
         if (strikeModal) strikeModal.setAttribute("hidden", "");
-        if (!isFullscreen() && (document.fullscreenEnabled || document.webkitFullscreenEnabled)) {
-          enterFullscreen();
-        }
+        enterFullscreen();
       });
+    }
+
+    // Persist warning strike to server asynchronously so page refresh cannot reset strikeCount
+    function reportWarnToServer(reason) {
+      if (!warnForm) return;
+      try {
+        var csrfEl = warnForm.querySelector("input[name='_csrf']");
+        var body = new URLSearchParams();
+        if (csrfEl) body.set("_csrf", csrfEl.value);
+        body.set("status", "WARN");
+        body.set("reason", reason);
+        body.set("async", "1");
+        fetch("/student/proctor-status", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-Requested-With": "XMLHttpRequest"
+          },
+          body: body.toString(),
+          keepalive: true
+        }).catch(function () {});
+      } catch (e) {}
     }
 
     // Lock exam permanently via server form
@@ -251,6 +294,7 @@
       var locked = kiosk.getAttribute("data-cbt-locked") === "true";
       if (locked || violationTriggered) return;
       violationTriggered = true;
+      lockKioskView();
       if (reasonInput) {
         reasonInput.value = reason;
       }
@@ -265,15 +309,27 @@
       var locked = kiosk.getAttribute("data-cbt-locked") === "true";
       if (locked || violationTriggered) return;
 
+      var now = Date.now();
+      if (!isCritical && now - lastViolationAt < 1200) {
+        return;
+      }
+      lastViolationAt = now;
+
+      lockKioskView();
+
       if (isCritical) {
         triggerAntiCheat(reason);
         return;
       }
 
       strikeCount++;
+      try {
+        sessionStorage.setItem(storageKey, String(strikeCount));
+      } catch (e) {}
+
       if (strikeCount >= MAX_STRIKES) {
         triggerAntiCheat(
-          "Pelanggaran anti-curang mencapai batas maksimal (" +
+          "Batas pelanggaran tercapai (" +
             strikeCount +
             "/" +
             MAX_STRIKES +
@@ -281,12 +337,13 @@
             reason
         );
       } else {
+        reportWarnToServer(reason);
         if (strikeModal) {
           if (strikeBadge) {
             strikeBadge.textContent = "Pelanggaran " + strikeCount + "/" + MAX_STRIKES;
           }
           if (strikeTitle) {
-            strikeTitle.textContent = "Aktivitas Mencurigakan Terdeteksi!";
+            strikeTitle.textContent = "Perpindahan Fokus Terdeteksi!";
           }
           if (strikeDesc) {
             strikeDesc.textContent = reason;
@@ -401,21 +458,21 @@
 
     // Initial fullscreen status check
     if (isFullscreen()) {
-      everFullscreen = true;
-      if (fsGate) fsGate.setAttribute("hidden", "");
+      unlockKioskView();
     } else {
+      lockKioskView();
       if (fsGate) fsGate.removeAttribute("hidden");
     }
 
     // Native fullscreen exit detection
     function onFullscreenChange() {
       if (isFullscreen()) {
-        everFullscreen = true;
-        if (fsGate) fsGate.setAttribute("hidden", "");
+        unlockKioskView();
       } else {
+        lockKioskView();
         if (fsGate) fsGate.removeAttribute("hidden");
-        if (everFullscreen) {
-          handleViolation("Keluar dari mode Layar Penuh (Fullscreen Exit) tanpa izin pengawas", false);
+        if (everFullscreen || examStarted) {
+          handleViolation("Keluar dari mode Layar Penuh tanpa izin pengawas", false);
         }
       }
     }
@@ -428,6 +485,7 @@
     document.addEventListener("visibilitychange", function () {
       if (document.hidden) {
         hideStartTime = Date.now();
+        lockKioskView();
       } else {
         if (hideStartTime) {
           var elapsedSec = (Date.now() - hideStartTime) / 1000;
@@ -444,13 +502,13 @@
       }
     });
 
-    // Window Blur Guard (catches notification drawer pull or alt-tab)
+    // Window Blur Guard (catches notification drawer pull, floating calculator, or alt-tab)
     var blurTimer = null;
     window.addEventListener("blur", function () {
-      if (!everFullscreen && !isFullscreen()) return;
+      if (!everFullscreen && !examStarted && !isFullscreen()) return;
       blurTimer = setTimeout(function () {
         handleViolation("Pindah jendela / aplikasi lain (Window Blur) terdeteksi", false);
-      }, 800);
+      }, 600);
     });
     window.addEventListener("focus", function () {
       if (blurTimer) {
@@ -463,12 +521,11 @@
     window.addEventListener("resize", function () {
       var activeEl = document.activeElement;
       var isInput = activeEl && (activeEl.tagName === "INPUT" || activeEl.tagName === "TEXTAREA");
-      // When keyboard is not active, detect abnormal viewport height compression
       if (!isInput && window.innerHeight > 0) {
         if (window.screen && window.screen.availHeight > 500) {
           var ratio = window.innerHeight / window.screen.availHeight;
           if (ratio < 0.55 && window.innerHeight < 380) {
-            handleViolation("Mode Layar Terbagi (Split-Screen / Floating Window) Terdeteksi! Harap gunakan satu layar penuh.", false);
+            handleViolation("Mode Layar Terbagi (Split-Screen / Floating Window) terdeteksi", false);
           }
         }
       }
@@ -479,11 +536,11 @@
       history.pushState({ wesmkCbt: true }, "", location.href);
       window.addEventListener("popstate", function () {
         history.pushState({ wesmkCbt: true }, "", location.href);
-        handleViolation("Gestur / Tombol navigasi Kembali (Back) dinonaktifkan selama ujian", false);
+        handleViolation("Tombol navigasi Kembali (Back) dinonaktifkan selama ujian", false);
       });
     } catch (e) {}
 
-    // Disable text selection and context menu on mobile touch and desktop click
+    // Disable text selection, context menu, drag-and-drop
     document.addEventListener("selectstart", function (e) {
       var tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : "";
       if (tag !== "textarea" && tag !== "input") {
@@ -497,7 +554,17 @@
       return false;
     });
 
-    // Block keyboard shortcuts & DevTools on Laptop/Desktop
+    document.addEventListener("dragstart", function (e) {
+      e.preventDefault();
+      return false;
+    });
+
+    document.addEventListener("drop", function (e) {
+      e.preventDefault();
+      return false;
+    });
+
+    // Block keyboard shortcuts, PrintScreen, Print, Save, Find & DevTools
     document.addEventListener("keydown", function (e) {
       var locked = kiosk.getAttribute("data-cbt-locked") === "true";
       if (locked || violationTriggered) return;
@@ -519,6 +586,25 @@
         return false;
       }
 
+      // Block PrintScreen / Screenshot keys
+      if (key === "PrintScreen" || (ctrlOrMeta && e.shiftKey && (key === "S" || key === "s"))) {
+        e.preventDefault();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText("").catch(function () {});
+        }
+        handleViolation("Mencoba melakukan tangkapan layar (Screenshot)", false);
+        return false;
+      }
+
+      // Block Print (Ctrl+P), Save (Ctrl+S), Find (Ctrl+F / Ctrl+G)
+      if (
+        ctrlOrMeta &&
+        (key === "p" || key === "P" || key === "s" || key === "S" || key === "f" || key === "F" || key === "g" || key === "G")
+      ) {
+        e.preventDefault();
+        return false;
+      }
+
       // Block Alt+Tab or Alt+F4
       if (e.altKey && (key === "Tab" || key === "F4")) {
         e.preventDefault();
@@ -532,20 +618,17 @@
         key === "F5"
       ) {
         e.preventDefault();
-        handleViolation("Mencoba navigasi / reload halaman (" + key + ")", false);
+        handleViolation("Mencoba navigasi / muat ulang halaman (" + key + ")", false);
         return false;
       }
 
-      // Block Copy/Cut/Paste shortcuts outside essay textarea
+      // Block Copy/Cut/Paste shortcuts (even in essay textarea, block external paste)
       if (
         ctrlOrMeta &&
-        (key === "c" || key === "C" || key === "x" || key === "X" || key === "v" || key === "V" || key === "a" || key === "A")
+        (key === "c" || key === "C" || key === "x" || key === "X" || key === "v" || key === "V")
       ) {
-        var tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : "";
-        if (tag !== "textarea") {
-          e.preventDefault();
-          return false;
-        }
+        e.preventDefault();
+        return false;
       }
 
       // Prevent F11 native browser toggle
@@ -555,20 +638,19 @@
       }
     });
 
-    // Block clipboard copy/cut outside textarea
+    // Block clipboard copy, cut, and external paste (prevents pasting AI/web answers into essay)
     document.addEventListener("copy", function (e) {
-      var tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : "";
-      if (tag !== "textarea") {
-        e.preventDefault();
-        return false;
-      }
+      e.preventDefault();
+      return false;
     });
     document.addEventListener("cut", function (e) {
-      var tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : "";
-      if (tag !== "textarea") {
-        e.preventDefault();
-        return false;
-      }
+      e.preventDefault();
+      return false;
+    });
+    document.addEventListener("paste", function (e) {
+      e.preventDefault();
+      handleViolation("Menempelkan teks dari luar (Paste) dilarang selama ujian", false);
+      return false;
     });
 
     // Confirmation on accidental tab close / navigation
@@ -648,30 +730,30 @@
       stellar: {
         cls: "cbt-tier-stellar",
         pillCls: "pill-stellar",
-        name: "✦ TIER STELLAR JADE (91 - 100) ✦",
-        spinHint: "✨ Kilau prisma mulai berputar halus... Ketuk sekali lagi untuk mengungkap nilai!",
-        fullHint: "Nilai rata-rata seluruh ujian: " + currentScore + "/100 (Ketuk lagi untuk mengulang animasi)"
+        name: "✦ STELLAR JADE (91 - 100) ✦",
+        spinHint: "✨ Ketuk sekali lagi untuk membuka nilai!",
+        fullHint: "Rata-rata ujian: " + currentScore + "/100"
       },
       gold: {
         cls: "cbt-tier-gold",
         pillCls: "pill-gold",
-        name: "★ TIER EMAS (81 - 90) ★",
-        spinHint: "✨ Kilau emas mulai berputar halus... Ketuk sekali lagi untuk mengungkap nilai!",
-        fullHint: "Nilai rata-rata seluruh ujian: " + currentScore + "/100 (Ketuk lagi untuk mengulang animasi)"
+        name: "★ EMAS (81 - 90) ★",
+        spinHint: "✨ Ketuk sekali lagi untuk membuka nilai!",
+        fullHint: "Rata-rata ujian: " + currentScore + "/100"
       },
       blue: {
         cls: "cbt-tier-blue",
         pillCls: "pill-blue",
-        name: "◆ TIER BIRU (71 - 80) ◆",
-        spinHint: "✨ Kilau biru mulai berputar halus... Ketuk sekali lagi untuk mengungkap nilai!",
-        fullHint: "Nilai rata-rata seluruh ujian: " + currentScore + "/100 (Ketuk lagi untuk mengulang animasi)"
+        name: "◆ BIRU (71 - 80) ◆",
+        spinHint: "✨ Ketuk sekali lagi untuk membuka nilai!",
+        fullHint: "Rata-rata ujian: " + currentScore + "/100"
       },
       green: {
         cls: "cbt-tier-green",
         pillCls: "pill-green",
-        name: "● TIER HIJAU (1 - 70) ●",
-        spinHint: "✨ Kilau hijau mulai berputar halus... Ketuk sekali lagi untuk mengungkap nilai!",
-        fullHint: "Nilai rata-rata seluruh ujian: " + currentScore + "/100 (Ketuk lagi untuk mengulang animasi)"
+        name: "● HIJAU (1 - 70) ●",
+        spinHint: "✨ Ketuk sekali lagi untuk membuka nilai!",
+        fullHint: "Rata-rata ujian: " + currentScore + "/100"
       }
     };
 
@@ -709,14 +791,14 @@
           navigator.vibrate([80, 40, 80]);
         }
         if (hintEl) {
-          hintEl.textContent = "Nilai belum dapat dibuka. Harap selesaikan seluruh ujian dan tunggu penilaian guru.";
+          hintEl.textContent = "Belum dapat dibuka. Selesaikan seluruh ujian terlebih dahulu.";
           hintEl.classList.add("text-danger");
           setTimeout(function () {
             if (hintEl) {
               hintEl.classList.remove("text-danger");
-              hintEl.textContent = "Nilai rata-rata masih terkunci. Selesaikan seluruh 4 mata pelajaran dan tunggu penilaian guru.";
+              hintEl.textContent = "Selesaikan seluruh ujian (4 mapel) untuk membuka nilai.";
             }
-          }, 3500);
+          }, 3000);
         }
         return; // Hentikan di sini!
       }
@@ -748,7 +830,7 @@
           pillEl.className = "cbt-tier-pill " + info.pillCls;
         }
         if (tierNameEl) tierNameEl.textContent = info.name;
-        if (hintEl) hintEl.textContent = "Nilai rata-rata seluruh ujian: " + currentScore + "/100 (Ketuk lagi untuk mengulang animasi)";
+        if (hintEl) hintEl.textContent = "Rata-rata ujian: " + currentScore + "/100";
         if (navigator.vibrate) navigator.vibrate([100, 50, 120]);
 
         // Munculkan rincian nilai per mapel di bawahnya
@@ -763,7 +845,7 @@
         if (symbolEl) symbolEl.removeAttribute("hidden");
         if (scoreEl) scoreEl.setAttribute("hidden", "");
         if (pillEl) pillEl.setAttribute("hidden", "");
-        if (hintEl) hintEl.textContent = "Ketuk lingkaran misteri untuk mendeteksi aura nilai!";
+        if (hintEl) hintEl.textContent = "Ketuk lingkaran untuk melihat aura & nilai rata-rata.";
       }
     }
 
