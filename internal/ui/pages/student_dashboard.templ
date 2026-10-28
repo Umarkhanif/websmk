@@ -36,7 +36,7 @@ templ StudentDashboardPage(data ui.StudentDashboard) {
 			<div class="appreciation-card">
 				<span class="appreciation-icon">@components.Icon("award", "icon")</span>
 				<div>
-					<span class="eyebrow">Apresiasi vokasi</span>
+					<span class="eyebrow">Apresiasi Siswa</span>
 					<strong>{ data.Student.ActiveBadge }</strong>
 					<p>“{ data.Student.ActiveBadgeReason }”</p>
 				</div>
@@ -48,7 +48,7 @@ templ StudentDashboardPage(data ui.StudentDashboard) {
 
 			<article class="card stat-card">
 				<div class="stat-card-head">
-					<span class="eyebrow">Presensi gerbang</span>
+					<span class="eyebrow">Presensi Hari Ini</span>
 					<span class={ "badge " + attendanceBadgeClass(data.Attendance.Status) }>
 						@components.Icon(attendanceIcon(data.Attendance.Status), "icon icon-xs")
 						{ data.Attendance.StatusLabel }
@@ -57,18 +57,18 @@ templ StudentDashboardPage(data ui.StudentDashboard) {
 				<p class="stat-value mono">{ data.Attendance.Time }</p>
 				<p class="stat-note">{ data.Attendance.Source }</p>
 				<div class="info-strip">
-					<span class="info-strip-label">Notifikasi orang tua</span>
-					<span>Pesan kehadiran dikirim otomatis ke { data.Student.ParentName }.</span>
+					<span class="info-strip-label">Notifikasi Ortu</span>
+					<span>Terkirim otomatis ke WhatsApp { data.Student.ParentName }.</span>
 				</div>
 				<div class="stat-card-foot">
-					<span>Poin sikap terproteksi</span>
+					<span>Poin Sikap</span>
 					<strong class="mono">{ strconv.Itoa(data.Student.AttitudeScore) }/100</strong>
 				</div>
 			</article>
 
 			<article class="card stat-card">
 				<div class="stat-card-head">
-					<span class="eyebrow">Kuis harian</span>
+					<span class="eyebrow">Kuis Harian</span>
 					<span class="badge badge-neutral">
 						@components.Icon("flame", "icon icon-xs")
 						Rata-rata { strconv.Itoa(data.Quiz.Average) }
@@ -78,7 +78,7 @@ templ StudentDashboardPage(data ui.StudentDashboard) {
 				<p class="stat-note">Topik: { data.Quiz.Topic }</p>
 				<div class="info-strip">
 					@components.Icon("clock", "icon icon-xs")
-					<span>{ strconv.Itoa(data.Quiz.QuestionCount) } soal · batas 45 detik per soal</span>
+					<span>{ strconv.Itoa(data.Quiz.QuestionCount) } soal · 45 detik/soal</span>
 				</div>
 				<div class="stat-card-foot stat-card-foot-action">
 					if data.Quiz.Attempted {
@@ -89,7 +89,7 @@ templ StudentDashboardPage(data ui.StudentDashboard) {
 					} else if data.Quiz.QuestionCount > 0 {
 						<button type="button" class="button button-primary button-block" data-modal-open="#quiz-modal">
 							@components.Icon("arrow-right", "icon")
-							<span>Mulai kuis harian</span>
+							<span>Mulai Kuis</span>
 						</button>
 					} else {
 						<span class="muted">Belum ada kuis untuk hari ini.</span>
@@ -106,7 +106,7 @@ templ StudentDashboardPage(data ui.StudentDashboard) {
 			<section class="note-card">
 				<div class="note-icon">@components.Icon("heart", "icon")</div>
 				<div>
-					<span class="eyebrow">Catatan wali kelas</span>
+					<span class="eyebrow">Catatan Wali Kelas</span>
 					<p>{ data.Student.HomeroomNote }</p>
 				</div>
 			</section>
@@ -119,29 +119,29 @@ templ StudentDashboardPage(data ui.StudentDashboard) {
 templ FinanceCard(data ui.StudentDashboard) {
 	<article id="finance-card" class="card stat-card">
 		<div class="stat-card-head">
-			<span class="eyebrow">Keuangan &amp; gerbang ujian</span>
+			<span class="eyebrow">Status SPP &amp; Ujian</span>
 			if data.IsCleared {
 				<span class="badge badge-success">
 					@components.Icon("check", "icon icon-xs")
 					if data.HasDispensation && !data.Invoice.IsPaid {
-						Dispensasi aktif
+						Dispensasi Aktif
 					} else {
-						Pintu CBT terbuka
+						Ujian Diizinkan
 					}
 				</span>
 			} else {
 				<span class="badge badge-danger">
 					@components.Icon("lock", "icon icon-xs")
-					Tertahan gatekeeper
+					Menunggu SPP
 				</span>
 			}
 		</div>
 		if data.HasInvoice {
 			<p class="stat-title">SPP { data.Invoice.Period }</p>
 			<p class="stat-value mono">{ ui.FormatRupiah(data.Invoice.Remaining) }</p>
-			<p class="stat-note">Sisa tagihan · status { data.Invoice.StatusLabel }</p>
+			<p class="stat-note">Sisa tagihan · { data.Invoice.StatusLabel }</p>
 			<div class="va-box">
-				<span class="info-strip-label">Virtual account · { data.Invoice.Provider }</span>
+				<span class="info-strip-label">VA Mandiri ({ data.Invoice.Provider })</span>
 				<strong class="mono">{ data.Invoice.VANumber }</strong>
 			</div>
 			if !data.Invoice.IsPaid && data.Shell.DemoMode {

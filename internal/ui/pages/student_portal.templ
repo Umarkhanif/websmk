@@ -14,17 +14,17 @@ templ StudentPortal(data ui.StudentPortalPage) {
 		if data.Tab == "classroom" {
 			<section class="card form-stack">
 				<div class="stat-card-head">
-					<span class="eyebrow">Jurnal Kelas &amp; Materi Praktik Hari Ini</span>
+					<span class="eyebrow">Agenda Pembelajaran</span>
 					<span class="badge badge-teal">{ data.Journal.Subject }</span>
 				</div>
 				<h2>{ data.Journal.Topic }</h2>
 				<p class="muted">Guru Pengampu: <strong>{ data.Journal.TeacherName }</strong></p>
 				<div class="info-strip">
-					<span class="info-strip-label">Catatan Instruktur</span>
+					<span class="info-strip-label">Catatan Guru</span>
 					<span>{ data.TeacherNotes }</span>
 				</div>
 				<div class="info-strip">
-					<span class="info-strip-label">Langkah-Langkah Praktik Bengkel (AI Smart Notes)</span>
+					<span class="info-strip-label">Modul Praktik Bengkel</span>
 					<span>{ data.AiSmartNotes }</span>
 				</div>
 			</section>
@@ -32,14 +32,14 @@ templ StudentPortal(data ui.StudentPortalPage) {
 			<div class="grid-2">
 				<section class="card form-stack">
 					<div class="stat-card-head">
-						<span class="eyebrow">AI Daily Quiz</span>
-						<span class="badge badge-neutral">{ strconv.Itoa(data.Quiz.QuestionCount) } Soal · 45 Detik/Soal</span>
+						<span class="eyebrow">Kuis Harian</span>
+						<span class="badge badge-neutral">{ strconv.Itoa(data.Quiz.QuestionCount) } Soal · 45 dtk/soal</span>
 					</div>
-					<h3>AI Daily Quiz — { data.Quiz.Topic }</h3>
+					<h3>Kuis — { data.Quiz.Topic }</h3>
 					if data.Quiz.Attempted {
 						<div class="alert alert-success">
 							@components.Icon("check", "icon")
-							<span>Kuis Harian Sukses Diselesaikan · Skor: <strong class="mono">{ strconv.Itoa(data.Quiz.Score) }/100</strong></span>
+							<span>Kuis Selesai · Skor: <strong class="mono">{ strconv.Itoa(data.Quiz.Score) }/100</strong></span>
 						</div>
 					} else {
 						<p class="muted">Kerjakan kuis singkat harian untuk menguji pemahaman materi hari ini.</p>
@@ -67,56 +67,56 @@ templ StudentPortal(data ui.StudentPortalPage) {
 
 				<section class="card form-stack">
 					<div class="stat-card-head">
-						<span class="eyebrow">Radar Pemahaman Siswa (Anonim ke Guru)</span>
-						<span class="badge badge-gold">Proteksi Privasi</span>
+						<span class="eyebrow">Radar Pemahaman Siswa</span>
+						<span class="badge badge-gold">Anonim ke Guru</span>
 					</div>
-					<h3>Bagaimana Pemahaman Anda terhadap Materi "{ data.Journal.Topic }"?</h3>
+					<h3>Tingkat Pemahaman: "{ data.Journal.Topic }"</h3>
 					<form method="post" action="/student/reflection" class="form-stack">
 						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 						<label class="field">
-							<span class="field-label">Tingkat Pemahaman</span>
+							<span class="field-label">Pemahaman Materi</span>
 							<select class="input" name="level">
 								<option value="UNDERSTOOD">Paham &amp; Siap Praktik Mandiri</option>
 								<option value="CONFUSED">Masih Bingung / Butuh Penjelasan Ulang</option>
 							</select>
 						</label>
 						<label class="field">
-							<span class="field-label">Catatan Kendala Belajar (Dienkripsi &amp; Tanpa Nama)</span>
-							<textarea class="input" name="complaint" placeholder="Tuliskan bagian materi atau alat bengkel yang belum jelas...">{ data.ReflectionComplaint }</textarea>
+							<span class="field-label">Catatan Kendala (Opsional)</span>
+							<textarea class="input" name="complaint" placeholder="Tuliskan bagian materi yang belum jelas...">{ data.ReflectionComplaint }</textarea>
 						</label>
-						<button type="submit" class="button button-primary">Kirim Umpan Balik Radar</button>
+						<button type="submit" class="button button-primary">Kirim Umpan Balik</button>
 					</form>
 				</section>
 			</div>
 
 			<section class="card form-stack">
 				<div class="stat-card-head">
-					<span class="eyebrow">Escrow Pelaporan Sebaya Anonim</span>
+					<span class="eyebrow">Laporan Sebaya</span>
 					<span class="badge badge-danger">Kesiswaan &amp; BK</span>
 				</div>
-				<h3>Laporan Perundungan atau Perusakan Fasilitas</h3>
-				<p class="muted">Identitas pelapor dilindungi dengan klaster hash kriptografi.</p>
+				<h3>Laporan Perundungan &amp; Ketertiban</h3>
+				<p class="muted">Identitas pelapor dienkripsi dan dijamin kerahasiaannya.</p>
 				<form method="post" action="/student/peer-report" class="form-stack">
 					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 					<div class="form-row">
 						<label class="field">
-							<span class="field-label">Kategori Kasus</span>
+							<span class="field-label">Kategori</span>
 							<input class="input" type="text" name="category" value="Perundungan / Intimidasi Area Bengkel" required/>
 						</label>
 						<label class="field">
-							<span class="field-label">Lokasi Kejadian</span>
-							<input class="input" type="text" name="location" value="Area Belakang Lab TKJ" required/>
+							<span class="field-label">Lokasi</span>
+							<input class="input" type="text" name="location" value="Area Bengkel TKJ" required/>
 						</label>
 						<label class="field">
-							<span class="field-label">Nama Terlapor / Kelas</span>
+							<span class="field-label">Nama Terlapor</span>
 							<input class="input" type="text" name="target_name" placeholder="Nama siswa atau kelompok..." required/>
 						</label>
 					</div>
 					<label class="field">
-						<span class="field-label">Kronologi Singkat</span>
-						<textarea class="input" name="description" placeholder="Jelaskan waktu dan kronologi kejadian secara objektif..." required></textarea>
+						<span class="field-label">Kronologi</span>
+						<textarea class="input" name="description" placeholder="Jelaskan waktu dan kronologi kejadian..." required></textarea>
 					</label>
-					<button type="submit" class="button button-secondary">Kirim Laporan ke Escrow BK</button>
+					<button type="submit" class="button button-secondary">Kirim Laporan</button>
 				</form>
 			</section>
 		} else if data.Tab == "exam-lobby" {
@@ -523,8 +523,8 @@ templ StudentPortal(data ui.StudentPortalPage) {
 		} else if data.Tab == "documents" {
 			<section class="card form-stack">
 				<div>
-					<span class="eyebrow">Arsip &amp; Validasi Berkas Administrasi</span>
-					<h2>Pemberkasan Dokumen Resmi TU &amp; Tugas Praktik Kejuruan</h2>
+					<span class="eyebrow">Validasi Dokumen TU</span>
+					<h2>Arsip Dokumen Resmi Siswa</h2>
 				</div>
 
 				<div class="table-wrap">
@@ -534,8 +534,8 @@ templ StudentPortal(data ui.StudentPortalPage) {
 								<th>Nama Dokumen</th>
 								<th>File Terunggah</th>
 								<th>Ukuran</th>
-								<th>Status Verifikasi TU</th>
-								<th>Unggah Ulang</th>
+								<th>Status TU</th>
+								<th>Aksi</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -546,11 +546,11 @@ templ StudentPortal(data ui.StudentPortalPage) {
 									<td class="mono">{ strconv.Itoa(d.FileSizeKB) } KB</td>
 									<td>
 										if d.Status == "VALID_DISETUJUI" {
-											<span class="badge badge-success">Valid Disetujui TU</span>
+											<span class="badge badge-success">Disetujui TU</span>
 										} else if d.Status == "DITOLAK" {
 											<span class="badge badge-danger">Ditolak: { d.RejectReason }</span>
 										} else {
-											<span class="badge badge-warning">Menunggu Cek TU</span>
+											<span class="badge badge-warning">Menunggu Cek</span>
 										}
 									</td>
 									<td>
@@ -569,20 +569,23 @@ templ StudentPortal(data ui.StudentPortalPage) {
 			</section>
 
 			<section class="card form-stack">
-				<h3>Pengumpulan Tugas Praktik Bengkel &amp; Laporan Lab</h3>
+				<div>
+					<span class="eyebrow">Tugas &amp; Portofolio</span>
+					<h3>Unggah Tugas Praktik Lab &amp; Bengkel</h3>
+				</div>
 				<form method="post" action="/student/task/submit" class="form-row">
 					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 					<label class="field">
-						<span class="field-label">Judul Laporan / Modul Praktik</span>
-						<input class="input" type="text" name="task_title" placeholder="Laporan Praktik Konfigurasi Mikrotik VLAN..." required/>
+						<span class="field-label">Judul Tugas / Praktik</span>
+						<input class="input" type="text" name="task_title" placeholder="Contoh: Praktik VLAN Mikrotik..." required/>
 					</label>
 					<label class="field">
 						<span class="field-label">Nama Berkas (.pdf / .pkt)</span>
 						<input class="input input-mono" type="text" name="file_name" value="praktik_vlan_budi.pdf" required/>
 					</label>
 					<div class="field">
-						<span class="field-label">Aksi</span>
-						<button type="submit" class="button button-primary">Kirim Tugas Praktik</button>
+						<span class="field-label">&nbsp;</span>
+						<button type="submit" class="button button-primary">Kirim Tugas</button>
 					</div>
 				</form>
 
@@ -743,8 +746,9 @@ templ StudentPortal(data ui.StudentPortalPage) {
 			<section class="card form-stack">
 				<div class="stat-card-head">
 					<div>
-						<span class="eyebrow">Magang Industri PKL DUDI &amp; Geotagging Haversine</span>
-						<h3>{ data.PklPlacement.CompanyName } ({ data.PklPlacement.Address })</h3>
+						<span class="eyebrow">Magang Industri</span>
+						<h3>{ data.PklPlacement.CompanyName }</h3>
+						<span class="muted">{ data.PklPlacement.Address }</span>
 					</div>
 					<span class="badge badge-teal">Radius Geofence: { strconv.Itoa(data.PklPlacement.RadiusMeters) }m</span>
 				</div>
@@ -752,29 +756,29 @@ templ StudentPortal(data ui.StudentPortalPage) {
 				<div class="grid-2">
 					<form method="post" action="/student/pkl/checkin" class="info-strip form-stack">
 						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-						<h4>Validasi Geolocation GPS &amp; Selfie EXIF</h4>
-						<p class="muted">Titik Koordinat Mitra: <span class="mono">{ fmt.Sprintf("%.4f, %.4f", data.PklPlacement.GpsLat, data.PklPlacement.GpsLng) }</span></p>
-						<button type="submit" class="button button-primary button-small">Check-In Kehadiran GPS Sekarang</button>
+						<h4>Presensi Geotagging &amp; Selfie</h4>
+						<p class="muted">Titik Lokasi: <span class="mono">{ fmt.Sprintf("%.4f, %.4f", data.PklPlacement.GpsLat, data.PklPlacement.GpsLng) }</span></p>
+						<button type="submit" class="button button-primary button-small">Check-In GPS Sekarang</button>
 					</form>
 
 					<form method="post" action="/student/pkl/journal" class="info-strip form-stack">
 						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-						<h4>Catat Jurnal Kegiatan Harian PKL Baru</h4>
-						<input class="input" type="text" name="activity_title" placeholder="Judul pekerjaan hari ini (mis. Terminasi ODP Fiber)..." required/>
+						<h4>Jurnal Kegiatan PKL Harian</h4>
+						<input class="input" type="text" name="activity_title" placeholder="Aktivitas hari ini (mis. Terminasi Fiber)..." required/>
 						<input class="input" type="text" name="competency" placeholder="Kompetensi yang dipelajari..." required/>
-						<button type="submit" class="button button-secondary button-small">Simpan Jurnal Harian PKL</button>
+						<button type="submit" class="button button-secondary button-small">Simpan Jurnal</button>
 					</form>
 				</div>
 
-				<h4>Riwayat Jurnal Kompetensi Harian ({ strconv.Itoa(len(data.PklJournals)) })</h4>
+				<h4>Riwayat Jurnal Harian ({ strconv.Itoa(len(data.PklJournals)) })</h4>
 				<div class="table-wrap">
 					<table class="data-table">
 						<thead>
 							<tr>
 								<th>Tanggal</th>
-								<th>Aktivitas Pekerjaan</th>
+								<th>Aktivitas</th>
 								<th>Kompetensi</th>
-								<th>Validasi Supervisor DUDI</th>
+								<th>Validasi DUDI</th>
 								<th>Validasi Guru</th>
 							</tr>
 						</thead>
@@ -786,9 +790,9 @@ templ StudentPortal(data ui.StudentPortalPage) {
 									<td>{ j.CompetencyLearned }</td>
 									<td>
 										if j.SupervisorApproved {
-											<span class="badge badge-success">Sah (PIN DUDI)</span>
+											<span class="badge badge-success">Sah DUDI</span>
 										} else {
-											<span class="badge badge-warning">Menunggu DUDI</span>
+											<span class="badge badge-warning">Menunggu</span>
 										}
 									</td>
 									<td>
@@ -807,17 +811,17 @@ templ StudentPortal(data ui.StudentPortalPage) {
 
 			<div class="grid-2">
 				<section class="card form-stack">
-					<span class="eyebrow">Perencanaan Masa Depan Lulusan (BMW)</span>
-					<h3>Rencana Target Karir Utama Anda Pasca-Kelulusan:</h3>
-					<p class="muted">Pilihan aktif saat ini: <strong>{ data.Student.BMWChoice }</strong></p>
+					<span class="eyebrow">Pilihan Karir Lulusan (BMW)</span>
+					<h3>Jalur Karir Pasca-Kelulusan</h3>
+					<p class="muted">Pilihan aktif: <strong>{ data.Student.BMWChoice }</strong></p>
 					<form method="post" action="/student/bmw" class="leader-actions">
 						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-						<button type="submit" name="choice" value="BEKERJA" class={ leaderButtonClass(data.Student.BMWChoice, "BEKERJA") }>Bekerja (Industri DUDI)</button>
-						<button type="submit" name="choice" value="MELANJUTKAN" class={ leaderButtonClass(data.Student.BMWChoice, "MELANJUTKAN") }>Melanjutkan (Kuliah Vokasi)</button>
-						<button type="submit" name="choice" value="WIRAUSAHA" class={ leaderButtonClass(data.Student.BMWChoice, "WIRAUSAHA") }>Wirausaha Mandiri</button>
+						<button type="submit" name="choice" value="BEKERJA" class={ leaderButtonClass(data.Student.BMWChoice, "BEKERJA") }>Bekerja</button>
+						<button type="submit" name="choice" value="MELANJUTKAN" class={ leaderButtonClass(data.Student.BMWChoice, "MELANJUTKAN") }>Kuliah</button>
+						<button type="submit" name="choice" value="WIRAUSAHA" class={ leaderButtonClass(data.Student.BMWChoice, "WIRAUSAHA") }>Wirausaha</button>
 					</form>
 
-					<h3>Bursa Kerja Khusus (BKK) Mitra Industri SMK ({ strconv.Itoa(len(data.BkkJobs)) } Lowongan)</h3>
+					<h3>Bursa Kerja Khusus ({ strconv.Itoa(len(data.BkkJobs)) } Lowongan)</h3>
 					for _, job := range data.BkkJobs {
 						<div class="info-strip">
 							<div class="stat-card-head">

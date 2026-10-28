@@ -35,8 +35,8 @@ templ TreasurerPortal(data ui.TreasurerPortalPage) {
 
 			<div class="grid-2">
 				<section class="card form-stack">
-					<span class="eyebrow">Afirmasi &amp; Potongan Otomatis</span>
-					<h3>Manajemen Beasiswa KIP, Yatim &amp; Prestasi</h3>
+					<span class="eyebrow">Potongan Biaya</span>
+					<h3>Alokasi Beasiswa Siswa</h3>
 					<form method="post" action="/treasurer/scholarship" class="form-stack">
 						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 						<label class="field">
@@ -62,13 +62,13 @@ templ TreasurerPortal(data ui.TreasurerPortalPage) {
 								<input class="input input-mono" type="number" name="discount_percent" value="50" min="0" max="100" required/>
 							</label>
 						</div>
-						<button type="submit" class="button button-primary">Terapkan Beasiswa &amp; Hitung Ulang Tagihan</button>
+						<button type="submit" class="button button-primary">Simpan Beasiswa</button>
 					</form>
 				</section>
 
 				<section class="card form-stack">
-					<span class="eyebrow">Komunikasi Empatik Orang Tua</span>
-					<h3>Antrean Bot Pengingat WhatsApp Santun (H-3, H-0, H+3, H+7)</h3>
+					<span class="eyebrow">Pengingat Pembayaran</span>
+					<h3>Notifikasi Tagihan Jatuh Tempo</h3>
 					for _, inv := range data.Invoices {
 						if !inv.IsPaid {
 							<div class="info-strip">
@@ -80,7 +80,7 @@ templ TreasurerPortal(data ui.TreasurerPortalPage) {
 								<form method="post" action="/treasurer/wa-reminder">
 									<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 									<input type="hidden" name="invoice_id" value={ inv.ID }/>
-									<button type="submit" class="button button-secondary button-small">Kirim Pengingat WA Santun</button>
+									<button type="submit" class="button button-secondary button-small">Kirim Pengingat WA</button>
 								</form>
 							</div>
 						}
@@ -89,9 +89,9 @@ templ TreasurerPortal(data ui.TreasurerPortalPage) {
 			</div>
 		} else if data.Tab == "billing" {
 			<section class="card form-stack">
-				<span class="eyebrow">Loket Kasir Bendahara (Otorisasi PIN 6-Digit Server)</span>
-				<h2>Penerimaan Pembayaran Tunai Penuh / Cicilan Ber-PIN 6 Digit</h2>
-				<p class="muted">Setiap transaksi tunai wajib diverifikasi PIN Bendahara di server dan langsung menghasilkan Kwitansi QR bersegel HMAC-SHA256.</p>
+				<span class="eyebrow">Kasir Pembayaran</span>
+				<h2>Penerimaan Pembayaran Tunai &amp; Cicilan</h2>
+				<p class="muted">Setiap pembayaran langsung tercatat ke buku kas dan menerbitkan kwitansi resmi dengan QR verifikasi.</p>
 				<form method="post" action="/treasurer/cash-payment" class="form-stack">
 					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 					<div class="form-row">
@@ -114,13 +114,13 @@ templ TreasurerPortal(data ui.TreasurerPortalPage) {
 					</div>
 					<button type="submit" class="button button-primary">
 						@components.Icon("receipt", "icon")
-						<span>Bukukan Pembayaran Tunai &amp; Terbitkan Kwitansi HMAC</span>
+						<span>Catat Pembayaran Tunai</span>
 					</button>
 				</form>
 			</section>
 
 			<section class="card form-stack">
-				<h3>Daftar Seluruh Tagihan SPP Siswa</h3>
+				<h3>Daftar Tagihan Siswa</h3>
 				<div class="table-wrap">
 					<table class="data-table">
 						<thead>
@@ -152,9 +152,9 @@ templ TreasurerPortal(data ui.TreasurerPortalPage) {
 			</section>
 		} else if data.Tab == "exam-clearance" {
 			<section class="card form-stack">
-				<span class="eyebrow">Kebijakan Kemanusiaan Gatekeeper Ujian</span>
-				<h2>Daftar Siswa Tertahan Syarat Administrasi Ujian &amp; Penerbitan Dispensasi 7 Hari</h2>
-				<p class="muted">Membuka kunci pintu ujian CBT bagi siswa yang orang tuanya telah menandatangani komitmen cicilan tanpa memalsukan saldo kas.</p>
+				<span class="eyebrow">Dispensasi Ujian</span>
+				<h2>Izin Mengikuti Ujian CBT</h2>
+				<p class="muted">Memberikan izin akses ujian CBT sementara bagi siswa dengan kesepakatan komitmen orang tua.</p>
 				<form method="post" action="/treasurer/dispensation" class="form-row">
 					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 					<label class="field">
@@ -166,16 +166,16 @@ templ TreasurerPortal(data ui.TreasurerPortalPage) {
 						</select>
 					</label>
 					<label class="field">
-						<span class="field-label">Dasar / Alasan Dispensasi 7 Hari</span>
+						<span class="field-label">Dasar / Alasan Dispensasi</span>
 						<input class="input" type="text" name="reason" value="Surat Perjanjian Komitmen Cicilan Orang Tua Wali" required/>
 					</label>
 					<div class="field">
 						<span class="field-label">Otorisasi</span>
-						<button type="submit" class="button button-primary">Terbitkan Dispensasi 7 Hari</button>
+						<button type="submit" class="button button-primary">Terbitkan Dispensasi</button>
 					</div>
 				</form>
 
-				<h3>Daftar Dispensasi Ujian Aktif ({ strconv.Itoa(len(data.Dispensations)) })</h3>
+				<h3>Dispensasi Aktif ({ strconv.Itoa(len(data.Dispensations)) })</h3>
 				<div class="table-wrap">
 					<table class="data-table">
 						<thead>
@@ -207,10 +207,10 @@ templ TreasurerPortal(data ui.TreasurerPortalPage) {
 			<section class="card form-stack">
 				<div class="stat-card-head">
 					<div>
-						<span class="eyebrow">Buku Kas Append-Only (Anti-Hapus &amp; Anti-Manipulasi)</span>
-						<h2>Buku Kas Baku (Standar Akuntansi Sekolah)</h2>
+						<span class="eyebrow">Buku Kas Utama</span>
+						<h2>Jurnal Transaksi Kas Sekolah</h2>
 					</div>
-					<span class="badge badge-teal">Segel Kriptografi HMAC-SHA256</span>
+					<span class="badge badge-teal">Tervalidasi Sistem</span>
 				</div>
 
 				<div class="table-wrap">
@@ -244,9 +244,9 @@ templ TreasurerPortal(data ui.TreasurerPortalPage) {
 			</section>
 
 			<section class="card form-stack">
-				<span class="eyebrow">Koreksi Kesalahan Kasir (Wajib OTP 6-Digit Kepala Sekolah)</span>
-				<h3>Eksekusi Jurnal Pembalik (Reversal Void)</h3>
-				<p class="muted">Transaksi di Buku Kas tidak pernah dapat dihapus. Kesalahan input dikoreksi melalui baris jurnal pembalik negatif dengan otorisasi OTP Kepala Sekolah (OTP aktif saat ini: <strong class="mono">{ data.ExpectedOTP }</strong>).</p>
+				<span class="eyebrow">Koreksi Jurnal</span>
+				<h3>Jurnal Pembalik (Reversal)</h3>
+				<p class="muted">Koreksi catatan kas menggunakan jurnal pembalik dengan persetujuan OTP Kepala Sekolah (OTP: <strong class="mono">{ data.ExpectedOTP }</strong>).</p>
 				<form method="post" action="/treasurer/reversal" class="form-row">
 					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 					<label class="field">
@@ -267,7 +267,7 @@ templ TreasurerPortal(data ui.TreasurerPortalPage) {
 					</label>
 					<div class="field">
 						<span class="field-label">Eksekusi</span>
-						<button type="submit" class="button button-danger">Posting Jurnal Pembalik</button>
+						<button type="submit" class="button button-danger">Proses Jurnal Pembalik</button>
 					</div>
 				</form>
 			</section>

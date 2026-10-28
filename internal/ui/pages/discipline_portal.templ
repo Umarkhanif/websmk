@@ -10,8 +10,8 @@ templ DisciplinePortal(data ui.DisciplinePortalPage) {
 	<div class="page-stack">
 		if data.Tab == "violations" {
 			<section class="card form-stack">
-				<span class="eyebrow">Kesiswaan &amp; Bimbingan Konseling (Pisau Bermata Dua)</span>
-				<h2>Pemantauan Tata Tertib, Escrow Perundungan &amp; Konsultasi BMW</h2>
+				<span class="eyebrow">Kesiswaan &amp; BK</span>
+				<h2>Pencatatan &amp; Pemantauan Tata Tertib</h2>
 				<form method="post" action="/discipline/violation/add" class="form-row">
 					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 					<label class="field">
@@ -65,7 +65,7 @@ templ DisciplinePortal(data ui.DisciplinePortalPage) {
 										<form method="post" action="/discipline/violation/summon">
 											<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 											<input type="hidden" name="violation_id" value={ v.ID }/>
-											<button type="submit" class="button button-secondary button-small">Terbitkan Surat Panggilan HMAC</button>
+											<button type="submit" class="button button-secondary button-small">Terbitkan Surat Panggilan</button>
 										</form>
 									</td>
 								</tr>
@@ -77,8 +77,8 @@ templ DisciplinePortal(data ui.DisciplinePortalPage) {
 
 			<div class="grid-2">
 				<section class="card form-stack">
-					<span class="eyebrow">Escrow Kriptografi Anonim</span>
-					<h3>Kasus Perundungan Berat Berstatus Escrow (&gt;=10 Pelapor dari &gt;=3 Klaster)</h3>
+					<span class="eyebrow">Laporan Kasus</span>
+					<h3>Laporan Perundungan Terverifikasi</h3>
 					for _, pr := range data.PeerReports {
 						<div class="info-strip">
 							<div class="stat-card-head">
@@ -86,20 +86,20 @@ templ DisciplinePortal(data ui.DisciplinePortalPage) {
 								<span class="badge badge-danger">{ pr.Status }</span>
 							</div>
 							<span><strong>{ pr.ArticleCategory }</strong>: { pr.Description }</span>
-							<span class="muted mono">Klaster: { pr.ReporterClusterHash } · { strconv.Itoa(pr.DistinctClusterCount) } Pelapor Independen</span>
+							<span class="muted mono">Klaster: { pr.ReporterClusterHash } · { strconv.Itoa(pr.DistinctClusterCount) } Pelapor</span>
 							<form method="post" action="/discipline/peer-report/resolve" class="leader-actions">
 								<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 								<input type="hidden" name="report_id" value={ pr.ID }/>
 								<button type="submit" name="status" value="INVESTIGATING_BK" class="button button-secondary button-small">Investigasi BK</button>
-								<button type="submit" name="status" value="RESOLVED" class="button button-primary button-small">Tandai Selesai Dibina</button>
+								<button type="submit" name="status" value="RESOLVED" class="button button-primary button-small">Tandai Selesai</button>
 							</form>
 						</div>
 					}
 				</section>
 
 				<section class="card form-stack">
-					<span class="eyebrow">Layanan Konseling Orang Tua</span>
-					<h3>Antrean Tiket Konsultasi Karir BMW dari Orang Tua Wali</h3>
+					<span class="eyebrow">Konseling Siswa &amp; Karier</span>
+					<h3>Permintaan Konsultasi Orang Tua</h3>
 					for _, c := range data.Consultations {
 						<div class="info-strip">
 							<div class="stat-card-head">
@@ -137,12 +137,12 @@ templ DisciplinePortal(data ui.DisciplinePortalPage) {
 
 			<section class="card form-stack">
 				<span class="eyebrow">Evaluasi Pemulihan Karakter</span>
-				<h3>Meja Konseling BK: Daftar Siswa dalam Pembinaan Aktif (Evaluasi 30-60 Hari)</h3>
+				<h3>Daftar Pembinaan Siswa Aktif</h3>
 				for _, cs := range data.CounselingSessions {
 					<div class="info-strip form-stack">
 						<div class="stat-card-head">
 							<strong>{ cs.StudentName } — { cs.IssueSummary }</strong>
-							<span class="badge badge-teal">{ cs.RecoveryStatus } ({ strconv.Itoa(cs.DailyCheckinsCompleted) } Hari Check-in)</span>
+							<span class="badge badge-teal">{ cs.RecoveryStatus } ({ strconv.Itoa(cs.DailyCheckinsCompleted) } Hari)</span>
 						</div>
 						<p class="muted">Periode: <span class="mono">{ cs.StartDate } s.d. { cs.EndDate }</span> · Konselor: { cs.CounselorName }</p>
 						<p>{ cs.Notes }</p>
@@ -154,7 +154,7 @@ templ DisciplinePortal(data ui.DisciplinePortalPage) {
 								<option value="MONITORING">MONITORING (Lanjut Pembinaan)</option>
 								<option value="RECOVERED_SUCCESS">RECOVERED_SUCCESS (Pulih Total)</option>
 							</select>
-							<button type="submit" class="button button-primary button-small">Catat Check-in &amp; Perbarui Status</button>
+							<button type="submit" class="button button-primary button-small">Perbarui Pembinaan</button>
 						</form>
 					</div>
 				}

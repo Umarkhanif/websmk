@@ -20,9 +20,9 @@ templ PublicVerify(data ui.PublicVerifyPage) {
 			<link rel="preconnect" href="https://fonts.googleapis.com"/>
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 			<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-			<link rel="stylesheet" href="/ui-assets/app.css"/>
+			<link rel="stylesheet" href="/ui-assets/app.css?v=20261028c"/>
 			<script src="/ui-assets/htmx.min.js" defer></script>
-			<script src="/ui-assets/app.js" defer></script>
+			<script src="/ui-assets/app.js?v=20261028c" defer></script>
 		</head>
 		<body class="app-body">
 			<main class="page">
@@ -31,17 +31,17 @@ templ PublicVerify(data ui.PublicVerifyPage) {
 						<div class="identity-main">
 							<span class="brand-mark brand-mark-lg">W</span>
 							<div class="identity-copy">
-								<span class="eyebrow">Portal Publik Verifikasi &amp; Mitra Industri (PUB-02)</span>
-								<h2>Verifikasi Keaslian Kwitansi, Surat Resmi &amp; Jurnal Magang DUDI</h2>
-								<p class="muted">SMK Negeri 1 Rekayasa · Validasi tanda tangan kriptografi HMAC-SHA256 secara real-time di server.</p>
+								<span class="eyebrow">Verifikasi Dokumen &amp; Mitra PKL</span>
+								<h2>Pemeriksaan Keaslian Dokumen Resmi</h2>
+								<p class="muted">SMK Negeri 1 Rekayasa · Cek keabsahan kwitansi, surat sekolah, dan persetujuan jurnal PKL.</p>
 							</div>
 						</div>
 						<a href="/login" class="button button-secondary button-small">Kembali ke Portal</a>
 					</section>
 
 					<div class="login-tabs" role="tablist">
-						<a href="/verify?tab=verify" class={ loginTabClass(data.ActiveTab, "verify") }>Verifikasi Surat &amp; Kwitansi (HMAC)</a>
-						<a href="/verify?tab=dudi" class={ loginTabClass(data.ActiveTab, "dudi") }>Persetujuan Jurnal Magang DUDI (PIN)</a>
+						<a href="/verify?tab=verify" class={ loginTabClass(data.ActiveTab, "verify") }>Verifikasi Dokumen &amp; Kwitansi</a>
+						<a href="/verify?tab=dudi" class={ loginTabClass(data.ActiveTab, "dudi") }>Persetujuan Jurnal Magang</a>
 					</div>
 
 					if data.Error != "" {
@@ -60,9 +60,9 @@ templ PublicVerify(data ui.PublicVerifyPage) {
 					if data.ActiveTab == "dudi" {
 						<section class="card form-stack">
 							<div>
-								<span class="eyebrow">Portal Supervisor Mitra Industri (DUDI)</span>
-								<h3>Persetujuan Jurnal Harian &amp; Kehadiran Siswa Magang</h3>
-								<p class="muted">Masukkan 6-digit PIN resmi mitra industri untuk mengesahkan jurnal kompetensi siswa tanpa perlu membuat akun.</p>
+								<span class="eyebrow">Persetujuan Pembimbing Industri</span>
+								<h3>Validasi Jurnal PKL Siswa</h3>
+								<p class="muted">Masukkan PIN 6-digit mitra industri untuk mengesahkan jurnal siswa.</p>
 							</div>
 
 							<form method="post" action="/verify/dudi-approve" class="form-stack">
@@ -82,7 +82,7 @@ templ PublicVerify(data ui.PublicVerifyPage) {
 								</label>
 								<button type="submit" class="button button-primary">
 									@components.Icon("check", "icon")
-									<span>Sahkan Jurnal Magang dengan PIN DUDI</span>
+									<span>Sahkan Jurnal Magang</span>
 								</button>
 							</form>
 
@@ -129,12 +129,12 @@ templ PublicVerify(data ui.PublicVerifyPage) {
 						<section class="card form-stack">
 							<form method="get" action="/verify" class="form-stack">
 								<label class="field">
-									<span class="field-label">Nomor Surat Resmi / Nomor Kwitansi / Hash HMAC-SHA256</span>
-									<input class="input input-mono" type="text" name="q" value={ data.Query } placeholder="Masukkan nomor surat, nomor kwitansi, atau kode hash HMAC..." required/>
+									<span class="field-label">Nomor Dokumen / Kwitansi / Kode Validasi</span>
+									<input class="input input-mono" type="text" name="q" value={ data.Query } placeholder="Masukkan nomor surat, kwitansi, atau kode verifikasi..." required/>
 								</label>
 								<button type="submit" class="button button-primary">
 									@components.Icon("file-check", "icon")
-									<span>Periksa Keaslian di Buku Induk Server</span>
+									<span>Periksa Keaslian Dokumen</span>
 								</button>
 							</form>
 
@@ -151,13 +151,13 @@ templ PublicVerify(data ui.PublicVerifyPage) {
 						if data.VerifiedLetter != nil {
 							<section class="card form-stack">
 								<div class="stat-card-head">
-									<span class="badge badge-success">SURAT ASLI &amp; TERVERIFIKASI BUKU INDUK SEKOLAH</span>
+									<span class="badge badge-success">SURAT RESMI TERVERIFIKASI</span>
 									<span class="mono">{ data.VerifiedLetter.LetterNumber }</span>
 								</div>
 								<h3>{ data.VerifiedLetter.LetterType } — { data.VerifiedLetter.StudentName }</h3>
 								<p class="muted">Tujuan: { data.VerifiedLetter.Recipient } · Tanggal Terbit: { data.VerifiedLetter.IssueDate }</p>
 								<div class="info-strip">
-									<span class="info-strip-label">Pejabat Penandatangan Elektronik</span>
+									<span class="info-strip-label">Penandatangan</span>
 									<strong>{ data.VerifiedLetter.SignerName } ({ data.VerifiedLetter.SignerRole })</strong>
 									<span class="mono">HMAC-SHA256: { data.VerifiedLetter.HmacHash }</span>
 								</div>
@@ -167,13 +167,13 @@ templ PublicVerify(data ui.PublicVerifyPage) {
 						if data.VerifiedReceipt != nil {
 							<section class="card form-stack">
 								<div class="stat-card-head">
-									<span class="badge badge-success">KWITANSI PEMBAYARAN SAH &amp; TERCATAT DI BUKU KAS</span>
+									<span class="badge badge-success">KWITANSI PEMBAYARAN SAH</span>
 									<span class="mono">{ data.VerifiedReceipt.ReceiptNumber }</span>
 								</div>
 								<h3>{ data.VerifiedReceipt.StudentName } — { ui.FormatRupiah(data.VerifiedReceipt.AmountDelta) }</h3>
 								<p class="muted">Jenis Transaksi: { data.VerifiedReceipt.TxType } · Petugas/Kanal: { data.VerifiedReceipt.ActorName } · Waktu: { ui.FormatDateID(data.VerifiedReceipt.CreatedAt) }</p>
 								<div class="info-strip">
-									<span class="info-strip-label">Segel Kriptografi Buku Kas (Append-Only Ledger #{ strconv.FormatInt(data.VerifiedReceipt.ID, 10) })</span>
+									<span class="info-strip-label">Validasi Buku Kas (#{ strconv.FormatInt(data.VerifiedReceipt.ID, 10) })</span>
 									<span class="mono">{ data.VerifiedReceipt.SignatureHmac }</span>
 								</div>
 							</section>

@@ -93,7 +93,7 @@ func TreasurerPortal(data ui.TreasurerPortalPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "%</p><p class=\"stat-note\">Target semester: 90%</p></article></div><div class=\"grid-2\"><section class=\"card form-stack\"><span class=\"eyebrow\">Afirmasi &amp; Potongan Otomatis</span><h3>Manajemen Beasiswa KIP, Yatim &amp; Prestasi</h3><form method=\"post\" action=\"/treasurer/scholarship\" class=\"form-stack\"><input type=\"hidden\" name=\"_csrf\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "%</p><p class=\"stat-note\">Target semester: 90%</p></article></div><div class=\"grid-2\"><section class=\"card form-stack\"><span class=\"eyebrow\">Potongan Biaya</span><h3>Alokasi Beasiswa Siswa</h3><form method=\"post\" action=\"/treasurer/scholarship\" class=\"form-stack\"><input type=\"hidden\" name=\"_csrf\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -181,7 +181,7 @@ func TreasurerPortal(data ui.TreasurerPortalPage) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</select></label><div class=\"form-row\"><label class=\"field\"><span class=\"field-label\">Kategori Beasiswa</span> <select class=\"input\" name=\"scholarship_type\"><option value=\"KIP\">KIP (Kartu Indonesia Pintar)</option> <option value=\"YATIM\">Santunan Yatim / Piatu</option> <option value=\"PRESTASI\">Beasiswa Prestasi Vokasi</option> <option value=\"NONE\">Reguler (Tanpa Potongan)</option></select></label> <label class=\"field\"><span class=\"field-label\">Persentase Potongan (%)</span> <input class=\"input input-mono\" type=\"number\" name=\"discount_percent\" value=\"50\" min=\"0\" max=\"100\" required></label></div><button type=\"submit\" class=\"button button-primary\">Terapkan Beasiswa &amp; Hitung Ulang Tagihan</button></form></section><section class=\"card form-stack\"><span class=\"eyebrow\">Komunikasi Empatik Orang Tua</span><h3>Antrean Bot Pengingat WhatsApp Santun (H-3, H-0, H+3, H+7)</h3>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</select></label><div class=\"form-row\"><label class=\"field\"><span class=\"field-label\">Kategori Beasiswa</span> <select class=\"input\" name=\"scholarship_type\"><option value=\"KIP\">KIP (Kartu Indonesia Pintar)</option> <option value=\"YATIM\">Santunan Yatim / Piatu</option> <option value=\"PRESTASI\">Beasiswa Prestasi Vokasi</option> <option value=\"NONE\">Reguler (Tanpa Potongan)</option></select></label> <label class=\"field\"><span class=\"field-label\">Persentase Potongan (%)</span> <input class=\"input input-mono\" type=\"number\" name=\"discount_percent\" value=\"50\" min=\"0\" max=\"100\" required></label></div><button type=\"submit\" class=\"button button-primary\">Simpan Beasiswa</button></form></section><section class=\"card form-stack\"><span class=\"eyebrow\">Pengingat Pembayaran</span><h3>Notifikasi Tagihan Jatuh Tempo</h3>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -278,7 +278,7 @@ func TreasurerPortal(data ui.TreasurerPortalPage) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "\"> <button type=\"submit\" class=\"button button-secondary button-small\">Kirim Pengingat WA Santun</button></form></div>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "\"> <button type=\"submit\" class=\"button button-secondary button-small\">Kirim Pengingat WA</button></form></div>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -289,7 +289,7 @@ func TreasurerPortal(data ui.TreasurerPortalPage) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else if data.Tab == "billing" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<section class=\"card form-stack\"><span class=\"eyebrow\">Loket Kasir Bendahara (Otorisasi PIN 6-Digit Server)</span><h2>Penerimaan Pembayaran Tunai Penuh / Cicilan Ber-PIN 6 Digit</h2><p class=\"muted\">Setiap transaksi tunai wajib diverifikasi PIN Bendahara di server dan langsung menghasilkan Kwitansi QR bersegel HMAC-SHA256.</p><form method=\"post\" action=\"/treasurer/cash-payment\" class=\"form-stack\"><input type=\"hidden\" name=\"_csrf\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<section class=\"card form-stack\"><span class=\"eyebrow\">Kasir Pembayaran</span><h2>Penerimaan Pembayaran Tunai &amp; Cicilan</h2><p class=\"muted\">Setiap pembayaran langsung tercatat ke buku kas dan menerbitkan kwitansi resmi dengan QR verifikasi.</p><form method=\"post\" action=\"/treasurer/cash-payment\" class=\"form-stack\"><input type=\"hidden\" name=\"_csrf\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -372,7 +372,7 @@ func TreasurerPortal(data ui.TreasurerPortalPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<span>Bukukan Pembayaran Tunai &amp; Terbitkan Kwitansi HMAC</span></button></form></section><section class=\"card form-stack\"><h3>Daftar Seluruh Tagihan SPP Siswa</h3><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>No. Tagihan</th><th>Periode</th><th>Tagihan Akhir</th><th>Sudah Dibayar</th><th>Sisa</th><th>Nomor VA</th><th>Status</th></tr></thead> <tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<span>Catat Pembayaran Tunai</span></button></form></section><section class=\"card form-stack\"><h3>Daftar Tagihan Siswa</h3><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>No. Tagihan</th><th>Periode</th><th>Tagihan Akhir</th><th>Sudah Dibayar</th><th>Sisa</th><th>Nomor VA</th><th>Status</th></tr></thead> <tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -500,7 +500,7 @@ func TreasurerPortal(data ui.TreasurerPortalPage) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else if data.Tab == "exam-clearance" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<section class=\"card form-stack\"><span class=\"eyebrow\">Kebijakan Kemanusiaan Gatekeeper Ujian</span><h2>Daftar Siswa Tertahan Syarat Administrasi Ujian &amp; Penerbitan Dispensasi 7 Hari</h2><p class=\"muted\">Membuka kunci pintu ujian CBT bagi siswa yang orang tuanya telah menandatangani komitmen cicilan tanpa memalsukan saldo kas.</p><form method=\"post\" action=\"/treasurer/dispensation\" class=\"form-row\"><input type=\"hidden\" name=\"_csrf\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<section class=\"card form-stack\"><span class=\"eyebrow\">Dispensasi Ujian</span><h2>Izin Mengikuti Ujian CBT</h2><p class=\"muted\">Memberikan izin akses ujian CBT sementara bagi siswa dengan kesepakatan komitmen orang tua.</p><form method=\"post\" action=\"/treasurer/dispensation\" class=\"form-row\"><input type=\"hidden\" name=\"_csrf\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -575,14 +575,14 @@ func TreasurerPortal(data ui.TreasurerPortalPage) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "</select></label> <label class=\"field\"><span class=\"field-label\">Dasar / Alasan Dispensasi 7 Hari</span> <input class=\"input\" type=\"text\" name=\"reason\" value=\"Surat Perjanjian Komitmen Cicilan Orang Tua Wali\" required></label><div class=\"field\"><span class=\"field-label\">Otorisasi</span> <button type=\"submit\" class=\"button button-primary\">Terbitkan Dispensasi 7 Hari</button></div></form><h3>Daftar Dispensasi Ujian Aktif (")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "</select></label> <label class=\"field\"><span class=\"field-label\">Dasar / Alasan Dispensasi</span> <input class=\"input\" type=\"text\" name=\"reason\" value=\"Surat Perjanjian Komitmen Cicilan Orang Tua Wali\" required></label><div class=\"field\"><span class=\"field-label\">Otorisasi</span> <button type=\"submit\" class=\"button button-primary\">Terbitkan Dispensasi</button></div></form><h3>Dispensasi Aktif (")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var38 string
 			templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(len(data.Dispensations)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/treasurer_portal.templ`, Line: 178, Col: 78}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/treasurer_portal.templ`, Line: 178, Col: 65}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
 			if templ_7745c5c3_Err != nil {
@@ -681,7 +681,7 @@ func TreasurerPortal(data ui.TreasurerPortalPage) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else if data.Tab == "reports" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "<section class=\"card form-stack\"><div class=\"stat-card-head\"><div><span class=\"eyebrow\">Buku Kas Append-Only (Anti-Hapus &amp; Anti-Manipulasi)</span><h2>Buku Kas Baku (Standar Akuntansi Sekolah)</h2></div><span class=\"badge badge-teal\">Segel Kriptografi HMAC-SHA256</span></div><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>ID</th><th>No. Kwitansi</th><th>Tipe</th><th>Siswa</th><th>Mutasi (Rp)</th><th>Otorisator</th><th>Hash HMAC</th></tr></thead> <tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "<section class=\"card form-stack\"><div class=\"stat-card-head\"><div><span class=\"eyebrow\">Buku Kas Utama</span><h2>Jurnal Transaksi Kas Sekolah</h2></div><span class=\"badge badge-teal\">Tervalidasi Sistem</span></div><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>ID</th><th>No. Kwitansi</th><th>Tipe</th><th>Siswa</th><th>Mutasi (Rp)</th><th>Otorisator</th><th>Hash HMAC</th></tr></thead> <tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -795,14 +795,14 @@ func TreasurerPortal(data ui.TreasurerPortalPage) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 71, "</tbody></table></div></section><section class=\"card form-stack\"><span class=\"eyebrow\">Koreksi Kesalahan Kasir (Wajib OTP 6-Digit Kepala Sekolah)</span><h3>Eksekusi Jurnal Pembalik (Reversal Void)</h3><p class=\"muted\">Transaksi di Buku Kas tidak pernah dapat dihapus. Kesalahan input dikoreksi melalui baris jurnal pembalik negatif dengan otorisasi OTP Kepala Sekolah (OTP aktif saat ini: <strong class=\"mono\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 71, "</tbody></table></div></section><section class=\"card form-stack\"><span class=\"eyebrow\">Koreksi Jurnal</span><h3>Jurnal Pembalik (Reversal)</h3><p class=\"muted\">Koreksi catatan kas menggunakan jurnal pembalik dengan persetujuan OTP Kepala Sekolah (OTP: <strong class=\"mono\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var53 string
 			templ_7745c5c3_Var53, templ_7745c5c3_Err = templ.JoinStringErrs(data.ExpectedOTP)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/treasurer_portal.templ`, Line: 249, Col: 231}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/treasurer_portal.templ`, Line: 249, Col: 152}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var53))
 			if templ_7745c5c3_Err != nil {
@@ -909,7 +909,7 @@ func TreasurerPortal(data ui.TreasurerPortalPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 81, "\" required></label><div class=\"field\"><span class=\"field-label\">Eksekusi</span> <button type=\"submit\" class=\"button button-danger\">Posting Jurnal Pembalik</button></div></form></section>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 81, "\" required></label><div class=\"field\"><span class=\"field-label\">Eksekusi</span> <button type=\"submit\" class=\"button button-danger\">Proses Jurnal Pembalik</button></div></form></section>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

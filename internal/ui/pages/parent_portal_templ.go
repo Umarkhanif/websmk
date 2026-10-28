@@ -49,14 +49,14 @@ func ParentPortal(data ui.ParentPortalPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</span><div class=\"identity-copy\"><span class=\"eyebrow\">Dashboard Empatik Orang Tua / Wali Murid</span><h2>Kabar Harian Ananda: ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</span><div class=\"identity-copy\"><span class=\"eyebrow\">Portal Orang Tua</span><h2>Kabar Belajar Ananda: ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(data.Student.FullName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 17, Col: 53}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 17, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -96,7 +96,7 @@ func ParentPortal(data ui.ParentPortalPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</span><div><span class=\"eyebrow\">Apresiasi Sekolah</span> <strong>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</span><div><span class=\"eyebrow\">Apresiasi Siswa</span> <strong>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -127,7 +127,7 @@ func ParentPortal(data ui.ParentPortalPage) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if data.Tab == "dashboard" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"dashboard-grid\"><article class=\"card stat-card\"><div class=\"stat-card-head\"><span class=\"eyebrow\">Kehadiran Hari Ini</span> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"dashboard-grid\"><article class=\"card stat-card\"><div class=\"stat-card-head\"><span class=\"eyebrow\">Presensi Hari Ini</span> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -188,7 +188,7 @@ func ParentPortal(data ui.ParentPortalPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</p></article><article class=\"card stat-card\"><div class=\"stat-card-head\"><span class=\"eyebrow\">Capaian Holistik 360°</span> <span class=\"badge badge-teal\">Tanpa Ranking Kaku</span></div><p class=\"stat-value mono\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</p></article><article class=\"card stat-card\"><div class=\"stat-card-head\"><span class=\"eyebrow\">Rapor Holistik 360°</span> <span class=\"badge badge-teal\">Komprehensif</span></div><p class=\"stat-value mono\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -201,14 +201,14 @@ func ParentPortal(data ui.ParentPortalPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "/100</p><p class=\"stat-note\">Rata-rata Kuis: ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "/100</p><p class=\"stat-note\">Kuis: ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(data.Student.DailyQuizAvg))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 48, Col: 83}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 48, Col: 73}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -221,13 +221,13 @@ func ParentPortal(data ui.ParentPortalPage) templ.Component {
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(data.Student.AttitudeScore))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 48, Col: 138}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 48, Col: 128}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</p></article><article class=\"card stat-card\"><div class=\"stat-card-head\"><span class=\"eyebrow\">Radar Pemahaman Kelas</span> <span class=\"badge badge-gold\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</p></article><article class=\"card stat-card\"><div class=\"stat-card-head\"><span class=\"eyebrow\">Pemahaman Materi</span> <span class=\"badge badge-gold\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -253,12 +253,12 @@ func ParentPortal(data ui.ParentPortalPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "”</p></article></div><section class=\"card form-stack\"><span class=\"eyebrow\">Kemitraan Keluarga &amp; Sekolah</span><h3>Panduan Dialog Hangat Meja Makan Malam Ini</h3><div class=\"info-strip\"><strong>Topik Obrolan Positif Malam Ini:</strong> <span>“Tadi di bengkel TKJ belajar konfigurasi jaringan apa, Nak? Wali kelasmu menyampaikan apresiasi atas kedisiplinanmu minggu ini.”</span></div></section>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "”</p></article></div><section class=\"card form-stack\"><span class=\"eyebrow\">Saran Obrolan Keluarga</span><h3>Topik Obrolan Malam Ini</h3><div class=\"info-strip\"><strong>Saran Diskusi:</strong> <span>“Bagaimana praktik bengkel hari ini, Nak? Sekolah mengapresiasi kedisiplinan dan keaktifanmu minggu ini.”</span></div></section>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if data.Tab == "roadmap" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<section class=\"card form-stack\"><span class=\"eyebrow\">Perencanaan Keuangan Keluarga</span><h2>Roadmap Perjalanan Biaya Pendidikan 3 Tahun (Kelas X – XII)</h2><div class=\"dashboard-grid\"><div class=\"info-strip\"><span class=\"badge badge-teal\">Tahun 1 · Kelas X</span><h4>Fondasi &amp; Kunjungan Industri</h4><p class=\"muted\">Seragam praktik bengkel, modul dasar kejuruan, dan orientasi industri mitra.</p></div><div class=\"info-strip\"><span class=\"badge badge-gold\">Tahun 2 · Kelas XI</span><h4>Praktik Kerja Lapangan (PKL 6 Bulan)</h4><p class=\"muted\">Transportasi magang DUDI, asuransi kerja siswa, dan jurnal kompetensi industri.</p></div><div class=\"info-strip\"><span class=\"badge badge-success\">Tahun 3 · Kelas XII</span><h4>Uji Kompetensi Keahlian (UKK/LSP)</h4><p class=\"muted\">Sertifikasi profesi BNSP, portofolio proyek akhir, dan penyaluran Bursa Kerja Khusus (BKK).</p></div></div></section><section class=\"card form-stack\"><div class=\"stat-card-head\"><h3>Rekap Pengeluaran Alat Praktik Ananda</h3><strong class=\"mono\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<section class=\"card form-stack\"><span class=\"eyebrow\">Rencana Biaya</span><h2>Perjalanan Biaya Pendidikan (3 Tahun)</h2><div class=\"dashboard-grid\"><div class=\"info-strip\"><span class=\"badge badge-teal\">Tahun 1 · Kelas X</span><h4>Fondasi &amp; Kunjungan Industri</h4><p class=\"muted\">Seragam bengkel, dasar kejuruan, dan orientasi industri.</p></div><div class=\"info-strip\"><span class=\"badge badge-gold\">Tahun 2 · Kelas XI</span><h4>Praktik Kerja Lapangan (PKL)</h4><p class=\"muted\">Magang DUDI, asuransi kerja, dan jurnal kompetensi.</p></div><div class=\"info-strip\"><span class=\"badge badge-success\">Tahun 3 · Kelas XII</span><h4>Uji Kompetensi Keahlian (UKK)</h4><p class=\"muted\">Sertifikasi BNSP, portofolio akhir, dan penyaluran BKK.</p></div></div></section><section class=\"card form-stack\"><div class=\"stat-card-head\"><h3>Rekap Pengeluaran Alat Praktik</h3><strong class=\"mono\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -351,33 +351,33 @@ func ParentPortal(data ui.ParentPortalPage) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else if data.Tab == "future-plan" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<section class=\"card form-stack\"><span class=\"eyebrow\">Konsultasi Masa Depan Lulusan (BMW)</span><h2>Peta Bakat &amp; Rekomendasi Jalur Karir Ananda (")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<section class=\"card form-stack\"><span class=\"eyebrow\">Konsultasi Karir (BMW)</span><h2>Jalur Karir Ananda (")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var24 string
 			templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(data.Student.FullName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 125, Col: 80}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 125, Col: 51}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, ")</h2><p class=\"muted\">Minat utama ananda saat ini: <strong>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, ")</h2><p class=\"muted\">Pilihan minat saat ini: <strong>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var25 string
 			templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(data.Student.BMWChoice)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 126, Col: 82}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 126, Col: 77}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</strong></p><div class=\"dashboard-grid\"><div class=\"info-strip\"><span class=\"badge badge-teal\">Jalur Bekerja (DUDI)</span><h4>Network &amp; Fiber Splicing Specialist</h4><p class=\"muted\">Mitra BKK: PT Telkom Akses &amp; PT Biznet Gio Nusantara.</p></div><div class=\"info-strip\"><span class=\"badge badge-gold\">Jalur Melanjutkan</span><h4>D4 Teknik Telekomunikasi Politeknik</h4><p class=\"muted\">Peluang beasiswa vokasi berprestasi berdasarkan portofolio Rapor 360°.</p></div><div class=\"info-strip\"><span class=\"badge badge-success\">Jalur Wirausaha</span><h4>Jasa Instalasi Jaringan &amp; RT/RW Net</h4><p class=\"muted\">Inkubasi unit produksi SMK dan pendampingan modal alat kerja.</p></div></div><form method=\"post\" action=\"/parent/consultation\" class=\"form-stack\"><input type=\"hidden\" name=\"_csrf\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</strong></p><div class=\"dashboard-grid\"><div class=\"info-strip\"><span class=\"badge badge-teal\">Bekerja (DUDI)</span><h4>Network Specialist</h4><p class=\"muted\">Mitra BKK: PT Telkom Akses &amp; PT Biznet Gio.</p></div><div class=\"info-strip\"><span class=\"badge badge-gold\">Kuliah Vokasi</span><h4>D4 Teknik Telekomunikasi</h4><p class=\"muted\">Peluang beasiswa vokasi via Rapor 360°.</p></div><div class=\"info-strip\"><span class=\"badge badge-success\">Wirausaha</span><h4>Teknisi &amp; Jasa Jaringan</h4><p class=\"muted\">Pendampingan unit produksi dan modal alat.</p></div></div><form method=\"post\" action=\"/parent/consultation\" class=\"form-stack\"><input type=\"hidden\" name=\"_csrf\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -390,7 +390,7 @@ func ParentPortal(data ui.ParentPortalPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "\"><h3>Jadwalkan Konsultasi Karir BMW Bersama Guru BK &amp; Kaprog</h3><div class=\"form-row\"><label class=\"field\"><span class=\"field-label\">Jalur Karir yang Ingin Dikonsultasikan</span> <select class=\"input\" name=\"chosen_path\"><option value=\"BEKERJA\">Bekerja di Mitra Industri (BKK)</option> <option value=\"MELANJUTKAN\">Melanjutkan Pendidikan Tinggi Vokasi</option> <option value=\"WIRAUSAHA\">Wirausaha Mandiri Terpadu</option></select></label> <label class=\"field\"><span class=\"field-label\">Pertanyaan / Harapan Orang Tua</span> <input class=\"input\" type=\"text\" name=\"topic_note\" placeholder=\"Mis. Persiapan magang dan peluang kerja di PT Telkom Akses...\" required></label></div><button type=\"submit\" class=\"button button-primary\">Kirim Permohonan Jadwal Konsultasi</button></form><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Tanggal</th><th>Jalur Pilihan</th><th>Topik Konsultasi</th><th>Status Jadwal BK</th></tr></thead> <tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "\"><h3>Ajukan Konsultasi Karir BMW</h3><div class=\"form-row\"><label class=\"field\"><span class=\"field-label\">Jalur Pilihan</span> <select class=\"input\" name=\"chosen_path\"><option value=\"BEKERJA\">Bekerja di Industri (BKK)</option> <option value=\"MELANJUTKAN\">Kuliah Vokasi</option> <option value=\"WIRAUSAHA\">Wirausaha Mandiri</option></select></label> <label class=\"field\"><span class=\"field-label\">Catatan / Pertanyaan Ortu</span> <input class=\"input\" type=\"text\" name=\"topic_note\" placeholder=\"Contoh: Peluang kerja setelah magang...\" required></label></div><button type=\"submit\" class=\"button button-primary\">Ajukan Jadwal Konsultasi</button></form><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Tanggal</th><th>Jalur</th><th>Topik Konsultasi</th><th>Status BK</th></tr></thead> <tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -457,272 +457,259 @@ func ParentPortal(data ui.ParentPortalPage) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else if data.Tab == "services" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<div class=\"grid-2\"><section class=\"card form-stack\"><span class=\"eyebrow\">Izin Kehadiran Resmi</span><h2>Pengajuan Surat Izin / Sakit Resmi Ananda (")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<div class=\"grid-2\"><section class=\"card form-stack\"><span class=\"eyebrow\">Izin Kehadiran</span><h2>Surat Izin / Sakit Resmi</h2><p class=\"muted\">Tersambung langsung ke presensi kelas guru mapel.</p><form method=\"post\" action=\"/parent/leave\" class=\"form-stack\"><input type=\"hidden\" name=\"_csrf\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var31 string
-			templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(data.Student.FullName)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 193, Col: 75}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, ")</h2><p class=\"muted\">Langsung terhubung ke daftar presensi Guru di kelas dan melindungi poin sikap ananda.</p><form method=\"post\" action=\"/parent/leave\" class=\"form-stack\"><input type=\"hidden\" name=\"_csrf\" value=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var32 string
-			templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.ResolveAttributeValue(data.Shell.CSRFToken)
+			templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.ResolveAttributeValue(data.Shell.CSRFToken)
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 196, Col: 68}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var32)
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var31)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "\"><div class=\"form-row\"><label class=\"field\"><span class=\"field-label\">Jenis Keterangan</span> <select class=\"input\" name=\"leave_type\"><option value=\"SAKIT\">Sakit (Istirahat / Berobat)</option> <option value=\"IZIN\">Izin Keperluan Keluarga</option></select></label> <label class=\"field\"><span class=\"field-label\">Tanggal</span> <input class=\"input input-mono\" type=\"date\" name=\"leave_date\" value=\"2026-10-25\" required></label></div><label class=\"field\"><span class=\"field-label\">Keterangan Orang Tua / Wali</span> <input class=\"input\" type=\"text\" name=\"leave_note\" placeholder=\"Demam sejak semalam, surat dokter menyusul...\" required></label> <button type=\"submit\" class=\"button button-primary\">Kirim Surat Izin Resmi ke Sekolah</button></form></section><section class=\"card form-stack\"><span class=\"eyebrow\">Layanan Pembayaran SPP &amp; Virtual Account</span><h3>Daftar Tagihan SPP Bulanan &amp; Kwitansi QR Resmi</h3>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "\"><div class=\"form-row\"><label class=\"field\"><span class=\"field-label\">Jenis Keterangan</span> <select class=\"input\" name=\"leave_type\"><option value=\"SAKIT\">Sakit (Istirahat / Berobat)</option> <option value=\"IZIN\">Izin Keperluan Keluarga</option></select></label> <label class=\"field\"><span class=\"field-label\">Tanggal</span> <input class=\"input input-mono\" type=\"date\" name=\"leave_date\" value=\"2026-10-25\" required></label></div><label class=\"field\"><span class=\"field-label\">Keterangan</span> <input class=\"input\" type=\"text\" name=\"leave_note\" placeholder=\"Keterangan sakit / keperluan...\" required></label> <button type=\"submit\" class=\"button button-primary\">Kirim Surat Izin</button></form></section><section class=\"card form-stack\"><span class=\"eyebrow\">Pembayaran SPP</span><h3>Tagihan &amp; Kwitansi Digital</h3>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			for _, inv := range data.Invoices {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<div class=\"info-strip\"><div class=\"stat-card-head\"><strong>SPP ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<div class=\"info-strip\"><div class=\"stat-card-head\"><strong>SPP ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var32 string
+				templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(inv.Period)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 224, Col: 32}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, " (")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var33 string
-				templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(inv.Period)
+				templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(inv.Number)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 224, Col: 32}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 224, Col: 48}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, " (")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, ")</strong> ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var34 string
-				templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(inv.Number)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 224, Col: 48}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
+				var templ_7745c5c3_Var34 = []any{"badge " + statusBadgeClass(inv.Status)}
+				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var34...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, ")</strong> ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<span class=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var35 = []any{"badge " + statusBadgeClass(inv.Status)}
-				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var35...)
+				var templ_7745c5c3_Var35 string
+				templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var34).String())
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 1, Col: 0}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var35)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<span class=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var36 string
-				templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.ResolveAttributeValue(templ.CSSClasses(templ_7745c5c3_Var35).String())
+				templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(inv.StatusLabel)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 1, Col: 0}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 225, Col: 81}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var36)
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</span></div><span class=\"mono\">Total: ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var37 string
-				templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs(inv.StatusLabel)
+				templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs(ui.FormatRupiah(inv.FinalAmount))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 225, Col: 81}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 227, Col: 67}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</span></div><span class=\"mono\">Tagihan Akhir: ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, " · Sisa: ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var38 string
-				templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs(ui.FormatRupiah(inv.FinalAmount))
+				templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs(ui.FormatRupiah(inv.Remaining))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 227, Col: 75}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 227, Col: 111}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, " · Sisa: ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</span> <span class=\"muted\">VA ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var39 string
-				templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.JoinStringErrs(ui.FormatRupiah(inv.Remaining))
+				templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.JoinStringErrs(inv.Provider)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 227, Col: 119}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 228, Col: 44}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var39))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</span> <span class=\"muted\">VA ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, ": <strong class=\"mono\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var40 string
-				templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.JoinStringErrs(inv.Provider)
+				templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.JoinStringErrs(inv.VANumber)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 228, Col: 44}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 228, Col: 83}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var40))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, ": <strong class=\"mono\">")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var41 string
-				templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinStringErrs(inv.VANumber)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 228, Col: 83}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var41))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "</strong></span> ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</strong></span> ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				if !inv.IsPaid && data.Shell.DemoMode {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<form method=\"post\" action=\"/parent/invoice/pay\"><input type=\"hidden\" name=\"_csrf\" value=\"")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<form method=\"post\" action=\"/parent/invoice/pay\"><input type=\"hidden\" name=\"_csrf\" value=\"")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var41 string
+					templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.ResolveAttributeValue(data.Shell.CSRFToken)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 231, Col: 71}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var41)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "\"> <input type=\"hidden\" name=\"invoice_id\" value=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var42 string
-					templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.ResolveAttributeValue(data.Shell.CSRFToken)
+					templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.ResolveAttributeValue(inv.ID)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 231, Col: 71}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 232, Col: 62}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var42)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "\"> <input type=\"hidden\" name=\"invoice_id\" value=\"")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var43 string
-					templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.ResolveAttributeValue(inv.ID)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 232, Col: 62}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var43)
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "\"> <button type=\"submit\" class=\"button button-secondary button-small\">Simulasi Lunasi VA</button></form>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "\"> <button type=\"submit\" class=\"button button-secondary button-small\">Simulasi Bayar VA</button></form>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "</div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "</div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<h4>Kwitansi Digital Ber-QR Code Resmi</h4>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<h4>Kwitansi Digital Terverifikasi</h4>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			for _, item := range data.Ledger {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "<div class=\"info-strip\"><div class=\"stat-card-head\"><strong class=\"mono\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<div class=\"info-strip\"><div class=\"stat-card-head\"><strong class=\"mono\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var43 string
+				templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.JoinStringErrs(item.ReceiptNumber)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 243, Col: 49}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var43))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "</strong> <strong class=\"mono\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var44 string
-				templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.JoinStringErrs(item.ReceiptNumber)
+				templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.JoinStringErrs(ui.FormatRupiah(item.AmountDelta))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 243, Col: 49}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 244, Col: 64}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var44))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "</strong> <strong class=\"mono\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "</strong></div><span class=\"muted\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var45 string
-				templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.JoinStringErrs(ui.FormatRupiah(item.AmountDelta))
+				templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.JoinStringErrs(item.TxType)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 244, Col: 64}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 246, Col: 40}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var45))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "</strong></div><span class=\"muted\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, " · ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var46 string
-				templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.JoinStringErrs(item.TxType)
+				templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.JoinStringErrs(ui.FormatDateID(item.CreatedAt))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 246, Col: 40}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 246, Col: 79}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var46))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, " · ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "</span> <a class=\"text-link\" href=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var47 string
-				templ_7745c5c3_Var47, templ_7745c5c3_Err = templ.JoinStringErrs(ui.FormatDateID(item.CreatedAt))
+				var templ_7745c5c3_Var47 templ.SafeURL
+				templ_7745c5c3_Var47, templ_7745c5c3_Err = templ.JoinURLErrs("/verify?q=" + item.ReceiptNumber)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 246, Col: 79}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 247, Col: 68}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var47))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "</span> <a class=\"text-link\" href=\"")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var48 templ.SafeURL
-				templ_7745c5c3_Var48, templ_7745c5c3_Err = templ.JoinURLErrs("/verify?q=" + item.ReceiptNumber)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/parent_portal.templ`, Line: 247, Col: 68}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var48))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, "\">Verifikasi Keaslian HMAC Kwitansi</a></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "\">Verifikasi Keaslian HMAC Kwitansi</a></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "</section></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, "</section></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

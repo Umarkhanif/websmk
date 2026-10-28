@@ -68,7 +68,7 @@ func PlaceholderPage(data ui.PlaceholderPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</p><div class=\"placeholder-meta\"><span class=\"badge badge-neutral\">Go + templ + HTMX</span> <span class=\"badge badge-gold\">Bertahap</span></div><p class=\"placeholder-note\">Navigasi, hak akses, dan alur modul ini tetap sama. Konten sedang dipindahkan dari prototipe React ke server Go agar data tidak lagi disimpan di browser.</p></section></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</p><div class=\"placeholder-meta\"><span class=\"badge badge-neutral\">Go + templ + HTMX</span> <span class=\"badge badge-gold\">Bertahap</span></div><p class=\"placeholder-note\">Navigasi, hak akses, dan alur modul ini tetap sama. Modul ini sedang disiapkan untuk pembaruan sistem berkala.</p></section></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

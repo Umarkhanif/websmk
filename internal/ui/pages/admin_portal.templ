@@ -11,8 +11,8 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 	<div class="page-stack">
 		if data.Tab == "master-data" {
 			<section class="card form-stack">
-				<span class="eyebrow">Tata Usaha &amp; Buku Induk Sekolah</span>
-				<h2>Master Data SMK &amp; Meja Verifikasi Dokumen Siswa</h2>
+				<span class="eyebrow">Tata Usaha</span>
+				<h2>Master Data &amp; Verifikasi Dokumen</h2>
 
 				<div class="grid-4">
 					for _, m := range data.Majors {
@@ -20,12 +20,12 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 							<span class="badge badge-teal">{ m.Code }</span>
 							<strong>{ m.Name }</strong>
 							<span class="muted">Kaprog: { m.HeadOfMajor }</span>
-							<span class="mono">{ strconv.Itoa(m.StudentCount) } Siswa · { strconv.Itoa(m.DudiPartnerCount) } Mitra DUDI</span>
+							<span class="mono">{ strconv.Itoa(m.StudentCount) } Siswa · { strconv.Itoa(m.DudiPartnerCount) } Mitra</span>
 						</article>
 					}
 				</div>
 
-				<h3>Antrean Berkas Siswa &amp; Verifikasi TU ({ strconv.Itoa(len(data.Documents)) })</h3>
+				<h3>Verifikasi Dokumen Siswa ({ strconv.Itoa(len(data.Documents)) })</h3>
 				<div class="table-wrap">
 					<table class="data-table">
 						<thead>
@@ -34,7 +34,7 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 								<th>Jenis Dokumen</th>
 								<th>Nama Berkas</th>
 								<th>Status</th>
-								<th>Tindakan Verifikasi TU</th>
+								<th>Aksi</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -62,8 +62,8 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 
 			<div class="grid-2">
 				<section class="card form-stack">
-					<span class="eyebrow">Registrasi Peserta Didik Baru / Mutasi</span>
-					<h3>Tambah Data Siswa ke Buku Induk &amp; Terbitkan VA SPP</h3>
+					<span class="eyebrow">Pendaftaran Siswa</span>
+					<h3>Tambah Data Siswa Baru</h3>
 					<form method="post" action="/admin/student/add" class="form-stack">
 						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 						<label class="field">
@@ -89,13 +89,13 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 								</select>
 							</label>
 						</div>
-						<button type="submit" class="button button-primary">Simpan Siswa &amp; Terbitkan Tagihan SPP</button>
+						<button type="submit" class="button button-primary">Simpan Data Siswa</button>
 					</form>
 				</section>
 
 				<section class="card form-stack">
-					<span class="eyebrow">Direktori Pendidik</span>
-					<h3>Data Induk Pendidik &amp; Tenaga Kependidikan ({ strconv.Itoa(len(data.Teachers)) })</h3>
+					<span class="eyebrow">Data Guru &amp; Staf</span>
+					<h3>Direktori Pendidik ({ strconv.Itoa(len(data.Teachers)) })</h3>
 					<div class="table-wrap">
 						<table class="data-table">
 							<thead>
@@ -124,14 +124,14 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 			<section class="card form-stack">
 				<div class="stat-card-head">
 					<div>
-						<span class="eyebrow">Interoperabilitas Nasional</span>
-						<h2>Ekspor File Nilai e-Rapor (.CSV / Excel) &amp; Sinkronisasi Dapodik</h2>
+						<span class="eyebrow">Sinkronisasi Data</span>
+						<h2>Ekspor e-Rapor &amp; Sinkron Dapodik</h2>
 					</div>
 					<div class="leader-actions">
-						<a href="/admin/erapor/export.csv" class="button button-secondary button-small">Unduh CSV Nilai e-Rapor 360°</a>
+						<a href="/admin/erapor/export.csv" class="button button-secondary button-small">Unduh CSV Nilai</a>
 						<form method="post" action="/admin/dapodik/sync">
 							<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-							<button type="submit" class="button button-primary button-small">Sinkronisasi Dapodik 1-Klik</button>
+							<button type="submit" class="button button-primary button-small">Sinkron Dapodik</button>
 						</form>
 					</div>
 				</div>
@@ -161,8 +161,8 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 			</section>
 
 			<section class="card form-stack">
-				<span class="eyebrow">Tata Persuratan Elektronik Ber-HMAC</span>
-				<h3>Penerbitan Surat Resmi 1-Klik Bervalidasi HMAC-SHA256</h3>
+				<span class="eyebrow">Persuratan Resmi</span>
+				<h3>Penerbitan Surat Resmi Sekolah</h3>
 				<form method="post" action="/admin/letter/create" class="form-row">
 					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 					<label class="field">
@@ -215,8 +215,8 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 		} else if data.Tab == "pkl-bkk" {
 			<div class="grid-2">
 				<section class="card form-stack">
-					<span class="eyebrow">Kemitraan Industri (DUDI)</span>
-					<h3>Tambah Mitra PKL &amp; Geofence Haversine</h3>
+					<span class="eyebrow">Kemitraan Industri</span>
+					<h3>Tambah Mitra PKL</h3>
 					<form method="post" action="/admin/pkl/add" class="form-stack">
 						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 						<input class="input" type="text" name="company_name" placeholder="Nama Perusahaan Mitra DUDI..." required/>
@@ -230,7 +230,7 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 							<input class="input input-mono" type="number" name="radius" value="120" required/>
 							<input class="input input-mono" type="text" name="pin" value="778899" placeholder="PIN 6 Digit" required/>
 						</div>
-						<button type="submit" class="button button-primary">Simpan Mitra DUDI &amp; PIN Supervisor</button>
+						<button type="submit" class="button button-primary">Simpan Mitra PKL</button>
 					</form>
 
 					<div class="table-wrap">
@@ -258,8 +258,8 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 				</section>
 
 				<section class="card form-stack">
-					<span class="eyebrow">Bursa Kerja Khusus (BKK) SMK</span>
-					<h3>Tambah Lowongan Kerja Mitra Industri</h3>
+					<span class="eyebrow">Bursa Kerja Khusus (BKK)</span>
+					<h3>Tambah Lowongan Pekerjaan</h3>
 					<form method="post" action="/admin/bkk/add" class="form-stack">
 						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 						<input class="input" type="text" name="company_name" placeholder="Nama Perusahaan Rekruter..." required/>
@@ -268,7 +268,7 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 							<input class="input" type="text" name="salary_range" value="Rp 4.800.000 - Rp 5.600.000" required/>
 							<input class="input" type="text" name="majors" value="TKJ, RPL" required/>
 						</div>
-						<button type="submit" class="button button-primary">Publikasikan Lowongan BKK</button>
+						<button type="submit" class="button button-primary">Publikasikan Lowongan</button>
 					</form>
 
 					<div class="table-wrap">

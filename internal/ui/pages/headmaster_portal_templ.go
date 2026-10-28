@@ -49,7 +49,7 @@ func HeadmasterPortal(data ui.HeadmasterPortalPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</span><div class=\"identity-copy\"><span class=\"eyebrow\">Executive Command Center • Kepala Sekolah &amp; Yayasan (KEP-01)</span><h2>Kepemimpinan Sekolah Berbasis Data 100% Objektif</h2><p class=\"muted\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</span><div class=\"identity-copy\"><span class=\"eyebrow\">Pusat Kendali Eksekutif</span><h2>Kepemimpinan Berbasis Kinerja Sekolah</h2><p class=\"muted\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -62,7 +62,7 @@ func HeadmasterPortal(data ui.HeadmasterPortalPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " · Evaluasi terukur berbasis metrik dampak riil tanpa subjektivitas.</p></div></div><form method=\"post\" action=\"/headmaster/esign\"><input type=\"hidden\" name=\"_csrf\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " · Evaluasi kinerja dan strategi mutu sekolah.</p></div></div><form method=\"post\" action=\"/headmaster/esign\"><input type=\"hidden\" name=\"_csrf\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -75,7 +75,7 @@ func HeadmasterPortal(data ui.HeadmasterPortalPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\"> <button type=\"submit\" class=\"button button-primary\">E-Sign QR Pengesahan Laporan &amp; BOS</button></form></section><div class=\"dashboard-grid\"><article class=\"card stat-card\"><span class=\"eyebrow\">Indeks Transformasi Kesiswaan</span><p class=\"stat-value mono\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\"> <button type=\"submit\" class=\"button button-primary\">Tanda Tangani Laporan (E-Sign)</button></form></section><div class=\"dashboard-grid\"><article class=\"card stat-card\"><span class=\"eyebrow\">Indeks Transformasi Kesiswaan</span><p class=\"stat-value mono\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -114,7 +114,7 @@ func HeadmasterPortal(data ui.HeadmasterPortalPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</p><p class=\"stat-note\">Digunakan Bendahara untuk otorisasi koreksi kas</p></article><article class=\"card stat-card\"><span class=\"eyebrow\">Pendidik Terkalibrasi</span><p class=\"stat-value mono\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</p><p class=\"stat-note\">Otorisasi koreksi kas bendahara</p></article><article class=\"card stat-card\"><span class=\"eyebrow\">Pendidik Terkalibrasi</span><p class=\"stat-value mono\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -127,7 +127,7 @@ func HeadmasterPortal(data ui.HeadmasterPortalPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " Guru</p><p class=\"stat-note\">45% Skor Siswa + 25% Anti-Bingung + 15% Ketua Kelas + 15% Apresiasi</p></article></div><section class=\"card form-stack\"><span class=\"eyebrow\">Leaderboard Objektif Teacher Impact Rating (Anti-Guru Penjilat)</span><h3>Evaluasi Kinerja Mengajar &amp; Bonus Inval Piket</h3><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Nama Pendidik</th><th>Mata Pelajaran</th><th>Pertumbuhan Nilai (45%)</th><th>Kejelasan Materi (25%)</th><th>Validasi Ketua Kelas (15%)</th><th>Bonus Inval Piket</th><th>Skor Impact Akhir</th></tr></thead> <tbody>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " Guru</p><p class=\"stat-note\">Evaluasi pembelajaran terpadu</p></article></div><section class=\"card form-stack\"><span class=\"eyebrow\">Evaluasi Dampak Pengajaran</span><h3>Peringkat Kinerja Guru</h3><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Nama Pendidik</th><th>Mata Pelajaran</th><th>Pertumbuhan Nilai</th><th>Kejelasan Materi</th><th>Validasi Kelas</th><th>Bonus Inval</th><th>Skor Akhir</th></tr></thead> <tbody>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -241,14 +241,14 @@ func HeadmasterPortal(data ui.HeadmasterPortalPage) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</tbody></table></div></section><div class=\"grid-2\"><section class=\"card form-stack\"><span class=\"eyebrow\">Otorisasi Ganda Keuangan Sekolah</span><h3>Persetujuan OTP Jurnal Pembalik (Reversal Kas Salah Input)</h3><p class=\"muted\">Kode OTP aktif saat ini: <strong class=\"mono\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</tbody></table></div></section><div class=\"grid-2\"><section class=\"card form-stack\"><span class=\"eyebrow\">Otorisasi Kas</span><h3>Persetujuan Jurnal Pembalik</h3><p class=\"muted\">Kode OTP aktif: <strong class=\"mono\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(data.ActiveOTP)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/headmaster_portal.templ`, Line: 82, Col: 83}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/headmaster_portal.templ`, Line: 82, Col: 74}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
@@ -363,12 +363,12 @@ func HeadmasterPortal(data ui.HeadmasterPortalPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "\"> <button type=\"submit\" class=\"button button-secondary button-small\">Terbitkan Kode OTP 6-Digit Baru</button></form></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "\"> <button type=\"submit\" class=\"button button-secondary button-small\">Terbitkan OTP Baru</button></form></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</section><section class=\"card form-stack\"><span class=\"eyebrow\">Executive AI Strategic Advisor</span><h3>Penasihat Analisis Mutu &amp; Strategi Sekolah</h3><form method=\"post\" action=\"/headmaster/ai-advisor\" class=\"form-stack\"><input type=\"hidden\" name=\"_csrf\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</section><section class=\"card form-stack\"><span class=\"eyebrow\">Asisten Strategis Eksekutif</span><h3>Analisis Mutu &amp; Kebijakan Sekolah</h3><form method=\"post\" action=\"/headmaster/ai-advisor\" class=\"form-stack\"><input type=\"hidden\" name=\"_csrf\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -381,12 +381,12 @@ func HeadmasterPortal(data ui.HeadmasterPortalPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "\"> <label class=\"field\"><span class=\"field-label\">Pertanyaan Strategis Kepala Sekolah</span> <textarea class=\"input\" name=\"query\" required>Bagaimana rekomendasi langkah untuk meningkatkan ketercapaian sertifikasi BNSP pada siswa yang hasil evaluasi CBT menunjukkan kelemahan di topik DHCP troubleshooting?</textarea></label> <button type=\"submit\" class=\"button button-primary\">Jalankan Analisis Strategis</button></form>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "\"> <label class=\"field\"><span class=\"field-label\">Topik / Pertanyaan Evaluasi</span> <textarea class=\"input\" name=\"query\" required>Bagaimana rekomendasi langkah untuk meningkatkan ketercapaian sertifikasi BNSP pada siswa yang hasil evaluasi CBT menunjukkan kelemahan di topik DHCP troubleshooting?</textarea></label> <button type=\"submit\" class=\"button button-primary\">Analisis Sekarang</button></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if data.AiAdvice != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<div class=\"info-strip\"><span class=\"info-strip-label\">Rekomendasi Strategis Eksekutif</span><p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<div class=\"info-strip\"><span class=\"info-strip-label\">Rekomendasi Kebijakan</span><p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

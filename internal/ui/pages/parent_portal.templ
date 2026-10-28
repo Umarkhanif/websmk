@@ -13,15 +13,15 @@ templ ParentPortal(data ui.ParentPortalPage) {
 			<div class="identity-main">
 				<span class="avatar avatar-lg">{ ui.Initials(data.Student.FullName) }</span>
 				<div class="identity-copy">
-					<span class="eyebrow">Dashboard Empatik Orang Tua / Wali Murid</span>
-					<h2>Kabar Harian Ananda: { data.Student.FullName }</h2>
+					<span class="eyebrow">Portal Orang Tua</span>
+					<h2>Kabar Belajar Ananda: { data.Student.FullName }</h2>
 					<p class="identity-meta mono">Kelas { data.Student.ClassroomName } · NISN { data.Student.NISN }</p>
 				</div>
 			</div>
 			<div class="appreciation-card">
 				<span class="appreciation-icon">@components.Icon("award", "icon")</span>
 				<div>
-					<span class="eyebrow">Apresiasi Sekolah</span>
+					<span class="eyebrow">Apresiasi Siswa</span>
 					<strong>{ data.Student.ActiveBadge }</strong>
 					<p>“{ data.Student.ActiveBadgeReason }”</p>
 				</div>
@@ -32,7 +32,7 @@ templ ParentPortal(data ui.ParentPortalPage) {
 			<div class="dashboard-grid">
 				<article class="card stat-card">
 					<div class="stat-card-head">
-						<span class="eyebrow">Kehadiran Hari Ini</span>
+						<span class="eyebrow">Presensi Hari Ini</span>
 						<span class={ "badge " + attendanceBadgeClass(data.Attendance.Status) }>{ data.Attendance.StatusLabel }</span>
 					</div>
 					<p class="stat-value mono">{ data.Attendance.Time }</p>
@@ -41,16 +41,16 @@ templ ParentPortal(data ui.ParentPortalPage) {
 
 				<article class="card stat-card">
 					<div class="stat-card-head">
-						<span class="eyebrow">Capaian Holistik 360°</span>
-						<span class="badge badge-teal">Tanpa Ranking Kaku</span>
+						<span class="eyebrow">Rapor Holistik 360°</span>
+						<span class="badge badge-teal">Komprehensif</span>
 					</div>
 					<p class="stat-value mono">{ data.HolisticScore }/100</p>
-					<p class="stat-note">Rata-rata Kuis: { strconv.Itoa(data.Student.DailyQuizAvg) } · Sikap: { strconv.Itoa(data.Student.AttitudeScore) }</p>
+					<p class="stat-note">Kuis: { strconv.Itoa(data.Student.DailyQuizAvg) } · Sikap: { strconv.Itoa(data.Student.AttitudeScore) }</p>
 				</article>
 
 				<article class="card stat-card">
 					<div class="stat-card-head">
-						<span class="eyebrow">Radar Pemahaman Kelas</span>
+						<span class="eyebrow">Pemahaman Materi</span>
 						<span class="badge badge-gold">{ data.ReflectionLevel }</span>
 					</div>
 					<p class="stat-title">Catatan Wali Kelas</p>
@@ -59,39 +59,39 @@ templ ParentPortal(data ui.ParentPortalPage) {
 			</div>
 
 			<section class="card form-stack">
-				<span class="eyebrow">Kemitraan Keluarga &amp; Sekolah</span>
-				<h3>Panduan Dialog Hangat Meja Makan Malam Ini</h3>
+				<span class="eyebrow">Saran Obrolan Keluarga</span>
+				<h3>Topik Obrolan Malam Ini</h3>
 				<div class="info-strip">
-					<strong>Topik Obrolan Positif Malam Ini:</strong>
-					<span>“Tadi di bengkel TKJ belajar konfigurasi jaringan apa, Nak? Wali kelasmu menyampaikan apresiasi atas kedisiplinanmu minggu ini.”</span>
+					<strong>Saran Diskusi:</strong>
+					<span>“Bagaimana praktik bengkel hari ini, Nak? Sekolah mengapresiasi kedisiplinan dan keaktifanmu minggu ini.”</span>
 				</div>
 			</section>
 		} else if data.Tab == "roadmap" {
 			<section class="card form-stack">
-				<span class="eyebrow">Perencanaan Keuangan Keluarga</span>
-				<h2>Roadmap Perjalanan Biaya Pendidikan 3 Tahun (Kelas X – XII)</h2>
+				<span class="eyebrow">Rencana Biaya</span>
+				<h2>Perjalanan Biaya Pendidikan (3 Tahun)</h2>
 				<div class="dashboard-grid">
 					<div class="info-strip">
 						<span class="badge badge-teal">Tahun 1 · Kelas X</span>
 						<h4>Fondasi &amp; Kunjungan Industri</h4>
-						<p class="muted">Seragam praktik bengkel, modul dasar kejuruan, dan orientasi industri mitra.</p>
+						<p class="muted">Seragam bengkel, dasar kejuruan, dan orientasi industri.</p>
 					</div>
 					<div class="info-strip">
 						<span class="badge badge-gold">Tahun 2 · Kelas XI</span>
-						<h4>Praktik Kerja Lapangan (PKL 6 Bulan)</h4>
-						<p class="muted">Transportasi magang DUDI, asuransi kerja siswa, dan jurnal kompetensi industri.</p>
+						<h4>Praktik Kerja Lapangan (PKL)</h4>
+						<p class="muted">Magang DUDI, asuransi kerja, dan jurnal kompetensi.</p>
 					</div>
 					<div class="info-strip">
 						<span class="badge badge-success">Tahun 3 · Kelas XII</span>
-						<h4>Uji Kompetensi Keahlian (UKK/LSP)</h4>
-						<p class="muted">Sertifikasi profesi BNSP, portofolio proyek akhir, dan penyaluran Bursa Kerja Khusus (BKK).</p>
+						<h4>Uji Kompetensi Keahlian (UKK)</h4>
+						<p class="muted">Sertifikasi BNSP, portofolio akhir, dan penyaluran BKK.</p>
 					</div>
 				</div>
 			</section>
 
 			<section class="card form-stack">
 				<div class="stat-card-head">
-					<h3>Rekap Pengeluaran Alat Praktik Ananda</h3>
+					<h3>Rekap Pengeluaran Alat Praktik</h3>
 					<strong class="mono">{ ui.FormatRupiah(data.TotalExpense) }</strong>
 				</div>
 				<div class="table-wrap">
@@ -121,46 +121,46 @@ templ ParentPortal(data ui.ParentPortalPage) {
 			</section>
 		} else if data.Tab == "future-plan" {
 			<section class="card form-stack">
-				<span class="eyebrow">Konsultasi Masa Depan Lulusan (BMW)</span>
-				<h2>Peta Bakat &amp; Rekomendasi Jalur Karir Ananda ({ data.Student.FullName })</h2>
-				<p class="muted">Minat utama ananda saat ini: <strong>{ data.Student.BMWChoice }</strong></p>
+				<span class="eyebrow">Konsultasi Karir (BMW)</span>
+				<h2>Jalur Karir Ananda ({ data.Student.FullName })</h2>
+				<p class="muted">Pilihan minat saat ini: <strong>{ data.Student.BMWChoice }</strong></p>
 
 				<div class="dashboard-grid">
 					<div class="info-strip">
-						<span class="badge badge-teal">Jalur Bekerja (DUDI)</span>
-						<h4>Network &amp; Fiber Splicing Specialist</h4>
-						<p class="muted">Mitra BKK: PT Telkom Akses &amp; PT Biznet Gio Nusantara.</p>
+						<span class="badge badge-teal">Bekerja (DUDI)</span>
+						<h4>Network Specialist</h4>
+						<p class="muted">Mitra BKK: PT Telkom Akses &amp; PT Biznet Gio.</p>
 					</div>
 					<div class="info-strip">
-						<span class="badge badge-gold">Jalur Melanjutkan</span>
-						<h4>D4 Teknik Telekomunikasi Politeknik</h4>
-						<p class="muted">Peluang beasiswa vokasi berprestasi berdasarkan portofolio Rapor 360°.</p>
+						<span class="badge badge-gold">Kuliah Vokasi</span>
+						<h4>D4 Teknik Telekomunikasi</h4>
+						<p class="muted">Peluang beasiswa vokasi via Rapor 360°.</p>
 					</div>
 					<div class="info-strip">
-						<span class="badge badge-success">Jalur Wirausaha</span>
-						<h4>Jasa Instalasi Jaringan &amp; RT/RW Net</h4>
-						<p class="muted">Inkubasi unit produksi SMK dan pendampingan modal alat kerja.</p>
+						<span class="badge badge-success">Wirausaha</span>
+						<h4>Teknisi &amp; Jasa Jaringan</h4>
+						<p class="muted">Pendampingan unit produksi dan modal alat.</p>
 					</div>
 				</div>
 
 				<form method="post" action="/parent/consultation" class="form-stack">
 					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-					<h3>Jadwalkan Konsultasi Karir BMW Bersama Guru BK &amp; Kaprog</h3>
+					<h3>Ajukan Konsultasi Karir BMW</h3>
 					<div class="form-row">
 						<label class="field">
-							<span class="field-label">Jalur Karir yang Ingin Dikonsultasikan</span>
+							<span class="field-label">Jalur Pilihan</span>
 							<select class="input" name="chosen_path">
-								<option value="BEKERJA">Bekerja di Mitra Industri (BKK)</option>
-								<option value="MELANJUTKAN">Melanjutkan Pendidikan Tinggi Vokasi</option>
-								<option value="WIRAUSAHA">Wirausaha Mandiri Terpadu</option>
+								<option value="BEKERJA">Bekerja di Industri (BKK)</option>
+								<option value="MELANJUTKAN">Kuliah Vokasi</option>
+								<option value="WIRAUSAHA">Wirausaha Mandiri</option>
 							</select>
 						</label>
 						<label class="field">
-							<span class="field-label">Pertanyaan / Harapan Orang Tua</span>
-							<input class="input" type="text" name="topic_note" placeholder="Mis. Persiapan magang dan peluang kerja di PT Telkom Akses..." required/>
+							<span class="field-label">Catatan / Pertanyaan Ortu</span>
+							<input class="input" type="text" name="topic_note" placeholder="Contoh: Peluang kerja setelah magang..." required/>
 						</label>
 					</div>
-					<button type="submit" class="button button-primary">Kirim Permohonan Jadwal Konsultasi</button>
+					<button type="submit" class="button button-primary">Ajukan Jadwal Konsultasi</button>
 				</form>
 
 				<div class="table-wrap">
@@ -168,9 +168,9 @@ templ ParentPortal(data ui.ParentPortalPage) {
 						<thead>
 							<tr>
 								<th>Tanggal</th>
-								<th>Jalur Pilihan</th>
+								<th>Jalur</th>
 								<th>Topik Konsultasi</th>
-								<th>Status Jadwal BK</th>
+								<th>Status BK</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -189,9 +189,9 @@ templ ParentPortal(data ui.ParentPortalPage) {
 		} else if data.Tab == "services" {
 			<div class="grid-2">
 				<section class="card form-stack">
-					<span class="eyebrow">Izin Kehadiran Resmi</span>
-					<h2>Pengajuan Surat Izin / Sakit Resmi Ananda ({ data.Student.FullName })</h2>
-					<p class="muted">Langsung terhubung ke daftar presensi Guru di kelas dan melindungi poin sikap ananda.</p>
+					<span class="eyebrow">Izin Kehadiran</span>
+					<h2>Surat Izin / Sakit Resmi</h2>
+					<p class="muted">Tersambung langsung ke presensi kelas guru mapel.</p>
 					<form method="post" action="/parent/leave" class="form-stack">
 						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 						<div class="form-row">
@@ -208,35 +208,35 @@ templ ParentPortal(data ui.ParentPortalPage) {
 							</label>
 						</div>
 						<label class="field">
-							<span class="field-label">Keterangan Orang Tua / Wali</span>
-							<input class="input" type="text" name="leave_note" placeholder="Demam sejak semalam, surat dokter menyusul..." required/>
+							<span class="field-label">Keterangan</span>
+							<input class="input" type="text" name="leave_note" placeholder="Keterangan sakit / keperluan..." required/>
 						</label>
-						<button type="submit" class="button button-primary">Kirim Surat Izin Resmi ke Sekolah</button>
+						<button type="submit" class="button button-primary">Kirim Surat Izin</button>
 					</form>
 				</section>
 
 				<section class="card form-stack">
-					<span class="eyebrow">Layanan Pembayaran SPP &amp; Virtual Account</span>
-					<h3>Daftar Tagihan SPP Bulanan &amp; Kwitansi QR Resmi</h3>
+					<span class="eyebrow">Pembayaran SPP</span>
+					<h3>Tagihan &amp; Kwitansi Digital</h3>
 					for _, inv := range data.Invoices {
 						<div class="info-strip">
 							<div class="stat-card-head">
 								<strong>SPP { inv.Period } ({ inv.Number })</strong>
 								<span class={ "badge " + statusBadgeClass(inv.Status) }>{ inv.StatusLabel }</span>
 							</div>
-							<span class="mono">Tagihan Akhir: { ui.FormatRupiah(inv.FinalAmount) } · Sisa: { ui.FormatRupiah(inv.Remaining) }</span>
+							<span class="mono">Total: { ui.FormatRupiah(inv.FinalAmount) } · Sisa: { ui.FormatRupiah(inv.Remaining) }</span>
 							<span class="muted">VA { inv.Provider }: <strong class="mono">{ inv.VANumber }</strong></span>
 							if !inv.IsPaid && data.Shell.DemoMode {
 								<form method="post" action="/parent/invoice/pay">
 									<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 									<input type="hidden" name="invoice_id" value={ inv.ID }/>
-									<button type="submit" class="button button-secondary button-small">Simulasi Lunasi VA</button>
+									<button type="submit" class="button button-secondary button-small">Simulasi Bayar VA</button>
 								</form>
 							}
 						</div>
 					}
 
-					<h4>Kwitansi Digital Ber-QR Code Resmi</h4>
+					<h4>Kwitansi Digital Terverifikasi</h4>
 					for _, item := range data.Ledger {
 						<div class="info-strip">
 							<div class="stat-card-head">

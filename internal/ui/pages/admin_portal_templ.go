@@ -41,7 +41,7 @@ func AdminTuPortal(data ui.AdminTuPortalPage) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if data.Tab == "master-data" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<section class=\"card form-stack\"><span class=\"eyebrow\">Tata Usaha &amp; Buku Induk Sekolah</span><h2>Master Data SMK &amp; Meja Verifikasi Dokumen Siswa</h2><div class=\"grid-4\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<section class=\"card form-stack\"><span class=\"eyebrow\">Tata Usaha</span><h2>Master Data &amp; Verifikasi Dokumen</h2><div class=\"grid-4\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -111,25 +111,25 @@ func AdminTuPortal(data ui.AdminTuPortalPage) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " Mitra DUDI</span></article>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " Mitra</span></article>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><h3>Antrean Berkas Siswa &amp; Verifikasi TU (")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><h3>Verifikasi Dokumen Siswa (")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(len(data.Documents)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/admin_portal.templ`, Line: 28, Col: 85}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/admin_portal.templ`, Line: 28, Col: 69}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, ")</h3><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Siswa</th><th>Jenis Dokumen</th><th>Nama Berkas</th><th>Status</th><th>Tindakan Verifikasi TU</th></tr></thead> <tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, ")</h3><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Siswa</th><th>Jenis Dokumen</th><th>Nama Berkas</th><th>Status</th><th>Aksi</th></tr></thead> <tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -243,7 +243,7 @@ func AdminTuPortal(data ui.AdminTuPortalPage) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</tbody></table></div></section><div class=\"grid-2\"><section class=\"card form-stack\"><span class=\"eyebrow\">Registrasi Peserta Didik Baru / Mutasi</span><h3>Tambah Data Siswa ke Buku Induk &amp; Terbitkan VA SPP</h3><form method=\"post\" action=\"/admin/student/add\" class=\"form-stack\"><input type=\"hidden\" name=\"_csrf\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</tbody></table></div></section><div class=\"grid-2\"><section class=\"card form-stack\"><span class=\"eyebrow\">Pendaftaran Siswa</span><h3>Tambah Data Siswa Baru</h3><form method=\"post\" action=\"/admin/student/add\" class=\"form-stack\"><input type=\"hidden\" name=\"_csrf\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -256,14 +256,14 @@ func AdminTuPortal(data ui.AdminTuPortalPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\"> <label class=\"field\"><span class=\"field-label\">Nama Lengkap Siswa</span> <input class=\"input\" type=\"text\" name=\"full_name\" placeholder=\"Nama lengkap sesuai ijazah...\" required></label><div class=\"form-row\"><label class=\"field\"><span class=\"field-label\">NISN (10 Digit)</span> <input class=\"input input-mono\" type=\"text\" name=\"nisn\" placeholder=\"0058471299\" required></label> <label class=\"field\"><span class=\"field-label\">Rombongan Belajar</span> <input class=\"input\" type=\"text\" name=\"classroom_name\" value=\"XII TKJ 1\" required></label> <label class=\"field\"><span class=\"field-label\">Jurusan</span> <select class=\"input\" name=\"major_code\"><option value=\"TKJ\">TKJ</option> <option value=\"RPL\">RPL</option> <option value=\"TKR\">TKR</option> <option value=\"AKL\">AKL</option></select></label></div><button type=\"submit\" class=\"button button-primary\">Simpan Siswa &amp; Terbitkan Tagihan SPP</button></form></section><section class=\"card form-stack\"><span class=\"eyebrow\">Direktori Pendidik</span><h3>Data Induk Pendidik &amp; Tenaga Kependidikan (")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "\"> <label class=\"field\"><span class=\"field-label\">Nama Lengkap Siswa</span> <input class=\"input\" type=\"text\" name=\"full_name\" placeholder=\"Nama lengkap sesuai ijazah...\" required></label><div class=\"form-row\"><label class=\"field\"><span class=\"field-label\">NISN (10 Digit)</span> <input class=\"input input-mono\" type=\"text\" name=\"nisn\" placeholder=\"0058471299\" required></label> <label class=\"field\"><span class=\"field-label\">Rombongan Belajar</span> <input class=\"input\" type=\"text\" name=\"classroom_name\" value=\"XII TKJ 1\" required></label> <label class=\"field\"><span class=\"field-label\">Jurusan</span> <select class=\"input\" name=\"major_code\"><option value=\"TKJ\">TKJ</option> <option value=\"RPL\">RPL</option> <option value=\"TKR\">TKR</option> <option value=\"AKL\">AKL</option></select></label></div><button type=\"submit\" class=\"button button-primary\">Simpan Data Siswa</button></form></section><section class=\"card form-stack\"><span class=\"eyebrow\">Data Guru &amp; Staf</span><h3>Direktori Pendidik (")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var17 string
 			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(len(data.Teachers)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/admin_portal.templ`, Line: 98, Col: 90}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/admin_portal.templ`, Line: 98, Col: 63}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {
@@ -336,7 +336,7 @@ func AdminTuPortal(data ui.AdminTuPortalPage) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else if data.Tab == "dapodik-erapor" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<section class=\"card form-stack\"><div class=\"stat-card-head\"><div><span class=\"eyebrow\">Interoperabilitas Nasional</span><h2>Ekspor File Nilai e-Rapor (.CSV / Excel) &amp; Sinkronisasi Dapodik</h2></div><div class=\"leader-actions\"><a href=\"/admin/erapor/export.csv\" class=\"button button-secondary button-small\">Unduh CSV Nilai e-Rapor 360°</a><form method=\"post\" action=\"/admin/dapodik/sync\"><input type=\"hidden\" name=\"_csrf\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<section class=\"card form-stack\"><div class=\"stat-card-head\"><div><span class=\"eyebrow\">Sinkronisasi Data</span><h2>Ekspor e-Rapor &amp; Sinkron Dapodik</h2></div><div class=\"leader-actions\"><a href=\"/admin/erapor/export.csv\" class=\"button button-secondary button-small\">Unduh CSV Nilai</a><form method=\"post\" action=\"/admin/dapodik/sync\"><input type=\"hidden\" name=\"_csrf\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -349,7 +349,7 @@ func AdminTuPortal(data ui.AdminTuPortalPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "\"> <button type=\"submit\" class=\"button button-primary button-small\">Sinkronisasi Dapodik 1-Klik</button></form></div></div><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Waktu Sinkronisasi</th><th>Entitas Tersinkronisasi</th><th>Jumlah Record</th><th>Status</th></tr></thead> <tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "\"> <button type=\"submit\" class=\"button button-primary button-small\">Sinkron Dapodik</button></form></div></div><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Waktu Sinkronisasi</th><th>Entitas Tersinkronisasi</th><th>Jumlah Record</th><th>Status</th></tr></thead> <tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -411,7 +411,7 @@ func AdminTuPortal(data ui.AdminTuPortalPage) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "</tbody></table></div></section><section class=\"card form-stack\"><span class=\"eyebrow\">Tata Persuratan Elektronik Ber-HMAC</span><h3>Penerbitan Surat Resmi 1-Klik Bervalidasi HMAC-SHA256</h3><form method=\"post\" action=\"/admin/letter/create\" class=\"form-row\"><input type=\"hidden\" name=\"_csrf\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "</tbody></table></div></section><section class=\"card form-stack\"><span class=\"eyebrow\">Persuratan Resmi</span><h3>Penerbitan Surat Resmi Sekolah</h3><form method=\"post\" action=\"/admin/letter/create\" class=\"form-row\"><input type=\"hidden\" name=\"_csrf\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -517,7 +517,7 @@ func AdminTuPortal(data ui.AdminTuPortalPage) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else if data.Tab == "pkl-bkk" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<div class=\"grid-2\"><section class=\"card form-stack\"><span class=\"eyebrow\">Kemitraan Industri (DUDI)</span><h3>Tambah Mitra PKL &amp; Geofence Haversine</h3><form method=\"post\" action=\"/admin/pkl/add\" class=\"form-stack\"><input type=\"hidden\" name=\"_csrf\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<div class=\"grid-2\"><section class=\"card form-stack\"><span class=\"eyebrow\">Kemitraan Industri</span><h3>Tambah Mitra PKL</h3><form method=\"post\" action=\"/admin/pkl/add\" class=\"form-stack\"><input type=\"hidden\" name=\"_csrf\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -530,7 +530,7 @@ func AdminTuPortal(data ui.AdminTuPortalPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "\"> <input class=\"input\" type=\"text\" name=\"company_name\" placeholder=\"Nama Perusahaan Mitra DUDI...\" required><div class=\"form-row\"><input class=\"input\" type=\"text\" name=\"sector\" value=\"Telekomunikasi &amp; Jaringan\" required> <input class=\"input\" type=\"text\" name=\"address\" placeholder=\"Alamat kawasan industri...\" required></div><div class=\"form-row\"><input class=\"input input-mono\" type=\"text\" name=\"lat\" value=\"-6.9147\" required> <input class=\"input input-mono\" type=\"text\" name=\"lng\" value=\"107.6098\" required> <input class=\"input input-mono\" type=\"number\" name=\"radius\" value=\"120\" required> <input class=\"input input-mono\" type=\"text\" name=\"pin\" value=\"778899\" placeholder=\"PIN 6 Digit\" required></div><button type=\"submit\" class=\"button button-primary\">Simpan Mitra DUDI &amp; PIN Supervisor</button></form><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Perusahaan</th><th>Sektor</th><th>Radius GPS</th><th>PIN DUDI</th></tr></thead> <tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "\"> <input class=\"input\" type=\"text\" name=\"company_name\" placeholder=\"Nama Perusahaan Mitra DUDI...\" required><div class=\"form-row\"><input class=\"input\" type=\"text\" name=\"sector\" value=\"Telekomunikasi &amp; Jaringan\" required> <input class=\"input\" type=\"text\" name=\"address\" placeholder=\"Alamat kawasan industri...\" required></div><div class=\"form-row\"><input class=\"input input-mono\" type=\"text\" name=\"lat\" value=\"-6.9147\" required> <input class=\"input input-mono\" type=\"text\" name=\"lng\" value=\"107.6098\" required> <input class=\"input input-mono\" type=\"number\" name=\"radius\" value=\"120\" required> <input class=\"input input-mono\" type=\"text\" name=\"pin\" value=\"778899\" placeholder=\"PIN 6 Digit\" required></div><button type=\"submit\" class=\"button button-primary\">Simpan Mitra PKL</button></form><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Perusahaan</th><th>Sektor</th><th>Radius GPS</th><th>PIN DUDI</th></tr></thead> <tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -605,7 +605,7 @@ func AdminTuPortal(data ui.AdminTuPortalPage) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "</tbody></table></div></section><section class=\"card form-stack\"><span class=\"eyebrow\">Bursa Kerja Khusus (BKK) SMK</span><h3>Tambah Lowongan Kerja Mitra Industri</h3><form method=\"post\" action=\"/admin/bkk/add\" class=\"form-stack\"><input type=\"hidden\" name=\"_csrf\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "</tbody></table></div></section><section class=\"card form-stack\"><span class=\"eyebrow\">Bursa Kerja Khusus (BKK)</span><h3>Tambah Lowongan Pekerjaan</h3><form method=\"post\" action=\"/admin/bkk/add\" class=\"form-stack\"><input type=\"hidden\" name=\"_csrf\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -618,7 +618,7 @@ func AdminTuPortal(data ui.AdminTuPortalPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "\"> <input class=\"input\" type=\"text\" name=\"company_name\" placeholder=\"Nama Perusahaan Rekruter...\" required> <input class=\"input\" type=\"text\" name=\"job_title\" placeholder=\"Posisi Lowongan (mis. Junior NOC Engineer)...\" required><div class=\"form-row\"><input class=\"input\" type=\"text\" name=\"salary_range\" value=\"Rp 4.800.000 - Rp 5.600.000\" required> <input class=\"input\" type=\"text\" name=\"majors\" value=\"TKJ, RPL\" required></div><button type=\"submit\" class=\"button button-primary\">Publikasikan Lowongan BKK</button></form><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Posisi</th><th>Perusahaan</th><th>Jurusan</th><th>Pelamar</th></tr></thead> <tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "\"> <input class=\"input\" type=\"text\" name=\"company_name\" placeholder=\"Nama Perusahaan Rekruter...\" required> <input class=\"input\" type=\"text\" name=\"job_title\" placeholder=\"Posisi Lowongan (mis. Junior NOC Engineer)...\" required><div class=\"form-row\"><input class=\"input\" type=\"text\" name=\"salary_range\" value=\"Rp 4.800.000 - Rp 5.600.000\" required> <input class=\"input\" type=\"text\" name=\"majors\" value=\"TKJ, RPL\" required></div><button type=\"submit\" class=\"button button-primary\">Publikasikan Lowongan</button></form><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Posisi</th><th>Perusahaan</th><th>Jurusan</th><th>Pelamar</th></tr></thead> <tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

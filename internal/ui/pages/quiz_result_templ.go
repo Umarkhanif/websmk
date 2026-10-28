@@ -44,7 +44,7 @@ func QuizResult(result ui.QuizResultView) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><span class=\"eyebrow\">Kuis selesai</span><h3>Jawaban Anda sudah dinilai di server.</h3><p class=\"quiz-result-score mono\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><span class=\"eyebrow\">Kuis selesai</span><h3>Hasil Kuis Selesai</h3><p class=\"quiz-result-score mono\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

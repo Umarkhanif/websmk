@@ -33,7 +33,7 @@ func PiketPortal(data ui.PiketPortalPage) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"page-stack\"><section class=\"card form-stack\"><div class=\"stat-card-head\"><div><span class=\"eyebrow\">Posko Guru Piket &amp; Pengendalian Operasional (PIKET-01)</span><h2>Radar Detektor Kelas Kosong, Penugasan Inval &amp; Log Gerbang</h2></div><span class=\"badge badge-teal\">Radar Detektor Aktif</span></div><div class=\"grid-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"page-stack\"><section class=\"card form-stack\"><div class=\"stat-card-head\"><div><span class=\"eyebrow\">Posko Guru Piket</span><h2>Pemantauan Kelas &amp; Log Gerbang</h2></div><span class=\"badge badge-teal\">Status Aktif</span></div><div class=\"grid-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -123,7 +123,7 @@ func PiketPortal(data ui.PiketPortalPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\"><h3>Tugaskan Guru Inval Pengganti (+5 Poin Kredit Kinerja Teacher Impact)</h3><div class=\"form-row\"><label class=\"field\"><span class=\"field-label\">Pilih Ruang Kelas</span> <select class=\"input\" name=\"classroom_id\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\"><h3>Tugaskan Guru Pengganti (Inval)</h3><div class=\"form-row\"><label class=\"field\"><span class=\"field-label\">Pilih Ruang Kelas</span> <select class=\"input\" name=\"classroom_id\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -234,7 +234,7 @@ func PiketPortal(data ui.PiketPortalPage) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</select></label> <label class=\"field\"><span class=\"field-label\">Instruksi / Modul Titipan</span> <input class=\"input\" type=\"text\" name=\"task_note\" value=\"Materi Titipan Guru Asli (Modul Praktik 04)\" required></label></div><button type=\"submit\" class=\"button button-primary\">Tugaskan Guru Inval &amp; Tambah +5 Poin Kinerja</button></form></section><section class=\"card form-stack\"><span class=\"eyebrow\">Kendali Akses Gerbang Sekolah</span><h3>Pencatatan Keterlambatan Gerbang &amp; Surat Izin Keluar Lingkungan Sekolah</h3><form method=\"post\" action=\"/piket/gate-log\" class=\"form-stack\"><input type=\"hidden\" name=\"_csrf\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</select></label> <label class=\"field\"><span class=\"field-label\">Instruksi / Modul Titipan</span> <input class=\"input\" type=\"text\" name=\"task_note\" value=\"Materi Titipan Guru Asli (Modul Praktik 04)\" required></label></div><button type=\"submit\" class=\"button button-primary\">Tugaskan Guru Inval</button></form></section><section class=\"card form-stack\"><span class=\"eyebrow\">Akses Gerbang</span><h3>Pencatatan Keterlambatan &amp; Izin Keluar</h3><form method=\"post\" action=\"/piket/gate-log\" class=\"form-stack\"><input type=\"hidden\" name=\"_csrf\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -247,7 +247,7 @@ func PiketPortal(data ui.PiketPortalPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\"><div class=\"form-row\"><label class=\"field\"><span class=\"field-label\">NISN Siswa</span> <input class=\"input input-mono\" type=\"text\" name=\"nisn\" value=\"0058471292\" required></label> <label class=\"field\"><span class=\"field-label\">Nama Siswa &amp; Kelas</span> <input class=\"input\" type=\"text\" name=\"student_name\" value=\"Deni Kurniawan (XII TKJ 1)\" required></label> <label class=\"field\"><span class=\"field-label\">Jenis Pencatatan</span> <select class=\"input\" name=\"log_type\"><option value=\"IZIN_KELUAR_SEMENTARA\">Surat Izin Keluar Sementara (QR Pass)</option> <option value=\"TERLAMBAT_MASUK\">Terlambat Masuk Gerbang (&gt;15 Menit · Auto PASAL-02)</option></select></label></div><label class=\"field\"><span class=\"field-label\">Alasan / Keperluan</span> <input class=\"input\" type=\"text\" name=\"reason\" value=\"Membeli Konektor RJ45 &amp; Kabel Patch-Cord di Koperasi\" required></label> <button type=\"submit\" class=\"button button-secondary\">Catat Log Gerbang &amp; Terbitkan QR Pass</button></form><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Waktu</th><th>NISN</th><th>Nama Siswa</th><th>Jenis Log</th><th>Keterangan</th><th>Kode QR Pass</th></tr></thead> <tbody>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\"><div class=\"form-row\"><label class=\"field\"><span class=\"field-label\">NISN Siswa</span> <input class=\"input input-mono\" type=\"text\" name=\"nisn\" value=\"0058471292\" required></label> <label class=\"field\"><span class=\"field-label\">Nama Siswa &amp; Kelas</span> <input class=\"input\" type=\"text\" name=\"student_name\" value=\"Deni Kurniawan (XII TKJ 1)\" required></label> <label class=\"field\"><span class=\"field-label\">Jenis Pencatatan</span> <select class=\"input\" name=\"log_type\"><option value=\"IZIN_KELUAR_SEMENTARA\">Izin Keluar Sementara</option> <option value=\"TERLAMBAT_MASUK\">Terlambat Masuk Gerbang</option></select></label></div><label class=\"field\"><span class=\"field-label\">Alasan / Keperluan</span> <input class=\"input\" type=\"text\" name=\"reason\" value=\"Membeli Perlengkapan Praktik di Koperasi\" required></label> <button type=\"submit\" class=\"button button-secondary\">Simpan Log Gerbang</button></form><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Waktu</th><th>NISN</th><th>Nama Siswa</th><th>Jenis Log</th><th>Keterangan</th><th>Kode QR Pass</th></tr></thead> <tbody>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

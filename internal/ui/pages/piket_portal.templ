@@ -9,10 +9,10 @@ templ PiketPortal(data ui.PiketPortalPage) {
 		<section class="card form-stack">
 			<div class="stat-card-head">
 				<div>
-					<span class="eyebrow">Posko Guru Piket &amp; Pengendalian Operasional (PIKET-01)</span>
-					<h2>Radar Detektor Kelas Kosong, Penugasan Inval &amp; Log Gerbang</h2>
+					<span class="eyebrow">Posko Guru Piket</span>
+					<h2>Pemantauan Kelas &amp; Log Gerbang</h2>
 				</div>
-				<span class="badge badge-teal">Radar Detektor Aktif</span>
+				<span class="badge badge-teal">Status Aktif</span>
 			</div>
 
 			<div class="grid-4">
@@ -35,7 +35,7 @@ templ PiketPortal(data ui.PiketPortalPage) {
 
 			<form method="post" action="/piket/assign-inval" class="info-strip form-stack">
 				<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-				<h3>Tugaskan Guru Inval Pengganti (+5 Poin Kredit Kinerja Teacher Impact)</h3>
+				<h3>Tugaskan Guru Pengganti (Inval)</h3>
 				<div class="form-row">
 					<label class="field">
 						<span class="field-label">Pilih Ruang Kelas</span>
@@ -58,13 +58,13 @@ templ PiketPortal(data ui.PiketPortalPage) {
 						<input class="input" type="text" name="task_note" value="Materi Titipan Guru Asli (Modul Praktik 04)" required/>
 					</label>
 				</div>
-				<button type="submit" class="button button-primary">Tugaskan Guru Inval &amp; Tambah +5 Poin Kinerja</button>
+				<button type="submit" class="button button-primary">Tugaskan Guru Inval</button>
 			</form>
 		</section>
 
 		<section class="card form-stack">
-			<span class="eyebrow">Kendali Akses Gerbang Sekolah</span>
-			<h3>Pencatatan Keterlambatan Gerbang &amp; Surat Izin Keluar Lingkungan Sekolah</h3>
+			<span class="eyebrow">Akses Gerbang</span>
+			<h3>Pencatatan Keterlambatan &amp; Izin Keluar</h3>
 			<form method="post" action="/piket/gate-log" class="form-stack">
 				<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 				<div class="form-row">
@@ -79,16 +79,16 @@ templ PiketPortal(data ui.PiketPortalPage) {
 					<label class="field">
 						<span class="field-label">Jenis Pencatatan</span>
 						<select class="input" name="log_type">
-							<option value="IZIN_KELUAR_SEMENTARA">Surat Izin Keluar Sementara (QR Pass)</option>
-							<option value="TERLAMBAT_MASUK">Terlambat Masuk Gerbang (&gt;15 Menit · Auto PASAL-02)</option>
+							<option value="IZIN_KELUAR_SEMENTARA">Izin Keluar Sementara</option>
+							<option value="TERLAMBAT_MASUK">Terlambat Masuk Gerbang</option>
 						</select>
 					</label>
 				</div>
 				<label class="field">
 					<span class="field-label">Alasan / Keperluan</span>
-					<input class="input" type="text" name="reason" value="Membeli Konektor RJ45 &amp; Kabel Patch-Cord di Koperasi" required/>
+					<input class="input" type="text" name="reason" value="Membeli Perlengkapan Praktik di Koperasi" required/>
 				</label>
-				<button type="submit" class="button button-secondary">Catat Log Gerbang &amp; Terbitkan QR Pass</button>
+				<button type="submit" class="button button-secondary">Simpan Log Gerbang</button>
 			</form>
 
 			<div class="table-wrap">

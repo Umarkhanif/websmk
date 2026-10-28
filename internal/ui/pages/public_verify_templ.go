@@ -36,7 +36,7 @@ func PublicVerify(data ui.PublicVerifyPage) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"id\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><meta name=\"color-scheme\" content=\"light\"><meta name=\"theme-color\" content=\"#0B1730\"><title>Verifikasi Publik &amp; Portal DUDI — WESMK</title><link rel=\"icon\" type=\"image/svg+xml\" href=\"/ui-assets/favicon.svg\"><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap\" rel=\"stylesheet\"><link rel=\"stylesheet\" href=\"/ui-assets/app.css\"><script src=\"/ui-assets/htmx.min.js\" defer></script><script src=\"/ui-assets/app.js\" defer></script></head><body class=\"app-body\"><main class=\"page\"><div class=\"page-stack\"><section class=\"identity-card\"><div class=\"identity-main\"><span class=\"brand-mark brand-mark-lg\">W</span><div class=\"identity-copy\"><span class=\"eyebrow\">Portal Publik Verifikasi &amp; Mitra Industri (PUB-02)</span><h2>Verifikasi Keaslian Kwitansi, Surat Resmi &amp; Jurnal Magang DUDI</h2><p class=\"muted\">SMK Negeri 1 Rekayasa · Validasi tanda tangan kriptografi HMAC-SHA256 secara real-time di server.</p></div></div><a href=\"/login\" class=\"button button-secondary button-small\">Kembali ke Portal</a></section><div class=\"login-tabs\" role=\"tablist\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"id\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><meta name=\"color-scheme\" content=\"light\"><meta name=\"theme-color\" content=\"#0B1730\"><title>Verifikasi Publik &amp; Portal DUDI — WESMK</title><link rel=\"icon\" type=\"image/svg+xml\" href=\"/ui-assets/favicon.svg\"><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap\" rel=\"stylesheet\"><link rel=\"stylesheet\" href=\"/ui-assets/app.css?v=20261028c\"><script src=\"/ui-assets/htmx.min.js\" defer></script><script src=\"/ui-assets/app.js?v=20261028c\" defer></script></head><body class=\"app-body\"><main class=\"page\"><div class=\"page-stack\"><section class=\"identity-card\"><div class=\"identity-main\"><span class=\"brand-mark brand-mark-lg\">W</span><div class=\"identity-copy\"><span class=\"eyebrow\">Verifikasi Dokumen &amp; Mitra PKL</span><h2>Pemeriksaan Keaslian Dokumen Resmi</h2><p class=\"muted\">SMK Negeri 1 Rekayasa · Cek keabsahan kwitansi, surat sekolah, dan persetujuan jurnal PKL.</p></div></div><a href=\"/login\" class=\"button button-secondary button-small\">Kembali ke Portal</a></section><div class=\"login-tabs\" role=\"tablist\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -58,7 +58,7 @@ func PublicVerify(data ui.PublicVerifyPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\">Verifikasi Surat &amp; Kwitansi (HMAC)</a> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\">Verifikasi Dokumen &amp; Kwitansi</a> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -80,7 +80,7 @@ func PublicVerify(data ui.PublicVerifyPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\">Persetujuan Jurnal Magang DUDI (PIN)</a></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\">Persetujuan Jurnal Magang</a></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -139,7 +139,7 @@ func PublicVerify(data ui.PublicVerifyPage) templ.Component {
 			}
 		}
 		if data.ActiveTab == "dudi" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<section class=\"card form-stack\"><div><span class=\"eyebrow\">Portal Supervisor Mitra Industri (DUDI)</span><h3>Persetujuan Jurnal Harian &amp; Kehadiran Siswa Magang</h3><p class=\"muted\">Masukkan 6-digit PIN resmi mitra industri untuk mengesahkan jurnal kompetensi siswa tanpa perlu membuat akun.</p></div><form method=\"post\" action=\"/verify/dudi-approve\" class=\"form-stack\"><input type=\"hidden\" name=\"_csrf\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<section class=\"card form-stack\"><div><span class=\"eyebrow\">Persetujuan Pembimbing Industri</span><h3>Validasi Jurnal PKL Siswa</h3><p class=\"muted\">Masukkan PIN 6-digit mitra industri untuk mengesahkan jurnal siswa.</p></div><form method=\"post\" action=\"/verify/dudi-approve\" class=\"form-stack\"><input type=\"hidden\" name=\"_csrf\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -222,7 +222,7 @@ func PublicVerify(data ui.PublicVerifyPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<span>Sahkan Jurnal Magang dengan PIN DUDI</span></button></form><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Tanggal</th><th>Nama Siswa</th><th>Perusahaan DUDI</th><th>Aktivitas &amp; Kompetensi</th><th>Status DUDI</th><th>Status Guru</th></tr></thead> <tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<span>Sahkan Jurnal Magang</span></button></form><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Tanggal</th><th>Nama Siswa</th><th>Perusahaan DUDI</th><th>Aktivitas &amp; Kompetensi</th><th>Status DUDI</th><th>Status Guru</th></tr></thead> <tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -332,7 +332,7 @@ func PublicVerify(data ui.PublicVerifyPage) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<section class=\"card form-stack\"><form method=\"get\" action=\"/verify\" class=\"form-stack\"><label class=\"field\"><span class=\"field-label\">Nomor Surat Resmi / Nomor Kwitansi / Hash HMAC-SHA256</span> <input class=\"input input-mono\" type=\"text\" name=\"q\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<section class=\"card form-stack\"><form method=\"get\" action=\"/verify\" class=\"form-stack\"><label class=\"field\"><span class=\"field-label\">Nomor Dokumen / Kwitansi / Kode Validasi</span> <input class=\"input input-mono\" type=\"text\" name=\"q\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -345,7 +345,7 @@ func PublicVerify(data ui.PublicVerifyPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "\" placeholder=\"Masukkan nomor surat, nomor kwitansi, atau kode hash HMAC...\" required></label> <button type=\"submit\" class=\"button button-primary\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "\" placeholder=\"Masukkan nomor surat, kwitansi, atau kode verifikasi...\" required></label> <button type=\"submit\" class=\"button button-primary\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -353,7 +353,7 @@ func PublicVerify(data ui.PublicVerifyPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<span>Periksa Keaslian di Buku Induk Server</span></button></form><div class=\"leader-actions\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<span>Periksa Keaslian Dokumen</span></button></form><div class=\"leader-actions\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -426,7 +426,7 @@ func PublicVerify(data ui.PublicVerifyPage) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if data.VerifiedLetter != nil {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<section class=\"card form-stack\"><div class=\"stat-card-head\"><span class=\"badge badge-success\">SURAT ASLI &amp; TERVERIFIKASI BUKU INDUK SEKOLAH</span> <span class=\"mono\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<section class=\"card form-stack\"><div class=\"stat-card-head\"><span class=\"badge badge-success\">SURAT RESMI TERVERIFIKASI</span> <span class=\"mono\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -491,7 +491,7 @@ func PublicVerify(data ui.PublicVerifyPage) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</p><div class=\"info-strip\"><span class=\"info-strip-label\">Pejabat Penandatangan Elektronik</span> <strong>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</p><div class=\"info-strip\"><span class=\"info-strip-label\">Penandatangan</span> <strong>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -540,7 +540,7 @@ func PublicVerify(data ui.PublicVerifyPage) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if data.VerifiedReceipt != nil {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<section class=\"card form-stack\"><div class=\"stat-card-head\"><span class=\"badge badge-success\">KWITANSI PEMBAYARAN SAH &amp; TERCATAT DI BUKU KAS</span> <span class=\"mono\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<section class=\"card form-stack\"><div class=\"stat-card-head\"><span class=\"badge badge-success\">KWITANSI PEMBAYARAN SAH</span> <span class=\"mono\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -618,14 +618,14 @@ func PublicVerify(data ui.PublicVerifyPage) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "</p><div class=\"info-strip\"><span class=\"info-strip-label\">Segel Kriptografi Buku Kas (Append-Only Ledger #")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "</p><div class=\"info-strip\"><span class=\"info-strip-label\">Validasi Buku Kas (#")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var37 string
 				templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatInt(data.VerifiedReceipt.ID, 10))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/public_verify.templ`, Line: 176, Col: 136}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/public_verify.templ`, Line: 176, Col: 108}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
 				if templ_7745c5c3_Err != nil {

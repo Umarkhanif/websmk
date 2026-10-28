@@ -11,7 +11,7 @@ templ QuizResult(result ui.QuizResultView) {
 	<div class="quiz-result">
 		<div class="quiz-result-mark">@components.Icon("check", "icon")</div>
 		<span class="eyebrow">Kuis selesai</span>
-		<h3>Jawaban Anda sudah dinilai di server.</h3>
+		<h3>Hasil Kuis Selesai</h3>
 		<p class="quiz-result-score mono">{ strconv.Itoa(result.Score) }<span>/100</span></p>
 		<p class="quiz-result-note">
 			{ strconv.Itoa(result.Correct) } benar dari { strconv.Itoa(result.Total) } soal.

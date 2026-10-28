@@ -40,7 +40,7 @@ func DisciplinePortal(data ui.DisciplinePortalPage) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if data.Tab == "violations" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<section class=\"card form-stack\"><span class=\"eyebrow\">Kesiswaan &amp; Bimbingan Konseling (Pisau Bermata Dua)</span><h2>Pemantauan Tata Tertib, Escrow Perundungan &amp; Konsultasi BMW</h2><form method=\"post\" action=\"/discipline/violation/add\" class=\"form-row\"><input type=\"hidden\" name=\"_csrf\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<section class=\"card form-stack\"><span class=\"eyebrow\">Kesiswaan &amp; BK</span><h2>Pencatatan &amp; Pemantauan Tata Tertib</h2><form method=\"post\" action=\"/discipline/violation/add\" class=\"form-row\"><input type=\"hidden\" name=\"_csrf\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -185,12 +185,12 @@ func DisciplinePortal(data ui.DisciplinePortalPage) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\"> <button type=\"submit\" class=\"button button-secondary button-small\">Terbitkan Surat Panggilan HMAC</button></form></td></tr>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\"> <button type=\"submit\" class=\"button button-secondary button-small\">Terbitkan Surat Panggilan</button></form></td></tr>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</tbody></table></div></section><div class=\"grid-2\"><section class=\"card form-stack\"><span class=\"eyebrow\">Escrow Kriptografi Anonim</span><h3>Kasus Perundungan Berat Berstatus Escrow (&gt;=10 Pelapor dari &gt;=3 Klaster)</h3>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</tbody></table></div></section><div class=\"grid-2\"><section class=\"card form-stack\"><span class=\"eyebrow\">Laporan Kasus</span><h3>Laporan Perundungan Terverifikasi</h3>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -286,7 +286,7 @@ func DisciplinePortal(data ui.DisciplinePortalPage) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, " Pelapor Independen</span><form method=\"post\" action=\"/discipline/peer-report/resolve\" class=\"leader-actions\"><input type=\"hidden\" name=\"_csrf\" value=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, " Pelapor</span><form method=\"post\" action=\"/discipline/peer-report/resolve\" class=\"leader-actions\"><input type=\"hidden\" name=\"_csrf\" value=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -312,12 +312,12 @@ func DisciplinePortal(data ui.DisciplinePortalPage) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "\"> <button type=\"submit\" name=\"status\" value=\"INVESTIGATING_BK\" class=\"button button-secondary button-small\">Investigasi BK</button> <button type=\"submit\" name=\"status\" value=\"RESOLVED\" class=\"button button-primary button-small\">Tandai Selesai Dibina</button></form></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "\"> <button type=\"submit\" name=\"status\" value=\"INVESTIGATING_BK\" class=\"button button-secondary button-small\">Investigasi BK</button> <button type=\"submit\" name=\"status\" value=\"RESOLVED\" class=\"button button-primary button-small\">Tandai Selesai</button></form></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</section><section class=\"card form-stack\"><span class=\"eyebrow\">Layanan Konseling Orang Tua</span><h3>Antrean Tiket Konsultasi Karir BMW dari Orang Tua Wali</h3>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</section><section class=\"card form-stack\"><span class=\"eyebrow\">Konseling Siswa &amp; Karier</span><h3>Permintaan Konsultasi Orang Tua</h3>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -475,7 +475,7 @@ func DisciplinePortal(data ui.DisciplinePortalPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, " Siswa</p><p class=\"stat-note\">Pendampingan harian oleh Guru BK</p></article></div><section class=\"card form-stack\"><span class=\"eyebrow\">Evaluasi Pemulihan Karakter</span><h3>Meja Konseling BK: Daftar Siswa dalam Pembinaan Aktif (Evaluasi 30-60 Hari)</h3>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, " Siswa</p><p class=\"stat-note\">Pendampingan harian oleh Guru BK</p></article></div><section class=\"card form-stack\"><span class=\"eyebrow\">Evaluasi Pemulihan Karakter</span><h3>Daftar Pembinaan Siswa Aktif</h3>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -532,7 +532,7 @@ func DisciplinePortal(data ui.DisciplinePortalPage) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, " Hari Check-in)</span></div><p class=\"muted\">Periode: <span class=\"mono\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, " Hari)</span></div><p class=\"muted\">Periode: <span class=\"mono\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -623,7 +623,7 @@ func DisciplinePortal(data ui.DisciplinePortalPage) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "\" required> <select class=\"input\" name=\"status\"><option value=\"MONITORING\">MONITORING (Lanjut Pembinaan)</option> <option value=\"RECOVERED_SUCCESS\">RECOVERED_SUCCESS (Pulih Total)</option></select> <button type=\"submit\" class=\"button button-primary button-small\">Catat Check-in &amp; Perbarui Status</button></form></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "\" required> <select class=\"input\" name=\"status\"><option value=\"MONITORING\">MONITORING (Lanjut Pembinaan)</option> <option value=\"RECOVERED_SUCCESS\">RECOVERED_SUCCESS (Pulih Total)</option></select> <button type=\"submit\" class=\"button button-primary button-small\">Perbarui Pembinaan</button></form></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

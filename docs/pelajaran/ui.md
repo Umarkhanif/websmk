@@ -39,3 +39,9 @@ Masalah: Ruang ujian siswa terkunci setelah 1 mapel dikumpulkan meski masih ada 
 Penyebab: Flag `examSubmitted` bersifat global per siswa tanpa melacak progres per ID mapel (`exam-sch-01/02/04`), serta strike anti-curang belum tersimpan per peringatan di server.
 Perbaikan: Pindahkan kartu rata-rata ujian ke menu Rapor, buka otomatis mapel berikutnya yang belum selesai, sederhanakan teks UI, dan simpan setiap strike anti-curang ke server + blur soal sebelum layar penuh.
 Verifikasi: `templ generate`, `go vet ./...`, `go test ./...`, HTTP 200 OK.
+
+## 2026-10-28 — ui-design-simplification-all-portals
+Masalah: Teks pada portal bendahara, kesiswaan, piket, admin TU, dan kepala sekolah terlalu padat dan bertele-tele.
+Penyebab: Frasa deskripsi teknis panjang di judul halaman, tombol, dan kartu stat.
+Perbaikan: Sederhanakan teks dan rapikan tata letak responsif (.grid-2, .grid-4, .dashboard-grid) di seluruh berkas portal.
+Verifikasi: `templ generate`, `go vet ./...`, `go test ./...`, HTTP 200 OK di semua portal.
