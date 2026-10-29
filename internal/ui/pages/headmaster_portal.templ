@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"wesmk/internal/ui"
+	"wesmk/internal/ui/components"
 )
 
 templ HeadmasterPortal(data ui.HeadmasterPortalPage) {
@@ -28,12 +29,15 @@ templ HeadmasterPortal(data ui.HeadmasterPortalPage) {
 			<article class="card stat-card">
 				<span class="eyebrow">Indeks Transformasi Kesiswaan</span>
 				<p class="stat-value mono">{ data.TransformationScore }/100</p>
-				<p class="stat-note">Tren Pemulihan Karakter: <strong>{ data.TransformationTrend }</strong></p>
+				<p class="stat-note">Tren Karakter: <strong>{ data.TransformationTrend }</strong></p>
 			</article>
 			<article class="card stat-card">
-				<span class="eyebrow">Kode OTP Jurnal Pembalik Aktif</span>
+				<div class="stat-card-head">
+					<span class="eyebrow">Kode OTP Aktif</span>
+					@components.InfoBubble("Otorisasi koreksi kas kasir bendahara.")
+				</div>
 				<p class="stat-value mono">{ data.ActiveOTP }</p>
-				<p class="stat-note">Otorisasi koreksi kas bendahara</p>
+				<p class="stat-note">Masa aktif 15 menit</p>
 			</article>
 			<article class="card stat-card">
 				<span class="eyebrow">Pendidik Terkalibrasi</span>
@@ -43,8 +47,13 @@ templ HeadmasterPortal(data ui.HeadmasterPortalPage) {
 		</div>
 
 		<section class="card form-stack">
-			<span class="eyebrow">Evaluasi Dampak Pengajaran</span>
-			<h3>Peringkat Kinerja Guru</h3>
+			<div class="stat-card-head">
+				<div>
+					<span class="eyebrow">Evaluasi Dampak Pengajaran</span>
+					<h3>Peringkat Kinerja Guru</h3>
+				</div>
+				@components.InfoBubble("Dihitung terpadu dari pertumbuhan nilai CBT siswa, kejelasan materi, dan validasi kelas.")
+			</div>
 			<div class="table-wrap">
 				<table class="data-table">
 					<thead>
@@ -77,16 +86,20 @@ templ HeadmasterPortal(data ui.HeadmasterPortalPage) {
 
 		<div class="grid-2">
 			<section class="card form-stack">
-				<span class="eyebrow">Otorisasi Kas</span>
-				<h3>Persetujuan Jurnal Pembalik</h3>
-				<p class="muted">Kode OTP aktif: <strong class="mono">{ data.ActiveOTP }</strong></p>
+				<div class="stat-card-head">
+					<div>
+						<span class="eyebrow">Otorisasi Kas</span>
+						<h3>Persetujuan Jurnal Pembalik</h3>
+					</div>
+					@components.InfoBubble("Kode OTP aktif saat ini: " + data.ActiveOTP + ". Berikan kode ini hanya kepada bendahara setelah bukti kesalahan diverifikasi.")
+				</div>
 				for _, req := range data.ReversalRequests {
 					<div class="info-strip">
 						<div class="stat-card-head">
 							<strong>Ledger #{ strconv.FormatInt(req.LedgerID, 10) } · Kasir: { req.CashierName }</strong>
 							<span class="badge badge-gold">{ req.Status }</span>
 						</div>
-						<span>Nominal Awal: <strong class="mono">{ ui.FormatRupiah(req.AmountOriginal) }</strong> &rarr; Koreksi: <strong class="mono">{ ui.FormatRupiah(req.AmountCorrected) }</strong></span>
+						<span>Nominal: <strong class="mono">{ ui.FormatRupiah(req.AmountOriginal) }</strong> &rarr; Koreksi: <strong class="mono">{ ui.FormatRupiah(req.AmountCorrected) }</strong></span>
 						<span class="muted">Alasan: { req.Reason }</span>
 						<form method="post" action="/headmaster/otp">
 							<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
@@ -98,14 +111,21 @@ templ HeadmasterPortal(data ui.HeadmasterPortalPage) {
 			</section>
 
 			<section class="card form-stack">
-				<span class="eyebrow">Asisten Strategis Eksekutif</span>
-				<h3>Analisis Mutu &amp; Kebijakan Sekolah</h3>
+				<div class="stat-card-head">
+					<div>
+						<span class="eyebrow">Asisten Strategis Eksekutif</span>
+						<h3>Analisis Mutu &amp; Kebijakan Sekolah</h3>
+					</div>
+					@components.InfoBubble("Rekomendasi langkah peningkatan mutu sekolah berbasis model analitik pembelajaran SMK.")
+				</div>
 				<form method="post" action="/headmaster/ai-advisor" class="form-stack">
 					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-					<label class="field">
-						<span class="field-label">Topik / Pertanyaan Evaluasi</span>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">Topik / Pertanyaan Evaluasi</label>
+						</div>
 						<textarea class="input" name="query" required>Bagaimana rekomendasi langkah untuk meningkatkan ketercapaian sertifikasi BNSP pada siswa yang hasil evaluasi CBT menunjukkan kelemahan di topik DHCP troubleshooting?</textarea>
-					</label>
+					</div>
 					<button type="submit" class="button button-primary">Analisis Sekarang</button>
 				</form>
 				if data.AiAdvice != "" {

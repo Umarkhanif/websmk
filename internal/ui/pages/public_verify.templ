@@ -20,9 +20,9 @@ templ PublicVerify(data ui.PublicVerifyPage) {
 			<link rel="preconnect" href="https://fonts.googleapis.com"/>
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 			<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-			<link rel="stylesheet" href="/ui-assets/app.css?v=20261028c"/>
+			<link rel="stylesheet" href="/ui-assets/app.css?v=20261029a"/>
 			<script src="/ui-assets/htmx.min.js" defer></script>
-			<script src="/ui-assets/app.js?v=20261028c" defer></script>
+			<script src="/ui-assets/app.js?v=20261029a" defer></script>
 		</head>
 		<body class="app-body">
 			<main class="page">
@@ -59,27 +59,33 @@ templ PublicVerify(data ui.PublicVerifyPage) {
 
 					if data.ActiveTab == "dudi" {
 						<section class="card form-stack">
-							<div>
-								<span class="eyebrow">Persetujuan Pembimbing Industri</span>
-								<h3>Validasi Jurnal PKL Siswa</h3>
-								<p class="muted">Masukkan PIN 6-digit mitra industri untuk mengesahkan jurnal siswa.</p>
+							<div class="stat-card-head">
+								<div>
+									<span class="eyebrow">Persetujuan Pembimbing Industri</span>
+									<h3>Validasi Jurnal PKL Siswa</h3>
+								</div>
+								@components.InfoBubble("Supervisor mitra industri memasukkan PIN otorisasi untuk mengesahkan aktivitas magang siswa.")
 							</div>
 
 							<form method="post" action="/verify/dudi-approve" class="form-stack">
 								<input type="hidden" name="_csrf" value={ data.CSRFToken }/>
-								<label class="field">
-									<span class="field-label">Pilih Jurnal Harian Siswa Magang</span>
+								<div class="field">
+									<div class="field-head">
+										<label class="field-label">Pilih Jurnal Siswa Magang</label>
+									</div>
 									<select class="input" name="journal_id">
 										for _, j := range data.PklJournals {
 											<option value={ j.ID }>{ j.StudentName } — { j.ActivityTitle } ({ j.Date })</option>
 										}
 									</select>
-								</label>
-								<label class="field">
-									<span class="field-label">PIN 6-Digit Supervisor Mitra DUDI</span>
-									<input class="input input-mono" type="password" name="pin" placeholder="Contoh demo: 445566" required/>
-									<span class="field-hint">PIN demo PT Telkom Akses: 445566 · PT Astra Honda Motor: 112233</span>
-								</label>
+								</div>
+								<div class="field">
+									<div class="field-head">
+										<label class="field-label">PIN Supervisor DUDI</label>
+										@components.InfoBubble("PIN resmi dari nota kerja sama sekolah (demo PT Telkom Akses: 445566 · PT Astra Honda Motor: 112233).")
+									</div>
+									<input class="input input-mono" type="password" name="pin" placeholder="••••••" required/>
+								</div>
 								<button type="submit" class="button button-primary">
 									@components.Icon("check", "icon")
 									<span>Sahkan Jurnal Magang</span>
@@ -128,10 +134,13 @@ templ PublicVerify(data ui.PublicVerifyPage) {
 					} else {
 						<section class="card form-stack">
 							<form method="get" action="/verify" class="form-stack">
-								<label class="field">
-									<span class="field-label">Nomor Dokumen / Kwitansi / Kode Validasi</span>
-									<input class="input input-mono" type="text" name="q" value={ data.Query } placeholder="Masukkan nomor surat, kwitansi, atau kode verifikasi..." required/>
-								</label>
+								<div class="field">
+									<div class="field-head">
+										<label class="field-label">Nomor Dokumen / Kwitansi / Kode Validasi</label>
+										@components.InfoBubble("Masukkan nomor surat resmi, nomor kwitansi pembayaran, atau kode hash HMAC.")
+									</div>
+									<input class="input input-mono" type="text" name="q" value={ data.Query } placeholder="Mis. SURAT/2026/048 atau KWT-202610-001..." required/>
+								</div>
 								<button type="submit" class="button button-primary">
 									@components.Icon("file-check", "icon")
 									<span>Periksa Keaslian Dokumen</span>

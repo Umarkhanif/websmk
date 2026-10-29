@@ -4,34 +4,52 @@ import (
 	"strconv"
 
 	"wesmk/internal/ui"
+	"wesmk/internal/ui/components"
 )
 
 templ DisciplinePortal(data ui.DisciplinePortalPage) {
 	<div class="page-stack">
 		if data.Tab == "violations" {
 			<section class="card form-stack">
-				<span class="eyebrow">Kesiswaan &amp; BK</span>
-				<h2>Pencatatan &amp; Pemantauan Tata Tertib</h2>
+				<div class="stat-card-head">
+					<div>
+						<span class="eyebrow">Kesiswaan &amp; BK</span>
+						<h2>Pencatatan &amp; Pemantauan Tata Tertib</h2>
+					</div>
+					@components.InfoBubble("Pencatatan pelanggaran siswa terhubung langsung dengan riwayat karakter dan surat dinas.")
+				</div>
 				<form method="post" action="/discipline/violation/add" class="form-row">
 					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-					<label class="field">
-						<span class="field-label">Nama Siswa &amp; Kelas</span>
-						<input class="input" type="text" name="student_name" placeholder="Nama Siswa (Kelas)..." required/>
-					</label>
-					<label class="field">
-						<span class="field-label">Pasal Tata Tertib</span>
-						<input class="input input-mono" type="text" name="article_code" value="PASAL-08" required/>
-					</label>
-					<label class="field">
-						<span class="field-label">Uraian Pelanggaran</span>
-						<input class="input" type="text" name="article_title" placeholder="Mis. Tidak memakai APD sepatu bengkel..." required/>
-					</label>
-					<label class="field">
-						<span class="field-label">Poin Pengurang</span>
-						<input class="input input-mono" type="number" name="points" value="10" min="1" max="100" required/>
-					</label>
 					<div class="field">
-						<span class="field-label">Simpan</span>
+						<div class="field-head">
+							<label class="field-label">Nama Siswa &amp; Kelas</label>
+						</div>
+						<input class="input" type="text" name="student_name" placeholder="Nama Siswa (Kelas)..." required/>
+					</div>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">Pasal Tata Tertib</label>
+							@components.InfoBubble("Kode pasal buku pedoman kedisiplinan (contoh: PASAL-08).")
+						</div>
+						<input class="input input-mono" type="text" name="article_code" value="PASAL-08" required/>
+					</div>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">Uraian Pelanggaran</label>
+						</div>
+						<input class="input" type="text" name="article_title" placeholder="Mis. Tidak memakai APD sepatu bengkel..." required/>
+					</div>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">Poin Pengurang</label>
+							@components.InfoBubble("Poin pengurang kedisiplinan (skala 1 - 100).")
+						</div>
+						<input class="input input-mono" type="number" name="points" value="10" min="1" max="100" required/>
+					</div>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">Simpan</label>
+						</div>
 						<button type="submit" class="button button-primary">Catat Pelanggaran</button>
 					</div>
 				</form>
@@ -77,8 +95,13 @@ templ DisciplinePortal(data ui.DisciplinePortalPage) {
 
 			<div class="grid-2">
 				<section class="card form-stack">
-					<span class="eyebrow">Laporan Kasus</span>
-					<h3>Laporan Perundungan Terverifikasi</h3>
+					<div class="stat-card-head">
+						<div>
+							<span class="eyebrow">Laporan Kasus</span>
+							<h3>Laporan Perundungan Terverifikasi</h3>
+						</div>
+						@components.InfoBubble("Laporan perlindungan siswa diverifikasi otomatis dari beberapa klaster pelapor independen.")
+					</div>
 					for _, pr := range data.PeerReports {
 						<div class="info-strip">
 							<div class="stat-card-head">
@@ -98,8 +121,13 @@ templ DisciplinePortal(data ui.DisciplinePortalPage) {
 				</section>
 
 				<section class="card form-stack">
-					<span class="eyebrow">Konseling Siswa &amp; Karier</span>
-					<h3>Permintaan Konsultasi Orang Tua</h3>
+					<div class="stat-card-head">
+						<div>
+							<span class="eyebrow">Konseling Siswa &amp; Karier</span>
+							<h3>Permintaan Konsultasi Orang Tua</h3>
+						</div>
+						@components.InfoBubble("Permintaan bimbingan langsung dari orang tua terkait pilihan karier BMW (Bekerja, Melanjutkan, Wirausaha).")
+					</div>
 					for _, c := range data.Consultations {
 						<div class="info-strip">
 							<div class="stat-card-head">

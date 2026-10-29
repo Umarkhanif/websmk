@@ -145,20 +145,27 @@ templ ParentPortal(data ui.ParentPortalPage) {
 
 				<form method="post" action="/parent/consultation" class="form-stack">
 					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-					<h3>Ajukan Konsultasi Karir BMW</h3>
+					<div class="stat-card-head">
+						<h3>Ajukan Konsultasi Karir BMW</h3>
+						@components.InfoBubble("Bimbingan minat karier Bekerja, Melanjutkan (kuliah), atau Wirausaha bersama Guru BK.")
+					</div>
 					<div class="form-row">
-						<label class="field">
-							<span class="field-label">Jalur Pilihan</span>
+						<div class="field">
+							<div class="field-head">
+								<label class="field-label">Jalur Pilihan</label>
+							</div>
 							<select class="input" name="chosen_path">
 								<option value="BEKERJA">Bekerja di Industri (BKK)</option>
 								<option value="MELANJUTKAN">Kuliah Vokasi</option>
 								<option value="WIRAUSAHA">Wirausaha Mandiri</option>
 							</select>
-						</label>
-						<label class="field">
-							<span class="field-label">Catatan / Pertanyaan Ortu</span>
+						</div>
+						<div class="field">
+							<div class="field-head">
+								<label class="field-label">Catatan / Topik Diskusi</label>
+							</div>
 							<input class="input" type="text" name="topic_note" placeholder="Contoh: Peluang kerja setelah magang..." required/>
-						</label>
+						</div>
 					</div>
 					<button type="submit" class="button button-primary">Ajukan Jadwal Konsultasi</button>
 				</form>
@@ -189,28 +196,38 @@ templ ParentPortal(data ui.ParentPortalPage) {
 		} else if data.Tab == "services" {
 			<div class="grid-2">
 				<section class="card form-stack">
-					<span class="eyebrow">Izin Kehadiran</span>
-					<h2>Surat Izin / Sakit Resmi</h2>
-					<p class="muted">Tersambung langsung ke presensi kelas guru mapel.</p>
+					<div class="stat-card-head">
+						<div>
+							<span class="eyebrow">Izin Kehadiran</span>
+							<h2>Surat Izin / Sakit Resmi</h2>
+						</div>
+						@components.InfoBubble("Pengajuan izin langsung terhubung ke presensi kelas guru mapel dan guru piket.")
+					</div>
 					<form method="post" action="/parent/leave" class="form-stack">
 						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 						<div class="form-row">
-							<label class="field">
-								<span class="field-label">Jenis Keterangan</span>
+							<div class="field">
+								<div class="field-head">
+									<label class="field-label">Jenis Keterangan</label>
+								</div>
 								<select class="input" name="leave_type">
 									<option value="SAKIT">Sakit (Istirahat / Berobat)</option>
 									<option value="IZIN">Izin Keperluan Keluarga</option>
 								</select>
-							</label>
-							<label class="field">
-								<span class="field-label">Tanggal</span>
+							</div>
+							<div class="field">
+								<div class="field-head">
+									<label class="field-label">Tanggal</label>
+								</div>
 								<input class="input input-mono" type="date" name="leave_date" value="2026-10-25" required/>
-							</label>
+							</div>
 						</div>
-						<label class="field">
-							<span class="field-label">Keterangan</span>
-							<input class="input" type="text" name="leave_note" placeholder="Keterangan sakit / keperluan..." required/>
-						</label>
+						<div class="field">
+							<div class="field-head">
+								<label class="field-label">Keterangan / Alasan</label>
+							</div>
+							<input class="input" type="text" name="leave_note" placeholder="Keterangan sakit atau urusan keluarga..." required/>
+						</div>
 						<button type="submit" class="button button-primary">Kirim Surat Izin</button>
 					</form>
 				</section>

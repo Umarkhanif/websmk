@@ -1,0 +1,13 @@
+package components
+
+// InfoBubble renders an elegant exclamation mark "!" trigger that reveals explanatory text on click without cluttering forms.
+templ InfoBubble(text string) {
+	<details class="info-bubble">
+		<summary class="info-bubble-trigger" aria-label="Informasi tambahan" title="Klik untuk penjelasan">
+			<span class="info-bubble-icon" aria-hidden="true">!</span>
+		</summary>
+		<div class="info-bubble-content" role="tooltip">
+			<p>{ text }</p>
+		</div>
+	</details>
+}

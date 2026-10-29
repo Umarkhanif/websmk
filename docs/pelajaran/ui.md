@@ -45,3 +45,9 @@ Masalah: Teks pada portal bendahara, kesiswaan, piket, admin TU, dan kepala seko
 Penyebab: Frasa deskripsi teknis panjang di judul halaman, tombol, dan kartu stat.
 Perbaikan: Sederhanakan teks dan rapikan tata letak responsif (.grid-2, .grid-4, .dashboard-grid) di seluruh berkas portal.
 Verifikasi: `templ generate`, `go vet ./...`, `go test ./...`, HTTP 200 OK di semua portal.
+
+## 2026-10-29 — form-ux-declutter-info-bubble
+Masalah: Desain form kaku seperti boilerplate generik dan teks petunjuk statis membuat tampilan berantakan.
+Penyebab: Input flat dengan focus ring OS, dropdown mentah, serta paragraf penjelasan permanen di bawah label.
+Perbaikan: Buat komponen InfoBubble (`!`) popover interaktif, rapikan `.field-head` & label, perhalus fokus kontrol & tombol berkedalaman di `app.css`.
+Verifikasi: `templ generate`, `go vet ./...`, `go test ./...`, HTTP 200 OK.

@@ -19,8 +19,8 @@ templ Login(page ui.LoginPage) {
 			<link rel="preconnect" href="https://fonts.googleapis.com"/>
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 			<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-			<link rel="stylesheet" href="/ui-assets/app.css?v=20261028c"/>
-			<script src="/ui-assets/app.js?v=20261028c" defer></script>
+			<link rel="stylesheet" href="/ui-assets/app.css?v=20261029a"/>
+			<script src="/ui-assets/app.js?v=20261029a" defer></script>
 		</head>
 		<body class="login-body">
 			<main class="login-shell">
@@ -91,14 +91,16 @@ templ Login(page ui.LoginPage) {
 					if page.Tab == "parent" {
 						<form method="post" action="/login/magic" class="form-stack">
 							<input type="hidden" name="_csrf" value={ page.CSRFToken }/>
-							<label class="field">
-								<span class="field-label">Nomor WhatsApp orang tua / wali</span>
+							<div class="field">
+								<div class="field-head">
+									<label class="field-label">Nomor WhatsApp Orang Tua / Wali</label>
+									@components.InfoBubble("Tautan masuk sekali pakai dikirim melalui WhatsApp resmi dan berlaku selama 5 menit.")
+								</div>
 								<input class="input input-mono" type="tel" name="phone" value={ page.ParentWA } placeholder="081234567800" autocomplete="tel" required/>
-								<span class="field-hint">Tautan sekali pakai berlaku 5 menit. Nomor yang tidak terdaftar mendapat respons yang sama.</span>
-							</label>
+							</div>
 							<button class="button button-primary button-block" type="submit">
 								@components.Icon("mail", "icon")
-								<span>Kirim tautan WhatsApp</span>
+								<span>Kirim Tautan WhatsApp</span>
 							</button>
 							if page.MagicLink != "" {
 								<div class="alert alert-info">
@@ -110,17 +112,23 @@ templ Login(page ui.LoginPage) {
 					} else {
 						<form method="post" action="/login" class="form-stack">
 							<input type="hidden" name="_csrf" value={ page.CSRFToken }/>
-							<label class="field">
-								<span class="field-label">NISN (siswa) atau NIP (guru / staf)</span>
+							<div class="field">
+								<div class="field-head">
+									<label class="field-label">NISN Siswa atau NIP Staf</label>
+									@components.InfoBubble("Gunakan NISN 10-digit untuk siswa atau NIP/NUPTK untuk guru dan staf sekolah.")
+								</div>
 								<input class="input input-mono" type="text" name="identifier" value={ page.Identifier } placeholder="Masukkan NISN atau NIP" autocomplete="username" required/>
-							</label>
-							<label class="field">
-								<span class="field-label">Kata sandi</span>
+							</div>
+							<div class="field">
+								<div class="field-head">
+									<label class="field-label">Kata Sandi</label>
+									@components.InfoBubble("Kata sandi akun sekolah Anda. Hubungi admin TU jika lupa kata sandi.")
+								</div>
 								<input class="input" type="password" name="password" placeholder="••••••••" autocomplete="current-password" required/>
-							</label>
+							</div>
 							<button class="button button-primary button-block" type="submit">
 								@components.Icon("arrow-right", "icon")
-								<span>Masuk ke portal</span>
+								<span>Masuk ke Portal</span>
 							</button>
 						</form>
 					}

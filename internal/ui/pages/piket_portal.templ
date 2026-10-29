@@ -2,6 +2,7 @@ package pages
 
 import (
 	"wesmk/internal/ui"
+	"wesmk/internal/ui/components"
 )
 
 templ PiketPortal(data ui.PiketPortalPage) {
@@ -12,7 +13,7 @@ templ PiketPortal(data ui.PiketPortalPage) {
 					<span class="eyebrow">Posko Guru Piket</span>
 					<h2>Pemantauan Kelas &amp; Log Gerbang</h2>
 				</div>
-				<span class="badge badge-teal">Status Aktif</span>
+				@components.InfoBubble("Radar kehadiran kelas dan log gerbang sekolah real-time.")
 			</div>
 
 			<div class="grid-4">
@@ -35,59 +36,83 @@ templ PiketPortal(data ui.PiketPortalPage) {
 
 			<form method="post" action="/piket/assign-inval" class="info-strip form-stack">
 				<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-				<h3>Tugaskan Guru Pengganti (Inval)</h3>
+				<div class="stat-card-head">
+					<h3>Tugaskan Guru Pengganti (Inval)</h3>
+					@components.InfoBubble("Penugasan guru pengganti untuk kelas kosong tercatat ke poin kontribusi mengajar guru.")
+				</div>
 				<div class="form-row">
-					<label class="field">
-						<span class="field-label">Pilih Ruang Kelas</span>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">Pilih Ruang Kelas</label>
+						</div>
 						<select class="input" name="classroom_id">
 							for _, cls := range data.Classrooms {
 								<option value={ cls.ID }>{ cls.Name } — { cls.Subject } ({ cls.Status })</option>
 							}
 						</select>
-					</label>
-					<label class="field">
-						<span class="field-label">Pilih Guru Inval Pengganti</span>
+					</div>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">Guru Pengganti</label>
+						</div>
 						<select class="input" name="teacher_name">
 							for _, t := range data.Teachers {
 								<option value={ t.TeacherName }>{ t.TeacherName } ({ t.Subject })</option>
 							}
 						</select>
-					</label>
-					<label class="field">
-						<span class="field-label">Instruksi / Modul Titipan</span>
+					</div>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">Modul / Materi Titipan</label>
+							@components.InfoBubble("Materi atau modul latihan yang harus diselesaikan siswa selama jam kosong.")
+						</div>
 						<input class="input" type="text" name="task_note" value="Materi Titipan Guru Asli (Modul Praktik 04)" required/>
-					</label>
+					</div>
 				</div>
 				<button type="submit" class="button button-primary">Tugaskan Guru Inval</button>
 			</form>
 		</section>
 
 		<section class="card form-stack">
-			<span class="eyebrow">Akses Gerbang</span>
-			<h3>Pencatatan Keterlambatan &amp; Izin Keluar</h3>
+			<div class="stat-card-head">
+				<div>
+					<span class="eyebrow">Akses Gerbang</span>
+					<h3>Pencatatan Keterlambatan &amp; Izin Keluar</h3>
+				</div>
+				@components.InfoBubble("Mencatat izin keluar siswa dengan QR Pass dan keterlambatan gerbang.")
+			</div>
 			<form method="post" action="/piket/gate-log" class="form-stack">
 				<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 				<div class="form-row">
-					<label class="field">
-						<span class="field-label">NISN Siswa</span>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">NISN Siswa</label>
+						</div>
 						<input class="input input-mono" type="text" name="nisn" value="0058471292" required/>
-					</label>
-					<label class="field">
-						<span class="field-label">Nama Siswa &amp; Kelas</span>
+					</div>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">Nama Siswa &amp; Kelas</label>
+						</div>
 						<input class="input" type="text" name="student_name" value="Deni Kurniawan (XII TKJ 1)" required/>
-					</label>
-					<label class="field">
-						<span class="field-label">Jenis Pencatatan</span>
+					</div>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">Jenis Pencatatan</label>
+							@components.InfoBubble("Izin keluar sementara menghasilkan kode pass; keterlambatan terhubung ke catatan tata tertib.")
+						</div>
 						<select class="input" name="log_type">
 							<option value="IZIN_KELUAR_SEMENTARA">Izin Keluar Sementara</option>
 							<option value="TERLAMBAT_MASUK">Terlambat Masuk Gerbang</option>
 						</select>
-					</label>
+					</div>
 				</div>
-				<label class="field">
-					<span class="field-label">Alasan / Keperluan</span>
+				<div class="field">
+					<div class="field-head">
+						<label class="field-label">Alasan / Keperluan</label>
+					</div>
 					<input class="input" type="text" name="reason" value="Membeli Perlengkapan Praktik di Koperasi" required/>
-				</label>
+				</div>
 				<button type="submit" class="button button-secondary">Simpan Log Gerbang</button>
 			</form>
 

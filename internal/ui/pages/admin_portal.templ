@@ -5,14 +5,20 @@ import (
 	"strconv"
 
 	"wesmk/internal/ui"
+	"wesmk/internal/ui/components"
 )
 
 templ AdminTuPortal(data ui.AdminTuPortalPage) {
 	<div class="page-stack">
 		if data.Tab == "master-data" {
 			<section class="card form-stack">
-				<span class="eyebrow">Tata Usaha</span>
-				<h2>Master Data &amp; Verifikasi Dokumen</h2>
+				<div class="stat-card-head">
+					<div>
+						<span class="eyebrow">Tata Usaha</span>
+						<h2>Master Data &amp; Verifikasi Dokumen</h2>
+					</div>
+					@components.InfoBubble("Pusat verifikasi berkas legalitas siswa dan basis data program keahlian.")
+				</div>
 
 				<div class="grid-4">
 					for _, m := range data.Majors {
@@ -62,32 +68,47 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 
 			<div class="grid-2">
 				<section class="card form-stack">
-					<span class="eyebrow">Pendaftaran Siswa</span>
-					<h3>Tambah Data Siswa Baru</h3>
+					<div class="stat-card-head">
+						<div>
+							<span class="eyebrow">Pendaftaran Siswa</span>
+							<h3>Tambah Data Siswa Baru</h3>
+						</div>
+						@components.InfoBubble("Menambahkan siswa ke buku induk sekaligus menerbitkan nomor Virtual Account SPP.")
+					</div>
 					<form method="post" action="/admin/student/add" class="form-stack">
 						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-						<label class="field">
-							<span class="field-label">Nama Lengkap Siswa</span>
+						<div class="field">
+							<div class="field-head">
+								<label class="field-label">Nama Lengkap Siswa</label>
+							</div>
 							<input class="input" type="text" name="full_name" placeholder="Nama lengkap sesuai ijazah..." required/>
-						</label>
+						</div>
 						<div class="form-row">
-							<label class="field">
-								<span class="field-label">NISN (10 Digit)</span>
+							<div class="field">
+								<div class="field-head">
+									<label class="field-label">NISN (10 Digit)</label>
+									@components.InfoBubble("Nomor Induk Siswa Nasional valid dari Dapodik.")
+								</div>
 								<input class="input input-mono" type="text" name="nisn" placeholder="0058471299" required/>
-							</label>
-							<label class="field">
-								<span class="field-label">Rombongan Belajar</span>
+							</div>
+							<div class="field">
+								<div class="field-head">
+									<label class="field-label">Rombongan Belajar</label>
+								</div>
 								<input class="input" type="text" name="classroom_name" value="XII TKJ 1" required/>
-							</label>
-							<label class="field">
-								<span class="field-label">Jurusan</span>
+							</div>
+							<div class="field">
+								<div class="field-head">
+									<label class="field-label">Jurusan</label>
+									@components.InfoBubble("Konsentrasi keahlian: TKJ, RPL, TKR, atau AKL.")
+								</div>
 								<select class="input" name="major_code">
 									<option value="TKJ">TKJ</option>
 									<option value="RPL">RPL</option>
 									<option value="TKR">TKR</option>
 									<option value="AKL">AKL</option>
 								</select>
-							</label>
+							</div>
 						</div>
 						<button type="submit" class="button button-primary">Simpan Data Siswa</button>
 					</form>
@@ -161,28 +182,41 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 			</section>
 
 			<section class="card form-stack">
-				<span class="eyebrow">Persuratan Resmi</span>
-				<h3>Penerbitan Surat Resmi Sekolah</h3>
+				<div class="stat-card-head">
+					<div>
+						<span class="eyebrow">Persuratan Resmi</span>
+						<h3>Penerbitan Surat Resmi Sekolah</h3>
+					</div>
+					@components.InfoBubble("Penerbitan surat keterangan resmi dengan tanda tangan elektronik ber-QR HMAC-SHA256.")
+				</div>
 				<form method="post" action="/admin/letter/create" class="form-row">
 					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-					<label class="field">
-						<span class="field-label">Jenis Surat Resmi</span>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">Jenis Surat Resmi</label>
+						</div>
 						<select class="input" name="letter_type">
 							<option value="SURAT_PENGANTAR_PKL">Surat Pengantar Magang PKL DUDI</option>
 							<option value="SURAT_KETERANGAN_AKTIF">Surat Keterangan Siswa Aktif</option>
 							<option value="SURAT_REKOMENDASI_BEASISWA">Surat Rekomendasi Beasiswa Vokasi</option>
 						</select>
-					</label>
-					<label class="field">
-						<span class="field-label">Nama Siswa</span>
-						<input class="input" type="text" name="student_name" value="Muhammad Budi Santoso" required/>
-					</label>
-					<label class="field">
-						<span class="field-label">Tujuan / Instansi Penerima</span>
-						<input class="input" type="text" name="recipient" value="HRD PT Telkom Akses Regional Jawa Barat" required/>
-					</label>
+					</div>
 					<div class="field">
-						<span class="field-label">Terbitkan</span>
+						<div class="field-head">
+							<label class="field-label">Nama Siswa</label>
+						</div>
+						<input class="input" type="text" name="student_name" value="Muhammad Budi Santoso" required/>
+					</div>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">Tujuan / Instansi</label>
+						</div>
+						<input class="input" type="text" name="recipient" value="HRD PT Telkom Akses Regional Jawa Barat" required/>
+					</div>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">Terbitkan</label>
+						</div>
 						<button type="submit" class="button button-primary">Terbitkan Surat Resmi</button>
 					</div>
 				</form>
@@ -215,20 +249,62 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 		} else if data.Tab == "pkl-bkk" {
 			<div class="grid-2">
 				<section class="card form-stack">
-					<span class="eyebrow">Kemitraan Industri</span>
-					<h3>Tambah Mitra PKL</h3>
+					<div class="stat-card-head">
+						<div>
+							<span class="eyebrow">Kemitraan Industri</span>
+							<h3>Tambah Mitra PKL</h3>
+						</div>
+						@components.InfoBubble("Menentukan koordinat geofence dan PIN otorisasi supervisor magang industri.")
+					</div>
 					<form method="post" action="/admin/pkl/add" class="form-stack">
 						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-						<input class="input" type="text" name="company_name" placeholder="Nama Perusahaan Mitra DUDI..." required/>
-						<div class="form-row">
-							<input class="input" type="text" name="sector" value="Telekomunikasi &amp; Jaringan" required/>
-							<input class="input" type="text" name="address" placeholder="Alamat kawasan industri..." required/>
+						<div class="field">
+							<div class="field-head">
+								<label class="field-label">Nama Perusahaan Mitra</label>
+							</div>
+							<input class="input" type="text" name="company_name" placeholder="PT Industri..." required/>
 						</div>
 						<div class="form-row">
-							<input class="input input-mono" type="text" name="lat" value="-6.9147" required/>
-							<input class="input input-mono" type="text" name="lng" value="107.6098" required/>
-							<input class="input input-mono" type="number" name="radius" value="120" required/>
-							<input class="input input-mono" type="text" name="pin" value="778899" placeholder="PIN 6 Digit" required/>
+							<div class="field">
+								<div class="field-head">
+									<label class="field-label">Sektor Industri</label>
+								</div>
+								<input class="input" type="text" name="sector" value="Telekomunikasi &amp; Jaringan" required/>
+							</div>
+							<div class="field">
+								<div class="field-head">
+									<label class="field-label">Alamat Kantor / Pabrik</label>
+								</div>
+								<input class="input" type="text" name="address" placeholder="Alamat kawasan industri..." required/>
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="field">
+								<div class="field-head">
+									<label class="field-label">Latitude</label>
+								</div>
+								<input class="input input-mono" type="text" name="lat" value="-6.9147" required/>
+							</div>
+							<div class="field">
+								<div class="field-head">
+									<label class="field-label">Longitude</label>
+								</div>
+								<input class="input input-mono" type="text" name="lng" value="107.6098" required/>
+							</div>
+							<div class="field">
+								<div class="field-head">
+									<label class="field-label">Radius (Meter)</label>
+									@components.InfoBubble("Jarak toleransi GPS untuk absensi magang siswa.")
+								</div>
+								<input class="input input-mono" type="number" name="radius" value="120" required/>
+							</div>
+							<div class="field">
+								<div class="field-head">
+									<label class="field-label">PIN Supervisor</label>
+									@components.InfoBubble("PIN 6-digit untuk verifikasi jurnal harian siswa tanpa membuat akun.")
+								</div>
+								<input class="input input-mono" type="text" name="pin" value="778899" placeholder="PIN 6 Digit" required/>
+							</div>
 						</div>
 						<button type="submit" class="button button-primary">Simpan Mitra PKL</button>
 					</form>
@@ -258,15 +334,41 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 				</section>
 
 				<section class="card form-stack">
-					<span class="eyebrow">Bursa Kerja Khusus (BKK)</span>
-					<h3>Tambah Lowongan Pekerjaan</h3>
+					<div class="stat-card-head">
+						<div>
+							<span class="eyebrow">Bursa Kerja Khusus (BKK)</span>
+							<h3>Tambah Lowongan Pekerjaan</h3>
+						</div>
+						@components.InfoBubble("Mempublikasikan lowongan kerja mitra industri untuk alumni dan siswa tingkat akhir.")
+					</div>
 					<form method="post" action="/admin/bkk/add" class="form-stack">
 						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-						<input class="input" type="text" name="company_name" placeholder="Nama Perusahaan Rekruter..." required/>
-						<input class="input" type="text" name="job_title" placeholder="Posisi Lowongan (mis. Junior NOC Engineer)..." required/>
+						<div class="field">
+							<div class="field-head">
+								<label class="field-label">Nama Perusahaan Rekruter</label>
+							</div>
+							<input class="input" type="text" name="company_name" placeholder="Nama Perusahaan..." required/>
+						</div>
+						<div class="field">
+							<div class="field-head">
+								<label class="field-label">Posisi Lowongan</label>
+							</div>
+							<input class="input" type="text" name="job_title" placeholder="Posisi Lowongan (mis. Junior NOC Engineer)..." required/>
+						</div>
 						<div class="form-row">
-							<input class="input" type="text" name="salary_range" value="Rp 4.800.000 - Rp 5.600.000" required/>
-							<input class="input" type="text" name="majors" value="TKJ, RPL" required/>
+							<div class="field">
+								<div class="field-head">
+									<label class="field-label">Rentang Gaji</label>
+								</div>
+								<input class="input" type="text" name="salary_range" value="Rp 4.800.000 - Rp 5.600.000" required/>
+							</div>
+							<div class="field">
+								<div class="field-head">
+									<label class="field-label">Target Jurusan</label>
+									@components.InfoBubble("Jurusan yang diprioritaskan untuk lowongan ini.")
+								</div>
+								<input class="input" type="text" name="majors" value="TKJ, RPL" required/>
+							</div>
 						</div>
 						<button type="submit" class="button button-primary">Publikasikan Lowongan</button>
 					</form>

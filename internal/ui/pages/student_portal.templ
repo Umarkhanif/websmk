@@ -68,22 +68,26 @@ templ StudentPortal(data ui.StudentPortalPage) {
 				<section class="card form-stack">
 					<div class="stat-card-head">
 						<span class="eyebrow">Radar Pemahaman Siswa</span>
-						<span class="badge badge-gold">Anonim ke Guru</span>
+						@components.InfoBubble("Umpan balik materi dikirim secara anonim untuk membantu guru mengevaluasi pemahaman kelas.")
 					</div>
 					<h3>Tingkat Pemahaman: "{ data.Journal.Topic }"</h3>
 					<form method="post" action="/student/reflection" class="form-stack">
 						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-						<label class="field">
-							<span class="field-label">Pemahaman Materi</span>
+						<div class="field">
+							<div class="field-head">
+								<label class="field-label">Tingkat Pemahaman</label>
+							</div>
 							<select class="input" name="level">
 								<option value="UNDERSTOOD">Paham &amp; Siap Praktik Mandiri</option>
 								<option value="CONFUSED">Masih Bingung / Butuh Penjelasan Ulang</option>
 							</select>
-						</label>
-						<label class="field">
-							<span class="field-label">Catatan Kendala (Opsional)</span>
+						</div>
+						<div class="field">
+							<div class="field-head">
+								<label class="field-label">Catatan Kendala (Opsional)</label>
+							</div>
 							<textarea class="input" name="complaint" placeholder="Tuliskan bagian materi yang belum jelas...">{ data.ReflectionComplaint }</textarea>
-						</label>
+						</div>
 						<button type="submit" class="button button-primary">Kirim Umpan Balik</button>
 					</form>
 				</section>
@@ -91,31 +95,40 @@ templ StudentPortal(data ui.StudentPortalPage) {
 
 			<section class="card form-stack">
 				<div class="stat-card-head">
-					<span class="eyebrow">Laporan Sebaya</span>
-					<span class="badge badge-danger">Kesiswaan &amp; BK</span>
+					<div>
+						<span class="eyebrow">Laporan Sebaya</span>
+						<h3>Laporan Perundungan &amp; Ketertiban</h3>
+					</div>
+					@components.InfoBubble("Identitas pelapor dienkripsi dan dijamin kerahasiaannya oleh sistem kesiswaan.")
 				</div>
-				<h3>Laporan Perundungan &amp; Ketertiban</h3>
-				<p class="muted">Identitas pelapor dienkripsi dan dijamin kerahasiaannya.</p>
 				<form method="post" action="/student/peer-report" class="form-stack">
 					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 					<div class="form-row">
-						<label class="field">
-							<span class="field-label">Kategori</span>
+						<div class="field">
+							<div class="field-head">
+								<label class="field-label">Kategori</label>
+							</div>
 							<input class="input" type="text" name="category" value="Perundungan / Intimidasi Area Bengkel" required/>
-						</label>
-						<label class="field">
-							<span class="field-label">Lokasi</span>
+						</div>
+						<div class="field">
+							<div class="field-head">
+								<label class="field-label">Lokasi</label>
+							</div>
 							<input class="input" type="text" name="location" value="Area Bengkel TKJ" required/>
-						</label>
-						<label class="field">
-							<span class="field-label">Nama Terlapor</span>
+						</div>
+						<div class="field">
+							<div class="field-head">
+								<label class="field-label">Nama Terlapor</label>
+							</div>
 							<input class="input" type="text" name="target_name" placeholder="Nama siswa atau kelompok..." required/>
-						</label>
+						</div>
 					</div>
-					<label class="field">
-						<span class="field-label">Kronologi</span>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">Kronologi</label>
+						</div>
 						<textarea class="input" name="description" placeholder="Jelaskan waktu dan kronologi kejadian..." required></textarea>
-					</label>
+					</div>
 					<button type="submit" class="button button-secondary">Kirim Laporan</button>
 				</form>
 			</section>
@@ -569,22 +582,31 @@ templ StudentPortal(data ui.StudentPortalPage) {
 			</section>
 
 			<section class="card form-stack">
-				<div>
-					<span class="eyebrow">Tugas &amp; Portofolio</span>
-					<h3>Unggah Tugas Praktik Lab &amp; Bengkel</h3>
+				<div class="stat-card-head">
+					<div>
+						<span class="eyebrow">Tugas &amp; Portofolio</span>
+						<h3>Unggah Tugas Praktik Lab &amp; Bengkel</h3>
+					</div>
+					@components.InfoBubble("Format berkas PDF atau laporan praktikum (maksimal 10 MB per berkas).")
 				</div>
 				<form method="post" action="/student/task/submit" class="form-row">
 					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-					<label class="field">
-						<span class="field-label">Judul Tugas / Praktik</span>
-						<input class="input" type="text" name="task_title" placeholder="Contoh: Praktik VLAN Mikrotik..." required/>
-					</label>
-					<label class="field">
-						<span class="field-label">Nama Berkas (.pdf / .pkt)</span>
-						<input class="input input-mono" type="text" name="file_name" value="praktik_vlan_budi.pdf" required/>
-					</label>
 					<div class="field">
-						<span class="field-label">&nbsp;</span>
+						<div class="field-head">
+							<label class="field-label">Judul Tugas / Praktik</label>
+						</div>
+						<input class="input" type="text" name="task_title" placeholder="Contoh: Praktik VLAN Mikrotik..." required/>
+					</div>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">Nama Berkas</label>
+						</div>
+						<input class="input input-mono" type="text" name="file_name" value="praktik_vlan_budi.pdf" required/>
+					</div>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">Aksi</label>
+						</div>
 						<button type="submit" class="button button-primary">Kirim Tugas</button>
 					</div>
 				</form>

@@ -48,19 +48,24 @@ templ TreasurerPortal(data ui.TreasurerPortalPage) {
 							</select>
 						</label>
 						<div class="form-row">
-							<label class="field">
-								<span class="field-label">Kategori Beasiswa</span>
+							<div class="field">
+								<div class="field-head">
+									<label class="field-label">Kategori Beasiswa</label>
+									@components.InfoBubble("Otomatis menghitung potongan tagihan SPP bulanan siswa yang bersangkutan.")
+								</div>
 								<select class="input" name="scholarship_type">
 									<option value="KIP">KIP (Kartu Indonesia Pintar)</option>
 									<option value="YATIM">Santunan Yatim / Piatu</option>
 									<option value="PRESTASI">Beasiswa Prestasi Vokasi</option>
 									<option value="NONE">Reguler (Tanpa Potongan)</option>
 								</select>
-							</label>
-							<label class="field">
-								<span class="field-label">Persentase Potongan (%)</span>
+							</div>
+							<div class="field">
+								<div class="field-head">
+									<label class="field-label">Potongan (%)</label>
+								</div>
 								<input class="input input-mono" type="number" name="discount_percent" value="50" min="0" max="100" required/>
-							</label>
+							</div>
 						</div>
 						<button type="submit" class="button button-primary">Simpan Beasiswa</button>
 					</form>
@@ -89,28 +94,39 @@ templ TreasurerPortal(data ui.TreasurerPortalPage) {
 			</div>
 		} else if data.Tab == "billing" {
 			<section class="card form-stack">
-				<span class="eyebrow">Kasir Pembayaran</span>
-				<h2>Penerimaan Pembayaran Tunai &amp; Cicilan</h2>
-				<p class="muted">Setiap pembayaran langsung tercatat ke buku kas dan menerbitkan kwitansi resmi dengan QR verifikasi.</p>
+				<div class="stat-card-head">
+					<div>
+						<span class="eyebrow">Kasir Pembayaran</span>
+						<h2>Penerimaan Pembayaran Tunai &amp; Cicilan</h2>
+					</div>
+					@components.InfoBubble("Pembayaran langsung dibukukan ke jurnal kas sekolah dan menerbitkan kwitansi ber-QR resmi.")
+				</div>
 				<form method="post" action="/treasurer/cash-payment" class="form-stack">
 					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 					<div class="form-row">
-						<label class="field">
-							<span class="field-label">Pilih Tagihan SPP Siswa</span>
+						<div class="field">
+							<div class="field-head">
+								<label class="field-label">Tagihan Siswa</label>
+							</div>
 							<select class="input" name="invoice_id">
 								for _, inv := range data.Invoices {
 									<option value={ inv.ID }>{ inv.Number } — Sisa { ui.FormatRupiah(inv.Remaining) } ({ inv.StatusLabel })</option>
 								}
 							</select>
-						</label>
-						<label class="field">
-							<span class="field-label">Nominal Tunai Diterima (Rp)</span>
+						</div>
+						<div class="field">
+							<div class="field-head">
+								<label class="field-label">Nominal Tunai (Rp)</label>
+							</div>
 							<input class="input input-mono" type="number" name="amount" value="175000" min="10000" required/>
-						</label>
-						<label class="field">
-							<span class="field-label">PIN 6-Digit Kasir Bendahara</span>
-							<input class="input input-mono" type="password" name="pin" placeholder="Demo PIN: 123456" required/>
-						</label>
+						</div>
+						<div class="field">
+							<div class="field-head">
+								<label class="field-label">PIN Kasir (6 Digit)</label>
+								@components.InfoBubble("PIN bendahara digunakan untuk otorisasi mutasi dan menandatangani kwitansi resmi (PIN demo: 123456).")
+							</div>
+							<input class="input input-mono" type="password" name="pin" placeholder="••••••" required/>
+						</div>
 					</div>
 					<button type="submit" class="button button-primary">
 						@components.Icon("receipt", "icon")
@@ -152,25 +168,36 @@ templ TreasurerPortal(data ui.TreasurerPortalPage) {
 			</section>
 		} else if data.Tab == "exam-clearance" {
 			<section class="card form-stack">
-				<span class="eyebrow">Dispensasi Ujian</span>
-				<h2>Izin Mengikuti Ujian CBT</h2>
-				<p class="muted">Memberikan izin akses ujian CBT sementara bagi siswa dengan kesepakatan komitmen orang tua.</p>
+				<div class="stat-card-head">
+					<div>
+						<span class="eyebrow">Dispensasi Ujian</span>
+						<h2>Izin Mengikuti Ujian CBT</h2>
+					</div>
+					@components.InfoBubble("Dispensasi 7 hari membuka pintu CBT siswa yang orang tuanya memiliki komitmen tertulis.")
+				</div>
 				<form method="post" action="/treasurer/dispensation" class="form-row">
 					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-					<label class="field">
-						<span class="field-label">Pilih Siswa</span>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">Pilih Siswa</label>
+						</div>
 						<select class="input" name="student_id">
 							for _, s := range data.Students {
 								<option value={ s.ID }>{ s.FullName } ({ s.ClassroomName } · NISN { s.NISN })</option>
 							}
 						</select>
-					</label>
-					<label class="field">
-						<span class="field-label">Dasar / Alasan Dispensasi</span>
-						<input class="input" type="text" name="reason" value="Surat Perjanjian Komitmen Cicilan Orang Tua Wali" required/>
-					</label>
+					</div>
 					<div class="field">
-						<span class="field-label">Otorisasi</span>
+						<div class="field-head">
+							<label class="field-label">Dasar Dispensasi</label>
+							@components.InfoBubble("Dokumen perjanjian cicilan atau komitmen orang tua wali.")
+						</div>
+						<input class="input" type="text" name="reason" value="Surat Perjanjian Komitmen Cicilan Orang Tua Wali" required/>
+					</div>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">Otorisasi</label>
+						</div>
 						<button type="submit" class="button button-primary">Terbitkan Dispensasi</button>
 					</div>
 				</form>
@@ -244,30 +271,43 @@ templ TreasurerPortal(data ui.TreasurerPortalPage) {
 			</section>
 
 			<section class="card form-stack">
-				<span class="eyebrow">Koreksi Jurnal</span>
-				<h3>Jurnal Pembalik (Reversal)</h3>
-				<p class="muted">Koreksi catatan kas menggunakan jurnal pembalik dengan persetujuan OTP Kepala Sekolah (OTP: <strong class="mono">{ data.ExpectedOTP }</strong>).</p>
+				<div class="stat-card-head">
+					<div>
+						<span class="eyebrow">Koreksi Jurnal</span>
+						<h3>Jurnal Pembalik (Reversal)</h3>
+					</div>
+					@components.InfoBubble("Buku kas tidak dapat dihapus. Koreksi salah nominal memerlukan otorisasi kode OTP Kepala Sekolah.")
+				</div>
 				<form method="post" action="/treasurer/reversal" class="form-row">
 					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-					<label class="field">
-						<span class="field-label">Pilih Transaksi Buku Kas</span>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">Transaksi Kas</label>
+						</div>
 						<select class="input" name="ledger_id">
 							for _, item := range data.Ledger {
 								<option value={ strconv.FormatInt(item.ID, 10) }>#{ strconv.FormatInt(item.ID, 10) } — { item.ReceiptNumber } ({ item.StudentName } · { ui.FormatRupiah(item.AmountDelta) })</option>
 							}
 						</select>
-					</label>
-					<label class="field">
-						<span class="field-label">Alasan Jurnal Pembalik</span>
-						<input class="input" type="text" name="reason" value="Koreksi salah input nominal tunai di loket" required/>
-					</label>
-					<label class="field">
-						<span class="field-label">Kode OTP 6-Digit Kepala Sekolah</span>
-						<input class="input input-mono" type="text" name="otp" value={ data.ExpectedOTP } required/>
-					</label>
+					</div>
 					<div class="field">
-						<span class="field-label">Eksekusi</span>
-						<button type="submit" class="button button-danger">Proses Jurnal Pembalik</button>
+						<div class="field-head">
+							<label class="field-label">Alasan Koreksi</label>
+						</div>
+						<input class="input" type="text" name="reason" value="Koreksi salah input nominal tunai di loket" required/>
+					</div>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">OTP Kepala Sekolah</label>
+							@components.InfoBubble("Kode OTP aktif saat ini: " + data.ExpectedOTP)
+						</div>
+						<input class="input input-mono" type="text" name="otp" value={ data.ExpectedOTP } required/>
+					</div>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">Eksekusi</label>
+						</div>
+						<button type="submit" class="button button-danger">Proses Jurnal</button>
 					</div>
 				</form>
 			</section>

@@ -60,23 +60,35 @@ templ TeacherPortal(data ui.TeacherPortalPage) {
 			</div>
 		} else if data.Tab == "classroom" {
 			<section class="card form-stack">
-				<span class="eyebrow">Agenda Pembelajaran</span>
-				<h2>Agenda Mengajar Kelas XII TKJ 1</h2>
+				<div class="stat-card-head">
+					<div>
+						<span class="eyebrow">Agenda Pembelajaran</span>
+						<h2>Agenda Mengajar Kelas XII TKJ 1</h2>
+					</div>
+					@components.InfoBubble("Jurnal harian mengajar yang otomatis sinkron dengan catatan wali dan presensi siswa.")
+				</div>
 				<form method="post" action="/teacher/journal" class="form-stack">
 					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-					<label class="field">
-						<span class="field-label">Topik &amp; Kompetensi Dasar</span>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">Topik &amp; Kompetensi Dasar</label>
+						</div>
 						<input class="input" type="text" name="topic" value={ data.Journal.Topic } required/>
-					</label>
-					<label class="field">
-						<span class="field-label">Catatan Instruktur</span>
+					</div>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">Catatan Instruktur</label>
+						</div>
 						<textarea class="input" name="notes" required>{ data.TeacherNotes }</textarea>
-					</label>
-					<label class="field">
-						<span class="field-label">Modul Praktik Bengkel</span>
+					</div>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">Modul Praktik Bengkel</label>
+							@components.InfoBubble("Instruksi alat dan prosedur keselamatan kerja K3 bengkel.")
+						</div>
 						<textarea class="input" name="ai_notes" required>{ data.AiSmartNotes }</textarea>
-					</label>
-					<button type="submit" class="button button-primary">Simpan Agenda &amp; Perbarui Kuis</button>
+					</div>
+					<button type="submit" class="button button-primary">Simpan Agenda</button>
 				</form>
 			</section>
 
@@ -122,39 +134,58 @@ templ TeacherPortal(data ui.TeacherPortalPage) {
 			</section>
 		} else if data.Tab == "question-bank" {
 			<section class="card form-stack">
-				<span class="eyebrow">Bank Soal</span>
-				<h2>Bank Soal AIJ ({ strconv.Itoa(len(data.ExamQuestions)) } Soal Aktif)</h2>
+				<div class="stat-card-head">
+					<div>
+						<span class="eyebrow">Bank Soal</span>
+						<h2>Bank Soal AIJ ({ strconv.Itoa(len(data.ExamQuestions)) } Soal Aktif)</h2>
+					</div>
+					@components.InfoBubble("Butir soal CBT dengan validasi kunci otomatis di server untuk pilihan ganda.")
+				</div>
 				<form method="post" action="/teacher/question/add" class="form-stack">
 					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 					<div class="form-row">
-						<label class="field">
-							<span class="field-label">Tipe Soal</span>
+						<div class="field">
+							<div class="field-head">
+								<label class="field-label">Tipe Soal</label>
+								@components.InfoBubble("Pilihan Ganda dinilai otomatis; Esai dinilai manual oleh guru pengampu.")
+							</div>
 							<select class="input" name="question_type">
 								<option value="MULTIPLE_CHOICE">Pilihan Ganda (A/B/C/D)</option>
 								<option value="ESSAY">Esai / Uraian</option>
 							</select>
-						</label>
-						<label class="field">
-							<span class="field-label">Kunci Jawaban (Untuk PG)</span>
+						</div>
+						<div class="field">
+							<div class="field-head">
+								<label class="field-label">Kunci Jawaban PG</label>
+								@components.InfoBubble("Kunci disimpan di server dan tidak bocor ke browser siswa.")
+							</div>
 							<select class="input" name="correct_key">
 								<option value="A">Opsi A</option>
 								<option value="B">Opsi B</option>
 								<option value="C">Opsi C</option>
 								<option value="D">Opsi D</option>
 							</select>
-						</label>
+						</div>
 					</div>
-					<label class="field">
-						<span class="field-label">Pertanyaan / Kasus Jaringan</span>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">Pertanyaan / Kasus Praktik</label>
+						</div>
 						<textarea class="input" name="question_text" placeholder="Tuliskan skenario gangguan jaringan atau pertanyaan..." required></textarea>
-					</label>
+					</div>
 					<div class="form-row">
 						<input class="input" type="text" name="opt_a" placeholder="Pilihan A"/>
 						<input class="input" type="text" name="opt_b" placeholder="Pilihan B"/>
 						<input class="input" type="text" name="opt_c" placeholder="Pilihan C"/>
 						<input class="input" type="text" name="opt_d" placeholder="Pilihan D"/>
 					</div>
-					<input class="input" type="text" name="essay_rubric" placeholder="Rubrik penilaian esai..."/>
+					<div class="field">
+						<div class="field-head">
+							<label class="field-label">Rubrik Penilaian Esai</label>
+							@components.InfoBubble("Pedoman kata kunci dan bobot jawaban esai untuk koreksi guru.")
+						</div>
+						<input class="input" type="text" name="essay_rubric" placeholder="Mis. Menjelaskan subnet mask /24 dengan benar (skor maks: 25)..."/>
+					</div>
 					<button type="submit" class="button button-primary">Tambah ke Bank Soal</button>
 				</form>
 

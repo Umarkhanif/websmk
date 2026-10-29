@@ -920,8 +920,8 @@
       return;
     }
 
-    // Close open <details class="user-menu"> when clicking outside
-    document.querySelectorAll("details.user-menu[open]").forEach(function (menu) {
+    // Close open <details class="user-menu"> or <details class="info-bubble"> when clicking outside
+    document.querySelectorAll("details.user-menu[open], details.info-bubble[open]").forEach(function (menu) {
       if (!menu.contains(e.target)) {
         menu.removeAttribute("open");
       }
@@ -932,7 +932,7 @@
     if (e.key === "Escape") {
       setDrawerOpen(false);
       document.querySelectorAll(".modal:not([hidden])").forEach(closeModal);
-      document.querySelectorAll("details.user-menu[open]").forEach(function (m) {
+      document.querySelectorAll("details.user-menu[open], details.info-bubble[open]").forEach(function (m) {
         m.removeAttribute("open");
       });
     }
