@@ -928,6 +928,26 @@
     });
   });
 
+  // Ensure info bubble popovers never clip outside the viewport
+  document.addEventListener("toggle", function (e) {
+    if (e.target && e.target.matches && e.target.matches("details.info-bubble") && e.target.open) {
+      var content = e.target.querySelector(".info-bubble-content");
+      if (content) {
+        var rect = content.getBoundingClientRect();
+        var margin = 12;
+        if (rect.right > window.innerWidth - margin) {
+          var overflow = rect.right - (window.innerWidth - margin);
+          content.style.transform = "translateX(-" + overflow + "px)";
+        } else if (rect.left < margin) {
+          var underflow = margin - rect.left;
+          content.style.transform = "translateX(" + underflow + "px)";
+        } else {
+          content.style.transform = "";
+        }
+      }
+    }
+  }, true);
+
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") {
       setDrawerOpen(false);

@@ -51,3 +51,9 @@ Masalah: Desain form kaku seperti boilerplate generik dan teks petunjuk statis m
 Penyebab: Input flat dengan focus ring OS, dropdown mentah, serta paragraf penjelasan permanen di bawah label.
 Perbaikan: Buat komponen InfoBubble (`!`) popover interaktif, rapikan `.field-head` & label, perhalus fokus kontrol & tombol berkedalaman di `app.css`.
 Verifikasi: `templ generate`, `go vet ./...`, `go test ./...`, HTTP 200 OK.
+
+## 2026-10-30 — info-bubble-viewport-clipping
+Masalah: Popover petunjuk (!) terpotong di tepi kanan layar atau kartu.
+Penyebab: .info-bubble-content memakai `left: 0`, membuat popover melebar ke kanan keluar dari viewport.
+Perbaikan: Alihkan ke `right: 0; left: auto;`, beri panah penunjuk atas, dan auto-clamp di `app.js`.
+Verifikasi: `templ generate`, `go vet ./...`, `go test ./...`, HTTP 200 OK.
