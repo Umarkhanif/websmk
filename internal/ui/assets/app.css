@@ -1118,40 +1118,77 @@ textarea.input {
   min-height: 100vh;
   display: flex;
   align-items: stretch;
+  background: var(--surface);
 }
 
 .login-shell {
   display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
+  grid-template-columns: minmax(0, 1.15fr) minmax(420px, 0.85fr);
   width: 100%;
   min-height: 100vh;
 }
 
-.login-brand {
-  background: var(--navy);
+.login-visual {
+  position: relative;
+  overflow: hidden;
+  display: flex;
   color: #fff;
-  padding: 48px;
+  padding: 44px 48px;
+  background-color: var(--navy);
+  /* Ganti foto ini dengan foto kampus/sekolah asli. */
+  background-image:
+    linear-gradient(180deg, rgba(11, 23, 48, 0.2) 0%, rgba(11, 23, 48, 0.55) 58%, rgba(11, 23, 48, 0.96) 100%),
+    linear-gradient(90deg, rgba(11, 23, 48, 0.82) 0%, rgba(11, 23, 48, 0.35) 58%, rgba(11, 23, 48, 0.08) 100%),
+    url("https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1600&q=75");
+  background-position: center;
+  background-size: cover;
+}
+
+.login-visual-inner {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: 36px;
+  width: 100%;
+  max-width: 760px;
 }
 
-.login-brand-top {
+.login-school-lockup {
   display: flex;
   align-items: center;
   gap: 14px;
-  margin-bottom: 36px;
 }
 
-.login-product {
-  display: block;
-  font-size: 1.3rem;
+.login-school-mark {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--gold);
+  color: var(--navy);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
   font-weight: 800;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
 }
 
-.login-product-sub {
-  font-size: 0.85rem;
+.login-school-lockup strong {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.login-school-lockup span {
+  display: block;
+  font-size: 0.82rem;
   color: #CBD5E1;
+}
+
+.login-visual-copy {
+  margin-top: auto;
+  max-width: 620px;
 }
 
 .login-kicker {
@@ -1159,74 +1196,75 @@ textarea.input {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  font-size: 0.8rem;
-  margin-bottom: 10px;
+  font-size: 0.78rem;
+  margin-bottom: 12px;
 }
 
-.login-brand h1 {
-  font-size: 2.1rem;
-  line-height: 1.2;
-  margin-bottom: 14px;
+.login-visual h1 {
+  font-size: clamp(2rem, 3.2vw, 3rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
 }
 
 .login-lead {
-  color: #CBD5E1;
-  font-size: 1rem;
-  max-width: 480px;
-}
-
-.login-points {
-  list-style: none;
-  padding: 0;
-  margin: 28px 0 0;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.login-points li {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 0.92rem;
   color: #E2E8F0;
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 520px;
 }
 
-.point-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--gold);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.login-brand-footer {
+.login-visual-foot {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  font-size: 0.82rem;
-  color: #94A3B8;
+  gap: 16px;
   padding-top: 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.login-major-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.login-major-list span {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.login-visual-meta {
+  font-size: 0.78rem;
+  color: #CBD5E1;
+  white-space: nowrap;
 }
 
 .login-panel {
   background: var(--surface);
-  padding: 48px;
+  padding: 48px clamp(28px, 4.5vw, 64px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.login-panel-inner {
+  width: 100%;
+  max-width: 420px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  max-width: 560px;
-  width: 100%;
-  margin: 0 auto;
   gap: 20px;
 }
 
 .login-panel-head h2 {
-  font-size: 1.5rem;
+  font-size: 1.65rem;
+  line-height: 1.2;
   color: var(--navy);
   margin-top: 4px;
 }
@@ -1234,7 +1272,7 @@ textarea.input {
 .login-panel-head p {
   color: var(--text-muted);
   font-size: 0.9rem;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .login-tabs {
@@ -1247,17 +1285,45 @@ textarea.input {
 }
 
 .login-tab {
-  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
   padding: 10px 12px;
   border-radius: 8px;
+  text-align: center;
   font-weight: 700;
-  font-size: 0.86rem;
+  font-size: 0.84rem;
   color: var(--text-muted);
+}
+
+.login-tab:hover {
+  color: var(--navy);
+  text-decoration: none;
 }
 
 .login-tab.is-active {
   background: var(--navy);
   color: #fff;
+}
+
+.login-help {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: -6px;
+}
+
+.login-help a {
+  font-weight: 700;
+}
+
+.login-panel-footer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 4px;
 }
 
 .demo-box {
@@ -2955,6 +3021,15 @@ body.is-cbt-active .app-main {
     max-width: 300px;
     right: 5vw;
   }
+  .login-visual {
+    min-height: 160px;
+  }
+  .login-visual h1 {
+    font-size: 1.3rem;
+  }
+  .login-panel {
+    padding-top: 22px;
+  }
 }
 
 @media (max-width: 960px) {
@@ -3007,27 +3082,38 @@ body.is-cbt-active .app-main {
   .login-shell {
     grid-template-columns: 1fr;
   }
-  .login-brand {
-    justify-content: flex-start;
-    padding: 22px 20px 20px;
+  .login-visual {
+    min-height: 180px;
+    padding: 20px;
+    background-position: center 32%;
   }
-  .login-brand-top {
-    margin-bottom: 16px;
+  .login-visual-inner {
+    gap: 14px;
   }
-  .login-brand h1 {
-    font-size: 1.55rem;
-    margin-bottom: 6px;
+  .login-school-mark {
+    width: 40px;
+    height: 40px;
   }
-  .login-kicker {
-    margin-bottom: 4px;
+  .login-visual-copy {
+    margin-top: 0;
   }
+  .login-visual h1 {
+    font-size: 1.45rem;
+    margin-bottom: 0;
+    max-width: 460px;
+  }
+  .login-kicker,
   .login-lead,
-  .login-points,
-  .login-brand-footer {
+  .login-visual-foot {
     display: none;
   }
   .login-panel {
-    padding: 24px 20px calc(28px + env(safe-area-inset-bottom, 0px));
+    align-items: flex-start;
+    padding: 28px 20px calc(28px + env(safe-area-inset-bottom, 0px));
+  }
+  .login-panel-inner {
+    max-width: 520px;
+    margin: 0 auto;
   }
   .cbt-grid {
     grid-template-columns: 1fr;

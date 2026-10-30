@@ -7,9 +7,9 @@ func loginTabClass(tab, target string) string {
 	return "login-tab"
 }
 
-func loginTabSelected(tab, target string) string {
+func loginTabCurrent(tab, target string) string {
 	if tab == target {
-		return "true"
+		return "page"
 	}
 	return "false"
 }
