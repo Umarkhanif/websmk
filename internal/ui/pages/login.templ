@@ -156,10 +156,14 @@ templ Login(page ui.LoginPage) {
 						</details>
 					}
 
-					<div class="login-panel-footer">
+					<div class="login-panel-footer" style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;">
 						<a href="/verify" class="text-link">
 							@components.Icon("external", "icon icon-xs")
-							<span>Verifikasi Keaslian Dokumen Resmi</span>
+							<span>Verifikasi Dokumen Resmi</span>
+						</a>
+						<a href="/contact" class="text-link">
+							@components.Icon("bug", "icon icon-xs")
+							<span>Hubungi &amp; Laporkan Bug</span>
 						</a>
 					</div>
 				</section>

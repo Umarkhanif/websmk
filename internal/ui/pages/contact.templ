@@ -1,0 +1,145 @@
+package pages
+
+import (
+	"wesmk/internal/ui"
+	"wesmk/internal/ui/components"
+)
+
+templ Contact(data ui.ContactPage) {
+	<div class="page-stack">
+		<section class="card form-stack">
+			<div class="stat-card-head">
+				<div>
+					<span class="eyebrow">Dukungan Pengguna &amp; Bug Tracker</span>
+					<h2>Hubungi Tim Developer &amp; Laporkan Masalah</h2>
+				</div>
+				@components.InfoBubble("Laporan Anda langsung diteruskan ke Dasbor Admin Developer WESMK untuk investigasi teknis dan perbaikan segera.")
+			</div>
+
+			<p class="muted">
+				Menemukan kendala pada ujian CBT, perbedaan data presensi RFID, kesulitan akses, atau bug tampilan?
+				Kirimkan detailnya melalui form di bawah ini agar tim teknis kami dapat mendiagnosis log server dan menyelesaikannya.
+			</p>
+
+			<form method="post" action="/contact/report-bug" class="form-stack">
+				<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+
+				<div class="grid-2">
+					<label class="field">
+						<div class="field-head">
+							<span class="field-label">Nama Pelapor</span>
+							@components.InfoBubble("Nama Anda untuk konfirmasi tindak lanjut oleh tim teknis.")
+						</div>
+						<input class="input" name="reporter_name" value={ data.ReporterName } placeholder="Contoh: Budi Santoso atau Pengawas Lab 1" required/>
+					</label>
+
+					<label class="field">
+						<div class="field-head">
+							<span class="field-label">Kontak WhatsApp / Email</span>
+							@components.InfoBubble("Nomor atau email aktif untuk pemberitahuan status tiket.")
+						</div>
+						<input class="input" name="reporter_email" value={ data.ReporterEmail } placeholder="0812xxxx atau nama@sekolah.sch.id"/>
+					</label>
+				</div>
+
+				<div class="grid-2">
+					<label class="field">
+						<div class="field-head">
+							<span class="field-label">Peran Pengguna</span>
+							@components.InfoBubble("Pilih peran Anda saat kendala terjadi untuk memudahkan isolasi hak akses.")
+						</div>
+						<select class="input" name="reporter_role">
+							<option value="student" selected?={ data.ReporterRole == "student" }>Murid / Siswa</option>
+							<option value="teacher" selected?={ data.ReporterRole == "teacher" }>Guru / Pengawas Ujian</option>
+							<option value="treasurer" selected?={ data.ReporterRole == "treasurer" }>Bendahara Sekolah</option>
+							<option value="discipline" selected?={ data.ReporterRole == "discipline" }>Kesiswaan &amp; BK</option>
+							<option value="piket" selected?={ data.ReporterRole == "piket" }>Guru Piket</option>
+							<option value="admin_tu" selected?={ data.ReporterRole == "admin_tu" }>Admin Tata Usaha</option>
+							<option value="parent" selected?={ data.ReporterRole == "parent" }>Orang Tua Murid</option>
+							<option value="headmaster" selected?={ data.ReporterRole == "headmaster" }>Kepala Sekolah</option>
+							<option value="guest" selected?={ data.ReporterRole == "guest" || data.ReporterRole == "" }>Pengunjung / Tamu</option>
+						</select>
+					</label>
+
+					<label class="field">
+						<div class="field-head">
+							<span class="field-label">Kategori Masalah</span>
+							@components.InfoBubble("Modul sistem yang terdampak oleh kendala.")
+						</div>
+						<select class="input" name="category">
+							<option value="CBT_EXAM" selected>Ujian Online (CBT / Kiosk / Kunci Layar)</option>
+							<option value="ATTENDANCE_GATE">Presensi Gerbang &amp; Tap Kartu RFID</option>
+							<option value="RAPOR_HOLISTIK">e-Rapor 360° &amp; Nilai Siswa</option>
+							<option value="FINANCE_SPP">Keuangan, SPP &amp; Kwitansi Digital</option>
+							<option value="UI_UX">Tampilan / UI / Responsif di HP</option>
+							<option value="AUTH_ACCESS">Login, Sandi, &amp; Hak Akses Akun</option>
+							<option value="OTHER">Lainnya / Pertanyaan Umum</option>
+						</select>
+					</label>
+				</div>
+
+				<div class="grid-2">
+					<label class="field">
+						<div class="field-head">
+							<span class="field-label">Tingkat Keparahan (Severity)</span>
+							@components.InfoBubble("Pilih 'Kritis' jika ujian terhenti total atau data siswa terancam.")
+						</div>
+						<select class="input" name="severity">
+							<option value="medium" selected>Sedang - Kendala reguler, fungsi utama masih berjalan</option>
+							<option value="critical">Kritis - Sistem down / Ujian terhenti total</option>
+							<option value="major">Tinggi - Fungsi penting tidak merespons</option>
+							<option value="low">Rendah - Usulan perbaikan atau kendala visual kecil</option>
+						</select>
+					</label>
+
+					<label class="field">
+						<div class="field-head">
+							<span class="field-label">URL / Halaman Terkait</span>
+							@components.InfoBubble("Halaman tempat error muncul (otomatis dari browser jika ada).")
+						</div>
+						<input class="input" name="page_url" value={ data.RefererURL } placeholder="/student/exam-kiosk"/>
+					</label>
+				</div>
+
+				<label class="field">
+					<div class="field-head">
+						<span class="field-label">Judul Masalah / Ringkasan Bug</span>
+						@components.InfoBubble("Deskripsi singkat 1 kalimat mengenai gejala kendala.")
+					</div>
+					<input class="input" name="title" placeholder="Contoh: Tombol reset ujian tidak merespons pada siswa nomor meja 14" required/>
+				</label>
+
+				<label class="field">
+					<div class="field-head">
+						<span class="field-label">Detail Deskripsi &amp; Langkah Reproduksi</span>
+						@components.InfoBubble("Ceritakan kronologi: apa yang Anda klik, apa yang terjadi, dan pesan kesalahan jika ada.")
+					</div>
+					<textarea class="input" name="description" rows="5" placeholder="1. Saya membuka menu Pengawasan Ujian&#10;2. Menekan tombol Buka Kunci untuk siswa NISN 0058471292&#10;3. Muncul notifikasi error dan layar siswa tetap terkunci" required></textarea>
+				</label>
+
+				<div class="field-actions" style="display:flex; justify-content:flex-end; gap:10px; margin-top:8px;">
+					<a href={ templ.SafeURL(ui.RoleHome(data.Shell.Role)) } class="button button-secondary">Kembali ke Portal</a>
+					<button type="submit" class="button button-primary">
+						@components.Icon("bug", "icon-xs")
+						<span>Kirim Laporan Bug</span>
+					</button>
+				</div>
+			</form>
+		</section>
+
+		<!-- Developer SLA & Direct Channel Info -->
+		<section class="card note-card" style="display:flex; gap:16px; align-items:flex-start;">
+			<div class="note-icon" style="flex-shrink:0;">
+				@components.Icon("sliders", "icon")
+			</div>
+			<div>
+				<h4>Saluran Pengembang Resmi WESMK</h4>
+				<p class="muted" style="margin-top:4px;">
+					Semua laporan yang dikirimkan terintegrasi secara otomatis ke Dasbor Developer Admin internal.
+					Tiket berkategori <strong>Kritis</strong> (seperti kendala server saat CBT berlangsung) dimonitor langsung oleh tim on-call.
+					Untuk demo pengujian tim pengembang, akun demo khusus <code>developer.admin</code> dapat diakses melalui switcher peran di pojok atas.
+				</p>
+			</div>
+		</section>
+	</div>
+}

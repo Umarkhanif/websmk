@@ -39,6 +39,10 @@ templ MobileNav(shell ui.RoleShell) {
 					}
 				</a>
 			}
+			<a href="/contact" class="nav-link" data-drawer-close>
+				@Icon("bug", "icon")
+				<span class="nav-copy">Kontak &amp; Lapor Bug</span>
+			</a>
 		</nav>
 		<form method="post" action="/logout" class="drawer-logout">
 			<input type="hidden" name="_csrf" value={ shell.CSRFToken }/>

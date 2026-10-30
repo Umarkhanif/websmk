@@ -120,7 +120,7 @@ func Topbar(shell ui.RoleShell) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</summary><div class=\"user-menu-panel\"><div class=\"user-menu-meta\"><div><strong>Pilih Peran Demo</strong> <span>8 akses portal sekolah</span></div></div><div class=\"user-menu-divider\"></div><form method=\"post\" action=\"/demo/role\" class=\"menu-form\"><input type=\"hidden\" name=\"_csrf\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</summary><div class=\"user-menu-panel\"><div class=\"user-menu-meta\"><div><strong>Pilih Peran Demo</strong> <span>9 akses portal sekolah</span></div></div><div class=\"user-menu-divider\"></div><form method=\"post\" action=\"/demo/role\" class=\"menu-form\"><input type=\"hidden\" name=\"_csrf\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -133,7 +133,7 @@ func Topbar(shell ui.RoleShell) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\"> <button type=\"submit\" name=\"role\" value=\"student\" class=\"menu-button\"><span>1. Murid &amp; Ketua Kelas</span></button> <button type=\"submit\" name=\"role\" value=\"parent\" class=\"menu-button\"><span>2. Orang Tua / Wali</span></button> <button type=\"submit\" name=\"role\" value=\"treasurer\" class=\"menu-button\"><span>3. Bendahara / Keuangan</span></button> <button type=\"submit\" name=\"role\" value=\"teacher\" class=\"menu-button\"><span>4. Guru / Pengawas / Wali</span></button> <button type=\"submit\" name=\"role\" value=\"discipline\" class=\"menu-button\"><span>5. Kesiswaan &amp; BK</span></button> <button type=\"submit\" name=\"role\" value=\"piket\" class=\"menu-button\"><span>6. Guru Piket</span></button> <button type=\"submit\" name=\"role\" value=\"admin_tu\" class=\"menu-button\"><span>7. Admin TU &amp; Dapodik</span></button> <button type=\"submit\" name=\"role\" value=\"headmaster\" class=\"menu-button\"><span>8. Kepala Sekolah</span></button></form></div></details> <details class=\"user-menu\"><summary aria-label=\"Skenario demo\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\"> <button type=\"submit\" name=\"role\" value=\"student\" class=\"menu-button\"><span>1. Murid &amp; Ketua Kelas</span></button> <button type=\"submit\" name=\"role\" value=\"parent\" class=\"menu-button\"><span>2. Orang Tua / Wali</span></button> <button type=\"submit\" name=\"role\" value=\"treasurer\" class=\"menu-button\"><span>3. Bendahara / Keuangan</span></button> <button type=\"submit\" name=\"role\" value=\"teacher\" class=\"menu-button\"><span>4. Guru / Pengawas / Wali</span></button> <button type=\"submit\" name=\"role\" value=\"discipline\" class=\"menu-button\"><span>5. Kesiswaan &amp; BK</span></button> <button type=\"submit\" name=\"role\" value=\"piket\" class=\"menu-button\"><span>6. Guru Piket</span></button> <button type=\"submit\" name=\"role\" value=\"admin_tu\" class=\"menu-button\"><span>7. Admin TU &amp; Dapodik</span></button> <button type=\"submit\" name=\"role\" value=\"headmaster\" class=\"menu-button\"><span>8. Kepala Sekolah</span></button> <button type=\"submit\" name=\"role\" value=\"developer\" class=\"menu-button\"><span>9. Tim Developer (Admin Bug Tracker)</span></button></form></div></details> <details class=\"user-menu\"><summary aria-label=\"Skenario demo\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -156,7 +156,7 @@ func Topbar(shell ui.RoleShell) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(shell.CSRFToken)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/topbar.templ`, Line: 64, Col: 64}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/topbar.templ`, Line: 65, Col: 64}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 			if templ_7745c5c3_Err != nil {
@@ -167,14 +167,14 @@ func Topbar(shell ui.RoleShell) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<a class=\"topbar-link\" href=\"/verify\">Verifikasi publik</a> <details class=\"user-menu\"><summary aria-label=\"Buka menu akun\"><span class=\"avatar avatar-sm\" aria-hidden=\"true\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<a class=\"topbar-link\" href=\"/verify\">Verifikasi publik</a> <a class=\"topbar-link\" href=\"/contact\">Lapor Bug / Kontak</a> <details class=\"user-menu\"><summary aria-label=\"Buka menu akun\"><span class=\"avatar avatar-sm\" aria-hidden=\"true\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(shell.Initials)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/topbar.templ`, Line: 82, Col: 71}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/topbar.templ`, Line: 84, Col: 71}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -187,7 +187,7 @@ func Topbar(shell ui.RoleShell) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(shell.FullName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/topbar.templ`, Line: 84, Col: 30}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/topbar.templ`, Line: 86, Col: 30}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -200,7 +200,7 @@ func Topbar(shell ui.RoleShell) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(shell.RoleLabel)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/topbar.templ`, Line: 85, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/topbar.templ`, Line: 87, Col: 29}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -221,7 +221,7 @@ func Topbar(shell ui.RoleShell) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(shell.Initials)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/topbar.templ`, Line: 91, Col: 62}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/topbar.templ`, Line: 93, Col: 62}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -234,7 +234,7 @@ func Topbar(shell ui.RoleShell) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(shell.FullName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/topbar.templ`, Line: 93, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/topbar.templ`, Line: 95, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -247,7 +247,7 @@ func Topbar(shell ui.RoleShell) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(shell.Username)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/topbar.templ`, Line: 94, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/topbar.templ`, Line: 96, Col: 29}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
@@ -265,7 +265,7 @@ func Topbar(shell ui.RoleShell) templ.Component {
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.ResolveAttributeValue(shell.CSRFToken)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/topbar.templ`, Line: 100, Col: 64}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/topbar.templ`, Line: 102, Col: 64}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var14)
 			if templ_7745c5c3_Err != nil {
@@ -291,7 +291,7 @@ func Topbar(shell ui.RoleShell) templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.ResolveAttributeValue(shell.CSRFToken)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/topbar.templ`, Line: 108, Col: 63}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/topbar.templ`, Line: 110, Col: 63}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var15)
 		if templ_7745c5c3_Err != nil {

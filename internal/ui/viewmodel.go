@@ -207,6 +207,12 @@ func NavFor(role string) []NavItem {
 		return []NavItem{
 			{ID: "executive", Label: "Pusat Kendali Kepala Sekolah", ShortLabel: "Pusat Kendali", Badge: "Utama", Icon: "graduation", Href: "/headmaster/executive"},
 		}
+	case "developer":
+		return []NavItem{
+			{ID: "dashboard", Label: "Bug Reports & Issue Tracker", ShortLabel: "Bug Reports", Badge: "Active", Icon: "bug", Href: "/developer/dashboard"},
+			{ID: "resets", Label: "Audit Trail Reset Ujian", ShortLabel: "Audit Ujian", Icon: "rotate-ccw", Href: "/developer/resets"},
+			{ID: "system", Label: "Diagnostik & Status Sistem", ShortLabel: "Status Sistem", Icon: "sliders", Href: "/developer/system"},
+		}
 	default:
 		return nil
 	}
@@ -278,6 +284,8 @@ func RoleHome(role string) string {
 		return "/admin/master-data"
 	case "headmaster":
 		return "/headmaster/executive"
+	case "developer":
+		return "/developer/dashboard"
 	default:
 		return "/login"
 	}
@@ -301,6 +309,8 @@ func RoleLabel(role string) string {
 		return "Admin TU"
 	case "headmaster":
 		return "Kepala Sekolah"
+	case "developer":
+		return "Developer"
 	default:
 		return "Pengguna"
 	}

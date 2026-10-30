@@ -1,0 +1,221 @@
+package pages
+
+import (
+	"strconv"
+	"wesmk/internal/ui"
+	"wesmk/internal/ui/components"
+)
+
+templ DeveloperPortal(data ui.DeveloperPortalPage) {
+	<div class="page-stack">
+		<!-- Summary Cards -->
+		<div class="grid-4">
+			<article class="card stat-card">
+				<div class="stat-card-head">
+					<span class="eyebrow">Total Tiket Masuk</span>
+					@components.Icon("bug", "icon-xs")
+				</div>
+				<p class="stat-value mono">{ strconv.Itoa(data.TotalBugs) }</p>
+				<p class="stat-note">Semua laporan dari pengguna</p>
+			</article>
+
+			<article class="card stat-card">
+				<div class="stat-card-head">
+					<span class="eyebrow">Perlu Penanganan (Open)</span>
+					<span class="badge badge-danger">Antrean</span>
+				</div>
+				<p class="stat-value mono" style="color:#EF4444;">{ strconv.Itoa(data.OpenBugs) }</p>
+				<p class="stat-note">Tiket baru belum ditindaklanjuti</p>
+			</article>
+
+			<article class="card stat-card">
+				<div class="stat-card-head">
+					<span class="eyebrow">Sedang Investigasi</span>
+					<span class="badge badge-warning">Proses</span>
+				</div>
+				<p class="stat-value mono" style="color:#F59E0B;">{ strconv.Itoa(data.InvestigatingBugs) }</p>
+				<p class="stat-note">Dalam analisis tim teknis</p>
+			</article>
+
+			<article class="card stat-card">
+				<div class="stat-card-head">
+					<span class="eyebrow">Terselesaikan (Resolved)</span>
+					<span class="badge badge-success">Selesai</span>
+				</div>
+				<p class="stat-value mono" style="color:#10B981;">{ strconv.Itoa(data.ResolvedBugs) }</p>
+				<p class="stat-note">Bug telah diperbaiki di server</p>
+			</article>
+		</div>
+
+		if data.Tab == "dashboard" || data.Tab == "" {
+			<section class="card form-stack">
+				<div class="stat-card-head">
+					<div>
+						<span class="eyebrow">Incident &amp; Bug Tracking</span>
+						<h2>Daftar Laporan Bug Masuk</h2>
+					</div>
+					<a href="/contact" class="button button-secondary button-small" target="_blank">
+						@components.Icon("bug", "icon-xs")
+						<span>Buka Form Pelaporan</span>
+					</a>
+				</div>
+
+				if len(data.BugReports) == 0 {
+					<div class="note-card" style="text-align:center; padding:32px 16px;">
+						<p class="muted">Belum ada laporan bug yang dilaporkan ke sistem. Semua modul beroperasi normal.</p>
+					</div>
+				} else {
+					<div class="table-wrap">
+						<table class="data-table">
+							<thead>
+								<tr>
+									<th>ID &amp; Waktu</th>
+									<th>Kategori &amp; Keparahan</th>
+									<th>Masalah &amp; Detail</th>
+									<th>Pelapor &amp; Halaman</th>
+									<th>Status Tiket</th>
+									<th>Tindakan Developer</th>
+								</tr>
+							</thead>
+							<tbody>
+								for _, b := range data.BugReports {
+									<tr>
+										<td>
+											<span class="mono">#{ b.ID }</span>
+											<br/><span class="muted" style="font-size:0.75rem;">{ b.CreatedAt }</span>
+										</td>
+										<td>
+											<span class="badge badge-teal">{ b.CategoryLabel }</span>
+											<br/><span class={ "badge " + b.SeverityClass } style="margin-top:4px;">{ b.Severity }</span>
+										</td>
+										<td>
+											<strong>{ b.Title }</strong>
+											<p class="muted" style="font-size:0.8rem; margin-top:4px; max-width:280px; word-break:break-word;">{ b.Description }</p>
+											if b.DeveloperNotes != "" {
+												<div style="margin-top:6px; padding:4px 8px; background:rgba(10, 108, 116, 0.08); border-radius:6px; font-size:0.75rem; color:#0A6C74;">
+													<strong>Catatan Dev:</strong> { b.DeveloperNotes }
+												</div>
+											}
+										</td>
+										<td>
+											<strong>{ b.ReporterName }</strong>
+											<br/><span class="badge badge-neutral" style="font-size:0.72rem;">{ b.ReporterRole }</span>
+											if b.PageURL != "" {
+												<br/><span class="mono muted" style="font-size:0.72rem;">{ b.PageURL }</span>
+											}
+										</td>
+										<td>
+											<span class={ "badge " + b.StatusClass }>{ b.Status }</span>
+										</td>
+										<td>
+											<form method="post" action="/developer/bugs/update-status" style="display:flex; flex-direction:column; gap:4px; min-width:140px;">
+												<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+												<input type="hidden" name="report_id" value={ b.ID }/>
+												<select class="input" name="status" style="min-height:32px; padding:2px 8px; font-size:0.78rem;">
+													<option value="OPEN" selected?={ b.Status == "OPEN" }>Open</option>
+													<option value="INVESTIGATING" selected?={ b.Status == "INVESTIGATING" }>Investigating</option>
+													<option value="FIXED" selected?={ b.Status == "FIXED" }>Fixed / Patch</option>
+													<option value="CLOSED" selected?={ b.Status == "CLOSED" }>Closed</option>
+												</select>
+												<input class="input" name="developer_notes" placeholder="Catatan commit/fix..." value={ b.DeveloperNotes } style="min-height:30px; padding:2px 6px; font-size:0.75rem;"/>
+												<button type="submit" class="button button-primary button-small" style="min-height:28px; padding:2px 8px; font-size:0.75rem;">Simpan</button>
+											</form>
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+			</section>
+		} else if data.Tab == "resets" {
+			<section class="card form-stack">
+				<div class="stat-card-head">
+					<div>
+						<span class="eyebrow">Audit &amp; Integritas CBT</span>
+						<h2>Log Audit Reset Ujian Pengawas Ruangan</h2>
+					</div>
+					<span class="badge badge-teal">{ strconv.Itoa(len(data.ExamResetLogs)) } Catatan Audit</span>
+				</div>
+
+				<p class="muted">
+					Setiap aksi reset ujian oleh guru pengawas dicatat di server untuk mencegah manipulasi nilai atau penghapusan riwayat secara sepihak.
+				</p>
+
+				if len(data.ExamResetLogs) == 0 {
+					<div class="note-card" style="text-align:center; padding:32px 16px;">
+						<p class="muted">Belum ada riwayat reset ujian yang dicatat di server.</p>
+					</div>
+				} else {
+					<div class="table-wrap">
+						<table class="data-table">
+							<thead>
+								<tr>
+									<th>Waktu Server</th>
+									<th>Peserta Ujian</th>
+									<th>Mapel / Ujian</th>
+									<th>Pengawas Bertugas</th>
+									<th>Alasan Reset</th>
+									<th>Tipe Reset</th>
+								</tr>
+							</thead>
+							<tbody>
+								for _, r := range data.ExamResetLogs {
+									<tr>
+										<td class="mono">{ r.CreatedAt }</td>
+										<td><strong>{ r.StudentName }</strong> <span class="mono muted">({ r.StudentID })</span></td>
+										<td class="mono">{ r.SubjectID }</td>
+										<td>{ r.ProctorName }</td>
+										<td>{ r.Reason }</td>
+										<td>
+											if r.IsBulk {
+												<span class="badge badge-warning">Massal Lab</span>
+											} else {
+												<span class="badge badge-neutral">Individu</span>
+											}
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+			</section>
+		} else if data.Tab == "system" {
+			<section class="card form-stack">
+				<div class="stat-card-head">
+					<div>
+						<span class="eyebrow">Diagnostik Server</span>
+						<h2>Status Sistem &amp; Lingkungan WESMK</h2>
+					</div>
+					<span class="badge badge-success">ONLINE (Produksi)</span>
+				</div>
+
+				<div class="grid-2">
+					<article class="card">
+						<h4>Spesifikasi Arsitektur Core</h4>
+						<ul style="margin:12px 0 0 18px; line-height:1.8; font-size:0.88rem;">
+							<li><strong>Runtime:</strong> Go 1.23+ Engine (Native HTTP, Tanpa Framework Berat)</li>
+							<li><strong>Frontend Templating:</strong> Go templ (Kompilasi type-safe ke Go binary)</li>
+							<li><strong>Reactivity:</strong> HTMX 2.x + Alpine.js (Zero-bundle JS, No React/Vite)</li>
+							<li><strong>Database:</strong> PostgreSQL 16 (pgx/v5 Pool, Migrasi Idempotent)</li>
+							<li><strong>Cache &amp; Session:</strong> Redis 7 Cluster</li>
+							<li><strong>Anti-Tampering:</strong> HMAC-SHA256 untuk Kwitansi SPP &amp; Surat Resmi</li>
+						</ul>
+					</article>
+
+					<article class="card">
+						<h4>Enforcement Keamanan Anti-Curang (CBT)</h4>
+						<ul style="margin:12px 0 0 18px; line-height:1.8; font-size:0.88rem;">
+							<li><strong>Kiosk Lockdown:</strong> Fullscreen enforcement, deteksi tab-switching &amp; split-window</li>
+							<li><strong>Kunci Jawaban &amp; Scoring:</strong> Mutlak server-side; kiosk hanya mengirimkan indeks pilihan</li>
+							<li><strong>Audit Trail Reset:</strong> Setiap reset (individu/massal) tersimpan di PostgreSQL</li>
+							<li><strong>Escrow Perundungan:</strong> Laporan kesiswaan terenkripsi dengan cluster hash anonim</li>
+							<li><strong>Audit SPP Append-Only:</strong> Larangan UPDATE/DELETE langsung pada tabel ledger</li>
+						</ul>
+					</article>
+				</div>
+			</section>
+		}
+	</div>
+}

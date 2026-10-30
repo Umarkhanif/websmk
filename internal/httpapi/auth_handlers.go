@@ -19,6 +19,7 @@ var allowedRoles = map[string]bool{
 	"piket":      true,
 	"admin_tu":   true,
 	"headmaster": true,
+	"developer":  true,
 }
 
 func (s *Server) handleAuthConfig(w http.ResponseWriter, _ *http.Request) {

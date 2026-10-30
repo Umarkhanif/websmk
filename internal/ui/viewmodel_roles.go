@@ -402,6 +402,7 @@ type TeacherPortalPage struct {
 	Attendances     []AttendanceRowView
 	ExamQuestions   []ExamQuestionView
 	ProctorStudents []ProctorSessionView
+	ExamResetLogs   []ExamResetLogView
 	PklLogs         []PklLogView
 	PklJournals     []PklJournalView
 }
@@ -449,4 +450,54 @@ type HeadmasterPortalPage struct {
 	TransformationTrend string
 	ActiveOTP           string
 	AiAdvice            string
+}
+
+type BugReportView struct {
+	ID             string
+	ReporterUserID string
+	ReporterName   string
+	ReporterRole   string
+	Category       string
+	CategoryLabel  string
+	Title          string
+	Description    string
+	PageURL        string
+	Severity       string
+	SeverityClass  string
+	Status         string
+	StatusClass    string
+	DeveloperNotes string
+	CreatedAt      string
+}
+
+type ExamResetLogView struct {
+	ID          string
+	StudentID   string
+	StudentName string
+	SubjectID   string
+	ProctorName string
+	Reason      string
+	IsBulk      bool
+	CreatedAt   string
+}
+
+type DeveloperPortalPage struct {
+	Shell             RoleShell
+	Tab               string
+	TotalBugs         int
+	OpenBugs          int
+	InvestigatingBugs int
+	ResolvedBugs      int
+	BugReports        []BugReportView
+	ExamResetLogs     []ExamResetLogView
+}
+
+type ContactPage struct {
+	Shell         RoleShell
+	ReporterName  string
+	ReporterEmail string
+	ReporterRole  string
+	RefererURL    string
+	SuccessMsg    string
+	ErrorMsg      string
 }

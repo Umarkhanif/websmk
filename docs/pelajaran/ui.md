@@ -57,3 +57,9 @@ Masalah: Popover petunjuk (!) terpotong di tepi kanan layar atau kartu.
 Penyebab: .info-bubble-content memakai `left: 0`, membuat popover melebar ke kanan keluar dari viewport.
 Perbaikan: Alihkan ke `right: 0; left: auto;`, beri panah penunjuk atas, dan auto-clamp di `app.js`.
 Verifikasi: `templ generate`, `go vet ./...`, `go test ./...`, HTTP 200 OK.
+
+## 2026-10-30 — proctor-exam-reset-and-bug-tracker
+Masalah: Pengawas CBT belum memiliki kontrol reset ujian siswa/lab dan belum ada portal pelaporan bug untuk pengembang.
+Penyebab: Ketiadaan endpoint reset & audit trail reset CBT di state serta tidak tersedianya peran developer internal.
+Perbaikan: Tambahkan reset ujian individu & bulk di live proctoring beserta audit log, buat form `/contact` terintegrasi, dan hadirkan portal peran `developer` (`developer.admin`).
+Verifikasi: `templ generate`, `go vet ./...`, `go test ./...`, HTTP 200 OK di `/contact`, `/teacher/exam-control`, dan `/developer/dashboard`.

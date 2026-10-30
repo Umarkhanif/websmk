@@ -107,6 +107,7 @@ func demoAccountsList() []ui.DemoAccount {
 		{Label: "Rian Pratama, S.Pd.", Identifier: "198811202014021004", Group: "Guru Piket Harian"},
 		{Label: "Nurul Hidayati, A.Md.", Identifier: "199201052019032011", Group: "Admin TU & Dapodik"},
 		{Label: "Dr. H. Sulaiman Effendi", Identifier: "196805121994121001", Group: "Kepala Sekolah"},
+		{Label: "Tim Developer WESMK", Identifier: "developer.admin", Group: "Developer & Bug Tracker"},
 	}
 }
 
@@ -1027,6 +1028,20 @@ func (s *Server) buildTeacherPortal(doc map[string]any, shell ui.RoleShell, tab 
 		pklJournals = append(pklJournals, parsePklJournal(jm))
 	}
 
+	resetLogs := make([]ui.ExamResetLogView, 0)
+	for _, rm := range asMapSlice(doc["examResetLogs"]) {
+		resetLogs = append(resetLogs, ui.ExamResetLogView{
+			ID:          strVal(rm, "id"),
+			StudentID:   strVal(rm, "studentId"),
+			StudentName: strVal(rm, "studentName"),
+			SubjectID:   strVal(rm, "subjectId"),
+			ProctorName: strVal(rm, "proctorName"),
+			Reason:      strVal(rm, "reason"),
+			IsBulk:      boolVal(rm, "isBulk"),
+			CreatedAt:   strVal(rm, "createdAt"),
+		})
+	}
+
 	return ui.TeacherPortalPage{
 		Shell:           shell,
 		Tab:             tab,
@@ -1038,6 +1053,7 @@ func (s *Server) buildTeacherPortal(doc map[string]any, shell ui.RoleShell, tab 
 		Attendances:     atts,
 		ExamQuestions:   examQs,
 		ProctorStudents: proctors,
+		ExamResetLogs:   resetLogs,
 		PklLogs:         pklLogs,
 		PklJournals:     pklJournals,
 	}
@@ -1416,5 +1432,131 @@ func parseReversalReq(rm map[string]any) ui.ReversalRequestView {
 		Reason:          strVal(rm, "reason"),
 		Status:          strVal(rm, "status"),
 		OtpCode:         strVal(rm, "otpCode"),
+	}
+}
+
+func (s *Server) buildDeveloperDashboard(doc map[string]any, shell ui.RoleShell, tab string) ui.DeveloperPortalPage {
+	bugs := make([]ui.BugReportView, 0)
+	total := 0
+	open := 0
+	investigating := 0
+	resolved := 0
+
+	for _, bm := range asMapSlice(doc["bugReports"]) {
+		status := strings.ToUpper(strVal(bm, "status"))
+		if status == "" {
+			status = "OPEN"
+		}
+		sev := strings.ToLower(strVal(bm, "severity"))
+		if sev == "" {
+			sev = "medium"
+		}
+		total++
+		switch status {
+		case "OPEN":
+			open++
+		case "INVESTIGATING":
+			investigating++
+		case "FIXED", "RESOLVED", "CLOSED":
+			resolved++
+		}
+
+		sevClass := "badge-neutral"
+		switch sev {
+		case "critical":
+			sevClass = "badge-danger"
+		case "high", "major":
+			sevClass = "badge-warning"
+		case "medium":
+			sevClass = "badge-teal"
+		case "low", "enhancement":
+			sevClass = "badge-neutral"
+		}
+
+		stClass := "badge-neutral"
+		switch status {
+		case "OPEN":
+			stClass = "badge-danger"
+		case "INVESTIGATING":
+			stClass = "badge-warning"
+		case "FIXED", "RESOLVED":
+			stClass = "badge-success"
+		case "CLOSED":
+			stClass = "badge-teal"
+		}
+
+		cat := strVal(bm, "category")
+		catLabel := cat
+		switch cat {
+		case "CBT_EXAM":
+			catLabel = "Ujian & CBT"
+		case "ATTENDANCE_GATE":
+			catLabel = "Presensi & Gerbang"
+		case "FINANCE_SPP":
+			catLabel = "Keuangan & SPP"
+		case "RAPOR_HOLISTIK":
+			catLabel = "e-Rapor & Nilai"
+		case "UI_UX":
+			catLabel = "Tampilan / UI / Responsif"
+		case "AUTH_ACCESS":
+			catLabel = "Akun & Hak Akses"
+		default:
+			catLabel = "Umum / Sistem"
+		}
+
+		bugs = append(bugs, ui.BugReportView{
+			ID:             strVal(bm, "id"),
+			ReporterUserID: strVal(bm, "reporterUserId"),
+			ReporterName:   strVal(bm, "reporterName"),
+			ReporterRole:   strVal(bm, "reporterRole"),
+			Category:       cat,
+			CategoryLabel:  catLabel,
+			Title:          strVal(bm, "title"),
+			Description:    strVal(bm, "description"),
+			PageURL:        strVal(bm, "pageUrl"),
+			Severity:       strings.ToUpper(sev),
+			SeverityClass:  sevClass,
+			Status:         status,
+			StatusClass:    stClass,
+			DeveloperNotes: strVal(bm, "developerNotes"),
+			CreatedAt:      strVal(bm, "createdAt"),
+		})
+	}
+
+	resets := make([]ui.ExamResetLogView, 0)
+	for _, rm := range asMapSlice(doc["examResetLogs"]) {
+		resets = append(resets, ui.ExamResetLogView{
+			ID:          strVal(rm, "id"),
+			StudentID:   strVal(rm, "studentId"),
+			StudentName: strVal(rm, "studentName"),
+			SubjectID:   strVal(rm, "subjectId"),
+			ProctorName: strVal(rm, "proctorName"),
+			Reason:      strVal(rm, "reason"),
+			IsBulk:      boolVal(rm, "isBulk"),
+			CreatedAt:   strVal(rm, "createdAt"),
+		})
+	}
+
+	return ui.DeveloperPortalPage{
+		Shell:             shell,
+		Tab:               tab,
+		TotalBugs:         total,
+		OpenBugs:          open,
+		InvestigatingBugs: investigating,
+		ResolvedBugs:      resolved,
+		BugReports:        bugs,
+		ExamResetLogs:     resets,
+	}
+}
+
+func (s *Server) buildContactPage(shell ui.RoleShell, reporterName, reporterEmail, reporterRole, refererURL, successMsg, errorMsg string) ui.ContactPage {
+	return ui.ContactPage{
+		Shell:         shell,
+		ReporterName:  reporterName,
+		ReporterEmail: reporterEmail,
+		ReporterRole:  reporterRole,
+		RefererURL:    refererURL,
+		SuccessMsg:    successMsg,
+		ErrorMsg:      errorMsg,
 	}
 }

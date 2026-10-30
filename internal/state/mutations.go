@@ -1104,3 +1104,175 @@ func ApprovePklJournalByDudi(doc map[string]any, journalID, pinInput string, now
 	targetJournal["approvedAt"] = now.UTC().Format(time.RFC3339)
 	return nil
 }
+
+// ResetStudentExam clears a student's submission and restores their active CBT session, logging the action for audit.
+func ResetStudentExam(doc map[string]any, studentID, subjectID, proctorUserID, proctorName, reason string, now time.Time) error {
+	student := findStudent(doc, studentID)
+	studentName := studentID
+	if student != nil {
+		studentName = text(student["fullName"])
+		student["cbtScore"] = 0
+	}
+
+	// 1. Remove exam submission so student can restart the exam
+	var keptSubmissions []any
+	for _, item := range asList(doc["examSubmissions"]) {
+		rec := asMap(item)
+		if rec == nil {
+			continue
+		}
+		if text(rec["studentId"]) == studentID {
+			if subjectID == "" || text(rec["examId"]) == subjectID || subjectID == "exam-cbt-tkj-01" || subjectID == "exam-sch-01" {
+				continue
+			}
+		}
+		keptSubmissions = append(keptSubmissions, rec)
+	}
+	doc["examSubmissions"] = keptSubmissions
+
+	// 2. Reset proctor student status
+	for _, item := range asList(doc["proctorStudents"]) {
+		ps := asMap(item)
+		if ps == nil || text(ps["studentId"]) != studentID {
+			continue
+		}
+		if text(ps["name"]) != "" {
+			studentName = text(ps["name"])
+		}
+		ps["status"] = "ACTIVE"
+		ps["progress"] = "0/40"
+		ps["lockCount"] = 0
+		ps["warnCount"] = 0
+		ps["unlockToken"] = ""
+		ps["hasEmergency2hTicket"] = true
+		cleanReason := strings.TrimSpace(reason)
+		if cleanReason == "" {
+			cleanReason = "Restart Ujian oleh Pengawas"
+		}
+		ps["lastViolation"] = fmt.Sprintf("Reset Ujian oleh Pengawas (%s): %s", proctorName, cleanReason)
+	}
+
+	if strings.TrimSpace(reason) == "" {
+		reason = "Kendala teknis / izin pengawas ruangan"
+	}
+	if strings.TrimSpace(subjectID) == "" {
+		subjectID = "exam-cbt-tkj-01"
+	}
+
+	// 3. Append to audit log
+	logEntry := map[string]any{
+		"id":            fmt.Sprintf("rst-%04d", now.UnixNano()%10000),
+		"studentId":     studentID,
+		"studentName":   studentName,
+		"subjectId":     subjectID,
+		"proctorUserId": proctorUserID,
+		"proctorName":   proctorName,
+		"reason":        reason,
+		"isBulk":        false,
+		"createdAt":     now.UTC().Format(time.RFC3339),
+	}
+	doc["examResetLogs"] = append([]any{logEntry}, asList(doc["examResetLogs"])...)
+	return nil
+}
+
+// BulkResetStudentExams resets exams for multiple students or all students in the room.
+func BulkResetStudentExams(doc map[string]any, studentIDs []string, subjectID, proctorUserID, proctorName, reason string, now time.Time) (int, error) {
+	if strings.TrimSpace(reason) == "" {
+		reason = "Reset Massal Pengawas Ruangan"
+	}
+
+	targetIDs := make(map[string]bool)
+	all := false
+	for _, id := range studentIDs {
+		if id == "ALL" || id == "*" {
+			all = true
+			break
+		}
+		if trimmed := strings.TrimSpace(id); trimmed != "" {
+			targetIDs[trimmed] = true
+		}
+	}
+
+	if all || len(targetIDs) == 0 {
+		for _, item := range asList(doc["proctorStudents"]) {
+			if ps := asMap(item); ps != nil {
+				targetIDs[text(ps["studentId"])] = true
+			}
+		}
+	}
+
+	count := 0
+	for sID := range targetIDs {
+		_ = ResetStudentExam(doc, sID, subjectID, proctorUserID, proctorName, reason, now)
+		count++
+	}
+
+	if count > 1 {
+		bulkLog := map[string]any{
+			"id":            fmt.Sprintf("rst-bulk-%04d", now.UnixNano()%10000),
+			"studentId":     fmt.Sprintf("%d Siswa", count),
+			"studentName":   fmt.Sprintf("Reset Massal (%d Peserta Ruangan)", count),
+			"subjectId":     subjectID,
+			"proctorUserId": proctorUserID,
+			"proctorName":   proctorName,
+			"reason":        reason,
+			"isBulk":        true,
+			"createdAt":     now.UTC().Format(time.RFC3339),
+		}
+		doc["examResetLogs"] = append([]any{bulkLog}, asList(doc["examResetLogs"])...)
+	}
+
+	return count, nil
+}
+
+// AddBugReport records an incident or bug report directed to the developer admin page.
+func AddBugReport(doc map[string]any, report map[string]any, now time.Time) string {
+	reportID := fmt.Sprintf("bug-%04d", now.UnixNano()%10000)
+	title := strings.TrimSpace(text(report["title"]))
+	if title == "" {
+		title = "Laporan Masalah Sistem"
+	}
+	category := strings.TrimSpace(text(report["category"]))
+	if category == "" {
+		category = "UMUM"
+	}
+	severity := strings.TrimSpace(text(report["severity"]))
+	if severity == "" {
+		severity = "medium"
+	}
+	entry := map[string]any{
+		"id":             reportID,
+		"reporterUserId": text(report["reporterUserId"]),
+		"reporterName":   text(report["reporterName"]),
+		"reporterRole":   text(report["reporterRole"]),
+		"category":       category,
+		"title":          title,
+		"description":    strings.TrimSpace(text(report["description"])),
+		"pageUrl":        strings.TrimSpace(text(report["pageUrl"])),
+		"severity":       severity,
+		"status":         "OPEN",
+		"developerNotes": "",
+		"createdAt":      now.UTC().Format(time.RFC3339),
+		"updatedAt":      now.UTC().Format(time.RFC3339),
+	}
+	doc["bugReports"] = append([]any{entry}, asList(doc["bugReports"])...)
+	return reportID
+}
+
+// UpdateBugReportStatus modifies status and appends developer notes on a bug report.
+func UpdateBugReportStatus(doc map[string]any, reportID, status, devNotes string, now time.Time) error {
+	for _, item := range asList(doc["bugReports"]) {
+		rec := asMap(item)
+		if rec != nil && text(rec["id"]) == reportID {
+			if strings.TrimSpace(status) != "" {
+				rec["status"] = strings.ToUpper(strings.TrimSpace(status))
+			}
+			if strings.TrimSpace(devNotes) != "" {
+				rec["developerNotes"] = strings.TrimSpace(devNotes)
+			}
+			rec["updatedAt"] = now.UTC().Format(time.RFC3339)
+			return nil
+		}
+	}
+	return ErrNotFound
+}

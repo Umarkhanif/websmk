@@ -31,6 +31,7 @@ var validRoles = map[string]bool{
 	"piket":      true,
 	"admin_tu":   true,
 	"headmaster": true,
+	"developer":  true,
 }
 
 const avatarBase = "https://images.unsplash.com/photo-"
@@ -183,5 +184,9 @@ func demoUsers() []*model.User {
 			"1580489944761-15a19d654956", "", map[string]any{}),
 		user("usr-headmaster-1", "196805121994121001", "Dr. H. Sulaiman Effendi, M.Pd. (Kepala Sekolah)", "headmaster", "081398765406",
 			"1560250097-0b93528c311a", "", map[string]any{}),
+		user("usr-developer-1", "developer.admin", "Tim Developer WESMK (Core Engineering)", "developer", "081299990001",
+			"1534528741775-53994a69daeb", "", map[string]any{
+				"isDeveloper": true,
+			}),
 	}
 }

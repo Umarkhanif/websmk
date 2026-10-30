@@ -85,6 +85,8 @@ func (s *Server) registerUIRoutes() {
 	s.mux.HandleFunc("POST /teacher/proctor/unlock", s.handleTeacherProctorUnlockForm)
 	s.mux.HandleFunc("POST /teacher/proctor/mass-unlock", s.handleTeacherProctorMassUnlockForm)
 	s.mux.HandleFunc("POST /teacher/proctor/emergency-ticket", s.handleTeacherEmergencyTicketForm)
+	s.mux.HandleFunc("POST /teacher/proctor/reset-exam", s.handleTeacherProctorResetExamForm)
+	s.mux.HandleFunc("POST /teacher/proctor/bulk-reset", s.handleTeacherProctorBulkResetForm)
 	s.mux.HandleFunc("POST /teacher/essay/grade", s.handleTeacherEssayGradeForm)
 	s.mux.HandleFunc("POST /teacher/homeroom/attitude", s.handleTeacherHomeroomAttitudeForm)
 	s.mux.HandleFunc("POST /teacher/pkl/bulk-approve", s.handleTeacherBulkApprovePklForm)
@@ -121,6 +123,15 @@ func (s *Server) registerUIRoutes() {
 	s.mux.HandleFunc("POST /headmaster/esign", s.handleHeadmasterESignForm)
 	s.mux.HandleFunc("POST /headmaster/otp", s.handleHeadmasterOTPForm)
 	s.mux.HandleFunc("POST /headmaster/ai-advisor", s.handleHeadmasterAIAdvisorForm)
+
+	// Developer Routes
+	s.mux.HandleFunc("GET /developer", s.handleDeveloperRedirect)
+	s.mux.HandleFunc("GET /developer/{tab}", s.handleDeveloperPage)
+	s.mux.HandleFunc("POST /developer/bugs/update-status", s.handleDeveloperBugStatusForm)
+
+	// Contact & Bug Report Routes
+	s.mux.HandleFunc("GET /contact", s.handleContactPage)
+	s.mux.HandleFunc("POST /contact/report-bug", s.handleContactReportBugForm)
 
 	// Root entrypoint
 	s.mux.HandleFunc("/", s.handleRootUI)
@@ -326,7 +337,7 @@ func (s *Server) handleLogoutForm(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleDemoRoleForm(w http.ResponseWriter, r *http.Request) {
-	authVal, ok := requireWebRole(w, r, "student", "parent", "treasurer", "teacher", "discipline", "piket", "admin_tu", "headmaster")
+	authVal, ok := requireWebRole(w, r, "student", "parent", "treasurer", "teacher", "discipline", "piket", "admin_tu", "headmaster", "developer")
 	if !ok {
 		return
 	}
@@ -342,7 +353,7 @@ func (s *Server) handleDemoRoleForm(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleDemoScenarioForm(w http.ResponseWriter, r *http.Request) {
-	authVal, ok := requireWebRole(w, r, "student", "parent", "treasurer", "teacher", "discipline", "piket", "admin_tu", "headmaster")
+	authVal, ok := requireWebRole(w, r, "student", "parent", "treasurer", "teacher", "discipline", "piket", "admin_tu", "headmaster", "developer")
 	if !ok {
 		return
 	}
@@ -1080,6 +1091,48 @@ func (s *Server) handleTeacherEmergencyTicketForm(w http.ResponseWriter, r *http
 	redirectWithFlash(w, r, "/teacher/exam-control", "Tiket Darurat 2 Jam berhasil diterbitkan untuk membuka akses ujian siswa.", "success")
 }
 
+func (s *Server) handleTeacherProctorResetExamForm(w http.ResponseWriter, r *http.Request) {
+	authVal, ok := requireWebRole(w, r, "teacher")
+	if !ok {
+		return
+	}
+	_ = r.ParseForm()
+	studentID := strings.TrimSpace(r.FormValue("student_id"))
+	reason := strings.TrimSpace(r.FormValue("reason"))
+	subjectID := strings.TrimSpace(r.FormValue("subject_id"))
+	if reason == "" {
+		reason = "Kendala teknis / izin pengawas ruangan"
+	}
+	_ = s.mutateStateDoc(r.Context(), func(doc map[string]any) error {
+		return state.ResetStudentExam(doc, studentID, subjectID, authVal.user.ID, authVal.user.FullName, reason, time.Now())
+	})
+	redirectWithFlash(w, r, "/teacher/exam-control", fmt.Sprintf("Sesi ujian CBT siswa %s berhasil di-reset untuk mulai ulang.", studentID), "success")
+}
+
+func (s *Server) handleTeacherProctorBulkResetForm(w http.ResponseWriter, r *http.Request) {
+	authVal, ok := requireWebRole(w, r, "teacher")
+	if !ok {
+		return
+	}
+	_ = r.ParseForm()
+	studentIDs := r.Form["student_ids"]
+	reason := strings.TrimSpace(r.FormValue("reason"))
+	subjectID := strings.TrimSpace(r.FormValue("subject_id"))
+	if reason == "" {
+		reason = "Reset massal pengawas lab komputer"
+	}
+	if r.FormValue("reset_all") == "1" {
+		studentIDs = []string{"ALL"}
+	}
+	count := 0
+	_ = s.mutateStateDoc(r.Context(), func(doc map[string]any) error {
+		var err error
+		count, err = state.BulkResetStudentExams(doc, studentIDs, subjectID, authVal.user.ID, authVal.user.FullName, reason, time.Now())
+		return err
+	})
+	redirectWithFlash(w, r, "/teacher/exam-control", fmt.Sprintf("Reset ujian massal berhasil dijalankan untuk %d peserta di lab.", count), "success")
+}
+
 func (s *Server) handleTeacherEssayGradeForm(w http.ResponseWriter, r *http.Request) {
 	_, ok := requireWebRole(w, r, "teacher")
 	if !ok {
@@ -1452,4 +1505,114 @@ func (s *Server) handleHeadmasterAIAdvisorForm(w http.ResponseWriter, r *http.Re
 	shell := s.buildRoleShell(authVal, "executive", "Analisis strategis selesai dijalankan.", "success")
 	data := s.buildHeadmasterPortal(doc, shell, advice)
 	renderComponent(w, r, http.StatusOK, layout.Base(shell, pages.HeadmasterPortal(data)))
+}
+
+// Developer Portal Handlers
+func (s *Server) handleDeveloperRedirect(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/developer/dashboard", http.StatusFound)
+}
+
+func (s *Server) handleDeveloperPage(w http.ResponseWriter, r *http.Request) {
+	authVal, ok := requireWebRole(w, r, "developer")
+	if !ok {
+		return
+	}
+	tab := r.PathValue("tab")
+	if tab == "" {
+		tab = "dashboard"
+	}
+	doc, _ := s.loadOrSeedState(r.Context())
+	shell := s.buildRoleShell(authVal, tab, r.URL.Query().Get("flash"), r.URL.Query().Get("kind"))
+	data := s.buildDeveloperDashboard(doc, shell, tab)
+	renderComponent(w, r, http.StatusOK, layout.Base(shell, pages.DeveloperPortal(data)))
+}
+
+func (s *Server) handleDeveloperBugStatusForm(w http.ResponseWriter, r *http.Request) {
+	_, ok := requireWebRole(w, r, "developer")
+	if !ok {
+		return
+	}
+	_ = r.ParseForm()
+	reportID := r.FormValue("report_id")
+	status := r.FormValue("status")
+	notes := r.FormValue("developer_notes")
+	_ = s.mutateStateDoc(r.Context(), func(doc map[string]any) error {
+		return state.UpdateBugReportStatus(doc, reportID, status, notes, time.Now())
+	})
+	redirectWithFlash(w, r, "/developer/dashboard", fmt.Sprintf("Status laporan bug #%s berhasil diubah menjadi %s.", reportID, status), "success")
+}
+
+// Contact & Bug Report Handlers
+func (s *Server) handleContactPage(w http.ResponseWriter, r *http.Request) {
+	authVal, loggedIn := currentAuth(r)
+	reporterName := ""
+	reporterEmail := ""
+	reporterRole := "GUEST"
+	shell := ui.RoleShell{
+		Role:         "guest",
+		RoleLabel:    "Pengunjung",
+		FullName:     "Pengunjung / Siswa",
+		Initials:     "WB",
+		SchoolName:   "SMK Negeri 1 Cimahi",
+		AcademicYear: "2026/2027 Ganjil",
+		ActiveTab:    "contact",
+		PageTitle:    "Hubungi & Lapor Bug",
+		CSRFToken:    s.csrfTokenFor("contact"),
+		DemoMode:     s.authSvc.DemoMode(),
+		Flash:        r.URL.Query().Get("flash"),
+		FlashKind:    r.URL.Query().Get("kind"),
+	}
+
+	if loggedIn && authVal.user != nil {
+		reporterName = authVal.user.FullName
+		reporterEmail = authVal.user.PhoneWA
+		reporterRole = authVal.user.Role
+		shell = s.buildRoleShell(authVal, "contact", r.URL.Query().Get("flash"), r.URL.Query().Get("kind"))
+	}
+
+	referer := r.Header.Get("Referer")
+	data := s.buildContactPage(shell, reporterName, reporterEmail, reporterRole, referer, r.URL.Query().Get("success"), r.URL.Query().Get("error"))
+	renderComponent(w, r, http.StatusOK, layout.Base(shell, pages.Contact(data)))
+}
+
+func (s *Server) handleContactReportBugForm(w http.ResponseWriter, r *http.Request) {
+	_ = r.ParseForm()
+	authVal, loggedIn := currentAuth(r)
+	reporterID := "anon"
+	reporterName := strings.TrimSpace(r.FormValue("reporter_name"))
+	reporterRole := strings.TrimSpace(r.FormValue("reporter_role"))
+	if loggedIn && authVal.user != nil {
+		reporterID = authVal.user.ID
+		if reporterName == "" {
+			reporterName = authVal.user.FullName
+		}
+		if reporterRole == "" {
+			reporterRole = authVal.user.Role
+		}
+	}
+	if reporterName == "" {
+		reporterName = "Pengguna WESMK"
+	}
+	if reporterRole == "" {
+		reporterRole = "PENGGUNA"
+	}
+
+	report := map[string]any{
+		"reporterUserId": reporterID,
+		"reporterName":   reporterName,
+		"reporterRole":   reporterRole,
+		"category":       r.FormValue("category"),
+		"title":          r.FormValue("title"),
+		"description":    r.FormValue("description"),
+		"pageUrl":        r.FormValue("page_url"),
+		"severity":       r.FormValue("severity"),
+	}
+
+	var reportID string
+	_ = s.mutateStateDoc(r.Context(), func(doc map[string]any) error {
+		reportID = state.AddBugReport(doc, report, time.Now())
+		return nil
+	})
+
+	redirectWithFlash(w, r, "/contact", fmt.Sprintf("Laporan masalah (#%s) berhasil dikirim langsung ke Dasbor Admin Developer WESMK. Terima kasih atas bantuan Anda!", reportID), "success")
 }
