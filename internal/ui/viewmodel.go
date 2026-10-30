@@ -154,6 +154,8 @@ type DemoAccount struct {
 
 // NavFor returns the same navigation labels and order as the React prototype,
 // so the migration does not change the information architecture.
+// Order matters: when a role has more than four items, the first three become
+// the mobile bottom bar (see MobileItems).
 func NavFor(role string) []NavItem {
 	switch role {
 	case "student":
@@ -184,8 +186,8 @@ func NavFor(role string) []NavItem {
 		return []NavItem{
 			{ID: "dashboard", Label: "Beranda Guru & Izin Mengajar", ShortLabel: "Beranda", Icon: "dashboard", Href: "/teacher/dashboard"},
 			{ID: "classroom", Label: "Ruang Mengajar & Agenda", ShortLabel: "Kelas", Badge: "Presensi", Icon: "calendar", Href: "/teacher/classroom"},
-			{ID: "question-bank", Label: "Bank Soal Kejuruan", ShortLabel: "Bank Soal", Icon: "help", Href: "/teacher/question-bank"},
 			{ID: "exam-control", Label: "Pengawasan Ujian Siswa", ShortLabel: "Pengawasan", Badge: "Langsung", Icon: "monitor", Href: "/teacher/exam-control"},
+			{ID: "question-bank", Label: "Bank Soal Kejuruan", ShortLabel: "Bank Soal", Icon: "help", Href: "/teacher/question-bank"},
 			{ID: "homeroom-pkl", Label: "Wali Kelas & Magang Siswa", ShortLabel: "Wali & PKL", Badge: "Pantau", Icon: "users", Href: "/teacher/homeroom-pkl"},
 		}
 	case "discipline":

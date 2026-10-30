@@ -107,7 +107,7 @@ func MobileNav(shell ui.RoleShell) templ.Component {
 			}
 		}
 		if ui.HasMore(shell.Nav) {
-			var templ_7745c5c3_Var7 = []any{mobileMoreClass(shell.Nav, shell.ActiveTab)}
+			var templ_7745c5c3_Var7 = []any{mobileMoreClass(ui.MoreItems(shell.Nav), shell.ActiveTab)}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var7...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

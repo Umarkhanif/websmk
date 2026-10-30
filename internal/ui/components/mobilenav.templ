@@ -11,7 +11,7 @@ templ MobileNav(shell ui.RoleShell) {
 			</a>
 		}
 		if ui.HasMore(shell.Nav) {
-			<button type="button" class={ mobileMoreClass(shell.Nav, shell.ActiveTab) } data-drawer-toggle aria-controls="mobile-drawer" aria-expanded="false">
+			<button type="button" class={ mobileMoreClass(ui.MoreItems(shell.Nav), shell.ActiveTab) } data-drawer-toggle aria-controls="mobile-drawer" aria-expanded="false">
 				@Icon("menu", "icon")
 				<span>Lainnya</span>
 			</button>
