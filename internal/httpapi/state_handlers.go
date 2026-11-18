@@ -151,6 +151,14 @@ func (s *Server) handlePutState(w http.ResponseWriter, r *http.Request) {
 	}
 
 	access, scoped, linked := scopeFor(authValue.user)
+	if !scoped {
+		switch authValue.user.Role {
+		case "admin_tu", "headmaster":
+		default:
+			writeError(w, http.StatusForbidden, "Hanya Admin TU atau Kepala Sekolah yang dapat memperbarui seluruh data.")
+			return
+		}
+	}
 	if scoped && !linked {
 		writeError(w, http.StatusForbidden, "Akun belum terhubung ke profil siswa.")
 		return

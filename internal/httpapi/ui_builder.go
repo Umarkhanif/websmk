@@ -10,8 +10,8 @@ import (
 	"math"
 	"sort"
 	"strconv"
-	"time"
 	"strings"
+	"time"
 
 	"wesmk/internal/model"
 	"wesmk/internal/state"
@@ -923,11 +923,6 @@ func (s *Server) buildTreasurerPortal(doc map[string]any, shell ui.RoleShell, ta
 		revs = append(revs, parseReversalReq(rm))
 	}
 
-	otp := strVal(doc, "activeHeadmasterOtp")
-	if otp == "" {
-		otp = "981240"
-	}
-
 	return ui.TreasurerPortalPage{
 		Shell:            shell,
 		Tab:              tab,
@@ -940,7 +935,6 @@ func (s *Server) buildTreasurerPortal(doc map[string]any, shell ui.RoleShell, ta
 		Dispensations:    disps,
 		Ledger:           ledger,
 		ReversalRequests: revs,
-		ExpectedOTP:      otp,
 	}
 }
 

@@ -935,29 +935,16 @@ func TreasurerPortal(data ui.TreasurerPortalPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.InfoBubble("Kode OTP aktif saat ini: "+data.ExpectedOTP).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.InfoBubble("Masukkan kode OTP yang diberikan Kepala Sekolah setelah verifikasi bukti koreksi.").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 86, "</div><input class=\"input input-mono\" type=\"text\" name=\"otp\" value=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var59 string
-			templ_7745c5c3_Var59, templ_7745c5c3_Err = templ.ResolveAttributeValue(data.ExpectedOTP)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/treasurer_portal.templ`, Line: 304, Col: 85}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var59)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 87, "\" required></div><div class=\"field\"><div class=\"field-head\"><label class=\"field-label\">Eksekusi</label></div><button type=\"submit\" class=\"button button-danger\">Proses Jurnal</button></div></form></section>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 86, "</div><input class=\"input input-mono\" type=\"text\" name=\"otp\" placeholder=\"6 digit OTP\" inputmode=\"numeric\" autocomplete=\"one-time-code\" required></div><div class=\"field\"><div class=\"field-head\"><label class=\"field-label\">Eksekusi</label></div><button type=\"submit\" class=\"button button-danger\">Proses Jurnal</button></div></form></section>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 88, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 87, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -299,9 +299,9 @@ templ TreasurerPortal(data ui.TreasurerPortalPage) {
 					<div class="field">
 						<div class="field-head">
 							<label class="field-label">OTP Kepala Sekolah</label>
-							@components.InfoBubble("Kode OTP aktif saat ini: " + data.ExpectedOTP)
+							@components.InfoBubble("Masukkan kode OTP yang diberikan Kepala Sekolah setelah verifikasi bukti koreksi.")
 						</div>
-						<input class="input input-mono" type="text" name="otp" value={ data.ExpectedOTP } required/>
+						<input class="input input-mono" type="text" name="otp" placeholder="6 digit OTP" inputmode="numeric" autocomplete="one-time-code" required/>
 					</div>
 					<div class="field">
 						<div class="field-head">
