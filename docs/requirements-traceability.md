@@ -1,9 +1,10 @@
 # WESMK Requirements Traceability Matrix (Blueprint V3 Ultimate)
 
-> **Catatan audit:** kolom `READY` berarti alur UI demo berjalan, bukan bukti kelayakan produksi.
-> Nilai kuis/CBT dan pembayaran SPP sudah diproses di server; upload dokumen, verifikasi publik, OTP,
-> presensi, dan status proctor masih diproses di browser. Lihat
-> [`production-readiness.md`](production-readiness.md) untuk status sebenarnya.
+> **Catatan audit (20 November 2026):** kolom `READY` berarti alur UI demo berjalan, bukan bukti kelayakan produksi.
+> Nilai kuis/CBT, pembayaran SPP, kas tunai bendahara, surat resmi, dan verifikasi publik sudah diproses di server.
+> Upload dokumen (masih metadata), OTP reversal (masih di `app_state`, tanpa TTL), presensi, dan status proctor
+> masih melibatkan klien. Lihat [`production-readiness.md`](production-readiness.md) dan [`AUDIT.md`](../AUDIT.md)
+> untuk status sebenarnya.
 
 | ID | Role / Module | Route | Core Business Rules & Features | Data Layer & Security | Verification & Test | Status |
 |---|---|---|---|---|---|---|

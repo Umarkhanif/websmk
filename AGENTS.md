@@ -1,7 +1,7 @@
 # Aturan Kerja Repository — WESMK (WAJIB DIBACA AI)
 
 Project: **WESMK** — ERP SMK (Go + templ/HTMX + PostgreSQL 16 + Redis 7).
-Stack terkunci: Go 1.23+, Go templ, HTMX 2.x, Alpine.js, Tailwind, pgx/v5, sqlc-style manual. **React/Vite sudah dihapus; jangan reintroduce.**
+Stack terkunci: Go 1.26+, Go templ, HTMX 2.x, Alpine.js, Tailwind, pgx/v5, sqlc-style manual. **React/Vite sudah dihapus; jangan reintroduce.**
 
 ## 1. Snapshot sebelum edit massal
 Sebelum mengubah >5 file atau menjalankan script apa pun:

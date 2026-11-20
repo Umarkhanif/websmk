@@ -1,6 +1,6 @@
 # WESMK — Audit Kesiapan Produksi
 
-Terakhir diperbarui: 25 Oktober 2026
+Terakhir diperbarui: 20 November 2026
 
 ## Putusan
 
@@ -24,10 +24,10 @@ tangan surat, unggahan dokumen, dan seluruh data sekolah masih satu dokumen JSON
 | Config production | `DATABASE_URL`/`REDIS_URL` wajib eksplisit; cookie `Secure` default aktif; peringatan demo mode |
 | AI | API key lewat header (bukan URL), error internal tidak lagi dikirim ke browser |
 | Tulis state | Rate limit 120 tulisan/menit per akun; simpan dari klien diserialkan agar respons lama tidak menimpa snapshot baru |
-| Frontend | Error boundary, layar "data siswa belum tersedia", banner gagal sinkronisasi, `lang="id"`, timeout AI 45 detik |
+| Frontend | Flash message, layar "data siswa belum tersedia", banner gagal sinkronisasi, `lang="id"`, timeout AI 45 detik |
 | Magic link | Nomor ortu dinormalisasi saat upsert dan lookup langsung dengan index |
-| Deploy | `Dockerfile` multi-stage (Node build → Go statis → distroless non-root), sudah diuji read-only |
-| Test | Unit test config, scoping state, auth, penilaian, pembayaran, tanda tangan webhook; `npm audit` dan `govulncheck` bersih |
+| Deploy | `Dockerfile` multi-stage (Go statis → distroless non-root), aset UI di-embed, sudah diuji read-only |
+| Test | Unit test config, scoping state, auth, penilaian, pembayaran, tanda tangan webhook; `go vet` + `go test` hijau |
 | Nilai kuis & CBT | `POST /api/learning/quiz/submit` dan `/exam/submit`: server memegang kunci jawaban, menghitung skor, menolak duplikat/jawaban ganda, satu attempt per siswa/ujian, menandai proctor `SUBMITTED`; kunci jawaban & rubrik dihapus dari respons siswa |
 | Pembayaran SPP | `POST /api/payments/intent` (VA pending), `/pay` (hanya mode demo), `/callback` (HMAC + timestamp, idempoten). `paidAmount`, status tagihan, dan ledger hanya ditulis lewat transaksi terkunci; kwitansi ditandatangani `WESMK_RECEIPT_SECRET`; VA kedaluwarsa tidak bisa disettle |
 | Scoping tulis | `PUT /api/state` dari siswa/ortu tidak lagi menerima `dailyQuizAvg`, `cbtScore`, `paidAmount`, atau entri ledger; nilai dan saldo hanya berubah lewat endpoint domain |
@@ -36,14 +36,13 @@ tangan surat, unggahan dokumen, dan seluruh data sekolah masih satu dokumen JSON
 
 | Prioritas | Masalah | Bukti | Arah perbaikan |
 |---|---|---|---|
-| Kritis | Presensi, status proctor (warn/lock/unlock), OTP, dan hash surat masih dihitung/ditulis dari browser lalu disimpan server | `src/App.tsx`, `StudentView.tsx`, `MergeOwned` menerima `proctorStudents`, `activeHeadmasterOtp` | Pindahkan ke endpoint per domain seperti nilai/pembayaran; server memegang timer, status ujian, dan OTP ber-TTL |
-| Kritis | Pembayaran tunai bendahara masih membuat entri ledger + HMAC di browser | `App.tsx` `handleRecordCashPayment` | Endpoint kas dengan PIN bendahara, idempotensi, dan nomor kwitansi dari server |
+| Kritis | Status proctor (warn/lock/unlock) dan OTP reversal belum sepenuhnya server-authoritative: status masih dikirim browser, OTP disimpan di `app_state` tanpa TTL dan ditampilkan di UI | `internal/httpapi/ui_handlers.go` `handleStudentProctorStatusForm`; `internal/state/mutations.go` `ExecuteReversal`, `GenerateReversalOTP` | Server memegang timer/status ujian; OTP per-request, ber-TTL, tidak ditampilkan |
 | Kritis | Semua data sekolah satu blob `app_state`; tidak ada audit trail, foreign key, atau pengaman lost update | `internal/store/postgres.go`, `state_handlers.go` | Normalisasi tabel per entitas, API per entitas, transaksi + optimistic lock, audit log append-only |
 | Kritis | Staf mana pun bisa membaca seluruh state (keuangan, BK, catatan wali) dan menulis field di luar perannya | GET staff mengembalikan snapshot penuh | Scoping baca/tulis per peran staf, bukan hanya siswa/ortu |
 | Kritis | Saat `app_state` kosong, snapshot klien (termasuk data mock) menjadi isi database | `MergeOwned` mengembalikan `incoming` untuk state kosong | Setup/import data awal di server; tolak seed dari klien di production |
 | Kritis | Unggah dokumen tidak menyimpan file; validasi magic bytes hanya di klien | `StudentView.tsx` mengirim metadata ke state | Endpoint multipart, validasi ukuran/MIME di server, object storage + presigned URL |
 | Kritis | Magic link ortu belum punya kanal pengiriman; tautan GET bisa habis dipakai bot preview | `auth_handlers.go` hanya log / `devLink` | Integrasi WhatsApp gateway + halaman konfirmasi POST sebelum sesi dibuat |
-| Kritis | Verifikasi publik kwitansi/surat memakai state browser, bukan HMAC server | `PublicVerifyView.tsx`, `App.tsx` `Math.random()` | Tanda tangan HMAC di server, endpoint `/verify/:hash`, QR berisi URL server |
+| Selesai | Verifikasi publik kwitansi/surat already HMAC server-side (`/verify/{hash}` mencocokkan `signatureHmac`/`hmacHash` yang dibuat server) | `internal/httpapi/ui_handlers.go` `handlePublicVerifyPage` | — |
 | Kritis | OTP kepala sekolah tersimpan di state dan terbaca semua staf | `activeHeadmasterOtp` | OTP per permintaan reversal, di-hash, TTL pendek, rate limit, hanya kepala sekolah |
 | Tinggi | Belum ada backup/restore, monitoring, dan alert | — | `pg_dump`/WAL terjadwal, uptime check `/api/health`, log retention |
 | Tinggi | Belum ada reset password, lifecycle akun, dan MFA untuk bendahara/kepala sekolah | — | Alur undangan/reset, MFA untuk aksi keuangan |
@@ -55,7 +54,7 @@ tangan surat, unggahan dokumen, dan seluruh data sekolah masih satu dokumen JSON
 - Login dibatasi per IP+identifier (5/10 menit); belum ada batas global per IP untuk credential spraying.
 - Banner peringatan muncul saat muat/simpan state gagal, tetapi belum ada retry otomatis atau antrean offline.
 - Tidak ada routing URL/deep link; refresh kembali ke tab default.
-- Bundle JS ~560 KB; pertimbangkan code splitting.
+- Aset UI (HTMX, Alpine, `app.js`, `app.css`) di-embed ke binary; tidak ada build step Node.
 - Font Google dan avatar Unsplash masih eksternal; pertimbangkan self-host untuk privasi/uptime.
 - Test HTTP end-to-end masih manual (curl + headless Chrome), belum masuk CI.
 - `docs/requirements-traceability.md` menandai banyak alur "READY"; artinya alur UI demo berjalan, bukan verifikasi produksi.
@@ -78,8 +77,8 @@ tangan surat, unggahan dokumen, dan seluruh data sekolah masih satu dokumen JSON
 
 ## Bukti verifikasi audit
 
-- `go test ./...`, `go vet ./...`, `tsc --noEmit`, `npm test`, `npm run build` — lulus.
-- `npm audit --omit=dev` — 0 vulnerability; `govulncheck ./...` — 0 reachable vulnerability.
+- `go test ./...`, `go vet ./...` — lulus; `templ generate` — nol diff.
+- `govulncheck ./...` — 0 reachable vulnerability.
 - `/api/health` mengembalikan status Postgres/Redis; migrasi tercatat di `schema_migrations`.
 - Rate limit tulis state: 120×200 lalu 429 pada request ke-121.
 - CSP diuji di Chrome headless: portal kepala sekolah render, font termuat, 0 error security/CSP.

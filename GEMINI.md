@@ -4,7 +4,7 @@ Project: **WESMK** — ERP SMK (Go + templ/HTMX + PostgreSQL 16 + Redis 7).
 Aturan lengkap: lihat **AGENTS.md**.
 
 Ringkas:
-- Stack terkunci: Go 1.23+, templ, HTMX, Alpine, Tailwind, pgx. Jangan reintroduce React.
+- Stack terkunci: Go 1.26+, templ, HTMX, Alpine, Tailwind, pgx. Jangan reintroduce React.
 - Snapshot sebelum edit massal; commit per task via pathspec.
 - Dilarang perintah destruktif tanpa izin; jangan hapus .bak/.orig/.rej.
 - Verifikasi mutlak: `go vet ./... && go test ./...`.

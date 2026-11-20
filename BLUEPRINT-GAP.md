@@ -3,6 +3,10 @@
 **Sumber:** `~/Downloads/rencana sementara.pdf` — *WESMK MEGA SUPER BLUEPRINT (V3 ULTIMATE) — GO 1.23 + HTMX 2.X*, 51 halaman.  
 **Tujuan dokumen ini:** memisahkan mana yang sudah sesuai blueprint, mana yang belum, dan menentukan jalur tercepat tanpa merusak UI/UX yang sudah ada.
 
+> **Diperbarui 20 November 2026:** dokumen ini awalnya ditulis 25 Oktober 2026 saat repo masih React.
+> Migrasi ke Go + templ + HTMX **sudah selesai**. Matriks di bawah diperbarui ke kondisi sekarang;
+> untuk audit detail lihat [`AUDIT.md`](AUDIT.md).
+
 ---
 
 ## 1. Tujuan Proyek yang Gw Pahami dari PDF
@@ -57,30 +61,33 @@ Status: ✅ sesuai · ⚠️ sebagian · ❌ belum / berbeda.
 
 | Area | Blueprint V3 | Repo saat ini | Status |
 |---|---|---|---|
-| Framework UI | Go templ + HTMX + Alpine | React 19 + Vite | ❌ |
-| Bundle JS | ~21 KB | 562 KB (148 KB gzip) | ❌ |
+| Framework UI | Go templ + HTMX + Alpine | templ + HTMX + Alpine (`internal/ui`) | ✅ |
+| Bundle JS | ~21 KB | aset di-embed: HTMX 52 KB + Alpine 56 KB + `app.js` 34 KB | ✅ |
 | Router backend | Fiber/Chi | `net/http` stdlib | ⚠️ |
-| Database | 38 tabel + FK + trigger | 2 tabel (`users`, `app_state` JSONB) | ❌ |
-| Query layer | sqlc | pgx manual | ❌ |
+| Database | 38 tabel + FK + trigger | 66 tabel + trigger ada di migrasi; hanya `users` + `app_state` dipakai | ⚠️ |
+| Query layer | sqlc | pgx manual | ⚠️ |
 | Queue | Asynq | tidak ada | ❌ |
 | SSE proctoring | native Go SSE | tidak ada | ❌ |
 | Storage | R2 presigned URL | metadata saja | ❌ |
-| AI | Gemini strict JSON + XML sandbox | client Gemini + prompt XML (sebagian) | ⚠️ |
-| Payment | Midtrans/Xendit + HMAC + active pull | intent/callback HMAC, gateway demo | ⚠️ |
-| WhatsApp | Fonnte/WAHA + handshake | hanya log/devLink | ❌ |
+| AI | Gemini strict JSON + XML sandbox | klien Gemini server-side (`internal/ai`), strict JSON | ⚠️ |
+| Payment | Midtrans/Xendit + HMAC + active pull | intent/callback HMAC server; gateway masih demo | ⚠️ |
+| WhatsApp | Fonnte/WAHA + handshake | hanya log/`devLink` | ❌ |
 | Auth | Argon2id, Redis session, rate limit | sudah ada | ✅ |
-| RBAC | 8 role terisolasi | UI 8 role; server scoping hanya student/parent | ⚠️ |
-| CBT | zero-key, Redis timer, IndexedDB, lock permanen | UI demo; timer/lock di client | ⚠️ |
-| Ledger | append-only trigger + OTP reversal | ledger dibuat client; belum immutable | ❌ |
-| Public verify | HMAC server | state browser | ❌ |
-| Design token | navy/teal/gold, radius 16 | slate semua, token tidak dipakai | ❌ |
-| Halaman/route | 30+ route URL | 27 tab, tanpa URL router | ⚠️ |
-| Komponen | 10 komponen templ reusable | komponen React | ❌ |
+| RBAC | 8 role terisolasi | UI 9 role; server scoping hanya student/parent | ⚠️ |
+| CBT | zero-key, Redis timer, lock permanen | nilai server-authoritative; timer/lock masih client | ⚠️ |
+| Ledger | append-only trigger + OTP reversal | trigger append-only ada; ledger hidup di `app_state`; kas/PIN/HMAC server | ⚠️ |
+| Public verify | HMAC server | `/verify/{hash}` cocok dengan HMAC server | ✅ |
+| Design token | navy/teal/gold, radius 16 | token sama dipakai di `app.css` | ✅ |
+| Halaman/route | 30+ route URL | route server-rendered per role/tab (`/student/{tab}`, dst.) | ✅ |
+| Komponen | 10 komponen templ reusable | sidebar, topbar, mobilenav, flash, icons, info bubble | ✅ |
 | Deploy | distroless non-root, health | sudah ada | ✅ |
-| Test | unit + load test | unit saja, E2E manual | ⚠️ |
+| Test | unit + load test | unit + `templ generate` sync; E2E manual | ⚠️ |
 | Dokumen | blueprint + readiness | sudah ada | ✅ |
 
-**Kesimpulan:** repo ini adalah **prototipe React yang meniru fitur UI blueprint**, bukan implementasi blueprint. Secara tampilan dan alur sudah banyak tercakup; secara arsitektur, data, dan keamanan masih jauh.
+**Kesimpulan:** repo sudah **implementasi templ/HTMX**, bukan prototipe React. Tampilan, alur, auth, dan
+nilai/keuangan inti sudah jalan dan sebagian server-authoritative. Yang tersisa adalah arsitektur data
+(schema mati + blob `app_state`), keamanan fail-closed (PIN/OTP/secret default), dan integrasi
+antrean/SSE/storage/WA/VA. Detail ada di [`AUDIT.md`](AUDIT.md).
 
 ---
 
@@ -202,7 +209,9 @@ Yang **tidak boleh**:
 
 ## 7. Keputusan yang Gw Butuh dari Lo
 
-1. **Stack:** tetap React (cepat, demo) atau migrasi ke Go+templ+HTMX (sesuai blueprint, lama)?
+> **Sudah diputus (26 Okt 2026):** dipilih Jalur B — migrasi ke Go + templ + HTMX. React dihapus.
+
+1. **Stack:** tetap React (cepat, demo) atau migrasi ke Go+templ+HTMX (sesuai blueprint, lama)? **→ Jalur B.**
 2. **UI freeze:** layout/navigasi/alur saja yang dibekukan, atau warna/typography/spacing juga tidak boleh berubah?
 3. **Prioritas fitur pertama:** keamanan/data (CBT, kas, verify, RBAC) atau integrasi (WA, VA, R2, Excel/PDF)?
 

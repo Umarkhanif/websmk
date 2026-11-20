@@ -1,12 +1,13 @@
 # PLAN BESAR PENGEMBANGAN WESMK (SESUAI BLUEPRINT V3)
 
 Basis: `rencana sementara.pdf` (WESMK MEGA SUPER BLUEPRINT V3) + audit repo saat ini.
-Target: Go 1.23+ + templ/HTMX, PostgreSQL 16, Redis 7, 8 role, 38 tabel, server-authoritative.
+Target: Go 1.26+ + templ/HTMX, PostgreSQL 16, Redis 7, 9 role, 38+ tabel, server-authoritative.
 
 ## Status saat ini
 - UI Go+templ/HTMX sudah berjalan; auth, 8 role, navigasi, state scoping siswa/ortu aktif.
 - Data masih satu blob `app_state`; banyak fitur masih demo/client-side.
-- Belum ada schema 38 tabel, CBT server-timer, kas/PIN/OTP server, upload R2, WA/VA, audit trail, backup/monitoring.
+- Schema 66 tabel sudah ada di migrasi, tetapi yang dipakai aplikasi baru `users` + `app_state` (blob JSON); normalisasi belum.
+- CBT timer/lock, upload R2, WA/VA, audit trail, backup/monitoring belum; kas/PIN/OTP sudah server-side tapi belum fail-closed.
 
 ## Prinsip eksekusi
 - UI freeze: layout/navigasi/alur tidak diubah; hanya token, a11y, status, copy.
@@ -84,7 +85,7 @@ Target: Go 1.23+ + templ/HTMX, PostgreSQL 16, Redis 7, 8 role, 38 tabel, server-
 - Backup/restore diuji; monitoring + alert; health check.
 - CI: build + test + lint + migration check.
 - E2E smoke 8 role, deep link, refresh, mobile.
-- Performance: bundle <250KB initial (HTMX sudah ~21KB), load test CBT.
+- Performance: aset UI di-embed (HTMX + Alpine + `app.js`), load test CBT.
 - Error tracking (Sentry) + analytics.
 - Acceptance: checklist production-readiness.md semua hijau.
 
