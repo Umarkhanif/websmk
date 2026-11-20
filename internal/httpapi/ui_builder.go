@@ -32,6 +32,20 @@ func (s *Server) validCSRF(rToken, submitted string) bool {
 	return hmac.Equal([]byte(expected), []byte(strings.TrimSpace(submitted)))
 }
 
+// loadStateForRole reads the state document and applies the role's read scope
+// before it reaches a page builder. Student/parent builders keep the full doc
+// and filter by their own profile ID; staff builders only receive their keys.
+func (s *Server) loadStateForRole(ctx context.Context, role string) (map[string]any, error) {
+	doc, err := s.loadOrSeedState(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if state.IsStaffRole(role) && role != "headmaster" {
+		return state.StaffView(doc, role), nil
+	}
+	return doc, nil
+}
+
 // loadOrSeedState reads the global state document from Postgres, seeding it
 // with the embedded default state if the database is empty.
 func (s *Server) loadOrSeedState(ctx context.Context) (map[string]any, error) {

@@ -63,8 +63,8 @@ Perbaikan: `Validate()` menolak produksi dengan demo mode menyala atau PIN defau
 | # | Temuan | Bukti |
 |---|---|---|
 | S4 | **CSRF token hiasan.** Semua form memuat `_csrf`, tetapi `validCSRF()` tidak pernah dipanggil; Origin check hanya untuk `/api/`. | Diperbaiki `74ac6b1`: `csrfGuard` memvalidasi token per sesi/seed + `mutationGuards` memeriksa Origin untuk semua method mutasi |
-| S5 | **RBAC staf belum ada.** Hanya `student`/`parent` yang di-scope; semua staf membaca snapshot penuh dan menulis field lintas peran. | `internal/state/scope.go:22-24`; `internal/httpapi/state_handlers.go` |
-| S6 | **Proctor status masih dari browser.** Siswa mengirim `status` lewat `POST /student/proctor-status`; server menerimanya. | `internal/httpapi/ui_handlers.go:621-646` |
+| S5 | **RBAC staf belum ada.** Hanya `student`/`parent` yang di-scope; semua staf membaca snapshot penuh dan menulis field lintas peran. | Diperbaiki: `state.StaffView` — allowlist key per peran di `GET /api/state` dan halaman staf; kunci jawaban tetap hanya untuk guru, OTP hanya untuk kepsek |
+| S6 | **Proctor status masih dari browser.** Siswa mengirim `status` lewat `POST /student/proctor-status`; server menerimanya. | Diperbaiki: klien hanya boleh `WARN`/`LOCKED`, lock permanen, `mergeProctorSession` dihapus |
 | S7 | **Unggah dokumen metadata saja.** Tidak ada file yang disimpan; ukuran di-hardcode (`280`). | `internal/httpapi/ui_handlers.go:696-710` |
 | S8 | **Magic link without channel.** Orang tua belum terintegrasi WhatsApp; tautan `GET` bisa dikonsumsi bot preview. | `internal/httpapi/auth_handlers.go` |
 

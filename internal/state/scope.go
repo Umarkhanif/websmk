@@ -23,6 +23,73 @@ func IsScopedRole(role string) bool {
 	return role == "student" || role == "parent"
 }
 
+// IsStaffRole reports whether the role is a staff/developer account rather than
+// a student or parent account.
+func IsStaffRole(role string) bool {
+	switch role {
+	case "treasurer", "teacher", "discipline", "piket", "admin_tu", "headmaster", "developer":
+		return true
+	}
+	return false
+}
+
+// staffKeys is the read allowlist per staff role. A role only receives the
+// keys its portal actually renders; everything else stays on the server.
+var staffKeys = map[string][]string{
+	"treasurer": {"students", "invoices", "dispensations", "ledger", "reversalRequests"},
+	"teacher":   {"students", "classJournal", "attendances", "examQuestions", "proctorStudents", "pklAttendanceLogs", "pklJournals", "examResetLogs"},
+	"discipline": {"students", "violations", "peerReports", "careerConsultations",
+		"counselingSessions"},
+	"piket":     {"piketClassrooms", "piketGateLogs", "teacherImpacts"},
+	"admin_tu":  {"students", "majors", "studentDocuments", "officialLetters", "dapodikLogs", "pklPlacements", "bkkJobs", "bkkApplications", "teacherImpacts"},
+	"developer": {"bugReports", "examResetLogs"},
+}
+
+// StaffView returns the subset of the state document a staff role may read.
+// The headmaster keeps the full document; all other roles get an allowlist with
+// sensitive subfields (answer keys, OTP, private complaints) removed.
+func StaffView(doc map[string]any, role string) map[string]any {
+	if doc == nil {
+		return nil
+	}
+	if role == "headmaster" {
+		out := make(map[string]any, len(doc))
+		for key, value := range doc {
+			out[key] = value
+		}
+		return out
+	}
+	keys, ok := staffKeys[role]
+	if !ok {
+		return map[string]any{}
+	}
+	out := map[string]any{}
+	for _, key := range keys {
+		if value, exists := doc[key]; exists {
+			out[key] = value
+		}
+	}
+	// Teachers grade essays and run the exam kiosk, so they keep answer keys.
+	// Every other staff role gets them stripped.
+	if role != "teacher" {
+		if value, exists := out["examQuestions"]; exists {
+			out["examQuestions"] = redactKeys(value, "correctKey", "essayRubric")
+		}
+		if value, exists := out["dailyQuiz"]; exists {
+			out["dailyQuiz"] = redactKeys(value, "correctKey", "explanation")
+		}
+	}
+	if value, exists := out["studentReflection"]; exists {
+		out["studentReflection"] = redactKeys(value, "privateComplaintText")
+	}
+	if value, exists := out["reversalRequests"]; exists {
+		out["reversalRequests"] = redactKeys(value, "otpCode")
+	}
+	delete(out, "activeHeadmasterOtp")
+	delete(out, "activeHeadmasterOtpExpiresAt")
+	return out
+}
+
 var validBMWChoices = map[string]bool{
 	"BEKERJA":     true,
 	"MELANJUTKAN": true,

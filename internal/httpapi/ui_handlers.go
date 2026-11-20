@@ -891,7 +891,7 @@ func (s *Server) handleTreasurerPage(w http.ResponseWriter, r *http.Request) {
 	if tab == "" {
 		tab = "dashboard"
 	}
-	doc, _ := s.loadOrSeedState(r.Context())
+	doc, _ := s.loadStateForRole(r.Context(), authVal.user.Role)
 	shell := s.buildRoleShell(authVal, tab, r.URL.Query().Get("flash"), r.URL.Query().Get("kind"))
 	data := s.buildTreasurerPortal(doc, shell, tab)
 	renderComponent(w, r, http.StatusOK, layout.Base(shell, pages.TreasurerPortal(data)))
@@ -982,7 +982,7 @@ func (s *Server) handleTeacherPage(w http.ResponseWriter, r *http.Request) {
 	if tab == "" {
 		tab = "dashboard"
 	}
-	doc, _ := s.loadOrSeedState(r.Context())
+	doc, _ := s.loadStateForRole(r.Context(), authVal.user.Role)
 	shell := s.buildRoleShell(authVal, tab, r.URL.Query().Get("flash"), r.URL.Query().Get("kind"))
 	data := s.buildTeacherPortal(doc, shell, tab)
 	renderComponent(w, r, http.StatusOK, layout.Base(shell, pages.TeacherPortal(data)))
@@ -1196,7 +1196,7 @@ func (s *Server) handleDisciplinePage(w http.ResponseWriter, r *http.Request) {
 	if tab == "" {
 		tab = "violations"
 	}
-	doc, _ := s.loadOrSeedState(r.Context())
+	doc, _ := s.loadStateForRole(r.Context(), authVal.user.Role)
 	shell := s.buildRoleShell(authVal, tab, r.URL.Query().Get("flash"), r.URL.Query().Get("kind"))
 	data := s.buildDisciplinePortal(doc, shell, tab)
 	renderComponent(w, r, http.StatusOK, layout.Base(shell, pages.DisciplinePortal(data)))
@@ -1279,7 +1279,7 @@ func (s *Server) handlePiketPage(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
-	doc, _ := s.loadOrSeedState(r.Context())
+	doc, _ := s.loadStateForRole(r.Context(), authVal.user.Role)
 	shell := s.buildRoleShell(authVal, "dashboard", r.URL.Query().Get("flash"), r.URL.Query().Get("kind"))
 	data := s.buildPiketPortal(doc, shell)
 	renderComponent(w, r, http.StatusOK, layout.Base(shell, pages.PiketPortal(data)))
@@ -1325,7 +1325,7 @@ func (s *Server) handleAdminPage(w http.ResponseWriter, r *http.Request) {
 	if tab == "" {
 		tab = "master-data"
 	}
-	doc, _ := s.loadOrSeedState(r.Context())
+	doc, _ := s.loadStateForRole(r.Context(), authVal.user.Role)
 	shell := s.buildRoleShell(authVal, tab, r.URL.Query().Get("flash"), r.URL.Query().Get("kind"))
 	data := s.buildAdminTuPortal(doc, shell, tab)
 	renderComponent(w, r, http.StatusOK, layout.Base(shell, pages.AdminTuPortal(data)))
@@ -1460,7 +1460,7 @@ func (s *Server) handleHeadmasterPage(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
-	doc, _ := s.loadOrSeedState(r.Context())
+	doc, _ := s.loadStateForRole(r.Context(), authVal.user.Role)
 	shell := s.buildRoleShell(authVal, "executive", r.URL.Query().Get("flash"), r.URL.Query().Get("kind"))
 	data := s.buildHeadmasterPortal(doc, shell, r.URL.Query().Get("advice"))
 	renderComponent(w, r, http.StatusOK, layout.Base(shell, pages.HeadmasterPortal(data)))
@@ -1524,7 +1524,7 @@ func (s *Server) handleDeveloperPage(w http.ResponseWriter, r *http.Request) {
 	if tab == "" {
 		tab = "dashboard"
 	}
-	doc, _ := s.loadOrSeedState(r.Context())
+	doc, _ := s.loadStateForRole(r.Context(), authVal.user.Role)
 	shell := s.buildRoleShell(authVal, tab, r.URL.Query().Get("flash"), r.URL.Query().Get("kind"))
 	data := s.buildDeveloperDashboard(doc, shell, tab)
 	renderComponent(w, r, http.StatusOK, layout.Base(shell, pages.DeveloperPortal(data)))

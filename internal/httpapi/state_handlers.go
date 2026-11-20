@@ -103,18 +103,15 @@ func (s *Server) handleGetState(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !scoped {
-		if authValue.user.Role != "headmaster" {
-			var doc map[string]any
-			if err := json.Unmarshal(data, &doc); err == nil {
-				delete(doc, "activeHeadmasterOtp")
-				if redacted, err := json.Marshal(doc); err == nil {
-					data = redacted
-				}
-			}
+		document, err := decodeState(data)
+		if err != nil {
+			log.Printf("decode state for staff failed: %v", err)
+			writeError(w, http.StatusInternalServerError, "Format state tidak valid.")
+			return
 		}
-		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		w.WriteHeader(http.StatusOK)
-		_ = json.NewEncoder(w).Encode(map[string]json.RawMessage{"state": data})
+		writeJSON(w, http.StatusOK, map[string]any{
+			"state": state.StaffView(document, authValue.user.Role),
+		})
 		return
 	}
 
