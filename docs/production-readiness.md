@@ -40,8 +40,8 @@ tangan surat, unggahan dokumen, dan seluruh data sekolah masih satu dokumen JSON
 | Kritis | Semua data sekolah satu blob `app_state`; tidak ada audit trail, foreign key, atau pengaman lost update | `internal/store/postgres.go`, `state_handlers.go` | Normalisasi tabel per entitas, API per entitas, transaksi + optimistic lock, audit log append-only |
 | Kritis | Staf mana pun bisa membaca seluruh state (keuangan, BK, catatan wali) dan menulis field di luar perannya | GET staff mengembalikan snapshot penuh | Scoping baca/tulis per peran staf, bukan hanya siswa/ortu |
 | Kritis | Saat `app_state` kosong, snapshot klien (termasuk data mock) menjadi isi database | `MergeOwned` mengembalikan `incoming` untuk state kosong | Setup/import data awal di server; tolak seed dari klien di production |
-| Kritis | Unggah dokumen tidak menyimpan file; validasi magic bytes hanya di klien | `StudentView.tsx` mengirim metadata ke state | Endpoint multipart, validasi ukuran/MIME di server, object storage + presigned URL |
-| Kritis | Magic link ortu belum punya kanal pengiriman; tautan GET bisa habis dipakai bot preview | `auth_handlers.go` hanya log / `devLink` | Integrasi WhatsApp gateway + halaman konfirmasi POST sebelum sesi dibuat |
+| Selesai | Unggah dokumen: multipart, batas 500 KB, validasi MIME/magic bytes di server, blob di `document_blobs`, metadata server-owned | `internal/httpapi/ui_handlers.go` `handleStudentDocUploadForm`, migrasi `005_document_blobs.sql` | Object storage R2 belum dipakai — blob masih di Postgres |
+| Sebagian | Magic link ortu: webhook WA via `WESMK_WA_WEBHOOK_URL` (production fail-closed 503 bila kosong); tautan GET masih bisa habis dipakai bot preview | `internal/httpapi/notify.go` | Halaman konfirmasi POST sebelum sesi dibuat |
 | Selesai | Verifikasi publik kwitansi/surat already HMAC server-side (`/verify/{hash}` mencocokkan `signatureHmac`/`hmacHash` yang dibuat server) | `internal/httpapi/ui_handlers.go` `handlePublicVerifyPage` | — |
 | Kritis | OTP kepala sekolah tersimpan di state dan terbaca semua staf | `activeHeadmasterOtp` | OTP per permintaan reversal, di-hash, TTL pendek, rate limit, hanya kepala sekolah |
 | Tinggi | Belum ada backup/restore, monitoring, dan alert | — | `pg_dump`/WAL terjadwal, uptime check `/api/health`, log retention |
@@ -66,7 +66,8 @@ tangan surat, unggahan dokumen, dan seluruh data sekolah masih satu dokumen JSON
 3. Jalankan container sebagai non-root (sudah default) dengan env:
    `WESMK_ENV=production`, `WESMK_DEMO_MODE=false`, `APP_URL=https://...`,
    `DATABASE_URL=...`, `REDIS_URL=...`, `GEMINI_API_KEY=...`, `WESMK_USERS='[...]'`,
-   `WESMK_RECEIPT_SECRET=...` (wajib, >= 16 karakter), `WESMK_PAYMENT_WEBHOOK_SECRET=...`
+   `WESMK_RECEIPT_SECRET=...` (wajib, >= 16 karakter), `WESMK_PAYMENT_WEBHOOK_SECRET=...`,
+   `WESMK_TREASURER_PIN=...` (bukan `123456`), `WESMK_WA_WEBHOOK_URL=...`
    (wajib bila menerima pembayaran VA; kosong = callback 503).
 4. `WESMK_SECURE_COOKIE` biarkan default (`true` di production).
 5. Pasang reverse proxy TLS; set `WESMK_TRUST_PROXY=true` hanya jika proxy tepercaya.

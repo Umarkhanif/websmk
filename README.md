@@ -42,6 +42,9 @@ REDIS_URL='redis://host:6379/0' \
 GEMINI_API_KEY='...' \
 WESMK_RECEIPT_SECRET='...' \
 WESMK_PAYMENT_WEBHOOK_SECRET='...' \
+WESMK_TREASURER_PIN='...' \
+WESMK_WA_WEBHOOK_URL='https://wa-relay.example.sch.id/send' \
+WESMK_WA_WEBHOOK_TOKEN='...' \
 ./wesmk-server
 ```
 
@@ -72,8 +75,9 @@ cookie sesi otomatis `Secure` dan `DATABASE_URL`/`REDIS_URL` wajib diisi eksplis
 - Sesi berupa token acak di **Redis** (`auth:session:*`) dengan cookie `HttpOnly`, `SameSite=Lax`,
   TTL 8 jam, dan **satu sesi aktif per akun** (single-device guard).
 - Login dibatasi 5 percobaan gagal / 10 menit per IP + identifier (Redis).
-- Magic link orang tua: token sekali pakai, 5 menit, disimpan sebagai hash di Redis. Pengiriman WhatsApp
-  belum terintegrasi; di mode demo tautan dikembalikan ke browser.
+- Magic link orang tua: token sekali pakai, 5 menit, disimpan sebagai hash di Redis. Pengiriman
+  WhatsApp lewat webhook `WESMK_WA_WEBHOOK_URL` (JSON `{"to","message"}`, Bearer token opsional).
+  Di production tanpa webhook, permintaan ditolak 503; di mode demo tautan dikembalikan ke browser.
 - `GET/PUT /api/state` dan `POST /api/ai/analyze` wajib sesi. Reset state hanya untuk `admin_tu` dan
   `headmaster`.
 - Endpoint AI dibatasi 30 request/menit per akun dan hanya menerima tipe yang dikenal.

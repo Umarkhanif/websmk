@@ -11,8 +11,10 @@
 
 - Stack sudah **sesuai blueprint**: Go + templ + HTMX + Alpine. React/Vite sudah tidak ada.
 - `go vet ./...` dan `go test ./...` **hijau**; `*_templ.go` **sinkron** dengan `.templ`; `git archive` → `go build` **lulus**.
-- Tiga blocker integritas repo sudah diperbaiki di `5ca69a3` (vendor JS masuk git, CI Go 1.26).
-- Sisa prioritas: **keamanan fail-closed** (PIN/OTP/secret default masih dipakai di produksi), **dokumen basi**, dan **schema mati** (66 tabel dibuat, hanya 2 dipakai).
+- Integritas repo, dokumen basi, keamanan fail-closed, RBAC staf, proctor, upload dokumen, dan
+  pengiriman magic link sudah diperbaiki (`5ca69a3`–`df94fb5`).
+- Sisa: **schema mati** (66 tabel dibuat, hanya `users` + `app_state` yang dipakai), konfirmasi POST
+  magic link, R2/VA nyata, dan uji E2E dengan Postgres/Redis hidup.
 
 ---
 
