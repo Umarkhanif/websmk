@@ -125,13 +125,6 @@ type JournalView struct {
 	LeaderStatus string
 }
 
-type PlaceholderPage struct {
-	Shell       RoleShell
-	Title       string
-	Description string
-	Module      string
-}
-
 type LoginPage struct {
 	Tab          string
 	Identifier   string

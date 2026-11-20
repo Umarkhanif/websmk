@@ -91,7 +91,7 @@ Perbaikan: `Validate()` menolak produksi dengan demo mode menyala atau PIN defau
 | R5 | `BLUEPRINT-GAP.md` & `docs/production-readiness.md` menyebut React/`src/App.tsx`/`npm`/bundle 560 KB | Diperbarui |
 | R6 | Versi Go tidak konsisten: `AGENTS.md`/`GEMINI.md` 1.23+, `README.md`/`go.mod` 1.26 | Disamakan ke 1.26 |
 | R7 | 66 tabel dibuat di migrasi, hanya `users` + `app_state` dipakai → ~64 tabel mati | Belum diputus |
-| R8 | `internal/ui/pages/placeholder.templ` (+ `_templ.go`) tidak dipakai handler manapun | Belum dibersihkan |
+| R8 | `internal/ui/pages/placeholder.templ` (+ `_templ.go`) tidak dipakai handler manapun | Dihapus beserta tipe `ui.PlaceholderPage` |
 | R9 | `docker-compose.yml` membuka Postgres/Redis ke `0.0.0.0` | Diperbaiki: bind `127.0.0.1` |
 
 ---
