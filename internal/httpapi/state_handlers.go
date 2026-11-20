@@ -1,6 +1,7 @@
 package httpapi
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"log"
@@ -49,7 +50,7 @@ func (s *Server) updateState(w http.ResponseWriter, r *http.Request, apply func(
 		Action:  r.Method + " " + r.URL.Path,
 	}
 	var result any
-	_, err := s.storeDB.UpdateStateAudited(r.Context(), audit, func(raw json.RawMessage) (json.RawMessage, error) {
+	updated, err := s.storeDB.UpdateStateAudited(r.Context(), audit, func(raw json.RawMessage) (json.RawMessage, error) {
 		document, err := decodeState(raw)
 		if err != nil {
 			return nil, err
@@ -65,7 +66,21 @@ func (s *Server) updateState(w http.ResponseWriter, r *http.Request, apply func(
 		writeStateError(w, err)
 		return
 	}
+	s.syncDomainShadow(r.Context(), updated)
 	writeJSON(w, http.StatusOK, map[string]any{"result": result})
+}
+
+// syncDomainShadow keeps the normalized tables current without making them the
+// read model yet. A failure is logged but never blocks the request: the JSON
+// blob is still authoritative.
+func (s *Server) syncDomainShadow(ctx context.Context, updated json.RawMessage) {
+	var doc map[string]any
+	if err := json.Unmarshal(updated, &doc); err != nil {
+		return
+	}
+	if err := s.storeDB.SyncDomainFromState(ctx, doc); err != nil {
+		log.Printf("domain shadow sync failed: %v", err)
+	}
 }
 
 func writeStateError(w http.ResponseWriter, err error) {

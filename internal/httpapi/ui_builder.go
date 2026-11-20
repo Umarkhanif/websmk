@@ -78,7 +78,7 @@ func (s *Server) mutateStateDoc(ctx context.Context, fn func(map[string]any) err
 		actorID, role = auth.user.ID, auth.user.Role
 	}
 	var fnErr error
-	_, err := s.storeDB.UpdateStateAudited(ctx, store.StateAudit{
+	updated, err := s.storeDB.UpdateStateAudited(ctx, store.StateAudit{
 		ActorID: actorID,
 		Role:    role,
 		Action:  "web.form",
@@ -95,6 +95,9 @@ func (s *Server) mutateStateDoc(ctx context.Context, fn func(map[string]any) err
 	})
 	if fnErr != nil {
 		return fnErr
+	}
+	if err == nil {
+		s.syncDomainShadow(ctx, updated)
 	}
 	return err
 }
