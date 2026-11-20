@@ -258,7 +258,11 @@ func (s *Server) csrfGuard(next http.Handler) http.Handler {
 
 		submitted := r.Header.Get("X-CSRF-Token")
 		if submitted == "" {
-			_ = r.ParseForm()
+			if strings.HasPrefix(r.Header.Get("Content-Type"), "multipart/form-data") {
+				_ = r.ParseMultipartForm(1 << 20)
+			} else {
+				_ = r.ParseForm()
+			}
 			submitted = r.FormValue("_csrf")
 		}
 		if !s.validCSRF(seed, submitted) {

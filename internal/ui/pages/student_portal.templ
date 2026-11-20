@@ -567,12 +567,15 @@ templ StudentPortal(data ui.StudentPortalPage) {
 										}
 									</td>
 									<td>
-										<form method="post" action="/student/document/upload" class="leader-actions">
+										<form method="post" action="/student/document/upload" enctype="multipart/form-data" class="leader-actions">
 											<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 											<input type="hidden" name="doc_id" value={ d.ID }/>
-											<input class="input" type="text" name="file_name" value={ d.FileName } placeholder="nama_berkas.pdf" required/>
+											<input class="input" type="file" name="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" required/>
 											<button type="submit" class="button button-secondary button-small">Unggah</button>
 										</form>
+										if d.BlobID != "" {
+											<a class="button button-ghost button-small" href={ "/document/" + d.BlobID } target="_blank" rel="noopener">Lihat berkas</a>
+										}
 									</td>
 								</tr>
 							}

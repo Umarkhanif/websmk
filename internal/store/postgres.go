@@ -183,3 +183,27 @@ func (p *Postgres) HasState(ctx context.Context) (bool, error) {
 	err := p.pool.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM app_state WHERE id = 1)`).Scan(&exists)
 	return exists, err
 }
+
+// ErrBlobNotFound is returned when a document blob does not exist.
+var ErrBlobNotFound = errors.New("document blob not found")
+
+// PutDocumentBlob stores validated file bytes and returns its generated UUID.
+func (p *Postgres) PutDocumentBlob(ctx context.Context, mimeType string, data []byte) (string, error) {
+	var id string
+	err := p.pool.QueryRow(ctx,
+		`INSERT INTO document_blobs (mime_type, size_bytes, data) VALUES ($1, $2, $3) RETURNING id::text`,
+		mimeType, len(data), data).Scan(&id)
+	return id, err
+}
+
+// DocumentBlob loads a stored file for an authorized reader.
+func (p *Postgres) DocumentBlob(ctx context.Context, id string) (string, []byte, error) {
+	var mimeType string
+	var data []byte
+	err := p.pool.QueryRow(ctx,
+		`SELECT mime_type, data FROM document_blobs WHERE id = $1::uuid`, id).Scan(&mimeType, &data)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return "", nil, ErrBlobNotFound
+	}
+	return mimeType, data, err
+}

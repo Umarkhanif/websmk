@@ -1,11 +1,16 @@
 package httpapi
 
 import (
+	"context"
 	"encoding/csv"
+	"encoding/hex"
+	"encoding/json"
 	"fmt"
+	"io"
 	"io/fs"
 	"net/http"
 	"net/url"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -51,6 +56,7 @@ func (s *Server) registerUIRoutes() {
 	s.mux.HandleFunc("POST /student/proctor-status", s.handleStudentProctorStatusForm)
 	s.mux.HandleFunc("POST /student/exam", s.handleStudentExamForm)
 	s.mux.HandleFunc("POST /student/document/upload", s.handleStudentDocUploadForm)
+	s.mux.HandleFunc("GET /document/{blobID}", s.handleDocumentFile)
 	s.mux.HandleFunc("POST /student/task/submit", s.handleStudentTaskSubmitForm)
 	s.mux.HandleFunc("POST /student/pkl/checkin", s.handleStudentPklCheckinForm)
 	s.mux.HandleFunc("POST /student/pkl/journal", s.handleStudentPklJournalForm)
@@ -696,20 +702,125 @@ func (s *Server) handleStudentExamForm(w http.ResponseWriter, r *http.Request) {
 	redirectWithFlash(w, r, "/student/exam-lobby", "Jawaban ujian berhasil dikumpulkan dan tersimpan di server.", "success")
 }
 
+const maxDocumentBytes = 500 << 10
+
 func (s *Server) handleStudentDocUploadForm(w http.ResponseWriter, r *http.Request) {
 	authVal, ok := requireWebRole(w, r, "student")
 	if !ok {
 		return
 	}
-	_ = r.ParseForm()
 	studentID := authVal.user.StudentProfileID
 	if studentID == "" {
 		studentID = "std-budi-01"
 	}
-	_ = s.mutateStateDoc(r.Context(), func(doc map[string]any) error {
-		return state.UploadStudentDocument(doc, studentID, r.FormValue("doc_id"), r.FormValue("file_name"), 280, time.Now())
-	})
+	fail := func(message string) {
+		redirectWithFlash(w, r, "/student/documents", message, "danger")
+	}
+	if err := r.ParseMultipartForm(maxDocumentBytes); err != nil {
+		fail("Berkas terlalu besar atau tidak dapat dibaca (maksimal 500 KB).")
+		return
+	}
+	file, header, err := r.FormFile("file")
+	if err != nil {
+		fail("Pilih berkas terlebih dahulu.")
+		return
+	}
+	defer file.Close()
+
+	data, err := io.ReadAll(io.LimitReader(file, maxDocumentBytes+1))
+	if err != nil {
+		fail("Gagal membaca berkas.")
+		return
+	}
+	if len(data) == 0 || len(data) > maxDocumentBytes {
+		fail("Ukuran berkas harus antara 1 byte dan 500 KB.")
+		return
+	}
+	sample := data
+	if len(sample) > 512 {
+		sample = sample[:512]
+	}
+	mimeType := http.DetectContentType(sample)
+	if !map[string]bool{"application/pdf": true, "image/jpeg": true, "image/png": true}[mimeType] {
+		fail("Jenis berkas harus PDF, JPG, atau PNG.")
+		return
+	}
+
+	blobID, err := s.storeDB.PutDocumentBlob(r.Context(), mimeType, data)
+	if err != nil {
+		fail("Gagal menyimpan berkas di server.")
+		return
+	}
+	fileName := filepath.Base(header.Filename)
+	if fileName == "" || fileName == "." {
+		fileName = "berkas_resmi.pdf"
+	}
+	magic := data
+	if len(magic) > 4 {
+		magic = magic[:4]
+	}
+	upload := state.DocumentUpload{
+		FileName:  fileName,
+		MimeType:  mimeType,
+		BlobID:    blobID,
+		SizeBytes: len(data),
+		MagicHex:  hex.EncodeToString(magic),
+	}
+	if err := s.mutateStateDoc(r.Context(), func(doc map[string]any) error {
+		return state.UploadStudentDocument(doc, studentID, r.FormValue("doc_id"), upload, time.Now())
+	}); err != nil {
+		fail("Berkas tersimpan tetapi gagal dicatat: " + err.Error())
+		return
+	}
 	redirectWithFlash(w, r, "/student/documents", "Berkas siswa berhasil diunggah dan masuk ke antrean verifikasi Admin TU.", "success")
+}
+
+// handleDocumentFile serves a stored upload only to Admin TU, the headmaster,
+// or the student/parent who owns the document record.
+func (s *Server) handleDocumentFile(w http.ResponseWriter, r *http.Request) {
+	authVal, ok := requireWebRole(w, r, "student", "parent", "treasurer", "teacher", "discipline", "piket", "admin_tu", "headmaster", "developer")
+	if !ok {
+		return
+	}
+	blobID := r.PathValue("blobID")
+	if !s.canReadDocument(r.Context(), authVal, blobID) {
+		writeError(w, http.StatusForbidden, "Akses berkas ditolak.")
+		return
+	}
+	mimeType, data, err := s.storeDB.DocumentBlob(r.Context(), blobID)
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+	w.Header().Set("Content-Type", mimeType)
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.Header().Set("Content-Disposition", `inline; filename="dokumen"`)
+	w.Header().Set("Cache-Control", "no-store")
+	_, _ = w.Write(data)
+}
+
+func (s *Server) canReadDocument(ctx context.Context, auth requestAuth, blobID string) bool {
+	if auth.user.Role == "admin_tu" || auth.user.Role == "headmaster" {
+		return true
+	}
+	if auth.user.Role != "student" && auth.user.Role != "parent" {
+		return false
+	}
+	raw, err := s.storeDB.GetState(ctx)
+	if err != nil || raw == nil {
+		return false
+	}
+	var doc map[string]any
+	if err := json.Unmarshal(raw, &doc); err != nil {
+		return false
+	}
+	for _, item := range asMapSlice(doc["studentDocuments"]) {
+		if strVal(item, "blobId") != blobID {
+			continue
+		}
+		return strVal(item, "studentId") == auth.user.StudentProfileID
+	}
+	return false
 }
 
 func (s *Server) handleStudentTaskSubmitForm(w http.ResponseWriter, r *http.Request) {

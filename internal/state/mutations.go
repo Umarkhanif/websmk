@@ -85,20 +85,36 @@ func SubmitPeerReport(doc map[string]any, category, location, targetName, descri
 	return nil
 }
 
+// DocumentUpload is the validated file metadata supplied by the upload endpoint.
+type DocumentUpload struct {
+	FileName  string
+	MimeType  string
+	BlobID    string
+	SizeBytes int
+	MagicHex  string
+}
+
 // UploadStudentDocument marks a student document as uploaded and awaiting TU verification.
-func UploadStudentDocument(doc map[string]any, studentID, docID, fileName string, fileSizeKB int, now time.Time) error {
+func UploadStudentDocument(doc map[string]any, studentID, docID string, upload DocumentUpload, now time.Time) error {
+	if strings.TrimSpace(upload.BlobID) == "" || upload.SizeBytes <= 0 {
+		return ErrInvalid
+	}
 	for _, item := range asList(doc["studentDocuments"]) {
 		rec := asMap(item)
 		if rec != nil && text(rec["id"]) == docID && text(rec["studentId"]) == studentID {
-			if strings.TrimSpace(fileName) == "" {
+			fileName := strings.TrimSpace(upload.FileName)
+			if fileName == "" {
 				fileName = "berkas_resmi.pdf"
 			}
-			if fileSizeKB <= 0 {
-				fileSizeKB = 240
+			sizeKB := (upload.SizeBytes + 1023) / 1024
+			if sizeKB <= 0 {
+				sizeKB = 1
 			}
-			rec["fileName"] = strings.TrimSpace(fileName)
-			rec["fileSizeKb"] = fileSizeKB
-			rec["mimeHeaderHex"] = "25504446"
+			rec["fileName"] = fileName
+			rec["fileSizeKb"] = sizeKB
+			rec["mimeType"] = upload.MimeType
+			rec["blobId"] = upload.BlobID
+			rec["mimeHeaderHex"] = upload.MagicHex
 			rec["uploadedAt"] = now.Format("2006-01-02")
 			rec["status"] = "MENUNGGU_CEK"
 			delete(rec, "rejectReason")

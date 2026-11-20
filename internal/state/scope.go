@@ -210,9 +210,8 @@ func MergeOwned(existing, incoming map[string]any, access Access) (map[string]an
 	switch access.Role {
 	case "student":
 		mergeReflection(existing, incoming, access.StudentID)
-		// Proctor status, counters, and unlock tokens are server-owned. The
-		// student reports violations via POST /student/proctor-status only.
-		mergeDocuments(existing, incoming, access.StudentID)
+		// Proctor status and uploaded document metadata are server-owned:
+		// violations and uploads go through dedicated endpoints only.
 		appendRecords(existing, incoming, "taskSubmissions", access.StudentID, func(rec map[string]any) {
 			rec["status"] = "TERKIRIM"
 			delete(rec, "score")
@@ -330,28 +329,6 @@ func mergeReflection(existing, incoming map[string]any, studentID string) {
 		return
 	}
 	existing["studentReflection"] = record
-}
-
-func mergeDocuments(existing, incoming map[string]any, studentID string) {
-	list := asList(existing["studentDocuments"])
-	for _, item := range asList(incoming["studentDocuments"]) {
-		record := asMap(item)
-		if record == nil || text(record["studentId"]) != studentID {
-			continue
-		}
-		target := findOwnedRecord(list, recordID(record["id"]), studentID)
-		if target == nil {
-			continue
-		}
-		for _, field := range []string{"fileName", "fileSizeKb", "mimeHeaderHex", "uploadedAt"} {
-			if value, ok := record[field]; ok {
-				target[field] = value
-			}
-		}
-		// Uploads always re-enter the TU review queue, never a self-approval.
-		target["status"] = "MENUNGGU_CEK"
-		delete(target, "rejectReason")
-	}
 }
 
 func mergeAttendances(existing, incoming map[string]any, studentID string) {

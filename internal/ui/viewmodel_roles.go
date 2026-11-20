@@ -13,17 +13,17 @@ type LetterView struct {
 }
 
 type LedgerEntryView struct {
-	ID                int64
-	InvoiceID         string
-	ReceiptNumber     string
-	TxType            string
-	AmountDelta       int
-	StudentName       string
-	ActorName         string
-	PinVerified       bool
-	ReversalApproval  string
-	SignatureHmac     string
-	CreatedAt         string
+	ID               int64
+	InvoiceID        string
+	ReceiptNumber    string
+	TxType           string
+	AmountDelta      int
+	StudentName      string
+	ActorName        string
+	PinVerified      bool
+	ReversalApproval string
+	SignatureHmac    string
+	CreatedAt        string
 }
 
 type PklPlacementView struct {
@@ -70,6 +70,7 @@ type StudentDocView struct {
 	DocType      string
 	DocName      string
 	FileName     string
+	BlobID       string
 	FileSizeKB   int
 	UploadedAt   string
 	Status       string
@@ -152,17 +153,17 @@ type ExamScheduleView struct {
 }
 
 type ProctorSessionView struct {
-	ID             string
-	StudentID      string
-	Name           string
-	NISN           string
-	Progress       string
-	Status         string
-	WarnCount      int
-	LockCount      int
-	LastViolation  string
-	UnlockToken    string
-	Emergency2h    bool
+	ID            string
+	StudentID     string
+	Name          string
+	NISN          string
+	Progress      string
+	Status        string
+	WarnCount     int
+	LockCount     int
+	LastViolation string
+	UnlockToken   string
+	Emergency2h   bool
 }
 
 type AttendanceRowView struct {
@@ -315,48 +316,48 @@ type PublicVerifyPage struct {
 }
 
 type StudentPortalPage struct {
-	Shell                   RoleShell
-	Tab                     string
-	Student                 StudentView
-	CbtScore                int
-	AttendanceConductScore  int
-	HolisticScore           string
-	Invoice                 InvoiceView
-	HasInvoice              bool
-	IsCleared               bool
-	HasDispensation         bool
-	Journal                 JournalView
-	TeacherNotes            string
-	AiSmartNotes            string
-	Quiz                    QuizView
-	QuizQuestions           []QuizQuestionView
-	ReflectionLevel         string
-	ReflectionComplaint     string
-	ExamQuestions           []ExamQuestionView
-	ExamSchedules           []ExamScheduleView
-	ActiveExamID            string
-	ActiveSubjectName       string
-	ActiveSubjectTeacher    string
-	ActiveSubjectRoom       string
-	ActiveSubjectTime       string
-	CompletedExamsCount     int
-	TotalExamsCount         int
-	ExamAverageScore        int
-	AllExamsGraded          bool
-	ExamTier                string
-	IsDemoGraded            bool
-	Proctor                 ProctorSessionView
-	ExamSubmitted           bool
-	ExamScore               int
-	Documents               []StudentDocView
-	TaskSubmissions         []TaskSubmissionView
-	PklPlacement            PklPlacementView
-	PklLogs                 []PklLogView
-	PklJournals             []PklJournalView
-	BkkJobs                 []BkkJobView
-	BkkApps                 []BkkAppView
-	Expenses                []StudentExpenseView
-	TotalExpense            int
+	Shell                  RoleShell
+	Tab                    string
+	Student                StudentView
+	CbtScore               int
+	AttendanceConductScore int
+	HolisticScore          string
+	Invoice                InvoiceView
+	HasInvoice             bool
+	IsCleared              bool
+	HasDispensation        bool
+	Journal                JournalView
+	TeacherNotes           string
+	AiSmartNotes           string
+	Quiz                   QuizView
+	QuizQuestions          []QuizQuestionView
+	ReflectionLevel        string
+	ReflectionComplaint    string
+	ExamQuestions          []ExamQuestionView
+	ExamSchedules          []ExamScheduleView
+	ActiveExamID           string
+	ActiveSubjectName      string
+	ActiveSubjectTeacher   string
+	ActiveSubjectRoom      string
+	ActiveSubjectTime      string
+	CompletedExamsCount    int
+	TotalExamsCount        int
+	ExamAverageScore       int
+	AllExamsGraded         bool
+	ExamTier               string
+	IsDemoGraded           bool
+	Proctor                ProctorSessionView
+	ExamSubmitted          bool
+	ExamScore              int
+	Documents              []StudentDocView
+	TaskSubmissions        []TaskSubmissionView
+	PklPlacement           PklPlacementView
+	PklLogs                []PklLogView
+	PklJournals            []PklJournalView
+	BkkJobs                []BkkJobView
+	BkkApps                []BkkAppView
+	Expenses               []StudentExpenseView
+	TotalExpense           int
 }
 
 type ParentPortalPage struct {

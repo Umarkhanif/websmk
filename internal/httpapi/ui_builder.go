@@ -1301,6 +1301,7 @@ func parseStudentDoc(dm map[string]any) ui.StudentDocView {
 		DocType:      strVal(dm, "docType"),
 		DocName:      strVal(dm, "docName"),
 		FileName:     strVal(dm, "fileName"),
+		BlobID:       strVal(dm, "blobId"),
 		FileSizeKB:   intVal(dm, "fileSizeKb"),
 		UploadedAt:   strVal(dm, "uploadedAt"),
 		Status:       strVal(dm, "status"),

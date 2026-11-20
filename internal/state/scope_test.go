@@ -276,8 +276,8 @@ func TestMergeOwnedRejectsForeignRecords(t *testing.T) {
 	if status := text(document["status"]); status != "MENUNGGU_CEK" {
 		t.Fatalf("document status = %q, want the upload to re-enter review", status)
 	}
-	if file := text(document["fileName"]); file != "kk.pdf" {
-		t.Fatalf("document file = %q, want kk.pdf", file)
+	if file := text(document["fileName"]); file != "" {
+		t.Fatalf("document file = %q, want server-owned metadata (client write ignored)", file)
 	}
 
 	attendance := findOwnedRecord(asList(merged["attendances"]), "att-1", "std-1")
