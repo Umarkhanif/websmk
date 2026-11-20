@@ -39,8 +39,17 @@ func decodeState(data []byte) (map[string]any, error) {
 // transaction and returns its result. Lost updates and double settlement are
 // prevented by the row lock in Postgres.UpdateState.
 func (s *Server) updateState(w http.ResponseWriter, r *http.Request, apply func(map[string]any) (any, error)) {
+	actorID, role := "", ""
+	if auth, ok := requestAuthFromContext(r.Context()); ok {
+		actorID, role = auth.user.ID, auth.user.Role
+	}
+	audit := store.StateAudit{
+		ActorID: actorID,
+		Role:    role,
+		Action:  r.Method + " " + r.URL.Path,
+	}
 	var result any
-	_, err := s.storeDB.UpdateState(r.Context(), func(raw json.RawMessage) (json.RawMessage, error) {
+	_, err := s.storeDB.UpdateStateAudited(r.Context(), audit, func(raw json.RawMessage) (json.RawMessage, error) {
 		document, err := decodeState(raw)
 		if err != nil {
 			return nil, err
@@ -243,6 +252,15 @@ func (s *Server) handlePutState(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, "Gagal menyimpan state.")
 		return
 	}
+	auditActor, auditRole := "", ""
+	if auth, ok := requestAuthFromContext(r.Context()); ok {
+		auditActor, auditRole = auth.user.ID, auth.user.Role
+	}
+	if err := s.storeDB.RecordStateAudit(r.Context(), store.StateAudit{
+		ActorID: auditActor, Role: auditRole, Action: "api.state.put",
+	}); err != nil {
+		log.Printf("state audit failed: %v", err)
+	}
 	writeJSON(w, http.StatusOK, map[string]string{
 		"status":    "saved",
 		"updatedAt": timestampNow(),
@@ -250,13 +268,19 @@ func (s *Server) handlePutState(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleResetState(w http.ResponseWriter, r *http.Request) {
-	if _, ok := requireRole(w, r, "headmaster", "admin_tu"); !ok {
+	authValue, ok := requireRole(w, r, "headmaster", "admin_tu")
+	if !ok {
 		return
 	}
 	if err := s.storeDB.PutState(r.Context(), state.DefaultStateBytes()); err != nil {
 		log.Printf("reset state failed: %v", err)
 		writeError(w, http.StatusInternalServerError, "Gagal mereset state.")
 		return
+	}
+	if err := s.storeDB.RecordStateAudit(r.Context(), store.StateAudit{
+		ActorID: authValue.user.ID, Role: authValue.user.Role, Action: "state.reset",
+	}); err != nil {
+		log.Printf("state audit failed: %v", err)
 	}
 	writeJSON(w, http.StatusOK, map[string]string{"status": "reset"})
 }

@@ -63,6 +63,12 @@ func main() {
 		log.Fatalf("seed failed: %v", err)
 	}
 
+	// Shadow-copy core entities from the JSON blob into normalized tables.
+	// A failure must not prevent the app from booting on the blob alone.
+	if err := storeDB.BackfillDomainData(ctx); err != nil {
+		log.Printf("[WARN] domain backfill skipped: %v", err)
+	}
+
 	authSvc := auth.New(storeDB, cache, auth.Options{
 		DemoMode:     cfg.DemoMode,
 		DemoPassword: cfg.DemoPassword,

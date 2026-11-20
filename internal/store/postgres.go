@@ -127,10 +127,24 @@ func (p *Postgres) GetState(ctx context.Context) (json.RawMessage, error) {
 	return json.RawMessage(data), nil
 }
 
+// StateAudit describes who performed a state mutation.
+type StateAudit struct {
+	ActorID string
+	Role    string
+	Action  string
+	Detail  json.RawMessage
+}
+
 // UpdateState locks the single state row, applies mutate, and saves the result
 // in one transaction. Server-authoritative writes (quiz, exam, payments) use
 // this so two requests cannot overwrite each other's changes.
 func (p *Postgres) UpdateState(ctx context.Context, mutate func(json.RawMessage) (json.RawMessage, error)) (json.RawMessage, error) {
+	return p.UpdateStateAudited(ctx, StateAudit{}, mutate)
+}
+
+// UpdateStateAudited is UpdateState plus an append-only audit row written in the
+// same transaction, so a state change can never exist without its audit trail.
+func (p *Postgres) UpdateStateAudited(ctx context.Context, audit StateAudit, mutate func(json.RawMessage) (json.RawMessage, error)) (json.RawMessage, error) {
 	tx, err := p.pool.Begin(ctx)
 	if err != nil {
 		return nil, err
@@ -156,10 +170,42 @@ func (p *Postgres) UpdateState(ctx context.Context, mutate func(json.RawMessage)
 	if _, err := tx.Exec(ctx, `UPDATE app_state SET data = $1::jsonb, updated_at = now() WHERE id = 1`, string(updated)); err != nil {
 		return nil, err
 	}
+
+	detail := audit.Detail
+	if len(detail) == 0 || !json.Valid(detail) {
+		detail = json.RawMessage(`{}`)
+	}
+	action := audit.Action
+	if action == "" {
+		action = "state.update"
+	}
+	if _, err := tx.Exec(ctx,
+		`INSERT INTO state_audit_log (actor_user_id, actor_role, action, detail) VALUES ($1, $2, $3, $4::jsonb)`,
+		audit.ActorID, audit.Role, action, string(detail)); err != nil {
+		return nil, err
+	}
+
 	if err := tx.Commit(ctx); err != nil {
 		return nil, err
 	}
 	return updated, nil
+}
+
+// RecordStateAudit writes a standalone audit entry for direct state writes that
+// do not go through UpdateStateAudited (reset and raw snapshot saves).
+func (p *Postgres) RecordStateAudit(ctx context.Context, audit StateAudit) error {
+	detail := audit.Detail
+	if len(detail) == 0 || !json.Valid(detail) {
+		detail = json.RawMessage(`{}`)
+	}
+	action := audit.Action
+	if action == "" {
+		action = "state.write"
+	}
+	_, err := p.pool.Exec(ctx,
+		`INSERT INTO state_audit_log (actor_user_id, actor_role, action, detail) VALUES ($1, $2, $3, $4::jsonb)`,
+		audit.ActorID, audit.Role, action, string(detail))
+	return err
 }
 
 func (p *Postgres) PutState(ctx context.Context, data json.RawMessage) error {

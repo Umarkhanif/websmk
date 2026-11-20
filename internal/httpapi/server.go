@@ -364,7 +364,11 @@ func (s *Server) clearSessionCookie(w http.ResponseWriter) {
 }
 
 func currentAuth(r *http.Request) (requestAuth, bool) {
-	value, ok := r.Context().Value(authContextKey{}).(requestAuth)
+	return requestAuthFromContext(r.Context())
+}
+
+func requestAuthFromContext(ctx context.Context) (requestAuth, bool) {
+	value, ok := ctx.Value(authContextKey{}).(requestAuth)
 	return value, ok && value.user != nil
 }
 

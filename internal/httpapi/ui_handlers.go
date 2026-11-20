@@ -18,6 +18,7 @@ import (
 	"github.com/a-h/templ"
 
 	"wesmk/internal/state"
+	"wesmk/internal/store"
 	"wesmk/internal/ui"
 	"wesmk/internal/ui/assets"
 	"wesmk/internal/ui/layout"
@@ -393,6 +394,9 @@ func (s *Server) handleResetStateForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	_ = s.storeDB.PutState(r.Context(), state.DefaultStateBytes())
+	_ = s.storeDB.RecordStateAudit(r.Context(), store.StateAudit{
+		ActorID: authVal.user.ID, Role: authVal.user.Role, Action: "state.reset",
+	})
 	redirectWithFlash(w, r, ui.RoleHome(authVal.user.Role), "Seluruh data sekolah berhasil direset ke kondisi awal demo.", "success")
 }
 

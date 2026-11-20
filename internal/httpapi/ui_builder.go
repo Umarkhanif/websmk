@@ -15,6 +15,7 @@ import (
 
 	"wesmk/internal/model"
 	"wesmk/internal/state"
+	"wesmk/internal/store"
 	"wesmk/internal/ui"
 )
 
@@ -72,8 +73,16 @@ func (s *Server) mutateStateDoc(ctx context.Context, fn func(map[string]any) err
 	if _, err := s.loadOrSeedState(ctx); err != nil {
 		return err
 	}
+	actorID, role := "", ""
+	if auth, ok := requestAuthFromContext(ctx); ok {
+		actorID, role = auth.user.ID, auth.user.Role
+	}
 	var fnErr error
-	_, err := s.storeDB.UpdateState(ctx, func(raw json.RawMessage) (json.RawMessage, error) {
+	_, err := s.storeDB.UpdateStateAudited(ctx, store.StateAudit{
+		ActorID: actorID,
+		Role:    role,
+		Action:  "web.form",
+	}, func(raw json.RawMessage) (json.RawMessage, error) {
 		doc, err := decodeState(raw)
 		if err != nil {
 			doc, _ = state.DefaultStateMap()
