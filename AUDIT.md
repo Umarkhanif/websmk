@@ -45,7 +45,7 @@
 
 ## 3. Temuan Keamanan
 
-### P0 — fail-closed di produksi
+### P0 — fail-closed di produksi (diperbaiki `74ac6b1`)
 
 | # | Temuan | Bukti |
 |---|---|---|
@@ -53,11 +53,16 @@
 | S2 | **OTP reversal tidak aman.** `activeHeadmasterOtp` disimpan di `app_state` (persist), tanpa TTL, ditampilkan di flash message dan kartu kepsek, lalu dipakai `ExecuteReversal`. | `internal/httpapi/ui_handlers.go:1485`; `internal/state/mutations.go:501-507,1064-1075` |
 | S3 | **Seed dari browser.** `MergeOwned` menerima snapshot klien saat `app_state` masih kosong; produksi bisa terisi data mock dari klien pertama. | `internal/state/scope.go:124-128` |
 
+Perbaikan: `Validate()` menolak produksi dengan demo mode menyala atau PIN default/kosong; fallback
+`123456`/`981240` dihapus dari `mutations.go` dan `ui_builder.go`; OTP kini ber-TTL 5 menit
+(`activeHeadmasterOtpExpiresAt`) dan dibandingkan konstant-time; `PUT /api/state` menolak merge saat
+`app_state` masih kosong di produksi.
+
 ### P1 — hardening
 
 | # | Temuan | Bukti |
 |---|---|---|
-| S4 | **CSRF token hiasan.** Semua form memuat `_csrf`, tetapi `validCSRF()` tidak pernah dipanggil; proteksi hanya Origin check. | `internal/httpapi/ui_builder.go:27-31`; `grep 'validCSRF('` nol pemanggil |
+| S4 | **CSRF token hiasan.** Semua form memuat `_csrf`, tetapi `validCSRF()` tidak pernah dipanggil; Origin check hanya untuk `/api/`. | Diperbaiki `74ac6b1`: `csrfGuard` memvalidasi token per sesi/seed + `mutationGuards` memeriksa Origin untuk semua method mutasi |
 | S5 | **RBAC staf belum ada.** Hanya `student`/`parent` yang di-scope; semua staf membaca snapshot penuh dan menulis field lintas peran. | `internal/state/scope.go:22-24`; `internal/httpapi/state_handlers.go` |
 | S6 | **Proctor status masih dari browser.** Siswa mengirim `status` lewat `POST /student/proctor-status`; server menerimanya. | `internal/httpapi/ui_handlers.go:621-646` |
 | S7 | **Unggah dokumen metadata saja.** Tidak ada file yang disimpan; ukuran di-hardcode (`280`). | `internal/httpapi/ui_handlers.go:696-710` |
@@ -87,7 +92,7 @@
 | R6 | Versi Go tidak konsisten: `AGENTS.md`/`GEMINI.md` 1.23+, `README.md`/`go.mod` 1.26 | Disamakan ke 1.26 |
 | R7 | 66 tabel dibuat di migrasi, hanya `users` + `app_state` dipakai → ~64 tabel mati | Belum diputus |
 | R8 | `internal/ui/pages/placeholder.templ` (+ `_templ.go`) tidak dipakai handler manapun | Belum dibersihkan |
-| R9 | `docker-compose.yml` membuka Postgres/Redis ke `0.0.0.0` | Bahaya di server publik |
+| R9 | `docker-compose.yml` membuka Postgres/Redis ke `0.0.0.0` | Diperbaiki: bind `127.0.0.1` |
 
 ---
 
