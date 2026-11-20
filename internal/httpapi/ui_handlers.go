@@ -643,9 +643,12 @@ func (s *Server) handleStudentProctorStatusForm(w http.ResponseWriter, r *http.R
 		redirectWithFlash(w, r, "/student/exam-kiosk", "Sesi ujian berhasil dibuka kembali oleh Pengawas.", "success")
 		return
 	}
-	_ = s.mutateStateDoc(r.Context(), func(doc map[string]any) error {
+	if err := s.mutateStateDoc(r.Context(), func(doc map[string]any) error {
 		return state.UpdateProctorStatus(doc, studentID, status, reason, time.Now())
-	})
+	}); err != nil {
+		redirectWithFlash(w, r, "/student/exam-kiosk", err.Error(), "danger")
+		return
+	}
 	if r.FormValue("async") == "1" || r.Header.Get("X-Requested-With") == "XMLHttpRequest" {
 		w.WriteHeader(http.StatusNoContent)
 		return

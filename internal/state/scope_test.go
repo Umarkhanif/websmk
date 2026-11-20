@@ -286,8 +286,8 @@ func TestMergeOwnedRejectsForeignRecords(t *testing.T) {
 	}
 
 	proctor := findOwnedRecord(asList(merged["proctorStudents"]), "proc-1", "std-1")
-	if status := text(proctor["status"]); status != "SUBMITTED" {
-		t.Fatalf("proctor status = %q, want SUBMITTED", status)
+	if status := text(proctor["status"]); status != "ACTIVE" {
+		t.Fatalf("proctor status = %q, want server-owned ACTIVE (client write ignored)", status)
 	}
 }
 

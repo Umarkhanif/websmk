@@ -143,7 +143,8 @@ func MergeOwned(existing, incoming map[string]any, access Access) (map[string]an
 	switch access.Role {
 	case "student":
 		mergeReflection(existing, incoming, access.StudentID)
-		mergeProctorSession(existing, incoming, access.StudentID)
+		// Proctor status, counters, and unlock tokens are server-owned. The
+		// student reports violations via POST /student/proctor-status only.
 		mergeDocuments(existing, incoming, access.StudentID)
 		appendRecords(existing, incoming, "taskSubmissions", access.StudentID, func(rec map[string]any) {
 			rec["status"] = "TERKIRIM"
@@ -262,25 +263,6 @@ func mergeReflection(existing, incoming map[string]any, studentID string) {
 		return
 	}
 	existing["studentReflection"] = record
-}
-
-func mergeProctorSession(existing, incoming map[string]any, studentID string) {
-	list := asList(existing["proctorStudents"])
-	for _, item := range asList(incoming["proctorStudents"]) {
-		record := asMap(item)
-		if record == nil || text(record["studentId"]) != studentID {
-			continue
-		}
-		target := findOwnedRecord(list, recordID(record["id"]), studentID)
-		if target == nil {
-			continue
-		}
-		for _, field := range []string{"status", "warnCount", "lockCount", "lastViolation", "progress", "unlockToken"} {
-			if value, ok := record[field]; ok {
-				target[field] = value
-			}
-		}
-	}
 }
 
 func mergeDocuments(existing, incoming map[string]any, studentID string) {

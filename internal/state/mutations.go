@@ -286,15 +286,26 @@ func AddStudentExpense(doc map[string]any, studentID, category, title string, am
 }
 
 // UpdateProctorStatus records anti-cheat tab switch warnings or locks in CBT.
+// The browser may only report WARN and LOCKED signals; counters, tokens, and the
+// transition back to ACTIVE are owned by the server (teacher unlock endpoints).
 func UpdateProctorStatus(doc map[string]any, studentID, status, reason string, now time.Time) error {
 	student := findStudent(doc, studentID)
 	if student == nil {
 		return ErrNotFound
 	}
+	if status != "WARN" && status != "LOCKED" {
+		return fmt.Errorf("%w: klien hanya boleh melaporkan WARN atau LOCKED", ErrInvalid)
+	}
 	nisn := text(student["nisn"])
 	for _, item := range asList(doc["proctorStudents"]) {
 		ps := asMap(item)
 		if ps != nil && text(ps["studentId"]) == studentID {
+			current := text(ps["status"])
+			// A lock (and a submitted session) is permanent until an authorized
+			// teacher/QR unlock. Later browser reports must not change it.
+			if current == "LOCKED" || current == "SUBMITTED" {
+				return nil
+			}
 			warnCnt, _ := number(ps["warnCount"])
 			lockCnt, _ := number(ps["lockCount"])
 			if status == "WARN" {
