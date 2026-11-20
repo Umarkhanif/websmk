@@ -23,6 +23,11 @@ type Config struct {
 	PaymentWebhookSecret string
 	TreasurerPin         string
 
+	// WANotifyURL is an HTTP webhook that delivers magic links to parents.
+	// The webhook receives {"to","message"}; WANotifyToken is sent as a Bearer token.
+	WANotifyURL   string
+	WANotifyToken string
+
 	DemoMode     bool
 	DemoPassword string
 	SecureCookie bool
@@ -80,6 +85,8 @@ func Load() Config {
 		ReceiptSecret:        receiptSecret,
 		PaymentWebhookSecret: os.Getenv("WESMK_PAYMENT_WEBHOOK_SECRET"),
 		TreasurerPin:         envOrDefault("WESMK_TREASURER_PIN", "123456"),
+		WANotifyURL:          os.Getenv("WESMK_WA_WEBHOOK_URL"),
+		WANotifyToken:        os.Getenv("WESMK_WA_WEBHOOK_TOKEN"),
 		DemoMode:             demoMode,
 		DemoPassword:         demoPassword,
 		SecureCookie:         secureCookie,

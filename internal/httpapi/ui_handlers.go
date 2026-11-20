@@ -313,8 +313,15 @@ func (s *Server) handleMagicLinkForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	page.Notice = "Jika nomor terdaftar, tautan masuk sekali pakai telah dikirim ke WhatsApp Anda."
-	if issued && s.authSvc.DemoMode() {
-		page.MagicLink = "/login/magic/" + token
+	if issued {
+		if err := s.sendMagicLink(r.Context(), phone, token); err != nil {
+			page.Error = err.Error()
+			renderComponent(w, r, http.StatusServiceUnavailable, pages.Login(page))
+			return
+		}
+		if s.authSvc.DemoMode() {
+			page.MagicLink = "/login/magic/" + token
+		}
 	}
 	renderComponent(w, r, http.StatusAccepted, pages.Login(page))
 }

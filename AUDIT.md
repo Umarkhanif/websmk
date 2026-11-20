@@ -66,7 +66,7 @@ Perbaikan: `Validate()` menolak produksi dengan demo mode menyala atau PIN defau
 | S5 | **RBAC staf belum ada.** Hanya `student`/`parent` yang di-scope; semua staf membaca snapshot penuh dan menulis field lintas peran. | Diperbaiki: `state.StaffView` — allowlist key per peran di `GET /api/state` dan halaman staf; kunci jawaban tetap hanya untuk guru, OTP hanya untuk kepsek |
 | S6 | **Proctor status masih dari browser.** Siswa mengirim `status` lewat `POST /student/proctor-status`; server menerimanya. | Diperbaiki: klien hanya boleh `WARN`/`LOCKED`, lock permanen, `mergeProctorSession` dihapus |
 | S7 | **Unggah dokumen metadata saja.** Tidak ada file yang disimpan; ukuran di-hardcode (`280`). | Diperbaiki: form multipart, batas 500 KB, validasi tipe/magic bytes di server, blob disimpan di `document_blobs` (migrasi `005`), endpoint `/document/{blobID}` dengan pemeriksaan akses |
-| S8 | **Magic link without channel.** Orang tua belum terintegrasi WhatsApp; tautan `GET` bisa dikonsumsi bot preview. | `internal/httpapi/auth_handlers.go` |
+| S8 | **Magic link without channel.** Orang tua belum terintegrasi WhatsApp; tautan `GET` bisa dikonsumsi bot preview. | Diperbaiki sebagian: webhook WA via `WESMK_WA_WEBHOOK_URL` + token; production menolak (503) bila belum dikonfigurasi. Bot preview masih perlu halaman konfirmasi POST |
 
 ### Yang sudah benar
 

@@ -170,6 +170,11 @@ func (s *Server) handleMagicLinkRequest(w http.ResponseWriter, r *http.Request) 
 			suffix = suffix[len(suffix)-4:]
 		}
 		log.Printf("[auth] Tautan magic dibuat untuk nomor berakhiran %s.", suffix)
+		if err := s.sendMagicLink(r.Context(), normalized, token); err != nil {
+			log.Printf("[auth] kirim tautan magic gagal: %v", err)
+			writeError(w, http.StatusServiceUnavailable, err.Error())
+			return
+		}
 		if s.authSvc.DemoMode() {
 			writeJSON(w, http.StatusAccepted, map[string]string{
 				"status":  "sent",
