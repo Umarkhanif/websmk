@@ -1244,9 +1244,6 @@ func (s *Server) buildHeadmasterPortal(doc map[string]any, shell ui.RoleShell, a
 		revs = append(revs, parseReversalReq(rm))
 	}
 	otp := strVal(doc, "activeHeadmasterOtp")
-	if otp == "" {
-		otp = "981240"
-	}
 	teachers := parseTeachers(doc)
 	sort.Slice(teachers, func(i, j int) bool {
 		return teachers[i].FinalImpactScore > teachers[j].FinalImpactScore

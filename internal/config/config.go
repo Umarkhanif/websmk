@@ -104,6 +104,16 @@ func (c Config) Validate() error {
 	if len(strings.TrimSpace(os.Getenv("WESMK_RECEIPT_SECRET"))) < 16 {
 		return errors.New("WESMK_RECEIPT_SECRET (minimal 16 karakter) wajib diisi saat WESMK_ENV=production")
 	}
+	// Demo accounts are a development aid; a public deployment must not expose
+	// the role switcher or the shared demo password.
+	if c.DemoMode {
+		return errors.New("WESMK_DEMO_MODE harus false saat WESMK_ENV=production")
+	}
+	// The fallback PIN is public knowledge, so production has to set its own.
+	pin := strings.TrimSpace(os.Getenv("WESMK_TREASURER_PIN"))
+	if pin == "" || pin == "123456" {
+		return errors.New("WESMK_TREASURER_PIN (6 digit, bukan default) wajib diisi saat WESMK_ENV=production")
+	}
 	return nil
 }
 

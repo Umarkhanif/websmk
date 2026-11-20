@@ -20,8 +20,14 @@ func TestProductionRequiresExplicitDatastores(t *testing.T) {
 	}
 
 	t.Setenv("WESMK_RECEIPT_SECRET", "rahasia-kwitansi-sekolah-2026")
+	t.Setenv("WESMK_TREASURER_PIN", "")
+	if err := Load().Validate(); err == nil {
+		t.Fatal("production without WESMK_TREASURER_PIN must fail validation")
+	}
+
+	t.Setenv("WESMK_TREASURER_PIN", "482913")
 	if err := Load().Validate(); err != nil {
-		t.Fatalf("production with explicit datastores and receipt secret: %v", err)
+		t.Fatalf("production with explicit datastores, receipt secret, and PIN: %v", err)
 	}
 }
 

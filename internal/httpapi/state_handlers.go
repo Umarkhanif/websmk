@@ -218,6 +218,13 @@ func (s *Server) handlePutState(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
+		if len(existing) == 0 && !s.cfg.DemoMode {
+			// Production must never let a browser snapshot become the school's
+			// data. The initial document is seeded from the embedded default.
+			writeError(w, http.StatusConflict, "Data sekolah belum diinisialisasi di server.")
+			return
+		}
+
 		merged, err := state.MergeOwned(existing, incoming, access)
 		if err != nil {
 			writeError(w, http.StatusForbidden, "Akun belum terhubung ke profil siswa.")

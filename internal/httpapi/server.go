@@ -60,8 +60,9 @@ func New(
 
 func (s *Server) Handler() http.Handler {
 	var handler http.Handler = s.mux
+	handler = s.csrfGuard(handler)
 	handler = s.attachAuth(handler)
-	handler = s.apiGuards(handler)
+	handler = s.mutationGuards(handler)
 	handler = s.securityHeaders(handler)
 	handler = s.recoverPanic(handler)
 	handler = s.accessLog(handler)
@@ -139,7 +140,6 @@ func (s *Server) handleAPINotFound(w http.ResponseWriter, _ *http.Request) {
 	writeError(w, http.StatusNotFound, "Endpoint API tidak ditemukan.")
 }
 
-
 const contentSecurityPolicy = "default-src 'self'; " +
 	"script-src 'self'; " +
 	"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
@@ -202,20 +202,68 @@ func (s *Server) accessLog(next http.Handler) http.Handler {
 	})
 }
 
-func (s *Server) apiGuards(next http.Handler) http.Handler {
+// mutationGuards rejects cross-origin state-changing requests. The Origin check
+// applies to every unsafe method, not only /api, so browser form POSTs are covered.
+func (s *Server) mutationGuards(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if !strings.HasPrefix(r.URL.Path, "/api/") {
-			next.ServeHTTP(w, r)
-			return
+		if strings.HasPrefix(r.URL.Path, "/api/") {
+			w.Header().Set("Cache-Control", "no-store")
 		}
-
-		w.Header().Set("Cache-Control", "no-store")
 		switch r.Method {
 		case http.MethodPost, http.MethodPut, http.MethodPatch, http.MethodDelete:
 			if !s.originAllowed(r) {
 				writeError(w, http.StatusForbidden, "Asal permintaan tidak diizinkan.")
 				return
 			}
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
+// csrfGuard validates the per-session CSRF token on state-changing web requests.
+// API requests are excluded: they are JSON-only and rely on the Origin check plus
+// the X-CSRF-Token header sent by the base layout.
+func (s *Server) csrfGuard(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodPost, http.MethodPut, http.MethodPatch, http.MethodDelete:
+		default:
+			next.ServeHTTP(w, r)
+			return
+		}
+		path := r.URL.Path
+		if strings.HasPrefix(path, "/api/") || strings.HasPrefix(path, "/ui-assets/") || path == "/favicon.ico" {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		seed := ""
+		if authValue, ok := currentAuth(r); ok {
+			seed = authValue.token
+		} else {
+			switch {
+			case strings.HasPrefix(path, "/login"):
+				seed = "login"
+			case strings.HasPrefix(path, "/verify"):
+				seed = "verify"
+			case strings.HasPrefix(path, "/contact"):
+				seed = "contact"
+			}
+		}
+		if seed == "" {
+			// Unknown public endpoint: let the handler decide (usually a redirect).
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		submitted := r.Header.Get("X-CSRF-Token")
+		if submitted == "" {
+			_ = r.ParseForm()
+			submitted = r.FormValue("_csrf")
+		}
+		if !s.validCSRF(seed, submitted) {
+			writeError(w, http.StatusForbidden, "Token keamanan tidak valid. Muat ulang halaman lalu coba lagi.")
+			return
 		}
 		next.ServeHTTP(w, r)
 	})

@@ -428,15 +428,15 @@ func GrantDispensation(doc map[string]any, studentID, reason, grantedBy string, 
 		reason = "Komitmen Cicilan Orang Tua Wali (Dispensasi 7 Hari)"
 	}
 	entry := map[string]any{
-		"id":               fmt.Sprintf("disp-%04d", now.UnixNano()%10000),
-		"studentId":        studentID,
-		"studentName":      text(student["fullName"]),
-		"examPeriod":       "Penilaian Akhir Semester Ganjil 2026",
-		"clearanceType":    "DISPENSATION_7D",
-		"reasonCategory":   strings.TrimSpace(reason),
-		"agreementDocUrl":  "https://r2.wesmk.sch.id/dispensations/surat_perjanjian.pdf",
-		"validUntil":       now.Add(7 * 24 * time.Hour).UTC().Format(time.RFC3339),
-		"grantedBy":        grantedBy,
+		"id":              fmt.Sprintf("disp-%04d", now.UnixNano()%10000),
+		"studentId":       studentID,
+		"studentName":     text(student["fullName"]),
+		"examPeriod":      "Penilaian Akhir Semester Ganjil 2026",
+		"clearanceType":   "DISPENSATION_7D",
+		"reasonCategory":  strings.TrimSpace(reason),
+		"agreementDocUrl": "https://r2.wesmk.sch.id/dispensations/surat_perjanjian.pdf",
+		"validUntil":      now.Add(7 * 24 * time.Hour).UTC().Format(time.RFC3339),
+		"grantedBy":       grantedBy,
 	}
 	doc["dispensations"] = append([]any{entry}, asList(doc["dispensations"])...)
 	return nil
@@ -445,10 +445,10 @@ func GrantDispensation(doc map[string]any, studentID, reason, grantedBy string, 
 // RecordCashPayment verifies the 6-digit treasurer PIN on the server and appends
 // an HMAC-signed PAYMENT_CASH entry to the immutable ledger.
 func RecordCashPayment(doc map[string]any, invoiceID string, amount int64, pinInput, expectedPIN, actorID, actorName, receiptSecret string, now time.Time) error {
-	if expectedPIN == "" {
-		expectedPIN = "123456"
+	if strings.TrimSpace(expectedPIN) == "" {
+		return fmt.Errorf("%w: PIN Kasir 6-digit belum dikonfigurasi di server", ErrInvalid)
 	}
-	if strings.TrimSpace(pinInput) != expectedPIN {
+	if !hmac.Equal([]byte(expectedPIN), []byte(strings.TrimSpace(pinInput))) {
 		return fmt.Errorf("%w: PIN Kasir 6-digit tidak sesuai", ErrInvalid)
 	}
 	if amount <= 0 {
@@ -501,9 +501,15 @@ func RecordCashPayment(doc map[string]any, invoiceID string, amount int64, pinIn
 func ExecuteReversal(doc map[string]any, ledgerID int64, reason, otpInput, actorID, actorName, receiptSecret string, now time.Time) error {
 	expectedOTP := strings.TrimSpace(text(doc["activeHeadmasterOtp"]))
 	if expectedOTP == "" {
-		expectedOTP = "981240"
+		return fmt.Errorf("%w: kode OTP Kepala Sekolah belum diterbitkan", ErrInvalid)
 	}
-	if strings.TrimSpace(otpInput) != expectedOTP {
+	if expiry := strings.TrimSpace(text(doc["activeHeadmasterOtpExpiresAt"])); expiry != "" {
+		expiresAt, err := time.Parse(time.RFC3339, expiry)
+		if err != nil || now.After(expiresAt) {
+			return fmt.Errorf("%w: kode OTP Kepala Sekolah sudah kedaluwarsa", ErrInvalid)
+		}
+	}
+	if !hmac.Equal([]byte(expectedOTP), []byte(strings.TrimSpace(otpInput))) {
 		return fmt.Errorf("%w: kode OTP Kepala Sekolah tidak valid", ErrInvalid)
 	}
 	var original map[string]any
@@ -1064,6 +1070,7 @@ func AddBkkJob(doc map[string]any, companyName, jobTitle, salaryRange string, ma
 func GenerateReversalOTP(doc map[string]any, reqID string, now time.Time) string {
 	otp := fmt.Sprintf("%06d", 100000+(now.UnixNano()%900000))
 	doc["activeHeadmasterOtp"] = otp
+	doc["activeHeadmasterOtpExpiresAt"] = now.Add(5 * time.Minute).UTC().Format(time.RFC3339)
 	if reqID != "" {
 		for _, item := range asList(doc["reversalRequests"]) {
 			if r := asMap(item); r != nil && text(r["id"]) == reqID {
