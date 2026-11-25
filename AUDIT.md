@@ -1,5 +1,9 @@
 # Audit WESMK — Kondisi Terkini
 
+> **Audit terbaru (23 November 2026, commit `c311c2a`):** lihat
+> [`docs/audit-2026-11-23.md`](docs/audit-2026-11-23.md). Dokumen di bawah ini dipertahankan
+> sebagai histori audit 20 November 2026.
+
 **Tanggal:** 20 November 2026  
 **Commit acuan:** `5ca69a3` (branch `master`)  
 **Scope:** backend Go 1.26 + UI `templ`/HTMX/Alpine, PostgreSQL 16, Redis 7, 9 peran (8 role blueprint + `developer`).  

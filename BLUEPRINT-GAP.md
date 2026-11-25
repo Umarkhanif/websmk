@@ -40,18 +40,18 @@ Inti produknya: 8 role, 30+ route, 38 tabel PostgreSQL, CBT anti-curang, keuanga
 
 | Token | Nilai |
 |---|---|
-| Background | `#F2F4F8` |
-| Surface | `#FFFFFF`, border `#E2E8F0`, radius 16px |
-| Deep Navy | `#0B1730` |
-| Vocational Teal | `#0A6C74` (hover `#08565D`) |
-| Warm Gold | `#E8B84A` (soft `#FEFCE8`) |
-| Status aman | text `#065F46`, bg `#D1FAE5`, dot `#10B981` |
-| Status atensi | text `#92400E`, bg `#FEF3C7`, dot `#F59E0B` |
-| Status kritis | text `#991B1B`, bg `#FEE2E2`, dot `#EF4444` |
-| Status alpa | text `#1E293B`, bg `#E2E8F0`, dot `#334155` |
+| Background | `#F2ECE0` |
+| Surface | `#FFFCF5`, border `#E1D6C2`, radius 14px |
+| Deep Pine | `#172E26` |
+| Forest Green | `#1F5C46` (hover `#174936`) |
+| Warm Ochre | `#D2A04A` (soft `#FBF0D9`) |
+| Status aman | text `#2D6248`, bg `#EAF2E7`, dot `#2F6B4F` |
+| Status atensi | text `#85500F`, bg `#FBF0D7`, dot `#A8671C` |
+| Status kritis | text `#9A3B29`, bg `#F9EAE5`, dot `#C0553D` |
+| Status alpa | text `#465247`, bg `#EFE8DB`, dot `#5F6B5D` |
 | Font | Plus Jakarta Sans + IBM Plex Mono |
 
-Responsif: mobile 360–430px pakai bottom nav 4–5 tab, target sentuh **48×48px**, font dasar **14–16px**; desktop pakai sidebar kiri **260px** `#0B1730`, top context bar, grid 12 kolom.
+Responsif: mobile 360–430px pakai bottom nav 4–5 tab, target sentuh **48×48px**, font dasar **14–16px**; desktop pakai sidebar kiri **260px** `#172E26`, top context bar, grid 12 kolom.
 
 ---
 

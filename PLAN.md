@@ -1,5 +1,9 @@
 # PLAN BESAR PENGEMBANGAN WESMK (SESUAI BLUEPRINT V3)
 
+> **Rencana terkini (23 November 2026):** gunakan
+> [`docs/master-plan-2026-11-23.md`](docs/master-plan-2026-11-23.md). Dokumen ini dipertahankan
+> sebagai rencana awal (basis Blueprint V3) dan status di bawah sudah tidak akurat.
+
 Basis: `rencana sementara.pdf` (WESMK MEGA SUPER BLUEPRINT V3) + audit repo saat ini.
 Target: Go 1.26+ + templ/HTMX, PostgreSQL 16, Redis 7, 9 role, 38+ tabel, server-authoritative.
 

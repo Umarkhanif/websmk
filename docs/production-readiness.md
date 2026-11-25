@@ -1,6 +1,6 @@
 # WESMK — Audit Kesiapan Produksi
 
-Terakhir diperbarui: 20 November 2026
+Terakhir diperbarui: 24 November 2026
 
 ## Putusan
 
@@ -37,15 +37,23 @@ tangan surat, unggahan dokumen, dan seluruh data sekolah masih satu dokumen JSON
 | Prioritas | Masalah | Bukti | Arah perbaikan |
 |---|---|---|---|
 | Kritis | Status proctor (warn/lock/unlock) dan OTP reversal belum sepenuhnya server-authoritative: status masih dikirim browser, OTP disimpan di `app_state` tanpa TTL dan ditampilkan di UI | `internal/httpapi/ui_handlers.go` `handleStudentProctorStatusForm`; `internal/state/mutations.go` `ExecuteReversal`, `GenerateReversalOTP` | Server memegang timer/status ujian; OTP per-request, ber-TTL, tidak ditampilkan |
-| Kritis | Aplikasi masih membaca blob `app_state`; tabel domain belum jadi source of truth | `internal/store/postgres.go`, `state_handlers.go` | Fondasi sudah: `UpdateStateAudited` (row lock + audit append-only, migrasi `006`), backfill idempotent siswa/tagihan/ledger. Berikutnya: endpoint dibaca dari tabel domain |
+| Sebagian | Profil siswa, tagihan, ledger, presensi, bank soal, sesi ujian, PKL, dan BKK sudah dibaca dari tabel domain (fallback blob) | `internal/domain/{identity,finance,attendance,exam,pkl,bkk}`, migrasi `007`–`011` | Bekukan key blob per agregat, lalu hapus fallback setelah masa dual-read |
 | Kritis | Staf mana pun bisa membaca seluruh state (keuangan, BK, catatan wali) dan menulis field di luar perannya | GET staff mengembalikan snapshot penuh | Scoping baca/tulis per peran staf, bukan hanya siswa/ortu |
 | Kritis | Saat `app_state` kosong, snapshot klien (termasuk data mock) menjadi isi database | `MergeOwned` mengembalikan `incoming` untuk state kosong | Setup/import data awal di server; tolak seed dari klien di production |
 | Selesai | Unggah dokumen: multipart, batas 500 KB, validasi MIME/magic bytes di server, blob di `document_blobs`, metadata server-owned | `internal/httpapi/ui_handlers.go` `handleStudentDocUploadForm`, migrasi `005_document_blobs.sql` | Object storage R2 belum dipakai — blob masih di Postgres |
-| Sebagian | Magic link ortu: webhook WA via `WESMK_WA_WEBHOOK_URL` (production fail-closed 503 bila kosong); tautan GET masih bisa habis dipakai bot preview | `internal/httpapi/notify.go` | Halaman konfirmasi POST sebelum sesi dibuat |
+| Selesai | Magic link ortu: webhook WA via `WESMK_WA_WEBHOOK_URL` (production fail-closed 503 bila kosong); GET hanya halaman konfirmasi, token dikonsumsi lewat POST | `internal/httpapi/notify.go`, `ui_handlers.go`, `auth_handlers.go` | — |
 | Selesai | Verifikasi publik kwitansi/surat already HMAC server-side (`/verify/{hash}` mencocokkan `signatureHmac`/`hmacHash` yang dibuat server) | `internal/httpapi/ui_handlers.go` `handlePublicVerifyPage` | — |
 | Kritis | OTP kepala sekolah tersimpan di state dan terbaca semua staf | `activeHeadmasterOtp` | OTP per permintaan reversal, di-hash, TTL pendek, rate limit, hanya kepala sekolah |
 | Tinggi | Belum ada backup/restore, monitoring, dan alert | — | `pg_dump`/WAL terjadwal, uptime check `/api/health`, log retention |
-| Tinggi | Belum ada reset password, lifecycle akun, dan MFA untuk bendahara/kepala sekolah | — | Alur undangan/reset, MFA untuk aksi keuangan |
+| Selesai | Lifecycle akun, MFA wajib untuk Admin TU/Bendahara/Kepala Sekolah/Developer, recovery code sekali pakai, secret TOTP terenkripsi AES-256-GCM, sesi aktif, dan audit login append-only | `internal/auth/{totp,recovery,policy}.go`, `internal/secure/mfa.go`, `internal/store/{security,totp,redis}.go`, migrasi `012`, `014`, `015` | Rotasi `WESMK_MFA_KEY` harus disertai reset MFA semua akun; halaman sesi saat ini menampilkan satu sesi karena desain single-device |
+| Selesai | Halaman sesi aktif dan audit login tersedia di `/security`; Admin TU/Developer juga melihat audit login seluruh akun | `internal/httpapi/ui_handlers.go`, `internal/store/security.go`, `internal/ui/pages/security.templ` | Ekspor audit ke SIEM/retensi eksternal belum ada |
+| Selesai | Onboarding siswa dari Admin TU membuat profil `students`, akun login siswa, akun wali, dan relasi `users.student_profile_id` secara transaksional; form mengisi nama/WA wali dan kata sandi awal | `internal/store/onboarding.go`, `internal/httpapi/ui_handlers.go`, `internal/state/mutations.go` | Satu akun wali masih terhubung ke satu anak; keluarga dengan saudara kandung butuh tabel relasi multi-anak |
+| Selesai | Master data tahun ajaran (satu aktif), kelas per jurusan/wali kelas, dan jadwal per kelas tersimpan di Postgres; kelas/jadwal bisa diubah dan dihapus dengan proteksi relasi | `internal/store/masterdata.go`, `internal/store/portal_ops.go`, migrasi `016`–`017` | Tarif SPP per tahun dan profil sekolah belum ada |
+| Selesai | Rollover tahun ajaran eksplisit: setiap kelas dipetakan ke kelas tujuan sejurusan, tingkat 12 diluluskan, siswa aktif dipindahkan beserta sinkronisasi nama/jurusan, lalu tahun tujuan diaktifkan dalam satu transaksi dan audit | `internal/store/masterdata.go` `RolloverStudents`, `internal/httpapi/ui_handlers.go`, `internal/ui/pages/admin_portal.templ` | Belum ada rollover otomatis dari kalender atau pembatalan rollover |
+| Selesai | Presensi per kelas/tanggal, izin orang tua per tanggal, jurnal mengajar per slot jadwal, log gerbang tervalidasi NISN, dan penugasan inval tersimpan di tabel domain | `internal/db/migrations/017_portal_operations.sql`, `internal/store/portal_ops.go` | Timer/status proctor dan rekap presensi lintas semester belum |
+| Selesai | Tugas guru difilter berdasarkan guru dan kelas yang diampu; penilaian ditolak bila tugas bukan milik kelas tersebut | `internal/httpapi/ui_builder.go`, `internal/httpapi/ui_handlers.go` | Tugas masih disimpan di `app_state`, belum menjadi tabel domain |
+| Selesai | Halaman Admin TU dipecah per bagian (Siswa, Kelas & Jadwal, Akun, Dokumen), dengan direktori siswa, pencarian, pagination, form ubah/hapus kelas dan jadwal, serta panel kenaikan kelas/kelulusan | `internal/ui/pages/admin_portal.templ`, `internal/store/portal_ops.go`, `internal/store/masterdata.go` | Impor CSV belum |
+| Sebagian | E-sign laporan kepala sekolah kini menyimpan hash + HMAC dan audit, tetapi belum menghasilkan PDF bertanda tangan | `internal/store/executive.go`, migrasi `013` | Buat PDF + QR verifikasi dari hash tersimpan |
 | Tinggi | Adapter gateway VA nyata, rekonsiliasi harian, dan tombol tarik status belum ada | Endpoint intent/callback sudah siap, tetapi belum ada kredensial gateway | Sambungkan provider VA, jadwalkan rekonsiliasi, dan uji callback sandbox |
 
 ## Catatan penting (bukan blocker demo)
@@ -56,8 +64,9 @@ tangan surat, unggahan dokumen, dan seluruh data sekolah masih satu dokumen JSON
 - Tidak ada routing URL/deep link; refresh kembali ke tab default.
 - Aset UI (HTMX, Alpine, `app.js`, `app.css`) di-embed ke binary; tidak ada build step Node.
 - Font Google dan avatar Unsplash masih eksternal; pertimbangkan self-host untuk privasi/uptime.
-- Test HTTP end-to-end masih manual (curl + headless Chrome), belum masuk CI.
+- Unit test + integration Postgres sudah berjalan di CI; E2E browser masih manual dan belum menjadi gate CI.
 - `docs/requirements-traceability.md` menandai banyak alur "READY"; artinya alur UI demo berjalan, bukan verifikasi produksi.
+- Tugas siswa sudah memakai unggahan berkas nyata (PDF/JPG/PNG, maks 10 MB), pembuatan tugas per kelas dengan tenggat, penolakan pengumpulan ganda/lintas kelas/lewat tenggat, dan penilaian guru. Belum ada object storage, versioning tugas, atau notifikasi tenggat.
 
 ## Checklist deploy (pilot/demo terkontrol)
 
@@ -66,7 +75,8 @@ tangan surat, unggahan dokumen, dan seluruh data sekolah masih satu dokumen JSON
 3. Jalankan container sebagai non-root (sudah default) dengan env:
    `WESMK_ENV=production`, `WESMK_DEMO_MODE=false`, `APP_URL=https://...`,
    `DATABASE_URL=...`, `REDIS_URL=...`, `GEMINI_API_KEY=...`, `WESMK_USERS='[...]'`,
-   `WESMK_RECEIPT_SECRET=...` (wajib, >= 16 karakter), `WESMK_PAYMENT_WEBHOOK_SECRET=...`,
+   `WESMK_RECEIPT_SECRET=...` (wajib, >= 16 karakter), `WESMK_MFA_KEY=...` (wajib, >= 32 karakter acak),
+   `WESMK_PAYMENT_WEBHOOK_SECRET=...`,
    `WESMK_TREASURER_PIN=...` (bukan `123456`), `WESMK_WA_WEBHOOK_URL=...`
    (wajib bila menerima pembayaran VA; kosong = callback 503).
 4. `WESMK_SECURE_COOKIE` biarkan default (`true` di production).
