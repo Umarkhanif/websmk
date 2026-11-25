@@ -247,6 +247,11 @@ func (s *Server) handleUIAsset(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "image/jpeg")
 			break
 		}
+		if strings.HasPrefix(name, "fonts/") && filepath.Ext(name) == ".woff2" {
+			w.Header().Set("Content-Type", "font/woff2")
+			w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+			break
+		}
 		http.NotFound(w, r)
 		return
 	}
@@ -255,7 +260,7 @@ func (s *Server) handleUIAsset(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	if name != "app.js" && name != "app.css" && name != "manifest.webmanifest" {
+	if name != "app.js" && name != "app.css" && name != "manifest.webmanifest" && !strings.HasPrefix(name, "fonts/") {
 		w.Header().Set("Cache-Control", "public, max-age=3600")
 	}
 	w.WriteHeader(http.StatusOK)

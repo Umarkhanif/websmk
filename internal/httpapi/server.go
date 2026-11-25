@@ -157,8 +157,8 @@ func (s *Server) handleAPINotFound(w http.ResponseWriter, _ *http.Request) {
 // data-confirm and are wired in app.js instead.
 const contentSecurityPolicy = "default-src 'self'; " +
 	"script-src 'self' 'unsafe-eval'; " +
-	"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-	"font-src 'self' https://fonts.gstatic.com; " +
+	"style-src 'self' 'unsafe-inline'; " +
+	"font-src 'self'; " +
 	"img-src 'self' data: blob: https://images.unsplash.com https://r2.wesmk.sch.id; " +
 	"media-src 'self' blob: https://r2.wesmk.sch.id; " +
 	"connect-src 'self'; " +

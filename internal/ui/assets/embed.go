@@ -6,5 +6,5 @@ import "embed"
 // login photography) directly into the Go binary so deployments need no external
 // static folder.
 //
-//go:embed app.css app.js favicon.svg manifest.webmanifest icon-*.png apple-touch-icon.png vendor/* images/*.jpg
+//go:embed app.css app.js favicon.svg manifest.webmanifest icon-*.png apple-touch-icon.png vendor/* images/*.jpg fonts/*.woff2
 var Files embed.FS

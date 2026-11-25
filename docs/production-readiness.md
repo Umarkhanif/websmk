@@ -66,7 +66,7 @@ tangan surat, unggahan dokumen, dan seluruh data sekolah masih satu dokumen JSON
 - Banner peringatan muncul saat muat/simpan state gagal, tetapi belum ada retry otomatis atau antrean offline.
 - Tidak ada routing URL/deep link; refresh kembali ke tab default.
 - Aset UI (HTMX, Alpine, `app.js`, `app.css`) di-embed ke binary; tidak ada build step Node.
-- Font Google dan avatar Unsplash masih eksternal; pertimbangkan self-host untuk privasi/uptime.
+- Font kini di-self-host (`internal/ui/assets/fonts`, di-embed ke binary); tidak ada permintaan ke Google Fonts dan CSP `font-src` sudah `'self'`. Avatar Unsplash masih eksternal.
 - Unit test + integration Postgres sudah berjalan di CI; E2E browser masih manual dan belum menjadi gate CI.
 - Matriks blueprint lama (`docs/arsip/requirements-traceability.md`) menandai banyak alur "READY"; itu berarti alur UI demo berjalan, bukan verifikasi produksi.
 - Tugas siswa sudah memakai unggahan berkas nyata (PDF/JPG/PNG, maks 10 MB), pembuatan tugas per kelas dengan tenggat, penolakan pengumpulan ganda/lintas kelas/lewat tenggat, dan penilaian guru. Belum ada object storage, versioning tugas, atau notifikasi tenggat.
