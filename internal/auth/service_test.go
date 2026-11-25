@@ -12,23 +12,20 @@ import (
 type fakeRepo struct {
 	byIdentifier map[string]*model.User
 	byID         map[string]*model.User
-	byRole       map[string]*model.User
+	recovery     map[string]bool
 }
 
 func newFakeRepo() *fakeRepo {
 	return &fakeRepo{
 		byIdentifier: map[string]*model.User{},
 		byID:         map[string]*model.User{},
-		byRole:       map[string]*model.User{},
+		recovery:     map[string]bool{},
 	}
 }
 
 func (r *fakeRepo) add(user *model.User) {
 	r.byIdentifier[user.Username] = user
 	r.byID[user.ID] = user
-	if _, exists := r.byRole[user.Role]; !exists {
-		r.byRole[user.Role] = user
-	}
 }
 
 func (r *fakeRepo) UserByIdentifier(_ context.Context, identifier string) (*model.User, error) {
@@ -48,12 +45,13 @@ func (r *fakeRepo) ParentByPhone(_ context.Context, normalized string) (*model.U
 	return nil, nil
 }
 
-func (r *fakeRepo) DemoUserByRole(_ context.Context, role string) (*model.User, error) {
-	user, ok := r.byRole[role]
-	if !ok || !user.IsDemo {
-		return nil, nil
+func (r *fakeRepo) ConsumeRecoveryCode(_ context.Context, userID, codeHash string) (bool, error) {
+	key := userID + ":" + codeHash
+	if !r.recovery[key] {
+		return false, nil
 	}
-	return user, nil
+	r.recovery[key] = false
+	return true, nil
 }
 
 type fakeCache struct {
@@ -62,6 +60,7 @@ type fakeCache struct {
 	userTokens map[string]string
 	failures   map[string]int
 	magic      map[string]string
+	mfa        map[string]string
 	counters   map[string]int
 }
 
@@ -71,6 +70,7 @@ func newFakeCache() *fakeCache {
 		userTokens: map[string]string{},
 		failures:   map[string]int{},
 		magic:      map[string]string{},
+		mfa:        map[string]string{},
 		counters:   map[string]int{},
 	}
 }
@@ -138,6 +138,26 @@ func (c *fakeCache) ConsumeMagicToken(_ context.Context, tokenHash string) (stri
 	return userID, nil
 }
 
+func (c *fakeCache) StoreMFAChallenge(_ context.Context, tokenHash, userID string, _ time.Duration) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.mfa[tokenHash] = userID
+	return nil
+}
+
+func (c *fakeCache) MFAChallengeUser(_ context.Context, tokenHash string) (string, error) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return c.mfa[tokenHash], nil
+}
+
+func (c *fakeCache) DeleteMFAChallenge(_ context.Context, tokenHash string) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	delete(c.mfa, tokenHash)
+	return nil
+}
+
 func (c *fakeCache) IncrementCounter(_ context.Context, key string, _ time.Duration) (int, error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
@@ -158,20 +178,17 @@ func newTestService(t *testing.T, options Options) (*Service, *fakeRepo, *fakeCa
 	repo := newFakeRepo()
 	repo.add(&model.User{
 		ID: "usr-student", Username: "0058471290", FullName: "Murid Uji", Role: "student",
-		PasswordHash: hash, IsDemo: true, PhoneWA: "081234567801",
+		PasswordHash: hash, IsActive: true, PhoneWA: "081234567801",
 	})
 	repo.add(&model.User{
 		ID: "usr-parent", Username: "081234567800", FullName: "Wali Uji", Role: "parent",
-		PasswordHash: hash, IsDemo: true, PhoneWA: "081234567800",
+		PasswordHash: hash, IsActive: true, PhoneWA: "081234567800",
 	})
 	repo.add(&model.User{
 		ID: "usr-headmaster", Username: "196805121994121001", FullName: "Kepsek Uji", Role: "headmaster",
-		PasswordHash: hash, IsDemo: true, PhoneWA: "081398765406",
+		PasswordHash: hash, IsActive: true, PhoneWA: "081398765406",
 	})
 
-	if options.DemoMode {
-		options.DemoPassword = testDemoPassword
-	}
 	if options.SessionTTL == 0 {
 		options.SessionTTL = time.Hour
 	}
@@ -194,7 +211,7 @@ func newTestService(t *testing.T, options Options) (*Service, *fakeRepo, *fakeCa
 }
 
 func TestLoginRejectsWrongPasswordAndAcceptsCorrectOne(t *testing.T) {
-	service, _, _ := newTestService(t, Options{DemoMode: true})
+	service, _, _ := newTestService(t, Options{})
 	ctx := context.Background()
 
 	_, err := service.Login(ctx, "0058471290", "salah", "10.0.0.1")
@@ -215,8 +232,19 @@ func TestLoginRejectsWrongPasswordAndAcceptsCorrectOne(t *testing.T) {
 	}
 }
 
+func TestInactiveAccountCannotLogin(t *testing.T) {
+	service, repo, _ := newTestService(t, Options{})
+	repo.byIdentifier["0058471290"].IsActive = false
+	ctx := context.Background()
+
+	_, err := service.Login(ctx, "0058471290", testDemoPassword, "10.0.0.9")
+	if !IsErrorCode(err, CodeInvalidCredentials) {
+		t.Fatalf("expected invalid credentials for inactive account, got %v", err)
+	}
+}
+
 func TestLoginIsRateLimited(t *testing.T) {
-	service, _, _ := newTestService(t, Options{DemoMode: true})
+	service, _, _ := newTestService(t, Options{})
 	ctx := context.Background()
 
 	for i := 0; i < 3; i++ {
@@ -238,7 +266,7 @@ func TestLoginIsRateLimited(t *testing.T) {
 }
 
 func TestSingleDeviceSession(t *testing.T) {
-	service, _, _ := newTestService(t, Options{DemoMode: true})
+	service, _, _ := newTestService(t, Options{})
 	ctx := context.Background()
 
 	first, err := service.Login(ctx, "0058471290", testDemoPassword, "10.0.0.4")
@@ -258,49 +286,8 @@ func TestSingleDeviceSession(t *testing.T) {
 	}
 }
 
-func TestDemoShortcutsDisabledOutsideDemoMode(t *testing.T) {
-	service, _, _ := newTestService(t, Options{DemoMode: false})
-	ctx := context.Background()
-
-	session, err := service.Login(ctx, "0058471290", testDemoPassword, "10.0.0.5")
-	if err != nil {
-		t.Fatalf("real login should work: %v", err)
-	}
-
-	if _, err := service.DemoLogin(ctx, "0058471290"); !IsErrorCode(err, CodeDemoDisabled) {
-		t.Fatalf("expected demo disabled, got %v", err)
-	}
-	if _, err := service.SwitchDemoRole(ctx, session.Token, "headmaster"); !IsErrorCode(err, CodeDemoDisabled) {
-		t.Fatalf("expected demo disabled, got %v", err)
-	}
-}
-
-func TestSwitchDemoRoleReplacesSession(t *testing.T) {
-	service, _, _ := newTestService(t, Options{DemoMode: true})
-	ctx := context.Background()
-
-	session, err := service.Login(ctx, "0058471290", testDemoPassword, "10.0.0.6")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	switched, err := service.SwitchDemoRole(ctx, session.Token, "headmaster")
-	if err != nil {
-		t.Fatalf("switch failed: %v", err)
-	}
-	if switched.User.Role != "headmaster" {
-		t.Fatalf("unexpected role %s", switched.User.Role)
-	}
-	if user, _ := service.UserForToken(ctx, session.Token); user != nil {
-		t.Fatal("old session should be revoked after role switch")
-	}
-	if user, _ := service.UserForToken(ctx, switched.Token); user == nil {
-		t.Fatal("new session should be valid")
-	}
-}
-
 func TestMagicLinkIsSingleUse(t *testing.T) {
-	service, _, _ := newTestService(t, Options{DemoMode: true})
+	service, _, _ := newTestService(t, Options{})
 	ctx := context.Background()
 
 	if token, issued, err := service.RequestMagicLink(ctx, "081200000000", "10.0.0.7"); err != nil || issued || token != "" {

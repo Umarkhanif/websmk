@@ -17,6 +17,12 @@ import (
 	"wesmk/internal/ai"
 	"wesmk/internal/auth"
 	"wesmk/internal/config"
+	"wesmk/internal/domain/attendance"
+	"wesmk/internal/domain/bkk"
+	"wesmk/internal/domain/exam"
+	"wesmk/internal/domain/finance"
+	"wesmk/internal/domain/identity"
+	"wesmk/internal/domain/pkl"
 	"wesmk/internal/model"
 	"wesmk/internal/store"
 )
@@ -36,7 +42,14 @@ type Server struct {
 	storeDB  *store.Postgres
 	cache    *store.Cache
 	aiClient *ai.Client
-	mux      *http.ServeMux
+	// Domain slices that read normalized tables instead of the blob.
+	studentProfiles *identity.Service
+	financeSvc      *finance.Service
+	attendanceSvc   *attendance.Service
+	examSvc         *exam.Service
+	pklSvc          *pkl.Service
+	bkkSvc          *bkk.Service
+	mux             *http.ServeMux
 }
 
 func New(
@@ -47,12 +60,18 @@ func New(
 	aiClient *ai.Client,
 ) *Server {
 	server := &Server{
-		cfg:      cfg,
-		authSvc:  authSvc,
-		storeDB:  storeDB,
-		cache:    cache,
-		aiClient: aiClient,
-		mux:      http.NewServeMux(),
+		cfg:             cfg,
+		authSvc:         authSvc,
+		storeDB:         storeDB,
+		cache:           cache,
+		aiClient:        aiClient,
+		studentProfiles: identity.NewService(storeDB),
+		financeSvc:      finance.NewService(storeDB),
+		attendanceSvc:   attendance.NewService(storeDB),
+		examSvc:         exam.NewService(storeDB),
+		pklSvc:          pkl.NewService(storeDB),
+		bkkSvc:          bkk.NewService(storeDB),
+		mux:             http.NewServeMux(),
 	}
 	server.routes()
 	return server
@@ -61,6 +80,7 @@ func New(
 func (s *Server) Handler() http.Handler {
 	var handler http.Handler = s.mux
 	handler = s.csrfGuard(handler)
+	handler = s.enforcePrivilegedMFA(handler)
 	handler = s.attachAuth(handler)
 	handler = s.mutationGuards(handler)
 	handler = s.securityHeaders(handler)
@@ -74,19 +94,17 @@ func (s *Server) routes() {
 
 	s.mux.HandleFunc("GET /api/auth/config", s.handleAuthConfig)
 	s.mux.HandleFunc("POST /api/auth/login", s.handleLogin)
+	s.mux.HandleFunc("POST /api/auth/mfa", s.handleMFA)
 	s.mux.HandleFunc("GET /api/auth/me", s.handleMe)
 	s.mux.HandleFunc("POST /api/auth/logout", s.handleLogout)
-	s.mux.HandleFunc("POST /api/auth/demo-login", s.handleDemoLogin)
-	s.mux.HandleFunc("POST /api/auth/demo-role", s.handleDemoRole)
 	s.mux.HandleFunc("POST /api/auth/magic-link", s.handleMagicLinkRequest)
-	s.mux.HandleFunc("GET /api/auth/magic/{token}", s.handleMagicLinkConsume)
+	s.mux.HandleFunc("POST /api/auth/magic/{token}", s.handleMagicLinkConsume)
 
 	s.mux.HandleFunc("POST /api/learning/quiz/submit", s.handleSubmitQuiz)
 	s.mux.HandleFunc("POST /api/learning/exam/submit", s.handleSubmitExam)
 	s.mux.HandleFunc("POST /api/learning/exam/start", s.handleStartExam)
 
 	s.mux.HandleFunc("POST /api/payments/intent", s.handleCreatePaymentIntent)
-	s.mux.HandleFunc("POST /api/payments/pay", s.handlePayInvoice)
 	s.mux.HandleFunc("POST /api/payments/callback", s.handlePaymentCallback)
 
 	s.mux.HandleFunc("GET /api/state", s.handleGetState)
@@ -116,23 +134,17 @@ func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
 		checks["redis"] = "down"
 	}
 
-	hasState := false
-	if databaseUp {
-		hasState, _ = s.storeDB.HasState(ctx)
-	}
-
 	status := http.StatusOK
 	state := "ok"
 	if !databaseUp || !redisUp {
 		status = http.StatusServiceUnavailable
 		state = "degraded"
 	}
+	// Keep the public probe minimal: model names and persistence details are
+	// useful reconnaissance for an unauthenticated caller.
 	writeJSON(w, status, map[string]any{
-		"status":             state,
-		"engine":             "WESMK Go Engine (Go + Postgres + Redis)",
-		"model":              s.cfg.GeminiModel,
-		"hasPersistentState": hasState,
-		"checks":             checks,
+		"status": state,
+		"checks": checks,
 	})
 }
 
@@ -140,8 +152,11 @@ func (s *Server) handleAPINotFound(w http.ResponseWriter, _ *http.Request) {
 	writeError(w, http.StatusNotFound, "Endpoint API tidak ditemukan.")
 }
 
+// Alpine evaluates x-data expressions with new Function, so it needs
+// 'unsafe-eval'. Inline event handlers stay blocked; destructive actions use
+// data-confirm and are wired in app.js instead.
 const contentSecurityPolicy = "default-src 'self'; " +
-	"script-src 'self'; " +
+	"script-src 'self' 'unsafe-eval'; " +
 	"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
 	"font-src 'self' https://fonts.gstatic.com; " +
 	"img-src 'self' data: blob: https://images.unsplash.com https://r2.wesmk.sch.id; " +
@@ -294,6 +309,47 @@ func (s *Server) attachAuth(next http.Handler) http.Handler {
 	})
 }
 
+// enforcePrivilegedMFA keeps an authenticated privileged account inside the
+// enrollment flow until TOTP is active. The session still exists so the user can
+// open /security, but every other portal and API route is blocked.
+func (s *Server) enforcePrivilegedMFA(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		authVal, ok := currentAuth(r)
+		if !ok || !auth.RequiresMFA(authVal.user) || authVal.user.TOTPEnabled {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		path := r.URL.Path
+		switch {
+		case path == "/favicon.ico", strings.HasPrefix(path, "/ui-assets/"), strings.HasPrefix(path, "/assets/"):
+			next.ServeHTTP(w, r)
+			return
+		case path == "/security", strings.HasPrefix(path, "/security/"):
+			next.ServeHTTP(w, r)
+			return
+		case path == "/logout", path == "/api/auth/logout", path == "/api/auth/me":
+			next.ServeHTTP(w, r)
+			return
+		case path == "/login", path == "/login/mfa", path == "/login/mfa/cancel", strings.HasPrefix(path, "/login/magic/"):
+			next.ServeHTTP(w, r)
+			return
+		case path == "/api/auth/login", path == "/api/auth/mfa", path == "/api/auth/magic-link", strings.HasPrefix(path, "/api/auth/magic/"):
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		if strings.HasPrefix(path, "/api/") {
+			writeJSON(w, http.StatusForbidden, map[string]any{
+				"error": "MFA wajib diaktifkan sebelum menggunakan API.",
+				"code":  "mfa_setup_required",
+			})
+			return
+		}
+		http.Redirect(w, r, "/security?required=1", http.StatusSeeOther)
+	})
+}
+
 func (s *Server) recoverPanic(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
@@ -326,8 +382,15 @@ func (s *Server) originAllowed(r *http.Request) bool {
 
 func (s *Server) clientIP(r *http.Request) string {
 	if s.cfg.TrustProxy {
+		// Only the last hop was appended by the trusted proxy directly in front
+		// of this app. Use it instead of the leftmost value so a client cannot
+		// choose its own rate-limit key.
 		if forwarded := r.Header.Get("X-Forwarded-For"); forwarded != "" {
-			return strings.TrimSpace(strings.Split(forwarded, ",")[0])
+			parts := strings.Split(forwarded, ",")
+			candidate := strings.TrimSpace(parts[len(parts)-1])
+			if net.ParseIP(candidate) != nil {
+				return candidate
+			}
 		}
 	}
 	host, _, err := net.SplitHostPort(r.RemoteAddr)
@@ -335,6 +398,23 @@ func (s *Server) clientIP(r *http.Request) string {
 		return r.RemoteAddr
 	}
 	return host
+}
+
+// rememberSession records where the token was created. Failure to store this
+// metadata only degrades the security page; it never blocks login.
+func (s *Server) rememberSession(r *http.Request, token, userID string) {
+	if s.cache == nil || token == "" {
+		return
+	}
+	info := model.SessionInfo{
+		UserID:    userID,
+		IP:        s.clientIP(r),
+		UserAgent: r.UserAgent(),
+		CreatedAt: time.Now(),
+	}
+	if err := s.cache.SetSessionInfo(r.Context(), token, info, s.authSvc.SessionTTL()); err != nil {
+		log.Printf("session info write failed: %v", err)
+	}
 }
 
 func (s *Server) setSessionCookie(w http.ResponseWriter, token string) {
@@ -419,8 +499,6 @@ func writeAuthError(w http.ResponseWriter, err error) {
 				"error":        authErr.Message,
 				"retryAfterMs": authErr.RetryAfter.Milliseconds(),
 			})
-		case auth.CodeDemoDisabled:
-			writeError(w, http.StatusNotFound, authErr.Message)
 		case auth.CodeUnauthenticated:
 			writeError(w, http.StatusUnauthorized, authErr.Message)
 		default:

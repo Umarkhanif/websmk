@@ -10,25 +10,39 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"wesmk/internal/model"
+	"wesmk/internal/secure"
 )
 
 // ErrNoState is returned when the school state has not been initialized yet.
 var ErrNoState = errors.New("app_state is empty")
 
 type Postgres struct {
-	pool *pgxpool.Pool
+	pool      *pgxpool.Pool
+	mfaCipher *secure.Cipher
 }
 
-func NewPostgres(pool *pgxpool.Pool) *Postgres {
-	return &Postgres{pool: pool}
+type Option func(*Postgres)
+
+// WithMFACipher enables encryption for TOTP secrets written by this store.
+func WithMFACipher(cipher *secure.Cipher) Option {
+	return func(p *Postgres) { p.mfaCipher = cipher }
+}
+
+func NewPostgres(pool *pgxpool.Pool, options ...Option) *Postgres {
+	p := &Postgres{pool: pool}
+	for _, option := range options {
+		option(p)
+	}
+	return p
 }
 
 func (p *Postgres) Ping(ctx context.Context) error { return p.pool.Ping(ctx) }
 
 const userColumns = `id, identifier, full_name, role, phone_wa, avatar_url,
-	COALESCE(student_profile_id, ''), attributes, password_hash, is_demo`
+	COALESCE(student_profile_id, ''), attributes, password_hash, is_active,
+	totp_secret, totp_enabled`
 
-func scanUser(row pgx.Row) (*model.User, error) {
+func (p *Postgres) scanUser(row pgx.Row) (*model.User, error) {
 	var user model.User
 	var attributes []byte
 
@@ -42,7 +56,9 @@ func scanUser(row pgx.Row) (*model.User, error) {
 		&user.StudentProfileID,
 		&attributes,
 		&user.PasswordHash,
-		&user.IsDemo,
+		&user.IsActive,
+		&user.TOTPSecret,
+		&user.TOTPEnabled,
 	)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil, nil
@@ -57,6 +73,18 @@ func scanUser(row pgx.Row) (*model.User, error) {
 			return nil, fmt.Errorf("decode user attributes: %w", err)
 		}
 	}
+	if user.TOTPSecret != "" {
+		if secure.IsEncrypted(user.TOTPSecret) && p.mfaCipher == nil {
+			return nil, errors.New("TOTP secret is encrypted but no MFA key is configured")
+		}
+		if p.mfaCipher != nil {
+			secret, err := p.mfaCipher.Decrypt(user.TOTPSecret)
+			if err != nil {
+				return nil, err
+			}
+			user.TOTPSecret = secret
+		}
+	}
 	return &user, nil
 }
 
@@ -69,8 +97,8 @@ func (p *Postgres) UpsertUser(ctx context.Context, user *model.User) error {
 
 	_, err = p.pool.Exec(ctx, `
 		INSERT INTO users
-			(id, identifier, full_name, role, phone_wa, avatar_url, student_profile_id, attributes, password_hash, is_demo)
-		VALUES ($1, $2, $3, $4, $5, $6, NULLIF($7, ''), $8::jsonb, $9, $10)
+			(id, identifier, full_name, role, phone_wa, avatar_url, student_profile_id, attributes, password_hash)
+		VALUES ($1, $2, $3, $4, $5, $6, NULLIF($7, ''), $8::jsonb, $9)
 		ON CONFLICT (identifier) DO UPDATE SET
 			full_name = EXCLUDED.full_name,
 			role = EXCLUDED.role,
@@ -79,35 +107,28 @@ func (p *Postgres) UpsertUser(ctx context.Context, user *model.User) error {
 			student_profile_id = EXCLUDED.student_profile_id,
 			attributes = EXCLUDED.attributes,
 			password_hash = EXCLUDED.password_hash,
-			is_demo = EXCLUDED.is_demo,
 			updated_at = now()
 	`,
 		user.ID, user.Username, user.FullName, user.Role, phone, user.AvatarURL,
-		user.StudentProfileID, string(attributes), user.PasswordHash, user.IsDemo,
+		user.StudentProfileID, string(attributes), user.PasswordHash,
 	)
 	return err
 }
 
 func (p *Postgres) UserByIdentifier(ctx context.Context, identifier string) (*model.User, error) {
 	row := p.pool.QueryRow(ctx, `SELECT `+userColumns+` FROM users WHERE identifier = $1`, identifier)
-	return scanUser(row)
+	return p.scanUser(row)
 }
 
 func (p *Postgres) UserByID(ctx context.Context, id string) (*model.User, error) {
 	row := p.pool.QueryRow(ctx, `SELECT `+userColumns+` FROM users WHERE id = $1`, id)
-	return scanUser(row)
+	return p.scanUser(row)
 }
 
 func (p *Postgres) ParentByPhone(ctx context.Context, normalizedPhone string) (*model.User, error) {
 	row := p.pool.QueryRow(ctx,
 		`SELECT `+userColumns+` FROM users WHERE role = 'parent' AND phone_wa = $1 LIMIT 1`, normalizedPhone)
-	return scanUser(row)
-}
-
-func (p *Postgres) DemoUserByRole(ctx context.Context, role string) (*model.User, error) {
-	row := p.pool.QueryRow(ctx,
-		`SELECT `+userColumns+` FROM users WHERE role = $1 AND is_demo = true ORDER BY id ASC LIMIT 1`, role)
-	return scanUser(row)
+	return p.scanUser(row)
 }
 
 func (p *Postgres) DeleteDemoUsers(ctx context.Context) error {
@@ -240,6 +261,13 @@ func (p *Postgres) PutDocumentBlob(ctx context.Context, mimeType string, data []
 		`INSERT INTO document_blobs (mime_type, size_bytes, data) VALUES ($1, $2, $3) RETURNING id::text`,
 		mimeType, len(data), data).Scan(&id)
 	return id, err
+}
+
+// DeleteDocumentBlob removes an orphaned upload when the document record could
+// not be created.
+func (p *Postgres) DeleteDocumentBlob(ctx context.Context, id string) error {
+	_, err := p.pool.Exec(ctx, `DELETE FROM document_blobs WHERE id = $1::uuid`, id)
+	return err
 }
 
 // DocumentBlob loads a stored file for an authorized reader.

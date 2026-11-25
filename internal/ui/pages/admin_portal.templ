@@ -15,12 +15,20 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 				<div class="stat-card-head">
 					<div>
 						<span class="eyebrow">Tata Usaha</span>
-						<h2>Master Data &amp; Verifikasi Dokumen</h2>
+						<h2>Master Data Sekolah</h2>
 					</div>
 					@components.InfoBubble("Pusat verifikasi berkas legalitas siswa dan basis data program keahlian.")
 				</div>
 
-				<div class="grid-4">
+				<nav class="section-tabs" aria-label="Bagian master data">
+					<a href="/admin/master-data?section=students" class={ sectionTabClass(data.Section, "students") }>Siswa</a>
+					<a href="/admin/master-data?section=classes" class={ sectionTabClass(data.Section, "classes") }>Kelas &amp; Jadwal</a>
+					<a href="/admin/master-data?section=accounts" class={ sectionTabClass(data.Section, "accounts") }>Akun &amp; Keamanan</a>
+					<a href="/admin/master-data?section=documents" class={ sectionTabClass(data.Section, "documents") }>Dokumen</a>
+				</nav>
+
+				if data.Section == "classes" {
+				<div class="grid-4 major-summary" aria-label="Ringkasan program keahlian">
 					for _, m := range data.Majors {
 						<article class="info-strip">
 							<span class="badge badge-teal">{ m.Code }</span>
@@ -31,6 +39,291 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 					}
 				</div>
 
+				<section class="card form-stack">
+					<div class="stat-card-head">
+						<div>
+							<span class="eyebrow">Kalender Akademik</span>
+							<h3>Tahun Ajaran &amp; Kelas</h3>
+						</div>
+						@components.InfoBubble("Hanya satu tahun ajaran yang aktif. Perubahan langsung tampil di sidebar semua peran.")
+					</div>
+					<div class="grid-2">
+						<div class="form-stack">
+							<h4>Tahun Ajaran</h4>
+							<div class="table-wrap">
+								<table class="data-table">
+									<thead><tr><th>Periode</th><th>Tanggal</th><th>Status</th><th>Aksi</th></tr></thead>
+									<tbody>
+										for _, y := range data.AcademicYears {
+											<tr>
+												<td><strong>{ y.Label }</strong> { y.Semester }</td>
+												<td class="mono">{ y.StartDate } – { y.EndDate }</td>
+												<td>
+													if y.Active {
+														<span class="badge badge-success">Aktif</span>
+													} else {
+														<span class="badge">Arsip</span>
+													}
+												</td>
+												<td>
+													if !y.Active {
+														<form method="post" action="/admin/master/academic-year/activate">
+															<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+															<input type="hidden" name="year_id" value={ y.ID }/>
+															<button type="submit" class="button button-secondary button-small">Aktifkan</button>
+														</form>
+													}
+												</td>
+											</tr>
+										}
+									</tbody>
+								</table>
+							</div>
+							<form method="post" action="/admin/master/academic-year" class="form-stack">
+								<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+								<div class="form-row">
+									<div class="field"><label class="field-label">Label</label><input class="input input-mono" name="label" placeholder="2027/2028" pattern="[0-9]{4}/[0-9]{4}" required/></div>
+									<div class="field"><label class="field-label">Semester</label><select class="input" name="semester"><option>Ganjil</option><option>Genap</option></select></div>
+								</div>
+								<div class="form-row">
+									<div class="field"><label class="field-label">Mulai</label><input class="input" type="date" name="start_date" required/></div>
+									<div class="field"><label class="field-label">Selesai</label><input class="input" type="date" name="end_date" required/></div>
+								</div>
+								<button type="submit" class="button button-secondary">Tambah Tahun Ajaran</button>
+							</form>
+						</div>
+						<div class="form-stack">
+							<h4>Kelas ({ strconv.Itoa(len(data.Classrooms)) })</h4>
+							<div class="table-wrap">
+								<table class="data-table">
+									<thead><tr><th>Kelas</th><th>Jurusan</th><th>Wali Kelas</th><th>Siswa</th></tr></thead>
+									<tbody>
+										for _, c := range data.Classrooms {
+											<tr><td><strong>{ c.Name }</strong></td><td>{ c.MajorCode }</td><td>{ c.HomeroomName }</td><td class="mono">{ strconv.Itoa(c.StudentCount) }</td></tr>
+											<tr class="edit-row">
+												<td colspan="4">
+													<details>
+														<summary>Ubah / hapus { c.Name }</summary>
+														<form method="post" action="/admin/master/classroom/update" class="form-stack edit-form">
+															<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+															<input type="hidden" name="class_id" value={ c.ID }/>
+															<div class="form-row">
+																<div class="field"><label class="field-label">Nama Kelas</label><input class="input" name="name" value={ c.Name } required/></div>
+																<div class="field"><label class="field-label">Tingkat</label><select class="input" name="grade_level">
+																	<option value="10" selected?={ c.GradeLevel == 10 }>10</option>
+																	<option value="11" selected?={ c.GradeLevel == 11 }>11</option>
+																	<option value="12" selected?={ c.GradeLevel == 12 }>12</option>
+																</select></div>
+															</div>
+															<div class="form-row">
+																<div class="field"><label class="field-label">Jurusan</label><select class="input" name="major_code">
+																	for _, m := range data.Majors {
+																		<option value={ m.Code } selected?={ c.MajorCode == m.Code }>{ m.Code } — { m.Name }</option>
+																	}
+																</select></div>
+																<div class="field"><label class="field-label">Wali Kelas</label><select class="input" name="homeroom_teacher_id"><option value="">Belum ditentukan</option>
+																	for _, a := range data.Accounts {
+																		if a.Role == "teacher" {
+																			<option value={ a.ID } selected?={ c.HomeroomID == a.ID }>{ a.FullName }</option>
+																		}
+																	}
+																</select></div>
+															</div>
+															<button type="submit" class="button button-primary button-small">Simpan Perubahan</button>
+														</form>
+														<form method="post" action="/admin/master/classroom/delete" data-confirm={ "Hapus kelas " + c.Name + "? Tindakan ini tidak bisa dibatalkan." }>
+															<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+															<input type="hidden" name="class_id" value={ c.ID }/>
+															<button type="submit" class="button button-danger button-small">Hapus Kelas</button>
+														</form>
+													</details>
+												</td>
+											</tr>
+										}
+									</tbody>
+								</table>
+							</div>
+							<form method="post" action="/admin/master/classroom" class="form-stack">
+								<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+								<div class="form-row">
+									<div class="field"><label class="field-label">Nama Kelas</label><input class="input" name="name" placeholder="X TKJ 2" required/></div>
+									<div class="field"><label class="field-label">Tingkat</label><select class="input" name="grade_level"><option>10</option><option>11</option><option>12</option></select></div>
+								</div>
+								<div class="form-row">
+									<div class="field"><label class="field-label">Jurusan</label><select class="input" name="major_code">
+										for _, m := range data.Majors {
+											<option value={ m.Code }>{ m.Code } — { m.Name }</option>
+										}
+									</select></div>
+									<div class="field"><label class="field-label">Wali Kelas</label><select class="input" name="homeroom_teacher_id"><option value="">Belum ditentukan</option>
+										for _, a := range data.Accounts {
+											if a.Role == "teacher" {
+												<option value={ a.ID }>{ a.FullName }</option>
+											}
+										}
+									</select></div>
+								</div>
+								<button type="submit" class="button button-secondary">Tambah Kelas</button>
+							</form>
+						</div>
+					</div>
+				</section>
+
+				<section class="card form-stack">
+					<div class="stat-card-head">
+						<div>
+							<span class="eyebrow">Akhir Tahun Ajaran</span>
+							<h3>Kenaikan Kelas &amp; Kelulusan</h3>
+						</div>
+						@components.InfoBubble("Operasi ini memindahkan siswa aktif, meluluskan tingkat 12, lalu mengaktifkan tahun ajaran tujuan dalam satu transaksi. Kelas tujuan harus sudah ada, sejurusan, dan tingkat di atasnya.")
+					</div>
+					if len(data.RolloverRows) == 0 {
+						<p class="muted">Belum ada siswa aktif di kelas mana pun. Tambahkan siswa ke kelas terlebih dahulu.</p>
+					} else {
+						<form method="post" action="/admin/master/rollover" class="form-stack" data-confirm="Proses kenaikan kelas sekarang? Siswa akan langsung dipindahkan dan tahun ajaran tujuan diaktifkan.">
+							<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+							<div class="field">
+								<label class="field-label">Tahun Ajaran Tujuan</label>
+								<select class="input" name="target_year_id" required>
+									<option value="">Pilih tahun ajaran berikutnya</option>
+									for _, y := range data.RolloverYears {
+										<option value={ y.ID }>{ y.Label } — { y.Semester }</option>
+									}
+								</select>
+								<span class="field-hint">Tambahkan tahun ajaran berikutnya di panel Tahun Ajaran bila belum ada.</span>
+							</div>
+							<div class="table-wrap">
+								<table class="data-table rollover-table">
+									<thead><tr><th>Kelas Asal</th><th>Siswa Aktif</th><th>Tindakan</th></tr></thead>
+									<tbody>
+										for _, row := range data.RolloverRows {
+											<tr>
+												<td data-label="Kelas asal"><strong>{ row.ClassName }</strong><div class="muted">Tingkat { strconv.Itoa(row.GradeLevel) } · { row.MajorCode }</div></td>
+												<td class="mono" data-label="Siswa aktif">{ strconv.Itoa(row.StudentCount) }</td>
+												<td data-label="Tindakan">
+													if row.Graduate {
+														<select class="input" name={ "target_" + row.ClassID }>
+															<option value="">Tetap di tingkat 12</option>
+															<option value="graduate" selected>Luluskan</option>
+														</select>
+													} else if len(row.Targets) == 0 {
+														<span class="muted">Belum ada kelas tingkat { strconv.Itoa(row.GradeLevel + 1) } jurusan { row.MajorCode }.</span>
+													} else {
+														<select class="input" name={ "target_" + row.ClassID }>
+															<option value="">Tetap di kelas</option>
+															for _, target := range row.Targets {
+																<option value={ target.ID } selected?={ target.ID == row.SuggestedTargetID }>{ target.Name }</option>
+															}
+														</select>
+													}
+												</td>
+											</tr>
+										}
+									</tbody>
+								</table>
+							</div>
+							if !data.RolloverReady {
+								<span class="field-hint">Lengkapi tahun ajaran tujuan dan kelas tujuan terlebih dahulu. Tombol aktif setelah minimal satu kelas bisa diproses.</span>
+								<button type="submit" class="button button-primary" disabled>Proses Kenaikan Kelas</button>
+							} else {
+								<button type="submit" class="button button-primary">Proses Kenaikan Kelas</button>
+							}
+						</form>
+					}
+				</section>
+
+				<section class="card form-stack">
+					<div class="stat-card-head">
+						<div>
+							<span class="eyebrow">Jadwal Pelajaran</span>
+							<h3>Jadwal per Kelas ({ strconv.Itoa(len(data.Schedules)) })</h3>
+						</div>
+						@components.InfoBubble("Jadwal ini dipakai guru dan piket. Tambahkan slot per kelas agar agenda harian tidak kosong.")
+					</div>
+					<div class="table-wrap table-scroll-hint">
+						<table class="data-table">
+							<thead><tr><th>Hari</th><th>Jam</th><th>Kelas</th><th>Mapel</th><th>Guru</th><th>Ruang</th></tr></thead>
+							<tbody>
+								for _, s := range data.Schedules {
+									<tr><td>{ s.DayName }</td><td class="mono">{ s.StartTime }–{ s.EndTime }</td><td>{ s.ClassName }</td><td>{ s.SubjectID }</td><td>{ s.TeacherName }</td><td>{ s.RoomName }</td></tr>
+									<tr class="edit-row">
+										<td colspan="6">
+											<details>
+												<summary>Ubah / hapus { s.ClassName } · { s.SubjectID } · { s.DayName } { s.StartTime }</summary>
+												<form method="post" action="/admin/master/schedule/update" class="form-stack edit-form">
+													<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+													<input type="hidden" name="schedule_id" value={ s.ID }/>
+													<div class="form-row">
+														<div class="field"><label class="field-label">Kelas</label><select class="input" name="classroom_id" required>
+															for _, c := range data.Classrooms {
+																<option value={ c.ID } selected?={ c.ID == s.ClassroomID }>{ c.Name }</option>
+															}
+														</select></div>
+														<div class="field"><label class="field-label">Mata Pelajaran</label><input class="input" name="subject_id" value={ s.SubjectID } required/></div>
+														<div class="field"><label class="field-label">Guru</label><select class="input" name="teacher_id"><option value="">Belum ditentukan</option>
+															for _, a := range data.Accounts {
+																if a.Role == "teacher" {
+																	<option value={ a.ID } selected?={ a.ID == s.TeacherID }>{ a.FullName }</option>
+																}
+															}
+														</select></div>
+													</div>
+													<div class="form-row">
+														<div class="field"><label class="field-label">Hari</label><select class="input" name="day_of_week">
+															<option value="1" selected?={ s.DayName == "Senin" }>Senin</option>
+															<option value="2" selected?={ s.DayName == "Selasa" }>Selasa</option>
+															<option value="3" selected?={ s.DayName == "Rabu" }>Rabu</option>
+															<option value="4" selected?={ s.DayName == "Kamis" }>Kamis</option>
+															<option value="5" selected?={ s.DayName == "Jumat" }>Jumat</option>
+															<option value="6" selected?={ s.DayName == "Sabtu" }>Sabtu</option>
+														</select></div>
+														<div class="field"><label class="field-label">Mulai</label><input class="input" type="time" name="start_time" value={ s.StartTime } required/></div>
+														<div class="field"><label class="field-label">Selesai</label><input class="input" type="time" name="end_time" value={ s.EndTime } required/></div>
+														<div class="field"><label class="field-label">Ruang</label><input class="input" name="room_name" value={ s.RoomName }/></div>
+													</div>
+													<button type="submit" class="button button-primary button-small">Simpan Perubahan</button>
+												</form>
+												<form method="post" action="/admin/master/schedule/delete" data-confirm={ "Hapus jadwal " + s.SubjectID + " " + s.ClassName + "?" }>
+													<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+													<input type="hidden" name="schedule_id" value={ s.ID }/>
+													<button type="submit" class="button button-danger button-small">Hapus Jadwal</button>
+												</form>
+											</details>
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+					<form method="post" action="/admin/master/schedule" class="form-stack">
+						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+						<div class="form-row">
+							<div class="field"><label class="field-label">Kelas</label><select class="input" name="classroom_id" required>
+								for _, c := range data.Classrooms {
+									<option value={ c.ID }>{ c.Name }</option>
+								}
+							</select></div>
+							<div class="field"><label class="field-label">Mata Pelajaran</label><input class="input" name="subject_id" placeholder="Matematika" required/></div>
+							<div class="field"><label class="field-label">Guru</label><select class="input" name="teacher_id"><option value="">Belum ditentukan</option>
+								for _, a := range data.Accounts {
+									if a.Role == "teacher" {
+										<option value={ a.ID }>{ a.FullName }</option>
+									}
+								}
+							</select></div>
+						</div>
+						<div class="form-row">
+							<div class="field"><label class="field-label">Hari</label><select class="input" name="day_of_week"><option value="1">Senin</option><option value="2">Selasa</option><option value="3">Rabu</option><option value="4">Kamis</option><option value="5">Jumat</option><option value="6">Sabtu</option></select></div>
+							<div class="field"><label class="field-label">Mulai</label><input class="input" type="time" name="start_time" required/></div>
+							<div class="field"><label class="field-label">Selesai</label><input class="input" type="time" name="end_time" required/></div>
+							<div class="field"><label class="field-label">Ruang</label><input class="input" name="room_name" placeholder="Lab TKJ 1"/></div>
+						</div>
+						<button type="submit" class="button button-secondary">Tambah Jadwal</button>
+					</form>
+				</section>
+				}
+
+				if data.Section == "documents" {
 				<h3>Verifikasi Dokumen Siswa ({ strconv.Itoa(len(data.Documents)) })</h3>
 				<div class="table-wrap">
 					<table class="data-table">
@@ -61,19 +354,20 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 									</td>
 								</tr>
 							}
-						</tbody>
-					</table>
-				</div>
-			</section>
+						</tbody>						</table>
+					</div>
+					}
+				</section>
 
-			<div class="grid-2">
+					if data.Section == "students" {
+				<div class="form-stack">
 				<section class="card form-stack">
 					<div class="stat-card-head">
 						<div>
 							<span class="eyebrow">Pendaftaran Siswa</span>
 							<h3>Tambah Data Siswa Baru</h3>
 						</div>
-						@components.InfoBubble("Menambahkan siswa ke buku induk sekaligus menerbitkan nomor Virtual Account SPP.")
+						@components.InfoBubble("Membuat profil siswa, akun login siswa, akun wali, dan tagihan SPP awal dalam satu alur.")
 					</div>
 					<form method="post" action="/admin/student/add" class="form-stack">
 						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
@@ -94,28 +388,105 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 							<div class="field">
 								<div class="field-head">
 									<label class="field-label">Rombongan Belajar</label>
+									@components.InfoBubble("Kelas diambil dari master data; tambahkan kelas dulu bila belum ada.")
 								</div>
-								<input class="input" type="text" name="classroom_name" value="XII TKJ 1" required/>
+								if len(data.Classrooms) > 0 {
+									<select class="input" name="classroom_id" required>
+										<option value="">Pilih kelas...</option>
+										for _, c := range data.Classrooms {
+											<option value={ c.ID }>{ c.Name } — { c.MajorCode }</option>
+										}
+									</select>
+								} else {
+									<input class="input" type="text" value="Belum ada kelas. Buat kelas di tab Kelas &amp; Jadwal." readonly/>
+								}
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="field">
+								<div class="field-head">
+									<label class="field-label">Nama Wali</label>
+								</div>
+								<input class="input" type="text" name="parent_name" placeholder="Nama orang tua / wali..." required/>
 							</div>
 							<div class="field">
 								<div class="field-head">
-									<label class="field-label">Jurusan</label>
-									@components.InfoBubble("Konsentrasi keahlian: TKJ, RPL, TKR, atau AKL.")
+									<label class="field-label">WhatsApp Wali</label>
+									@components.InfoBubble("Wali masuk lewat tautan sekali pakai; nomor ini harus aktif.")
 								</div>
-								<select class="input" name="major_code">
-									<option value="TKJ">TKJ</option>
-									<option value="RPL">RPL</option>
-									<option value="TKR">TKR</option>
-									<option value="AKL">AKL</option>
-								</select>
+								<input class="input input-mono" type="tel" name="parent_phone" placeholder="081234567890" required/>
+							</div>
+							<div class="field">
+								<div class="field-head">
+									<label class="field-label">Kata Sandi Awal Siswa</label>
+									@components.InfoBubble("Minimal 8 karakter; sampaikan secara pribadi dan minta siswa menggantinya.")
+								</div>
+								<input class="input" type="password" name="student_password" minlength="8" autocomplete="new-password" required/>
 							</div>
 						</div>
-						<button type="submit" class="button button-primary">Simpan Data Siswa</button>
+						if len(data.Classrooms) == 0 {
+							<button type="button" class="button button-primary" disabled>Simpan Siswa &amp; Buat Akun</button>
+						} else {
+							<button type="submit" class="button button-primary">Simpan Siswa &amp; Buat Akun</button>
+						}
 					</form>
 				</section>
 
 				<section class="card form-stack">
-					<span class="eyebrow">Data Guru &amp; Staf</span>
+					<div class="stat-card-head">
+						<div>
+							<span class="eyebrow">Direktori Siswa</span>
+							<h3>{ strconv.Itoa(data.StudentTotal) } siswa terdaftar</h3>
+						</div>
+						<form method="get" action="/admin/master-data" class="leader-actions">
+							<input type="hidden" name="section" value="students"/>
+							<input class="input" type="search" name="q" value={ data.Query } placeholder="Cari nama, NISN, atau kelas..."/>
+							<button type="submit" class="button button-secondary button-small">Cari</button>
+						</form>
+					</div>
+					<div class="table-wrap">
+						<table class="data-table">
+							<thead><tr><th>Nama</th><th>NISN</th><th>Kelas</th><th>Jurusan</th><th>Wali</th><th>Status</th></tr></thead>
+							<tbody>
+								if len(data.StudentRows) == 0 {
+									<tr><td colspan="6" class="muted">Tidak ada siswa yang cocok.</td></tr>
+								}
+								for _, s := range data.StudentRows {
+									<tr>
+										<td><strong>{ s.FullName }</strong></td>
+										<td class="mono">{ s.NISN }</td>
+										<td>{ s.ClassroomName }</td>
+										<td>{ s.MajorCode }</td>
+										<td>{ s.ParentName }<br/><span class="muted mono">{ s.ParentPhone }</span></td>
+										<td>
+											if s.IsAlumni {
+												<span class="badge">Alumni</span>
+											} else {
+												<span class="badge badge-success">Aktif</span>
+											}
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+					if data.PageCount > 1 {
+						<nav class="pagination" aria-label="Halaman siswa">
+							if data.Page > 1 {
+								<a class="button button-secondary button-small" href={ studentPageURL(data.Query, data.Page-1) }>Sebelumnya</a>
+							}
+							<span class="muted">Halaman { strconv.Itoa(data.Page) } dari { strconv.Itoa(data.PageCount) }</span>
+							if data.Page < data.PageCount {
+								<a class="button button-secondary button-small" href={ studentPageURL(data.Query, data.Page+1) }>Berikutnya</a>
+							}
+						</nav>
+					}
+				</section>
+				</div>
+				}					if data.Section == "accounts" {
+					<p class="muted">Kelola direktori pendidik, kata sandi, status akun, sesi, dan MFA.</p>
+					<section class="card form-stack">
+						<span class="eyebrow">Data Guru &amp; Staf</span>
 					<h3>Direktori Pendidik ({ strconv.Itoa(len(data.Teachers)) })</h3>
 					<div class="table-wrap">
 						<table class="data-table">
@@ -140,7 +511,130 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 						</table>
 					</div>
 				</section>
-			</div>
+
+			<section class="card form-stack">
+				<div class="stat-card-head">
+					<div>
+						<span class="eyebrow">Keamanan Akun</span>
+						<h3>Akun, Kata Sandi &amp; Sesi ({ strconv.Itoa(len(data.Accounts)) })</h3>
+					</div>
+					@components.InfoBubble("Reset kata sandi dan nonaktifkan akun tanpa menghapus riwayat. Setiap tindakan masuk audit log.")
+				</div>
+				<div class="table-wrap">
+					<table class="data-table">
+						<thead>
+							<tr>
+								<th>Nama</th>
+								<th>Identitas</th>
+								<th>Peran</th>
+								<th>Status</th>
+								<th>MFA</th>
+								<th>Reset Kata Sandi</th>
+								<th>Aksi</th>
+							</tr>
+						</thead>
+						<tbody>
+							for _, a := range data.Accounts {
+								<tr>
+									<td>
+										<strong>{ a.FullName }</strong>
+									</td>
+									<td class="mono">{ a.Identifier }</td>
+									<td>{ a.RoleLabel }</td>
+									<td>
+										if a.Active {
+											<span class="badge badge-success">Aktif</span>
+										} else {
+											<span class="badge badge-danger">Nonaktif</span>
+										}
+									</td>
+									<td>
+										if a.TOTPEnabled {
+											<span class="badge badge-success">TOTP</span>
+										} else {
+											<span class="badge">Off</span>
+										}
+									</td>
+									<td>
+										<form method="post" action="/admin/account/password" class="leader-actions" data-confirm="Reset kata sandi akun ini? Semua sesi aktifnya akan dicabut.">
+											<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+											<input type="hidden" name="user_id" value={ a.ID }/>
+											<input class="input" type="password" name="password" placeholder="Min. 8 karakter" minlength="8" required/>
+											<button type="submit" class="button button-secondary button-small">Reset</button>
+										</form>
+									</td>
+									<td>
+										<div class="leader-actions">
+											<form method="post" action="/admin/account/status">
+												<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+												<input type="hidden" name="user_id" value={ a.ID }/>
+												if a.Active {
+													<input type="hidden" name="active" value="false"/>
+													if a.IsSelf {
+														<button type="button" class="button button-secondary button-small" disabled>Akun Sendiri</button>
+													} else {
+														<button type="submit" class="button button-danger button-small" data-confirm="Nonaktifkan akun ini? Pengguna tidak akan bisa login sampai diaktifkan kembali.">Nonaktifkan</button>
+													}
+												} else {
+													<input type="hidden" name="active" value="true"/>
+													<button type="submit" class="button button-primary button-small">Aktifkan</button>
+												}
+											</form>
+											<form method="post" action="/admin/account/revoke" data-confirm="Cabut semua sesi akun ini? Pengguna harus login ulang.">
+												<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+												<input type="hidden" name="user_id" value={ a.ID }/>
+												<button type="submit" class="button button-secondary button-small">Cabut Sesi</button>
+											</form>
+											if a.TOTPEnabled && !a.IsSelf {
+												<form method="post" action="/admin/account/mfa-reset" data-confirm="Reset MFA akun ini? Semua sesinya dicabut dan pengguna harus mendaftarkan perangkat baru.">
+													<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+													<input type="hidden" name="user_id" value={ a.ID }/>
+													<button type="submit" class="button button-danger button-small">Reset MFA</button>
+												</form>
+											}
+										</div>
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+
+				<form method="post" action="/admin/account/create" class="form-stack">
+					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+					<h4>Buat Akun Staf Baru</h4>
+					<div class="form-row">
+						<label class="field">
+							<span class="field-label">Nama Lengkap</span>
+							<input class="input" type="text" name="full_name" required/>
+						</label>
+						<label class="field">
+							<span class="field-label">NIP / Identitas Login</span>
+							<input class="input input-mono" type="text" name="identifier" required/>
+						</label>
+						<label class="field">
+							<span class="field-label">Peran</span>
+							<select class="input" name="role">
+								<option value="teacher">Guru</option>
+								<option value="admin_tu">Admin TU</option>
+								<option value="treasurer">Bendahara</option>
+								<option value="discipline">Kesiswaan / BK</option>
+								<option value="piket">Guru Piket</option>
+							</select>
+						</label>
+						<label class="field">
+							<span class="field-label">WhatsApp</span>
+							<input class="input" type="tel" name="phone_wa" placeholder="08..."/>
+						</label>
+						<label class="field">
+							<span class="field-label">Kata Sandi Awal</span>
+							<input class="input" type="password" name="password" minlength="8" required/>
+						</label>
+					</div>
+					<button type="submit" class="button button-primary">Buat Akun</button>
+				</form>
+			</section>
+				}
 		} else if data.Tab == "dapodik-erapor" {
 			<section class="card form-stack">
 				<div class="stat-card-head">
@@ -303,7 +797,7 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 									<label class="field-label">PIN Supervisor</label>
 									@components.InfoBubble("PIN 6-digit untuk verifikasi jurnal harian siswa tanpa membuat akun.")
 								</div>
-								<input class="input input-mono" type="text" name="pin" value="778899" placeholder="PIN 6 Digit" required/>
+								<input class="input input-mono" type="text" inputmode="numeric" name="pin" placeholder="PIN 6 Digit" required/>
 							</div>
 						</div>
 						<button type="submit" class="button button-primary">Simpan Mitra PKL</button>
@@ -325,7 +819,7 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 										<td><strong>{ p.CompanyName }</strong><br/><span class="muted">{ p.Address }</span></td>
 										<td>{ p.IndustrySector }</td>
 										<td class="mono">{ strconv.Itoa(p.RadiusMeters) }m</td>
-										<td class="mono">{ p.SupervisorPin }</td>
+										<td class="mono">••••••</td>
 									</tr>
 								}
 							</tbody>

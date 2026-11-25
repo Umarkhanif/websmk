@@ -26,8 +26,14 @@ func TestProductionRequiresExplicitDatastores(t *testing.T) {
 	}
 
 	t.Setenv("WESMK_TREASURER_PIN", "482913")
+	t.Setenv("WESMK_MFA_KEY", "")
+	if err := Load().Validate(); err == nil {
+		t.Fatal("production without WESMK_MFA_KEY must fail validation")
+	}
+
+	t.Setenv("WESMK_MFA_KEY", "kunci-enkripsi-mfa-produksi-32-karakter")
 	if err := Load().Validate(); err != nil {
-		t.Fatalf("production with explicit datastores, receipt secret, and PIN: %v", err)
+		t.Fatalf("production with explicit datastores, receipt secret, MFA key, and PIN: %v", err)
 	}
 }
 
@@ -43,22 +49,76 @@ func TestProductionDefaultsToSecureCookie(t *testing.T) {
 	if !cfg.SecureCookie {
 		t.Fatal("production cookies must be Secure even without an https APP_URL")
 	}
-	if cfg.DemoMode {
-		t.Fatal("demo mode must default off in production")
+}
+
+func TestTrustProxyOffUnlessExplicitlyEnabled(t *testing.T) {
+	t.Setenv("WESMK_ENV", "production")
+	t.Setenv("WESMK_TRUST_PROXY", "")
+	if Load().TrustProxy {
+		t.Fatal("production must not trust X-Forwarded-For by default")
+	}
+
+	t.Setenv("WESMK_TRUST_PROXY", "true")
+	if !Load().TrustProxy {
+		t.Fatal("WESMK_TRUST_PROXY=true should enable proxy trust")
+	}
+}
+
+func TestDomainStudentProfileDefaultsOn(t *testing.T) {
+	t.Setenv("WESMK_DOMAIN_STUDENT_PROFILE", "")
+	if !Load().DomainStudentProfile {
+		t.Fatal("domain student profile should be on by default")
+	}
+
+	t.Setenv("WESMK_DOMAIN_STUDENT_PROFILE", "false")
+	if Load().DomainStudentProfile {
+		t.Fatal("WESMK_DOMAIN_STUDENT_PROFILE=false must disable the table read")
+	}
+}
+
+func TestDomainFinanceDefaultsOn(t *testing.T) {
+	t.Setenv("WESMK_DOMAIN_FINANCE", "")
+	if !Load().DomainFinance {
+		t.Fatal("domain finance should be on by default")
+	}
+
+	t.Setenv("WESMK_DOMAIN_FINANCE", "false")
+	if Load().DomainFinance {
+		t.Fatal("WESMK_DOMAIN_FINANCE=false must disable the table read")
+	}
+}
+
+func TestDomainAttendanceDefaultsOn(t *testing.T) {
+	t.Setenv("WESMK_DOMAIN_ATTENDANCE", "")
+	if !Load().DomainAttendance {
+		t.Fatal("domain attendance should be on by default")
+	}
+
+	t.Setenv("WESMK_DOMAIN_ATTENDANCE", "false")
+	if Load().DomainAttendance {
+		t.Fatal("WESMK_DOMAIN_ATTENDANCE=false must disable the table read")
+	}
+}
+
+func TestDomainExamDefaultsOn(t *testing.T) {
+	t.Setenv("WESMK_DOMAIN_EXAM", "")
+	if !Load().DomainExam {
+		t.Fatal("domain exam should be on by default")
+	}
+
+	t.Setenv("WESMK_DOMAIN_EXAM", "false")
+	if Load().DomainExam {
+		t.Fatal("WESMK_DOMAIN_EXAM=false must disable the table read")
 	}
 }
 
 func TestDevelopmentDefaults(t *testing.T) {
 	t.Setenv("WESMK_ENV", "development")
 	t.Setenv("WESMK_SECURE_COOKIE", "")
-	t.Setenv("WESMK_DEMO_MODE", "")
 	t.Setenv("APP_URL", "")
 
 	cfg := Load()
 	if cfg.SecureCookie {
 		t.Fatal("development should not force Secure cookies")
-	}
-	if !cfg.DemoMode {
-		t.Fatal("demo mode should default on outside production")
 	}
 }

@@ -22,13 +22,17 @@ const paymentState = `{
 
 const testSecret = "unit-test-receipt-secret"
 
-func TestPayInvoiceSettlesOnceWithServerReceipt(t *testing.T) {
+func TestSettlePaymentIntentIssuesServerReceipt(t *testing.T) {
 	doc := mustDoc(t, paymentState)
 	now := time.Date(2026, 10, 25, 10, 0, 0, 0, time.UTC)
 
-	result, err := PayInvoice(doc, "std-1", "inv-1", testSecret, now)
+	intent, err := CreatePaymentIntent(doc, "std-1", "inv-1", now)
 	if err != nil {
-		t.Fatalf("pay invoice: %v", err)
+		t.Fatalf("create intent: %v", err)
+	}
+	result, err := SettlePaymentIntent(doc, intent.IntentID, "ref-1", testSecret, now)
+	if err != nil {
+		t.Fatalf("settle intent: %v", err)
 	}
 	if result.Amount != 250000 || result.Status != "PAID" {
 		t.Fatalf("result = %+v, want 250000 PAID", result)
@@ -58,7 +62,7 @@ func TestPayInvoiceSettlesOnceWithServerReceipt(t *testing.T) {
 		t.Fatalf("ledger signature = %q, want %q", got, expected)
 	}
 
-	replay, err := PayInvoice(doc, "std-1", "inv-1", testSecret, now.Add(time.Minute))
+	replay, err := SettlePaymentIntent(doc, intent.IntentID, "ref-1", testSecret, now.Add(time.Minute))
 	if err != nil {
 		t.Fatalf("replay payment: %v", err)
 	}
@@ -73,13 +77,13 @@ func TestPayInvoiceSettlesOnceWithServerReceipt(t *testing.T) {
 func TestPaymentIsScopedToTheOwner(t *testing.T) {
 	doc := mustDoc(t, paymentState)
 
-	if _, err := PayInvoice(doc, "std-1", "inv-2", testSecret, time.Now()); !errors.Is(err, ErrNotFound) {
+	if _, err := CreatePaymentIntent(doc, "std-1", "inv-2", time.Now()); !errors.Is(err, ErrNotFound) {
 		t.Fatalf("foreign invoice error = %v, want ErrNotFound", err)
 	}
 	if _, err := CreatePaymentIntent(doc, "std-2", "inv-1", time.Now()); !errors.Is(err, ErrNotFound) {
 		t.Fatalf("foreign intent error = %v, want ErrNotFound", err)
 	}
-	if _, err := PayInvoice(doc, "std-ghost", "inv-1", testSecret, time.Now()); !errors.Is(err, ErrNotFound) {
+	if _, err := CreatePaymentIntent(doc, "std-ghost", "inv-1", time.Now()); !errors.Is(err, ErrNotFound) {
 		t.Fatalf("unknown student error = %v, want ErrNotFound", err)
 	}
 }

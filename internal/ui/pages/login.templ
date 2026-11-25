@@ -10,17 +10,21 @@ templ Login(page ui.LoginPage) {
 	<html lang="id">
 		<head>
 			<meta charset="UTF-8"/>
-			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 			<meta name="color-scheme" content="light"/>
-			<meta name="theme-color" content="#0B1730"/>
+			<meta name="theme-color" content="#172E26"/>
 			<title>Masuk — SMK Negeri 1 Rekayasa</title>
 			<meta name="description" content="Masuk ke portal layanan SMK Negeri 1 Rekayasa."/>
 			<link rel="icon" type="image/svg+xml" href="/ui-assets/favicon.svg"/>
+			<link rel="manifest" href="/ui-assets/manifest.webmanifest"/>
+			<link rel="apple-touch-icon" href="/ui-assets/apple-touch-icon.png"/>
+			<meta name="apple-mobile-web-app-capable" content="yes"/>
+			<meta name="apple-mobile-web-app-title" content="WESMK"/>
 			<link rel="preconnect" href="https://fonts.googleapis.com"/>
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 			<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-			<link rel="stylesheet" href="/ui-assets/app.css?v=20261030c"/>
-			<script src="/ui-assets/app.js?v=20261030a" defer></script>
+			<link rel="stylesheet" href="/ui-assets/app.css?v=20261124p"/>
+			<script src="/ui-assets/app.js?v=20261124p" defer></script>
 		</head>
 		<body class="login-body">
 			<main class="login-shell">
@@ -51,6 +55,17 @@ templ Login(page ui.LoginPage) {
 							</div>
 							<span class="login-visual-meta">Portal WESMK</span>
 						</div>
+					</div>
+
+					<div class="login-photo-stack" aria-hidden="true">
+						<figure class="login-photo">
+							<img src="/ui-assets/images/login-campus.jpg" alt="" width="1100" height="733"/>
+							<figcaption>Kegiatan sekolah</figcaption>
+						</figure>
+						<figure class="login-photo">
+							<img src="/ui-assets/images/login-lab.jpg" alt="" width="1100" height="733"/>
+							<figcaption>Lab komputer</figcaption>
+						</figure>
 					</div>
 				</section>
 
@@ -133,28 +148,6 @@ templ Login(page ui.LoginPage) {
 							Lupa kata sandi? <a href="/contact">Hubungi Admin TU</a>.
 						</p>
 
-						if page.DemoMode {
-							<details class="demo-box">
-								<summary>
-									<span>Akun demonstrasi</span>
-									<span class="badge badge-gold">Mode demo</span>
-								</summary>
-								<div class="demo-box-body">
-									<p class="demo-hint">
-										Kata sandi akun demo: <strong class="mono">{ page.DemoPassword }</strong>. Hanya tersedia di lingkungan pengembangan.
-									</p>
-									<form method="post" action="/login/demo" class="demo-grid">
-										<input type="hidden" name="_csrf" value={ page.CSRFToken }/>
-										for _, account := range page.DemoAccounts {
-											<button type="submit" name="identifier" value={ account.Identifier } class="demo-account">
-												<span class="demo-account-label">{ account.Label }</span>
-												<span class="demo-account-group">{ account.Group }</span>
-											</button>
-										}
-									</form>
-								</div>
-							</details>
-						}
 
 						<div class="login-panel-footer">
 							<a href="/verify" class="text-link">

@@ -10,24 +10,8 @@ import (
 	"wesmk/internal/model"
 )
 
-var allowedRoles = map[string]bool{
-	"student":    true,
-	"parent":     true,
-	"treasurer":  true,
-	"teacher":    true,
-	"discipline": true,
-	"piket":      true,
-	"admin_tu":   true,
-	"headmaster": true,
-	"developer":  true,
-}
-
 func (s *Server) handleAuthConfig(w http.ResponseWriter, _ *http.Request) {
-	payload := map[string]any{"demoMode": s.authSvc.DemoMode()}
-	if s.authSvc.DemoMode() {
-		payload["demoPassword"] = s.authSvc.DemoPassword()
-	}
-	writeJSON(w, http.StatusOK, payload)
+	writeJSON(w, http.StatusOK, map[string]any{})
 }
 
 func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
@@ -45,15 +29,49 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 
 	session, err := s.authSvc.Login(r.Context(), request.Identifier, request.Password, s.clientIP(r))
 	if err != nil {
+		var authErr *auth.Error
+		if errors.As(err, &authErr) && authErr.Code == auth.CodeMFARequired {
+			writeJSON(w, http.StatusUnauthorized, map[string]any{
+				"error":     authErr.Message,
+				"code":      auth.CodeMFARequired,
+				"challenge": authErr.Challenge,
+			})
+			return
+		}
+		userID, reason := authErrorDetails(err)
+		s.recordLoginEvent(r, userID, request.Identifier, "", "password", false, reason)
 		writeAuthError(w, err)
 		return
 	}
 
 	s.setSessionCookie(w, session.Token)
+	s.rememberSession(r, session.Token, session.User.ID)
+	s.recordLoginEvent(r, session.User.ID, request.Identifier, session.User.Role, session.Method, true, "")
 	writeJSON(w, http.StatusOK, map[string]any{
-		"user":     session.User,
-		"demoMode": s.authSvc.DemoMode(),
+		"user":             session.User,
+		"mfaSetupRequired": auth.RequiresMFA(session.User) && !session.User.TOTPEnabled,
 	})
+}
+
+func (s *Server) handleMFA(w http.ResponseWriter, r *http.Request) {
+	var request struct {
+		Challenge string `json:"challenge"`
+		Code      string `json:"code"`
+	}
+	if !decodeJSON(w, r, &request) {
+		return
+	}
+	session, err := s.authSvc.VerifyMFA(r.Context(), request.Challenge, request.Code)
+	if err != nil {
+		userID, reason := authErrorDetails(err)
+		s.recordLoginEvent(r, userID, "", "", "mfa", false, reason)
+		writeAuthError(w, err)
+		return
+	}
+	s.setSessionCookie(w, session.Token)
+	s.rememberSession(r, session.Token, session.User.ID)
+	s.recordLoginEvent(r, session.User.ID, session.User.Username, session.User.Role, session.Method, true, "")
+	writeJSON(w, http.StatusOK, map[string]any{"user": session.User})
 }
 
 func (s *Server) handleMe(w http.ResponseWriter, r *http.Request) {
@@ -62,8 +80,8 @@ func (s *Server) handleMe(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, http.StatusOK, map[string]any{
-		"user":     authValue.user,
-		"demoMode": s.authSvc.DemoMode(),
+		"user":             authValue.user,
+		"mfaSetupRequired": auth.RequiresMFA(authValue.user) && !authValue.user.TOTPEnabled,
 	})
 }
 
@@ -83,59 +101,6 @@ func (s *Server) handleLogout(w http.ResponseWriter, r *http.Request) {
 	}
 	s.clearSessionCookie(w)
 	writeJSON(w, http.StatusOK, map[string]string{"status": "logged_out"})
-}
-
-func (s *Server) handleDemoLogin(w http.ResponseWriter, r *http.Request) {
-	var request struct {
-		Identifier string `json:"identifier"`
-	}
-	if !decodeJSON(w, r, &request) {
-		return
-	}
-	if strings.TrimSpace(request.Identifier) == "" {
-		writeError(w, http.StatusBadRequest, "Identifier akun demo wajib diisi.")
-		return
-	}
-
-	session, err := s.authSvc.DemoLogin(r.Context(), request.Identifier)
-	if err != nil {
-		writeAuthError(w, err)
-		return
-	}
-	s.setSessionCookie(w, session.Token)
-	writeJSON(w, http.StatusOK, map[string]any{
-		"user":     session.User,
-		"demoMode": s.authSvc.DemoMode(),
-	})
-}
-
-func (s *Server) handleDemoRole(w http.ResponseWriter, r *http.Request) {
-	authValue, ok := requireUser(w, r)
-	if !ok {
-		return
-	}
-
-	var request struct {
-		Role string `json:"role"`
-	}
-	if !decodeJSON(w, r, &request) {
-		return
-	}
-	if !allowedRoles[request.Role] {
-		writeError(w, http.StatusBadRequest, "Peran tidak valid.")
-		return
-	}
-
-	session, err := s.authSvc.SwitchDemoRole(r.Context(), authValue.token, request.Role)
-	if err != nil {
-		writeAuthError(w, err)
-		return
-	}
-	s.setSessionCookie(w, session.Token)
-	writeJSON(w, http.StatusOK, map[string]any{
-		"user":     session.User,
-		"demoMode": s.authSvc.DemoMode(),
-	})
 }
 
 func (s *Server) handleMagicLinkRequest(w http.ResponseWriter, r *http.Request) {
@@ -173,13 +138,6 @@ func (s *Server) handleMagicLinkRequest(w http.ResponseWriter, r *http.Request) 
 		if err := s.sendMagicLink(r.Context(), normalized, token); err != nil {
 			log.Printf("[auth] kirim tautan magic gagal: %v", err)
 			writeError(w, http.StatusServiceUnavailable, err.Error())
-			return
-		}
-		if s.authSvc.DemoMode() {
-			writeJSON(w, http.StatusAccepted, map[string]string{
-				"status":  "sent",
-				"devLink": "/api/auth/magic/" + token,
-			})
 			return
 		}
 		log.Printf("[auth] Pengiriman WhatsApp belum dikonfigurasi; tautan hanya tersedia di log server.")

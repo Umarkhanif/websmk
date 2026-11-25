@@ -41,7 +41,7 @@ File cadangan = bukti konten hilang.
 - Uang, PIN, OTP, HMAC, kunci jawaban, rubrik **wajib server-side**.
 - `financial_audit_ledgers` append-only (trigger sudah ada) — jangan UPDATE/DELETE.
 - Jangan simpan data sensitif di browser/state client.
-- `WESMK_DEMO_MODE=false` untuk deploy nyata; sembunyikan role switcher, PIN, OTP, akun demo.
+- Mode demo sudah dihapus; akun nyata lewat `WESMK_USERS` (bootstrap minimal satu `admin_tu`).
 - Jangan commit secret/API key.
 
 ## 8. Database & migrasi

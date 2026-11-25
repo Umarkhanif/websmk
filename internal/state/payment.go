@@ -39,32 +39,6 @@ func CreatePaymentIntent(doc map[string]any, studentID, invoiceID string, now ti
 	return intentResult(intent), nil
 }
 
-// PayInvoice settles immediately. It is only called in demo mode; production
-// settlement goes through SettlePaymentIntent and a signed webhook.
-func PayInvoice(doc map[string]any, studentID, invoiceID, receiptSecret string, now time.Time) (PaymentResult, error) {
-	// A retried click on a settled invoice is not an error: report the receipt
-	// that already exists instead of charging again.
-	if invoice := findInvoice(doc, invoiceID, studentID); invoice != nil &&
-		(text(invoice["status"]) == "PAID" || dueAmount(invoice) <= 0) {
-		if intent := paidIntent(doc, invoiceID, studentID); intent != nil {
-			result := intentResult(intent)
-			result.AlreadyPaid = true
-			return result, nil
-		}
-	}
-
-	invoice, _, err := payableInvoice(doc, studentID, invoiceID)
-	if err != nil {
-		return PaymentResult{}, err
-	}
-	intent := pendingIntent(doc, invoiceID, studentID, now)
-	if intent == nil {
-		intent = newIntent(invoiceID, studentID, dueAmount(invoice), now)
-		doc["paymentIntents"] = append(asList(doc["paymentIntents"]), intent)
-	}
-	return settleIntent(doc, intent, "", receiptSecret, now)
-}
-
 // SettlePaymentIntent is the production path after a gateway callback.
 func SettlePaymentIntent(doc map[string]any, intentID, providerRef, receiptSecret string, now time.Time) (PaymentResult, error) {
 	intent := findIntent(doc, intentID)
@@ -191,19 +165,6 @@ func intentExpired(intent map[string]any, now time.Time) bool {
 		return false
 	}
 	return !now.Before(expiresAt)
-}
-
-func paidIntent(doc map[string]any, invoiceID, studentID string) map[string]any {
-	for _, item := range asList(doc["paymentIntents"]) {
-		intent := asMap(item)
-		if intent != nil &&
-			text(intent["invoiceId"]) == invoiceID &&
-			text(intent["studentId"]) == studentID &&
-			text(intent["status"]) == "PAID" {
-			return intent
-		}
-	}
-	return nil
 }
 
 func findIntent(doc map[string]any, intentID string) map[string]any {

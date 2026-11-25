@@ -16,15 +16,17 @@ import (
 const (
 	CodeInvalidCredentials = "invalid_credentials"
 	CodeLocked             = "locked"
-	CodeDemoDisabled       = "demo_disabled"
 	CodeUnauthenticated    = "unauthenticated"
 	CodeRateLimited        = "rate_limited"
+	CodeMFARequired        = "mfa_required"
 )
 
 type Error struct {
 	Code       string
 	Message    string
 	RetryAfter time.Duration
+	Challenge  string
+	UserID     string
 }
 
 func (e *Error) Error() string { return e.Message }
@@ -33,7 +35,7 @@ type Repository interface {
 	UserByIdentifier(ctx context.Context, identifier string) (*model.User, error)
 	UserByID(ctx context.Context, id string) (*model.User, error)
 	ParentByPhone(ctx context.Context, normalizedPhone string) (*model.User, error)
-	DemoUserByRole(ctx context.Context, role string) (*model.User, error)
+	ConsumeRecoveryCode(ctx context.Context, userID, codeHash string) (bool, error)
 }
 
 type Cache interface {
@@ -45,12 +47,13 @@ type Cache interface {
 	ClearLoginFailures(ctx context.Context, key string) error
 	StoreMagicToken(ctx context.Context, tokenHash, userID string, ttl time.Duration) error
 	ConsumeMagicToken(ctx context.Context, tokenHash string) (string, error)
+	StoreMFAChallenge(ctx context.Context, tokenHash, userID string, ttl time.Duration) error
+	MFAChallengeUser(ctx context.Context, tokenHash string) (string, error)
+	DeleteMFAChallenge(ctx context.Context, tokenHash string) error
 	IncrementCounter(ctx context.Context, key string, window time.Duration) (int, error)
 }
 
 type Options struct {
-	DemoMode         bool
-	DemoPassword     string
 	SessionTTL       time.Duration
 	MaxLoginAttempts int
 	LoginWindow      time.Duration
@@ -68,6 +71,8 @@ type Session struct {
 	Token     string
 	User      *model.User
 	ExpiresAt time.Time
+	// Method records how the session was authenticated for the login audit.
+	Method string
 }
 
 func New(repo Repository, cache Cache, options Options) *Service {
@@ -83,9 +88,6 @@ func New(repo Repository, cache Cache, options Options) *Service {
 	if options.MagicTokenTTL == 0 {
 		options.MagicTokenTTL = 5 * time.Minute
 	}
-	if options.DemoPassword == "" {
-		options.DemoPassword = "Wesmk#2026"
-	}
 	return &Service{repo: repo, cache: cache, opts: options}
 }
 
@@ -100,8 +102,6 @@ func (s *Service) Init() error {
 	return nil
 }
 
-func (s *Service) DemoMode() bool            { return s.opts.DemoMode }
-func (s *Service) DemoPassword() string      { return s.opts.DemoPassword }
 func (s *Service) SessionTTL() time.Duration { return s.opts.SessionTTL }
 
 func (s *Service) Login(ctx context.Context, identifier, password, ip string) (*Session, error) {
@@ -134,60 +134,31 @@ func (s *Service) Login(ctx context.Context, identifier, password, ip string) (*
 	}
 	valid := VerifyPassword(password, hash)
 
-	if user == nil || !valid {
+	if user == nil || !valid || !user.IsActive {
 		if _, err := s.cache.RecordLoginFailure(ctx, key, s.opts.LoginWindow); err != nil {
 			return nil, fmt.Errorf("record login failure: %w", err)
 		}
-		return nil, &Error{Code: CodeInvalidCredentials, Message: "NISN/NIP atau kata sandi salah."}
+		return nil, &Error{Code: CodeInvalidCredentials, Message: "NISN/NIP atau kata sandi salah.", UserID: userIDOf(user)}
 	}
 
 	if err := s.cache.ClearLoginFailures(ctx, key); err != nil {
 		return nil, fmt.Errorf("clear login failures: %w", err)
 	}
-	return s.issueSession(ctx, user)
-}
-
-func (s *Service) DemoLogin(ctx context.Context, identifier string) (*Session, error) {
-	if !s.opts.DemoMode {
-		return nil, &Error{Code: CodeDemoDisabled, Message: "Mode demo dinonaktifkan pada server ini."}
+	if user.TOTPEnabled {
+		if user.TOTPSecret == "" {
+			return nil, &Error{Code: CodeUnauthenticated, Message: "Konfigurasi MFA akun tidak valid. Hubungi Admin TU untuk reset MFA.", UserID: user.ID}
+		}
+		challenge := randomString(24)
+		if err := s.cache.StoreMFAChallenge(ctx, hashToken(challenge), user.ID, 5*time.Minute); err != nil {
+			return nil, fmt.Errorf("store mfa challenge: %w", err)
+		}
+		return nil, &Error{
+			Code:      CodeMFARequired,
+			Message:   "Masukkan kode 6 digit dari aplikasi autentikator.",
+			Challenge: challenge,
+		}
 	}
-
-	user, err := s.repo.UserByIdentifier(ctx, strings.TrimSpace(identifier))
-	if err != nil {
-		return nil, fmt.Errorf("lookup demo user: %w", err)
-	}
-	if user == nil || !user.IsDemo {
-		return nil, &Error{Code: CodeInvalidCredentials, Message: "Akun demo tidak ditemukan."}
-	}
-	return s.issueSession(ctx, user)
-}
-
-func (s *Service) SwitchDemoRole(ctx context.Context, token, role string) (*Session, error) {
-	if !s.opts.DemoMode {
-		return nil, &Error{Code: CodeDemoDisabled, Message: "Mode demo dinonaktifkan pada server ini."}
-	}
-
-	current, err := s.UserForToken(ctx, token)
-	if err != nil {
-		return nil, err
-	}
-	if current == nil {
-		return nil, &Error{Code: CodeUnauthenticated, Message: "Sesi tidak valid. Silakan login kembali."}
-	}
-
-	target, err := s.repo.DemoUserByRole(ctx, role)
-	if err != nil {
-		return nil, fmt.Errorf("lookup demo role: %w", err)
-	}
-	if target == nil {
-		return nil, &Error{Code: CodeInvalidCredentials, Message: "Peran demo tidak tersedia."}
-	}
-
-	// Changing roles replaces the current session; the old token must stop working.
-	if err := s.cache.DeleteSession(ctx, token); err != nil {
-		return nil, fmt.Errorf("delete previous session: %w", err)
-	}
-	return s.issueSession(ctx, target)
+	return s.issueSession(ctx, user, "password")
 }
 
 func (s *Service) UserForToken(ctx context.Context, token string) (*model.User, error) {
@@ -206,7 +177,7 @@ func (s *Service) UserForToken(ctx context.Context, token string) (*model.User, 
 	if err != nil {
 		return nil, fmt.Errorf("load session user: %w", err)
 	}
-	if user == nil {
+	if user == nil || !user.IsActive {
 		_ = s.cache.DeleteSession(ctx, token)
 		return nil, nil
 	}
@@ -275,15 +246,75 @@ func (s *Service) ConsumeMagicToken(ctx context.Context, token string) (*Session
 	if user == nil {
 		return nil, nil
 	}
-	return s.issueSession(ctx, user)
+	return s.issueSession(ctx, user, "magic")
 }
 
-func (s *Service) issueSession(ctx context.Context, user *model.User) (*Session, error) {
+// VerifyMFA finishes a password login that required a TOTP code. The challenge
+// is single-use and the attempt counter is bounded so a stolen challenge cannot
+// be brute-forced.
+func (s *Service) VerifyMFA(ctx context.Context, challenge, code string) (*Session, error) {
+	if strings.TrimSpace(challenge) == "" || strings.TrimSpace(code) == "" {
+		return nil, &Error{Code: CodeInvalidCredentials, Message: "Kode MFA tidak valid."}
+	}
+	hash := hashToken(strings.TrimSpace(challenge))
+	attemptKey := "ratelimit:mfa:" + hash
+	attempts, err := s.cache.IncrementCounter(ctx, attemptKey, 5*time.Minute)
+	if err != nil {
+		return nil, fmt.Errorf("record mfa attempt: %w", err)
+	}
+	if attempts > 5 {
+		_ = s.cache.DeleteMFAChallenge(ctx, hash)
+		return nil, &Error{Code: CodeRateLimited, Message: "Terlalu banyak percobaan kode MFA. Login ulang."}
+	}
+	userID, err := s.cache.MFAChallengeUser(ctx, hash)
+	if err != nil {
+		return nil, fmt.Errorf("read mfa challenge: %w", err)
+	}
+	if userID == "" {
+		return nil, &Error{Code: CodeInvalidCredentials, Message: "Sesi MFA kedaluwarsa. Silakan login ulang."}
+	}
+	user, err := s.repo.UserByID(ctx, userID)
+	if err != nil {
+		return nil, fmt.Errorf("load mfa user: %w", err)
+	}
+	if user == nil || !user.IsActive || !user.TOTPEnabled {
+		return nil, &Error{Code: CodeInvalidCredentials, Message: "Kode MFA salah.", UserID: userID}
+	}
+	method := "totp"
+	valid := false
+	if len(strings.TrimSpace(code)) == 6 {
+		valid = ValidateTOTP(user.TOTPSecret, code, time.Now())
+	} else {
+		consumed, err := s.repo.ConsumeRecoveryCode(ctx, user.ID, RecoveryCodeHash(user.ID, code))
+		if err != nil {
+			return nil, fmt.Errorf("consume recovery code: %w", err)
+		}
+		valid = consumed
+		method = "recovery_code"
+	}
+	if !valid {
+		return nil, &Error{Code: CodeInvalidCredentials, Message: "Kode MFA atau recovery code salah.", UserID: user.ID}
+	}
+	if err := s.cache.DeleteMFAChallenge(ctx, hash); err != nil {
+		return nil, fmt.Errorf("delete mfa challenge: %w", err)
+	}
+	_ = s.cache.ClearLoginFailures(ctx, attemptKey)
+	return s.issueSession(ctx, user, method)
+}
+
+func (s *Service) issueSession(ctx context.Context, user *model.User, method string) (*Session, error) {
 	token := randomString(32)
 	if err := s.cache.CreateSession(ctx, token, user.ID, s.opts.SessionTTL); err != nil {
 		return nil, fmt.Errorf("create session: %w", err)
 	}
-	return &Session{Token: token, User: user, ExpiresAt: time.Now().Add(s.opts.SessionTTL)}, nil
+	return &Session{Token: token, User: user, ExpiresAt: time.Now().Add(s.opts.SessionTTL), Method: method}, nil
+}
+
+func userIDOf(user *model.User) string {
+	if user == nil {
+		return ""
+	}
+	return user.ID
 }
 
 func randomString(bytesCount int) string {

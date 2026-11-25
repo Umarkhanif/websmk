@@ -53,31 +53,6 @@ func (s *Server) handleCreatePaymentIntent(w http.ResponseWriter, r *http.Reques
 	})
 }
 
-// handlePayInvoice settles immediately. It only exists for demo mode: a
-// production deployment must settle through the signed gateway callback.
-func (s *Server) handlePayInvoice(w http.ResponseWriter, r *http.Request) {
-	if !s.cfg.DemoMode {
-		writeError(w, http.StatusNotFound, "Endpoint API tidak ditemukan.")
-		return
-	}
-	studentID, ok := studentScopedID(w, r, "student", "parent")
-	if !ok {
-		return
-	}
-	invoiceID, ok := decodeInvoiceID(w, r)
-	if !ok {
-		return
-	}
-	if !s.allowDomainWrite(w, r, "payment-pay") {
-		return
-	}
-
-	now := time.Now()
-	s.updateState(w, r, func(doc map[string]any) (any, error) {
-		return state.PayInvoice(doc, studentID, invoiceID, s.cfg.ReceiptSecret, now)
-	})
-}
-
 // handlePaymentCallback is the only production settlement path. Requests must
 // carry a fresh timestamp and an HMAC of the raw body, so a leaked intent id is
 // not enough to mark an invoice paid.

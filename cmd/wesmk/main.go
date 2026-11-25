@@ -17,6 +17,7 @@ import (
 	"wesmk/internal/config"
 	"wesmk/internal/db"
 	"wesmk/internal/httpapi"
+	"wesmk/internal/secure"
 	"wesmk/internal/seed"
 	"wesmk/internal/store"
 )
@@ -27,9 +28,6 @@ func main() {
 	cfg := config.Load()
 	if err := cfg.Validate(); err != nil {
 		log.Fatalf("config invalid: %v", err)
-	}
-	if cfg.Env == "production" && cfg.DemoMode {
-		log.Printf("[WARN] WESMK_DEMO_MODE aktif di production; akun demo dengan kata sandi publik dapat login")
 	}
 	if cfg.Env == "production" && !cfg.SecureCookie {
 		log.Printf("[WARN] cookie sesi tidak memakai flag Secure di production")
@@ -54,10 +52,17 @@ func main() {
 	}
 	defer cache.Close()
 
-	storeDB := store.NewPostgres(pool)
+	mfaCipher, err := secure.NewCipher(cfg.MFAKey)
+	if err != nil {
+		log.Fatalf("MFA encryption key invalid: %v", err)
+	}
+	storeDB := store.NewPostgres(pool, store.WithMFACipher(mfaCipher))
+	if reencrypted, err := storeDB.EncryptLegacyTOTPSecrets(ctx); err != nil {
+		log.Fatalf("encrypt legacy MFA secrets failed: %v", err)
+	} else if reencrypted > 0 {
+		log.Printf("[security] %d secret MFA lama dienkripsi ulang", reencrypted)
+	}
 	if err := seed.Run(ctx, storeDB, seed.Options{
-		DemoMode:     cfg.DemoMode,
-		DemoPassword: cfg.DemoPassword,
 		EnvUsersJSON: os.Getenv("WESMK_USERS"),
 	}); err != nil {
 		log.Fatalf("seed failed: %v", err)
@@ -70,9 +75,7 @@ func main() {
 	}
 
 	authSvc := auth.New(storeDB, cache, auth.Options{
-		DemoMode:     cfg.DemoMode,
-		DemoPassword: cfg.DemoPassword,
-		SessionTTL:   cfg.SessionTTL,
+		SessionTTL: cfg.SessionTTL,
 	})
 	if err := authSvc.Init(); err != nil {
 		log.Fatalf("auth init failed: %v", err)
@@ -91,8 +94,7 @@ func main() {
 
 	go func() {
 		log.Printf("WESMK server listening on http://0.0.0.0:%s", cfg.Port)
-		log.Printf("[auth] demo mode: %s | session: %s | secure cookie: %s | demo accounts: %d",
-			onOff(cfg.DemoMode), cfg.SessionTTL, onOff(cfg.SecureCookie), demoAccountCount(cfg.DemoMode))
+		log.Printf("[auth] session: %s | secure cookie: %s", cfg.SessionTTL, onOff(cfg.SecureCookie))
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("server stopped unexpectedly: %v", err)
 		}
@@ -114,11 +116,4 @@ func onOff(value bool) string {
 		return "AKTIF"
 	}
 	return "NONAKTIF"
-}
-
-func demoAccountCount(demoMode bool) int {
-	if demoMode {
-		return 9
-	}
-	return 0
 }

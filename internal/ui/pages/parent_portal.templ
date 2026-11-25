@@ -32,7 +32,7 @@ templ ParentPortal(data ui.ParentPortalPage) {
 			<div class="dashboard-grid">
 				<article class="card stat-card">
 					<div class="stat-card-head">
-						<span class="eyebrow">Presensi Hari Ini</span>
+						<span class="eyebrow">{ data.Attendance.Label }</span>
 						<span class={ "badge " + attendanceBadgeClass(data.Attendance.Status) }>{ data.Attendance.StatusLabel }</span>
 					</div>
 					<p class="stat-value mono">{ data.Attendance.Time }</p>
@@ -219,7 +219,7 @@ templ ParentPortal(data ui.ParentPortalPage) {
 								<div class="field-head">
 									<label class="field-label">Tanggal</label>
 								</div>
-								<input class="input input-mono" type="date" name="leave_date" value="2026-10-25" required/>
+								<input class="input input-mono" type="date" name="leave_date" required/>
 							</div>
 						</div>
 						<div class="field">
@@ -230,6 +230,26 @@ templ ParentPortal(data ui.ParentPortalPage) {
 						</div>
 						<button type="submit" class="button button-primary">Kirim Surat Izin</button>
 					</form>
+
+					<h4>Riwayat Izin</h4>
+					<div class="table-wrap">
+						<table class="data-table">
+							<thead><tr><th>Tanggal</th><th>Jenis</th><th>Keterangan</th><th>Status</th></tr></thead>
+							<tbody>
+								if len(data.Leaves) == 0 {
+									<tr><td colspan="4" class="muted">Belum ada izin yang dikirim.</td></tr>
+								}
+								for _, leave := range data.Leaves {
+									<tr>
+										<td class="mono">{ leave.LeaveDate }</td>
+										<td>{ leave.LeaveType }</td>
+										<td>{ leave.Note }</td>
+										<td><span class="badge badge-success">{ leave.Status }</span></td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
 				</section>
 
 				<section class="card form-stack">
@@ -243,13 +263,6 @@ templ ParentPortal(data ui.ParentPortalPage) {
 							</div>
 							<span class="mono">Total: { ui.FormatRupiah(inv.FinalAmount) } · Sisa: { ui.FormatRupiah(inv.Remaining) }</span>
 							<span class="muted">VA { inv.Provider }: <strong class="mono">{ inv.VANumber }</strong></span>
-							if !inv.IsPaid && data.Shell.DemoMode {
-								<form method="post" action="/parent/invoice/pay">
-									<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-									<input type="hidden" name="invoice_id" value={ inv.ID }/>
-									<button type="submit" class="button button-secondary button-small">Simulasi Bayar VA</button>
-								</form>
-							}
 						</div>
 					}
 

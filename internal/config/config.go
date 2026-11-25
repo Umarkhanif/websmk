@@ -18,6 +18,9 @@ type Config struct {
 
 	// ReceiptSecret signs ledger receipts server-side.
 	ReceiptSecret string
+	// MFAKey encrypts TOTP secrets at rest. Production must set a dedicated
+	// value; development falls back to ReceiptSecret so local data stays readable.
+	MFAKey string
 	// PaymentWebhookSecret authenticates gateway callbacks. Empty disables the
 	// webhook instead of accepting unsigned settlements.
 	PaymentWebhookSecret string
@@ -28,10 +31,20 @@ type Config struct {
 	WANotifyURL   string
 	WANotifyToken string
 
-	DemoMode     bool
-	DemoPassword string
 	SecureCookie bool
 	TrustProxy   bool
+	// DomainStudentProfile reads student profile fields from the normalized
+	// students table, falling back to app_state when the row is not there yet.
+	DomainStudentProfile bool
+	// DomainFinance reads invoices and ledger rows from the normalized tables,
+	// falling back to app_state when the domain slice is empty.
+	DomainFinance bool
+	// DomainAttendance reads daily attendance from the normalized table.
+	DomainAttendance bool
+	// DomainExam reads the question bank and proctor sessions from tables.
+	DomainExam bool
+	// DomainPklBkk reads PKL placements/journals/logs and BKK listings from tables.
+	DomainPklBkk bool
 
 	SessionTTL time.Duration
 }
@@ -48,11 +61,6 @@ func Load() Config {
 		env = "development"
 	}
 
-	demoMode := env != "production"
-	if value, ok := os.LookupEnv("WESMK_DEMO_MODE"); ok {
-		demoMode = parseBool(value, demoMode)
-	}
-
 	// Production always gets Secure cookies; TLS terminates at the reverse proxy,
 	// so the app cannot infer the scheme from APP_URL or the request itself.
 	secureCookie := env == "production"
@@ -60,19 +68,45 @@ func Load() Config {
 		secureCookie = parseBool(value, secureCookie)
 	}
 
-	trustProxy := env == "production"
+	// Never trust a client-supplied forwarding header unless the deployment
+	// explicitly opts in behind a known reverse proxy.
+	trustProxy := false
 	if value, ok := os.LookupEnv("WESMK_TRUST_PROXY"); ok {
 		trustProxy = parseBool(value, trustProxy)
 	}
 
-	demoPassword := os.Getenv("WESMK_DEMO_PASSWORD")
-	if demoPassword == "" {
-		demoPassword = "Wesmk#2026"
+	domainStudentProfile := true
+	if value, ok := os.LookupEnv("WESMK_DOMAIN_STUDENT_PROFILE"); ok {
+		domainStudentProfile = parseBool(value, domainStudentProfile)
+	}
+
+	domainFinance := true
+	if value, ok := os.LookupEnv("WESMK_DOMAIN_FINANCE"); ok {
+		domainFinance = parseBool(value, domainFinance)
+	}
+
+	domainAttendance := true
+	if value, ok := os.LookupEnv("WESMK_DOMAIN_ATTENDANCE"); ok {
+		domainAttendance = parseBool(value, domainAttendance)
+	}
+
+	domainExam := true
+	if value, ok := os.LookupEnv("WESMK_DOMAIN_EXAM"); ok {
+		domainExam = parseBool(value, domainExam)
+	}
+
+	domainPklBkk := true
+	if value, ok := os.LookupEnv("WESMK_DOMAIN_PKL_BKK"); ok {
+		domainPklBkk = parseBool(value, domainPklBkk)
 	}
 
 	receiptSecret := os.Getenv("WESMK_RECEIPT_SECRET")
 	if receiptSecret == "" {
 		receiptSecret = "dev-receipt-secret-bukan-untuk-produksi"
+	}
+	mfaKey := os.Getenv("WESMK_MFA_KEY")
+	if mfaKey == "" {
+		mfaKey = receiptSecret
 	}
 
 	return Config{
@@ -83,14 +117,18 @@ func Load() Config {
 		GeminiAPIKey:         os.Getenv("GEMINI_API_KEY"),
 		GeminiModel:          envOrDefault("GEMINI_MODEL", "gemini-2.5-flash"),
 		ReceiptSecret:        receiptSecret,
+		MFAKey:               mfaKey,
 		PaymentWebhookSecret: os.Getenv("WESMK_PAYMENT_WEBHOOK_SECRET"),
 		TreasurerPin:         envOrDefault("WESMK_TREASURER_PIN", "123456"),
 		WANotifyURL:          os.Getenv("WESMK_WA_WEBHOOK_URL"),
 		WANotifyToken:        os.Getenv("WESMK_WA_WEBHOOK_TOKEN"),
-		DemoMode:             demoMode,
-		DemoPassword:         demoPassword,
 		SecureCookie:         secureCookie,
 		TrustProxy:           trustProxy,
+		DomainStudentProfile: domainStudentProfile,
+		DomainFinance:        domainFinance,
+		DomainAttendance:     domainAttendance,
+		DomainExam:           domainExam,
+		DomainPklBkk:         domainPklBkk,
 		SessionTTL:           8 * time.Hour,
 	}
 }
@@ -111,10 +149,9 @@ func (c Config) Validate() error {
 	if len(strings.TrimSpace(os.Getenv("WESMK_RECEIPT_SECRET"))) < 16 {
 		return errors.New("WESMK_RECEIPT_SECRET (minimal 16 karakter) wajib diisi saat WESMK_ENV=production")
 	}
-	// Demo accounts are a development aid; a public deployment must not expose
-	// the role switcher or the shared demo password.
-	if c.DemoMode {
-		return errors.New("WESMK_DEMO_MODE harus false saat WESMK_ENV=production")
+	// Losing or sharing this key makes every stored TOTP secret unreadable.
+	if len(strings.TrimSpace(os.Getenv("WESMK_MFA_KEY"))) < 32 {
+		return errors.New("WESMK_MFA_KEY (minimal 32 karakter) wajib diisi saat WESMK_ENV=production")
 	}
 	// The fallback PIN is public knowledge, so production has to set its own.
 	pin := strings.TrimSpace(os.Getenv("WESMK_TREASURER_PIN"))

@@ -1,6 +1,9 @@
 package ui
 
-import "strings"
+import (
+	"strings"
+	"time"
+)
 
 // RoleShell is the shared chrome for every authenticated page. It deliberately
 // contains only presentation data: handlers decide what the user may see.
@@ -16,7 +19,6 @@ type RoleShell struct {
 	PageTitle    string
 	Nav          []NavItem
 	CSRFToken    string
-	DemoMode     bool
 	Flash        string
 	FlashKind    string
 }
@@ -102,6 +104,7 @@ type InvoiceView struct {
 type AttendanceView struct {
 	Status      string
 	StatusLabel string
+	Label       string
 	Time        string
 	Source      string
 }
@@ -132,17 +135,52 @@ type LoginPage struct {
 	Error        string
 	Notice       string
 	MagicLink    string
-	DemoMode     bool
-	DemoPassword string
-	DemoAccounts []DemoAccount
 	CSRFToken    string
 	AcademicYear string
 }
 
-type DemoAccount struct {
-	Label      string
+type MagicLinkPage struct {
+	Token     string
+	CSRFToken string
+	Error     string
+}
+
+type MFAPage struct {
+	CSRFToken string
+	Error     string
+}
+
+type SecurityPage struct {
+	Shell         RoleShell
+	Enabled       bool
+	Required      bool
+	Secret        string
+	OTPAuthURI    string
+	RecoveryCodes []string
+	RecoveryCount int
+	Session       SecuritySession
+	LoginEvents   []SecurityLoginEvent
+	AdminEvents   []SecurityLoginEvent
+	ShowAdmin     bool
+	Error         string
+}
+
+type SecuritySession struct {
+	IP        string
+	UserAgent string
+	StartedAt time.Time
+	ExpiresAt time.Time
+}
+
+type SecurityLoginEvent struct {
+	CreatedAt  time.Time
 	Identifier string
-	Group      string
+	Role       string
+	Method     string
+	Success    bool
+	Reason     string
+	IP         string
+	UserAgent  string
 }
 
 // NavFor returns the same navigation labels and order as the React prototype,

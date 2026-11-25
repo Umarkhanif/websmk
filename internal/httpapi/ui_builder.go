@@ -6,13 +6,17 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"log"
 	"math"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
 
+	"wesmk/internal/authz"
+	"wesmk/internal/domain/identity"
 	"wesmk/internal/model"
 	"wesmk/internal/state"
 	"wesmk/internal/store"
@@ -102,8 +106,18 @@ func (s *Server) mutateStateDoc(ctx context.Context, fn func(map[string]any) err
 	return err
 }
 
-func (s *Server) buildRoleShell(authVal requestAuth, activeTab, flash, flashKind string) ui.RoleShell {
+func (s *Server) activeAcademicYearLabel(ctx context.Context) string {
+	if s.storeDB != nil {
+		if year, ok := s.storeDB.ActiveAcademicYear(ctx); ok {
+			return year.Label + " " + year.Semester
+		}
+	}
+	return "2026/2027 Ganjil"
+}
+
+func (s *Server) buildRoleShell(ctx context.Context, authVal requestAuth, activeTab, flash, flashKind string) ui.RoleShell {
 	nav := ui.NavFor(authVal.user.Role)
+	academicYear := s.activeAcademicYearLabel(ctx)
 	return ui.RoleShell{
 		Role:         authVal.user.Role,
 		RoleLabel:    ui.RoleLabel(authVal.user.Role),
@@ -111,29 +125,13 @@ func (s *Server) buildRoleShell(authVal requestAuth, activeTab, flash, flashKind
 		Initials:     ui.Initials(authVal.user.FullName),
 		Username:     authVal.user.Username,
 		SchoolName:   "SMK Negeri 1 Rekayasa",
-		AcademicYear: "2026/2027",
+		AcademicYear: academicYear,
 		ActiveTab:    activeTab,
 		PageTitle:    ui.ActiveLabel(nav, activeTab),
 		Nav:          nav,
 		CSRFToken:    s.csrfTokenFor(authVal.token),
-		DemoMode:     s.authSvc.DemoMode(),
 		Flash:        flash,
 		FlashKind:    flashKind,
-	}
-}
-
-func demoAccountsList() []ui.DemoAccount {
-	return []ui.DemoAccount{
-		{Label: "Muhammad Budi Santoso", Identifier: "0058471290", Group: "Murid · Ketua Kelas XII TKJ 1"},
-		{Label: "Siti Rahmawati", Identifier: "0058471291", Group: "Murid · Beasiswa KIP"},
-		{Label: "Bapak Ahmad Santoso", Identifier: "081234567800", Group: "Orang Tua / Wali Budi"},
-		{Label: "Ir. Hendro Wijaya", Identifier: "197804152005011003", Group: "Guru Produktif & Wali Kelas"},
-		{Label: "Hj. Ratna Sari, S.E.", Identifier: "198509122010012005", Group: "Bendahara Sekolah"},
-		{Label: "Drs. Bambang Sudarmono", Identifier: "197503112000031002", Group: "Kesiswaan & BK"},
-		{Label: "Rian Pratama, S.Pd.", Identifier: "198811202014021004", Group: "Guru Piket Harian"},
-		{Label: "Nurul Hidayati, A.Md.", Identifier: "199201052019032011", Group: "Admin TU & Dapodik"},
-		{Label: "Dr. H. Sulaiman Effendi", Identifier: "196805121994121001", Group: "Kepala Sekolah"},
-		{Label: "Tim Developer WESMK", Identifier: "developer.admin", Group: "Developer & Bug Tracker"},
 	}
 }
 
@@ -264,13 +262,13 @@ func findStudentMap(doc map[string]any, studentID string) map[string]any {
 	return nil
 }
 
-func (s *Server) buildStudentDashboard(doc map[string]any, shell ui.RoleShell, user *model.User) ui.StudentDashboard {
+func (s *Server) buildStudentDashboard(ctx context.Context, doc map[string]any, shell ui.RoleShell, user *model.User) ui.StudentDashboard {
 	studentID := user.StudentProfileID
-	if studentID == "" {
-		studentID = "std-budi-01"
-	}
 	stdMap := findStudentMap(doc, studentID)
 	student := parseStudentView(stdMap)
+	if profile := s.domainStudentProfile(ctx, user, studentID); profile != nil {
+		applyDomainStudentProfile(&student, profile)
+	}
 
 	var invoice ui.InvoiceView
 	hasInvoice := false
@@ -280,6 +278,10 @@ func (s *Server) buildStudentDashboard(doc map[string]any, shell ui.RoleShell, u
 			hasInvoice = true
 			break
 		}
+	}
+	if views, ok := s.domainStudentInvoices(ctx, user, studentID); ok {
+		invoice = views[0]
+		hasInvoice = true
 	}
 
 	hasDisp := false
@@ -300,6 +302,7 @@ func (s *Server) buildStudentDashboard(doc map[string]any, shell ui.RoleShell, u
 	att := ui.AttendanceView{
 		Status:      "HADIR_GERBANG",
 		StatusLabel: ui.StatusLabel("HADIR_GERBANG"),
+		Label:       "Presensi Hari Ini",
 		Time:        "06:48 WIB",
 		Source:      "Tap Kartu RFID Gerbang Utama",
 	}
@@ -309,11 +312,15 @@ func (s *Server) buildStudentDashboard(doc map[string]any, shell ui.RoleShell, u
 			att = ui.AttendanceView{
 				Status:      st,
 				StatusLabel: ui.StatusLabel(st),
+				Label:       "Presensi Hari Ini",
 				Time:        strVal(aMap, "gateTapTime"),
 				Source:      strVal(aMap, "verifiedSource"),
 			}
 			break
 		}
+	}
+	if records, ok := s.domainStudentAttendance(ctx, user, studentID); ok {
+		att = attendanceViewFromDomain(records[0])
 	}
 
 	quizMap, _ := doc["dailyQuiz"].(map[string]any)
@@ -385,9 +392,62 @@ func (s *Server) buildStudentDashboard(doc map[string]any, shell ui.RoleShell, u
 	}
 }
 
-func (s *Server) buildStudentPortal(doc map[string]any, shell ui.RoleShell, user *model.User, tab string, demoGraded ...bool) ui.StudentPortalPage {
-	isDemoGraded := len(demoGraded) > 0 && demoGraded[0]
-	dash := s.buildStudentDashboard(doc, shell, user)
+func (s *Server) domainStudentProfile(ctx context.Context, user *model.User, studentID string) *identity.StudentProfile {
+	if !s.cfg.DomainStudentProfile || s.studentProfiles == nil || user == nil {
+		return nil
+	}
+	profile, err := s.studentProfiles.ForViewer(ctx, identity.Viewer{
+		UserID:    user.ID,
+		Role:      user.Role,
+		StudentID: user.StudentProfileID,
+	}, studentID)
+	if err != nil {
+		// Missing rows are expected until the first backfill runs; fall back to
+		// the blob rather than breaking the dashboard.
+		if !errors.Is(err, identity.ErrProfileNotFound) && !errors.Is(err, authz.ErrDenied) {
+			log.Printf("domain student profile read failed: %v", err)
+		}
+		return nil
+	}
+	return profile
+}
+
+func applyDomainStudentProfile(view *ui.StudentView, profile *identity.StudentProfile) {
+	if view == nil || profile == nil {
+		return
+	}
+	if profile.FullName != "" {
+		view.FullName = profile.FullName
+	}
+	if profile.NISN != "" {
+		view.NISN = profile.NISN
+	}
+	if profile.NIK != "" {
+		view.NIK = profile.NIK
+	}
+	if profile.ClassroomName != "" {
+		view.ClassroomName = profile.ClassroomName
+	}
+	if profile.ParentName != "" {
+		view.ParentName = profile.ParentName
+	}
+	if profile.ScholarshipType != "" {
+		view.ScholarshipType = profile.ScholarshipType
+	}
+	if profile.BMWChoice != "" {
+		view.BMWChoice = profile.BMWChoice
+	}
+	if profile.HomeroomNote != "" {
+		view.HomeroomNote = profile.HomeroomNote
+	}
+	view.IsKetuaKelas = profile.IsKetuaKelas
+	view.IsSekretaris = profile.IsSekretaris
+	view.DiscountPercent = int(profile.DiscountPercent)
+	view.AttitudeScore = profile.AttitudeScore
+}
+
+func (s *Server) buildStudentPortal(ctx context.Context, doc map[string]any, shell ui.RoleShell, user *model.User, tab string) ui.StudentPortalPage {
+	dash := s.buildStudentDashboard(ctx, doc, shell, user)
 	stdMap := findStudentMap(doc, dash.Student.ID)
 	cbtScore := intVal(stdMap, "cbtScore")
 	attScore := intVal(stdMap, "attendanceConductScore")
@@ -399,6 +459,14 @@ func (s *Server) buildStudentPortal(doc map[string]any, shell ui.RoleShell, user
 	)
 
 	jMap, _ := doc["classJournal"].(map[string]any)
+	if profile := s.domainStudentProfile(ctx, user, dash.Student.ID); profile != nil && profile.ClassroomID != "" && s.storeDB != nil {
+		if entry, ok := s.storeDB.LatestClassJournalForClassroom(ctx, profile.ClassroomID); ok {
+			jMap = map[string]any{
+				"subjectName": entry.SubjectID, "syllabusTopic": entry.Topic,
+				"teacherName": entry.TeacherName, "teacherNotes": entry.Notes,
+			}
+		}
+	}
 	refMap, _ := doc["studentReflection"].(map[string]any)
 
 	examQs := make([]ui.ExamQuestionView, 0)
@@ -431,6 +499,9 @@ func (s *Server) buildStudentPortal(doc map[string]any, shell ui.RoleShell, user
 			Options:        opts,
 		})
 	}
+	if questions, ok := s.domainStudentExamQuestions(ctx, user, dash.Student.ID); ok && len(questions) >= len(examQs) {
+		examQs = examQuestionViewsFromDomain(questions)
+	}
 
 	proctor := ui.ProctorSessionView{
 		StudentID: dash.Student.ID,
@@ -455,6 +526,18 @@ func (s *Server) buildStudentPortal(doc map[string]any, shell ui.RoleShell, user
 				Emergency2h:   boolVal(pm, "hasEmergency2hTicket"),
 			}
 			break
+		}
+	}
+	if sessions, ok := s.domainStudentExamSession(ctx, user, dash.Student.ID); ok {
+		proctor = proctorViewFromDomain(sessions[0])
+		if proctor.StudentID == "" {
+			proctor.StudentID = dash.Student.ID
+		}
+		if proctor.Name == "" {
+			proctor.Name = dash.Student.FullName
+		}
+		if proctor.NISN == "" {
+			proctor.NISN = dash.Student.NISN
 		}
 	}
 
@@ -493,79 +576,7 @@ func (s *Server) buildStudentPortal(doc map[string]any, shell ui.RoleShell, user
 	}
 
 	schedules := make([]ui.ExamScheduleView, 0, 4)
-	if isDemoGraded {
-		if sch1Score <= 0 {
-			sch1Score = 96
-		}
-		if sch2Score <= 0 {
-			sch2Score = 94
-		}
-		if sch4Score <= 0 {
-			sch4Score = 90
-		}
-		schedules = []ui.ExamScheduleView{
-			{
-				ID:            "exam-sch-01",
-				SubjectName:   "Administrasi Infrastruktur Jaringan",
-				TeacherName:   "Ir. Hendro Wijaya",
-				DateLabel:     "Hari Ini",
-				TimeSlot:      "08.00 - 09.30 WIB",
-				DurationMin:   90,
-				QuestionCount: len(examQs),
-				Room:          "Lab TKJ 1",
-				SessionNumber: 1,
-				Status:        "SUBMITTED",
-				StatusBadge:   "Selesai",
-				BadgeClass:    "badge-teal",
-				Score:         sch1Score,
-			},
-			{
-				ID:            "exam-sch-02",
-				SubjectName:   "Keamanan Jaringan & Sistem Otomasi",
-				TeacherName:   "Ir. Hendro Wijaya",
-				DateLabel:     "Hari Ini",
-				TimeSlot:      "10.00 - 11.30 WIB",
-				DurationMin:   90,
-				QuestionCount: len(examQs),
-				Room:          "Lab TKJ 1",
-				SessionNumber: 2,
-				Status:        "SUBMITTED",
-				StatusBadge:   "Selesai",
-				BadgeClass:    "badge-teal",
-				Score:         sch2Score,
-			},
-			{
-				ID:            "exam-sch-03",
-				SubjectName:   "Teknologi Layanan Jaringan",
-				TeacherName:   "Rian Pratama, S.Pd.",
-				DateLabel:     "Kemarin",
-				TimeSlot:      "08.00 - 09.30 WIB",
-				DurationMin:   90,
-				QuestionCount: len(examQs),
-				Room:          "Lab TKJ 2",
-				SessionNumber: 1,
-				Status:        "SUBMITTED",
-				StatusBadge:   "Selesai",
-				BadgeClass:    "badge-teal",
-				Score:         92,
-			},
-			{
-				ID:            "exam-sch-04",
-				SubjectName:   "Produk Kreatif & Kewirausahaan",
-				TeacherName:   "Hj. Ratna Sari, S.E.",
-				DateLabel:     "Besok",
-				TimeSlot:      "08.00 - 09.30 WIB",
-				DurationMin:   90,
-				QuestionCount: len(examQs),
-				Room:          "R. Teori 12",
-				SessionNumber: 1,
-				Status:        "SUBMITTED",
-				StatusBadge:   "Selesai",
-				BadgeClass:    "badge-teal",
-				Score:         sch4Score,
-			},
-		}
-	} else {
+	{
 		sch1Status := "READY"
 		sch1Badge := "Bisa Dikerjakan"
 		sch1Class := "badge-success"
@@ -712,23 +723,39 @@ func (s *Server) buildStudentPortal(doc map[string]any, shell ui.RoleShell, user
 	tasks := make([]ui.TaskSubmissionView, 0)
 	for _, tm := range asMapSlice(doc["taskSubmissions"]) {
 		if strVal(tm, "studentId") == dash.Student.ID {
-			tasks = append(tasks, ui.TaskSubmissionView{
-				ID:          strVal(tm, "id"),
-				StudentID:   strVal(tm, "studentId"),
-				StudentName: strVal(tm, "studentName"),
-				SubjectName: strVal(tm, "subjectName"),
-				TaskTitle:   strVal(tm, "taskTitle"),
-				FileName:    strVal(tm, "fileName"),
-				FileSizeKB:  intVal(tm, "fileSizeKb"),
-				SubmittedAt: strVal(tm, "submittedAt"),
-				Status:      strVal(tm, "status"),
-				Score:       intVal(tm, "score"),
-			})
+			tasks = append(tasks, parseTaskSubmission(tm))
 		}
 	}
 
+	submissionByAssignment := map[string]ui.TaskSubmissionView{}
+	for _, task := range tasks {
+		if task.AssignmentID != "" {
+			submissionByAssignment[task.AssignmentID] = task
+		}
+	}
+	assignments := make([]ui.AssignmentView, 0)
+	for _, am := range asMapSlice(doc["assignments"]) {
+		assignment := parseAssignment(am)
+		if assignment.ClassName != dash.Student.ClassroomName {
+			continue
+		}
+		if submission, ok := submissionByAssignment[assignment.ID]; ok {
+			assignment.Submitted = true
+			assignment.SubmissionID = submission.ID
+			assignment.SubmissionStatus = submission.Status
+			assignment.Score = submission.Score
+		}
+		assignments = append(assignments, assignment)
+	}
+
 	var pklPlacement ui.PklPlacementView
+	blobPlacementCount := 0
 	if list := asMapSlice(doc["pklPlacements"]); len(list) > 0 {
+		for _, pm := range list {
+			if strVal(pm, "studentId") == dash.Student.ID {
+				blobPlacementCount++
+			}
+		}
 		pklPlacement = parsePklPlacement(list[0])
 	}
 
@@ -761,6 +788,38 @@ func (s *Server) buildStudentPortal(doc map[string]any, shell ui.RoleShell, user
 		job := parseBkkJob(jm)
 		job.AlreadyApplied = appliedJobs[job.ID]
 		bkkJobs = append(bkkJobs, job)
+	}
+
+	if placements, logs, journals, ok := s.domainStudentPkl(ctx, user, dash.Student.ID); ok {
+		if len(placements) > 0 && len(placements) >= blobPlacementCount {
+			pklPlacement = pklPlacementViewFromDomain(placements[0])
+		}
+		if len(logs) >= len(pklLogs) && len(pklLogs) > 0 {
+			pklLogs = pklLogViewsFromDomain(logs)
+		}
+		if len(journals) >= len(pklJournals) && len(pklJournals) > 0 {
+			pklJournals = pklJournalViewsFromDomain(journals)
+		}
+	}
+	if jobs, apps, ok := s.domainStudentBkk(ctx, user, dash.Student.ID); ok {
+		if len(jobs) >= len(bkkJobs) && len(bkkJobs) > 0 {
+			applied := map[string]bool{}
+			for _, app := range apps {
+				applied[app.JobAppID] = true
+			}
+			bkkJobs = make([]ui.BkkJobView, 0, len(jobs))
+			for _, job := range jobs {
+				view := bkkJobViewFromDomain(job)
+				view.AlreadyApplied = applied[view.ID]
+				bkkJobs = append(bkkJobs, view)
+			}
+		}
+		if len(apps) >= len(bkkApps) && len(bkkApps) > 0 {
+			bkkApps = make([]ui.BkkAppView, 0, len(apps))
+			for _, app := range apps {
+				bkkApps = append(bkkApps, bkkAppViewFromDomain(app))
+			}
+		}
 	}
 
 	expenses := make([]ui.StudentExpenseView, 0)
@@ -837,11 +896,11 @@ func (s *Server) buildStudentPortal(doc map[string]any, shell ui.RoleShell, user
 		ExamAverageScore:       avgScore,
 		AllExamsGraded:         allGraded,
 		ExamTier:               tier,
-		IsDemoGraded:           isDemoGraded,
 		Proctor:                proctor,
 		ExamSubmitted:          examSubmitted,
 		ExamScore:              examScore,
 		Documents:              docs,
+		Assignments:            assignments,
 		TaskSubmissions:        tasks,
 		PklPlacement:           pklPlacement,
 		PklLogs:                pklLogs,
@@ -853,9 +912,21 @@ func (s *Server) buildStudentPortal(doc map[string]any, shell ui.RoleShell, user
 	}
 }
 
-func (s *Server) buildParentPortal(doc map[string]any, shell ui.RoleShell, user *model.User, tab string) ui.ParentPortalPage {
-	sp := s.buildStudentPortal(doc, shell, user, "dashboard")
-	dash := s.buildStudentDashboard(doc, shell, user)
+func (s *Server) buildParentPortal(ctx context.Context, doc map[string]any, shell ui.RoleShell, user *model.User, tab string) ui.ParentPortalPage {
+	sp := s.buildStudentPortal(ctx, doc, shell, user, "dashboard")
+	dash := s.buildStudentDashboard(ctx, doc, shell, user)
+
+	leaves := make([]ui.ParentLeaveView, 0)
+	if s.storeDB != nil && sp.Student.ID != "" {
+		if rows, err := s.storeDB.ParentLeavesForStudent(ctx, sp.Student.ID); err == nil {
+			for _, row := range rows {
+				leaves = append(leaves, ui.ParentLeaveView{
+					ID: row.ID, LeaveType: row.LeaveType, LeaveDate: row.LeaveDate,
+					Note: row.Note, Status: row.Status, CreatedAt: row.CreatedAt,
+				})
+			}
+		}
+	}
 
 	invs := make([]ui.InvoiceView, 0)
 	ownInvIDs := map[string]bool{}
@@ -873,6 +944,15 @@ func (s *Server) buildParentPortal(doc map[string]any, shell ui.RoleShell, user 
 		if ownInvIDs[entry.InvoiceID] {
 			ledger = append(ledger, entry)
 		}
+	}
+	// Only switch slices when the domain read is at least as complete as the
+	// blob, so a partially mapped student never hides a receipt.
+	blobInvoiceCount, blobLedgerCount := len(invs), len(ledger)
+	if views, ok := s.domainStudentInvoices(ctx, user, sp.Student.ID); ok && len(views) >= blobInvoiceCount {
+		invs = views
+	}
+	if views, ok := s.domainStudentLedger(ctx, user, sp.Student.ID); ok && len(views) >= blobLedgerCount {
+		ledger = views
 	}
 
 	consults := make([]ui.ConsultationView, 0)
@@ -902,10 +982,11 @@ func (s *Server) buildParentPortal(doc map[string]any, shell ui.RoleShell, user 
 		Expenses:               sp.Expenses,
 		TotalExpense:           sp.TotalExpense,
 		Consultations:          consults,
+		Leaves:                 leaves,
 	}
 }
 
-func (s *Server) buildTreasurerPortal(doc map[string]any, shell ui.RoleShell, tab string) ui.TreasurerPortalPage {
+func (s *Server) buildTreasurerPortal(ctx context.Context, doc map[string]any, shell ui.RoleShell, user *model.User, tab string) ui.TreasurerPortalPage {
 	students := make([]ui.StudentView, 0)
 	for _, sm := range asMapSlice(doc["students"]) {
 		students = append(students, parseStudentView(sm))
@@ -919,6 +1000,15 @@ func (s *Server) buildTreasurerPortal(doc map[string]any, shell ui.RoleShell, ta
 		totalBilled += iv.FinalAmount
 		totalCollected += iv.PaidAmount
 		invoices = append(invoices, iv)
+	}
+	blobInvoiceCount := len(invoices)
+	if views, ok := s.domainAllInvoices(ctx, user); ok && len(views) >= blobInvoiceCount {
+		invoices = views
+		totalBilled, totalCollected = 0, 0
+		for _, invoice := range invoices {
+			totalBilled += invoice.FinalAmount
+			totalCollected += invoice.PaidAmount
+		}
 	}
 	totalArrears := totalBilled - totalCollected
 	if totalArrears < 0 {
@@ -943,6 +1033,9 @@ func (s *Server) buildTreasurerPortal(doc map[string]any, shell ui.RoleShell, ta
 	for _, lm := range asMapSlice(doc["ledger"]) {
 		ledger = append(ledger, parseLedgerEntry(lm))
 	}
+	if views, ok := s.domainAllLedger(ctx, user); ok && len(views) >= len(ledger) {
+		ledger = views
+	}
 
 	revs := make([]ui.ReversalRequestView, 0)
 	for _, rm := range asMapSlice(doc["reversalRequests"]) {
@@ -964,33 +1057,90 @@ func (s *Server) buildTreasurerPortal(doc map[string]any, shell ui.RoleShell, ta
 	}
 }
 
-func (s *Server) buildTeacherPortal(doc map[string]any, shell ui.RoleShell, tab string) ui.TeacherPortalPage {
-	stdMap := findStudentMap(doc, "std-budi-01")
+func (s *Server) buildTeacherPortal(ctx context.Context, doc map[string]any, shell ui.RoleShell, user *model.User, tab string, selectedClassID string) ui.TeacherPortalPage {
+	stdMap := findStudentMap(doc, "")
 	activeStudent := parseStudentView(stdMap)
 	cbtScore := intVal(stdMap, "cbtScore")
 
-	jMap, _ := doc["classJournal"].(map[string]any)
-	journal := ui.JournalView{
-		Subject:      strVal(jMap, "subjectName"),
-		Topic:        strVal(jMap, "syllabusTopic"),
-		TeacherName:  strVal(jMap, "teacherName"),
-		Summary:      strVal(jMap, "teacherNotes"),
-		LeaderStatus: strVal(jMap, "leaderValidationStatus"),
+	todaySchedules := s.schedulesForToday(ctx, user.ID)
+	homeroomClass := s.homeroomClassForTeacher(ctx, user.ID)
+	classes := make([]ui.ClassOptionView, 0)
+	seenClasses := map[string]bool{}
+	if s.storeDB != nil {
+		if all, err := s.storeDB.ListClassrooms(ctx); err == nil {
+			for _, class := range all {
+				if class.HomeroomTeacher != user.ID {
+					continue
+				}
+				classes = append(classes, ui.ClassOptionView{ID: class.ID, Name: class.Name})
+				seenClasses[class.ID] = true
+			}
+		}
+	}
+	for _, schedule := range todaySchedules {
+		if schedule.ClassroomID == "" || seenClasses[schedule.ClassroomID] {
+			continue
+		}
+		classes = append(classes, ui.ClassOptionView{ID: schedule.ClassroomID, Name: schedule.ClassName})
+		seenClasses[schedule.ClassroomID] = true
+	}
+
+	if selectedClassID == "" && len(todaySchedules) > 0 {
+		selectedClassID = todaySchedules[0].ClassroomID
+	}
+	if selectedClassID == "" && len(classes) > 0 {
+		selectedClassID = classes[0].ID
+	}
+	activeClass := ""
+	selectedSchedule := ""
+	selectedSubject := ""
+	for _, schedule := range todaySchedules {
+		if schedule.ClassroomID != selectedClassID {
+			continue
+		}
+		activeClass = schedule.ClassName
+		selectedSchedule = schedule.ID
+		selectedSubject = schedule.SubjectID
+		break
+	}
+	for _, class := range classes {
+		if class.ID == selectedClassID {
+			if activeClass == "" {
+				activeClass = class.Name
+			}
+			break
+		}
+	}
+
+	journal := ui.JournalView{}
+	journalNotes := ""
+	journalSmartNotes := ""
+	if selectedSchedule != "" && s.storeDB != nil {
+		if entry, ok := s.storeDB.ClassJournalForScheduleDate(ctx, selectedSchedule, schoolDate()); ok {
+			journal = ui.JournalView{
+				Subject: entry.SubjectID, Topic: entry.Topic, TeacherName: entry.TeacherName,
+				Summary: entry.Notes, LeaderStatus: "TERSIMPAN",
+			}
+			journalNotes = entry.Notes
+			journalSmartNotes = entry.SmartNotes
+		}
 	}
 
 	atts := make([]ui.AttendanceRowView, 0)
-	for _, am := range asMapSlice(doc["attendances"]) {
-		st := strVal(am, "status")
-		atts = append(atts, ui.AttendanceRowView{
-			ID:             strVal(am, "id"),
-			StudentID:      strVal(am, "studentId"),
-			StudentName:    strVal(am, "studentName"),
-			NISN:           strVal(am, "nisn"),
-			Status:         st,
-			StatusLabel:    ui.StatusLabel(st),
-			GateTapTime:    strVal(am, "gateTapTime"),
-			VerifiedSource: strVal(am, "verifiedSource"),
-		})
+	if selectedClassID != "" && s.storeDB != nil {
+		if roster, err := s.storeDB.ClassroomRoster(ctx, selectedClassID, schoolDate()); err == nil {
+			for _, entry := range roster {
+				status := entry.Status
+				if status == "" {
+					status = "BELUM_DICATAT"
+				}
+				atts = append(atts, ui.AttendanceRowView{
+					ID: entry.AttendanceID, StudentID: entry.StudentAppID, StudentName: entry.FullName,
+					NISN: entry.NISN, Status: status, StatusLabel: ui.StatusLabel(status),
+					GateTapTime: entry.GateTapTime, VerifiedSource: entry.VerifiedSource,
+				})
+			}
+		}
 	}
 
 	examQs := make([]ui.ExamQuestionView, 0)
@@ -1020,6 +1170,10 @@ func (s *Server) buildTeacherPortal(doc map[string]any, shell ui.RoleShell, tab 
 			EssayRubric:    strVal(qm, "essayRubric"),
 		})
 	}
+	blobQuestionCount := len(examQs)
+	if questions, ok := s.domainTeacherExamQuestions(ctx, user); ok && len(questions) >= blobQuestionCount {
+		examQs = examQuestionViewsFromDomain(questions)
+	}
 
 	proctors := make([]ui.ProctorSessionView, 0)
 	for _, pm := range asMapSlice(doc["proctorStudents"]) {
@@ -1037,6 +1191,9 @@ func (s *Server) buildTeacherPortal(doc map[string]any, shell ui.RoleShell, tab 
 			Emergency2h:   boolVal(pm, "hasEmergency2hTicket"),
 		})
 	}
+	if sessions, ok := s.domainTeacherExamSessions(ctx, user); ok && len(sessions) >= len(proctors) {
+		proctors = proctorViewsFromDomain(sessions)
+	}
 
 	pklLogs := make([]ui.PklLogView, 0)
 	for _, lm := range asMapSlice(doc["pklAttendanceLogs"]) {
@@ -1046,6 +1203,48 @@ func (s *Server) buildTeacherPortal(doc map[string]any, shell ui.RoleShell, tab 
 	pklJournals := make([]ui.PklJournalView, 0)
 	for _, jm := range asMapSlice(doc["pklJournals"]) {
 		pklJournals = append(pklJournals, parsePklJournal(jm))
+	}
+
+	tasks := make([]ui.TaskSubmissionView, 0)
+	for _, tm := range asMapSlice(doc["taskSubmissions"]) {
+		tasks = append(tasks, parseTaskSubmission(tm))
+	}
+
+	submissionCounts := map[string]int{}
+	for _, task := range tasks {
+		if task.AssignmentID != "" {
+			submissionCounts[task.AssignmentID]++
+		}
+	}
+	assignments := make([]ui.AssignmentView, 0)
+	ownedAssignments := map[string]bool{}
+	for _, am := range asMapSlice(doc["assignments"]) {
+		assignment := parseAssignment(am)
+		if !sameTeacher(assignment.TeacherName, user.FullName) {
+			continue
+		}
+		if selectedClassID != "" && assignment.ClassName != activeClass {
+			continue
+		}
+		assignment.SubmissionCount = submissionCounts[assignment.ID]
+		assignments = append(assignments, assignment)
+		ownedAssignments[assignment.ID] = true
+	}
+	ownedTasks := make([]ui.TaskSubmissionView, 0)
+	for _, task := range tasks {
+		if ownedAssignments[task.AssignmentID] {
+			ownedTasks = append(ownedTasks, task)
+		}
+	}
+	tasks = ownedTasks
+
+	if logs, journals, ok := s.domainTeacherPkl(ctx, user); ok {
+		if len(logs) >= len(pklLogs) && len(pklLogs) > 0 {
+			pklLogs = pklLogViewsFromDomain(logs)
+		}
+		if len(journals) >= len(pklJournals) && len(pklJournals) > 0 {
+			pklJournals = pklJournalViewsFromDomain(journals)
+		}
 	}
 
 	resetLogs := make([]ui.ExamResetLogView, 0)
@@ -1063,20 +1262,38 @@ func (s *Server) buildTeacherPortal(doc map[string]any, shell ui.RoleShell, tab 
 	}
 
 	return ui.TeacherPortalPage{
-		Shell:           shell,
-		Tab:             tab,
-		ActiveStudent:   activeStudent,
-		CbtScore:        cbtScore,
-		Journal:         journal,
-		TeacherNotes:    strVal(jMap, "teacherNotes"),
-		AiSmartNotes:    strVal(jMap, "aiSmartNotes"),
-		Attendances:     atts,
-		ExamQuestions:   examQs,
-		ProctorStudents: proctors,
-		ExamResetLogs:   resetLogs,
-		PklLogs:         pklLogs,
-		PklJournals:     pklJournals,
+		Shell:            shell,
+		Tab:              tab,
+		HomeroomClass:    homeroomClass,
+		ActiveClass:      activeClass,
+		SelectedClassID:  selectedClassID,
+		SelectedSchedule: selectedSchedule,
+		SelectedSubject:  selectedSubject,
+		Classes:          classes,
+		TodaySchedules:   todaySchedules,
+		ActiveStudent:    activeStudent,
+		CbtScore:         cbtScore,
+		Journal:          journal,
+		TeacherNotes:     journalNotes,
+		AiSmartNotes:     journalSmartNotes,
+		Attendances:      atts,
+		ExamQuestions:    examQs,
+		ProctorStudents:  proctors,
+		ExamResetLogs:    resetLogs,
+		PklLogs:          pklLogs,
+		PklJournals:      pklJournals,
+		Assignments:      assignments,
+		TaskSubmissions:  tasks,
 	}
+}
+
+func sameTeacher(assignmentTeacher, current string) bool {
+	a := strings.TrimSpace(assignmentTeacher)
+	c := strings.TrimSpace(current)
+	if a == "" || c == "" {
+		return false
+	}
+	return a == c || strings.HasPrefix(c, a) || strings.HasPrefix(a, c)
 }
 
 func (s *Server) buildDisciplinePortal(doc map[string]any, shell ui.RoleShell, tab string) ui.DisciplinePortalPage {
@@ -1160,41 +1377,67 @@ func (s *Server) buildDisciplinePortal(doc map[string]any, shell ui.RoleShell, t
 	}
 }
 
-func (s *Server) buildPiketPortal(doc map[string]any, shell ui.RoleShell) ui.PiketPortalPage {
-	clsList := make([]ui.PiketClassroomView, 0)
-	for _, cm := range asMapSlice(doc["piketClassrooms"]) {
+func (s *Server) buildPiketPortal(ctx context.Context, shell ui.RoleShell) ui.PiketPortalPage {
+	todaySchedules := s.schedulesForToday(ctx, "")
+	clsList := make([]ui.PiketClassroomView, 0, len(todaySchedules))
+	for _, schedule := range todaySchedules {
 		clsList = append(clsList, ui.PiketClassroomView{
-			ID:      strVal(cm, "id"),
-			Name:    strVal(cm, "name"),
-			Subject: strVal(cm, "subject"),
-			Teacher: strVal(cm, "teacher"),
-			Status:  strVal(cm, "status"),
-			Note:    strVal(cm, "note"),
+			ID: schedule.ClassroomID, Name: schedule.ClassName, Subject: schedule.SubjectID,
+			Teacher: schedule.TeacherName, Time: schedule.StartTime + "–" + schedule.EndTime,
+			Room: schedule.RoomName, ScheduleID: schedule.ID, Status: "TERJADWAL",
+			Note: "Slot jadwal hari ini.",
 		})
 	}
 
 	gateLogs := make([]ui.GateLogView, 0)
-	for _, gm := range asMapSlice(doc["piketGateLogs"]) {
-		gateLogs = append(gateLogs, ui.GateLogView{
-			ID:          strVal(gm, "id"),
-			NISN:        strVal(gm, "nisn"),
-			StudentName: strVal(gm, "studentName"),
-			LogType:     strVal(gm, "logType"),
-			Reason:      strVal(gm, "reason"),
-			RecordedAt:  strVal(gm, "recordedAt"),
-			QrPassHash:  strVal(gm, "qrPassHash"),
-		})
+	assignments := make([]ui.SubstituteAssignmentView, 0)
+	teachers := make([]ui.TeacherImpactView, 0)
+	if s.storeDB != nil {
+		if rows, err := s.storeDB.RecentGateLogs(ctx, 50); err == nil {
+			for _, row := range rows {
+				gateLogs = append(gateLogs, ui.GateLogView{
+					ID: row.ID, NISN: row.NISN, StudentName: row.StudentName, LogType: row.LogType,
+					Reason: row.Reason, RecordedAt: row.RecordedAt, QrPassHash: row.PassCode,
+				})
+			}
+		}
+		if rows, err := s.storeDB.SubstituteAssignmentsForDate(ctx, schoolDate()); err == nil {
+			for _, row := range rows {
+				assignments = append(assignments, ui.SubstituteAssignmentView{
+					ID: row.ID, ClassName: row.ClassName, Subject: row.SubjectID,
+					TeacherName: row.TeacherName, OriginalTeacher: row.OriginalTeacher, Note: row.Note,
+				})
+			}
+		}
+		if users, err := s.storeDB.ListUsers(ctx); err == nil {
+			for _, account := range users {
+				if account.Role != "teacher" || !account.IsActive {
+					continue
+				}
+				teachers = append(teachers, ui.TeacherImpactView{
+					ID: account.ID, TeacherName: account.FullName, NIP: account.Username,
+				})
+			}
+		}
 	}
 
 	return ui.PiketPortalPage{
-		Shell:      shell,
-		Classrooms: clsList,
-		GateLogs:   gateLogs,
-		Teachers:   parseTeachers(doc),
+		Shell:          shell,
+		Classrooms:     clsList,
+		TodaySchedules: todaySchedules,
+		Assignments:    assignments,
+		GateLogs:       gateLogs,
+		Teachers:       teachers,
 	}
 }
 
-func (s *Server) buildAdminTuPortal(doc map[string]any, shell ui.RoleShell, tab string) ui.AdminTuPortalPage {
+func (s *Server) buildAdminTuPortal(ctx context.Context, user *model.User, doc map[string]any, shell ui.RoleShell, tab, section, query string, page int) ui.AdminTuPortalPage {
+	if section != "classes" && section != "accounts" && section != "documents" {
+		section = "students"
+	}
+	if page < 1 {
+		page = 1
+	}
 	students := make([]ui.StudentView, 0)
 	for _, sm := range asMapSlice(doc["students"]) {
 		students = append(students, parseStudentView(sm))
@@ -1248,9 +1491,139 @@ func (s *Server) buildAdminTuPortal(doc map[string]any, shell ui.RoleShell, tab 
 		apps = append(apps, parseBkkApp(am))
 	}
 
+	if rows, ok := s.domainAdminPkl(ctx, user); ok && len(rows) >= len(placements) && len(placements) > 0 {
+		placements = pklPlacementViewsFromDomain(rows)
+	}
+	academicYears := make([]ui.AcademicYearView, 0)
+	classrooms := make([]ui.ClassroomView, 0)
+	schedules := make([]ui.ScheduleView, 0)
+	if s.storeDB != nil {
+		if years, err := s.storeDB.ListAcademicYears(ctx); err == nil {
+			for _, year := range years {
+				academicYears = append(academicYears, ui.AcademicYearView{
+					ID: year.ID, Label: year.Label, Semester: year.Semester,
+					StartDate: year.StartDate.Format("02 Jan 2006"), EndDate: year.EndDate.Format("02 Jan 2006"),
+					Active: year.Active,
+				})
+			}
+		}
+		if classes, err := s.storeDB.ListClassrooms(ctx); err == nil {
+			for _, class := range classes {
+				classrooms = append(classrooms, ui.ClassroomView{
+					ID: class.ID, Name: class.Name, GradeLevel: class.GradeLevel, MajorCode: class.MajorCode,
+					MajorName: class.MajorName, HomeroomID: class.HomeroomTeacher,
+					HomeroomName: class.HomeroomName, StudentCount: class.StudentCount,
+				})
+			}
+		}
+		if rows, err := s.storeDB.ListSchedules(ctx); err == nil {
+			for _, schedule := range rows {
+				schedules = append(schedules, scheduleViewFromStore(schedule))
+			}
+		}
+	}
+
+	rolloverYears := make([]ui.AcademicYearView, 0)
+	for _, year := range academicYears {
+		if !year.Active {
+			rolloverYears = append(rolloverYears, year)
+		}
+	}
+	rolloverRows := make([]ui.RolloverRowView, 0)
+	rolloverReady := false
+	for _, source := range classrooms {
+		if source.StudentCount == 0 {
+			continue
+		}
+		row := ui.RolloverRowView{
+			ClassID: source.ID, ClassName: source.Name, GradeLevel: source.GradeLevel,
+			MajorCode: source.MajorCode, StudentCount: source.StudentCount,
+			Graduate: source.GradeLevel == 12,
+		}
+		if !row.Graduate {
+			suffix := classSlotSuffix(source.Name)
+			for _, target := range classrooms {
+				if target.GradeLevel == source.GradeLevel+1 && target.MajorCode == source.MajorCode {
+					row.Targets = append(row.Targets, target)
+					if row.SuggestedTargetID == "" || (suffix != "" && classSlotSuffix(target.Name) == suffix) {
+						row.SuggestedTargetID = target.ID
+					}
+				}
+			}
+		}
+		rolloverRows = append(rolloverRows, row)
+		if row.Graduate || len(row.Targets) > 0 {
+			rolloverReady = true
+		}
+	}
+	rolloverReady = rolloverReady && len(rolloverYears) > 0
+
+	studentRows := make([]ui.StudentDirectoryView, 0)
+	studentTotal := 0
+	pageCount := 1
+	if s.storeDB != nil {
+		if rows, total, err := s.storeDB.StudentDirectory(ctx, query, 25, (page-1)*25); err == nil {
+			studentTotal = total
+			pageCount = (total + 24) / 25
+			if pageCount < 1 {
+				pageCount = 1
+			}
+			for _, row := range rows {
+				studentRows = append(studentRows, ui.StudentDirectoryView{
+					ID: row.ID, NISN: row.NISN, FullName: row.FullName, ClassroomName: row.ClassroomName,
+					MajorCode: row.MajorCode, ParentName: row.ParentName, ParentPhone: row.ParentPhone,
+					IsAlumni: row.IsAlumni,
+				})
+			}
+		}
+	}
+
+	accounts := make([]ui.AccountView, 0)
+	if s.storeDB != nil {
+		if users, err := s.storeDB.ListUsers(ctx); err == nil {
+			for _, account := range users {
+				if query != "" && !strings.Contains(strings.ToLower(account.FullName+" "+account.Username+" "+account.Role), strings.ToLower(query)) {
+					continue
+				}
+				accounts = append(accounts, ui.AccountView{
+					ID:          account.ID,
+					Identifier:  account.Username,
+					FullName:    account.FullName,
+					Role:        account.Role,
+					RoleLabel:   ui.RoleLabel(account.Role),
+					Phone:       account.PhoneWA,
+					Active:      account.IsActive,
+					IsSelf:      user != nil && user.ID == account.ID,
+					TOTPEnabled: account.TOTPEnabled,
+				})
+			}
+		}
+	}
+
+	if jobRows, appRows, ok := s.domainAdminBkk(ctx, user); ok {
+		if len(jobRows) >= len(jobs) && len(jobs) > 0 {
+			jobs = make([]ui.BkkJobView, 0, len(jobRows))
+			for _, job := range jobRows {
+				jobs = append(jobs, bkkJobViewFromDomain(job))
+			}
+		}
+		if len(appRows) >= len(apps) && len(apps) > 0 {
+			apps = make([]ui.BkkAppView, 0, len(appRows))
+			for _, app := range appRows {
+				apps = append(apps, bkkAppViewFromDomain(app))
+			}
+		}
+	}
+
 	return ui.AdminTuPortalPage{
 		Shell:         shell,
 		Tab:           tab,
+		Section:       section,
+		Query:         query,
+		Page:          page,
+		PageCount:     pageCount,
+		StudentTotal:  studentTotal,
+		StudentRows:   studentRows,
 		Students:      students,
 		Majors:        majors,
 		Teachers:      parseTeachers(doc),
@@ -1260,10 +1633,103 @@ func (s *Server) buildAdminTuPortal(doc map[string]any, shell ui.RoleShell, tab 
 		PklPlacements: placements,
 		BkkJobs:       jobs,
 		BkkApps:       apps,
+		Accounts:      accounts,
+		AcademicYears: academicYears,
+		Classrooms:    classrooms,
+		Schedules:     schedules,
+		RolloverRows:  rolloverRows,
+		RolloverYears: rolloverYears,
+		RolloverReady: rolloverReady,
 	}
 }
 
-func (s *Server) buildHeadmasterPortal(doc map[string]any, shell ui.RoleShell, aiAdvice string) ui.HeadmasterPortalPage {
+// classSlotSuffix strips the leading grade token so "X TKJ 1" and
+// "XI TKJ 1" pair as the same class slot across school years.
+func classSlotSuffix(name string) string {
+	fields := strings.Fields(strings.TrimSpace(name))
+	if len(fields) > 1 {
+		switch fields[0] {
+		case "X", "XI", "XII":
+			return strings.Join(fields[1:], " ")
+		}
+	}
+	return ""
+}
+
+func dayName(day int) string {
+	names := []string{"", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"}
+	if day < 1 || day > 7 {
+		return "-"
+	}
+	return names[day]
+}
+
+func scheduleViewFromStore(schedule store.Schedule) ui.ScheduleView {
+	return ui.ScheduleView{
+		ID: schedule.ID, ClassroomID: schedule.ClassroomID, ClassName: schedule.ClassName, SubjectID: schedule.SubjectID,
+		TeacherID: schedule.TeacherID, TeacherName: schedule.TeacherName, DayName: dayName(schedule.DayOfWeek),
+		StartTime: schedule.StartTime, EndTime: schedule.EndTime, RoomName: schedule.RoomName,
+	}
+}
+
+func schoolNow() time.Time {
+	return time.Now().In(time.FixedZone("WIB", 7*3600))
+}
+
+func schoolDate() time.Time {
+	now := schoolNow()
+	return time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+}
+
+func schoolDayOfWeek() int {
+	day := int(schoolNow().Weekday())
+	if day == 0 {
+		return 7
+	}
+	return day
+}
+
+// schedulesForToday reads the Postgres schedule master. A teacher filter of ""
+// returns every class for the piket board.
+func (s *Server) schedulesForToday(ctx context.Context, teacherID string) []ui.ScheduleView {
+	if s.storeDB == nil {
+		return nil
+	}
+	rows, err := s.storeDB.ListSchedules(ctx)
+	if err != nil {
+		return nil
+	}
+	today := schoolDayOfWeek()
+	views := make([]ui.ScheduleView, 0)
+	for _, schedule := range rows {
+		if schedule.DayOfWeek != today {
+			continue
+		}
+		if teacherID != "" && schedule.TeacherID != teacherID {
+			continue
+		}
+		views = append(views, scheduleViewFromStore(schedule))
+	}
+	return views
+}
+
+func (s *Server) homeroomClassForTeacher(ctx context.Context, teacherID string) string {
+	if s.storeDB == nil {
+		return ""
+	}
+	classes, err := s.storeDB.ListClassrooms(ctx)
+	if err != nil {
+		return ""
+	}
+	for _, class := range classes {
+		if class.HomeroomTeacher == teacherID {
+			return class.Name
+		}
+	}
+	return ""
+}
+
+func (s *Server) buildHeadmasterPortal(ctx context.Context, doc map[string]any, shell ui.RoleShell, aiAdvice string) ui.HeadmasterPortalPage {
 	disc := s.buildDisciplinePortal(doc, shell, "transformation-index")
 	revs := make([]ui.ReversalRequestView, 0)
 	for _, rm := range asMapSlice(doc["reversalRequests"]) {
@@ -1275,6 +1741,13 @@ func (s *Server) buildHeadmasterPortal(doc map[string]any, shell ui.RoleShell, a
 		return teachers[i].FinalImpactScore > teachers[j].FinalImpactScore
 	})
 
+	var lastType, lastHash, lastAt string
+	if s.storeDB != nil {
+		if signature, err := s.storeDB.LatestExecutiveSignature(ctx); err == nil && signature != nil {
+			lastType, lastHash, lastAt = signature.DocumentType, signature.DocumentHash, signature.SignedAt
+		}
+	}
+
 	return ui.HeadmasterPortalPage{
 		Shell:               shell,
 		Teachers:            teachers,
@@ -1284,6 +1757,9 @@ func (s *Server) buildHeadmasterPortal(doc map[string]any, shell ui.RoleShell, a
 		TransformationTrend: disc.TransformationTrend,
 		ActiveOTP:           otp,
 		AiAdvice:            aiAdvice,
+		LastSignatureType:   lastType,
+		LastSignatureHash:   lastHash,
+		LastSignatureAt:     lastAt,
 	}
 }
 
@@ -1318,6 +1794,35 @@ func parseStudentDoc(dm map[string]any) ui.StudentDocView {
 		UploadedAt:   strVal(dm, "uploadedAt"),
 		Status:       strVal(dm, "status"),
 		RejectReason: strVal(dm, "rejectReason"),
+	}
+}
+
+func parseAssignment(am map[string]any) ui.AssignmentView {
+	return ui.AssignmentView{
+		ID:          strVal(am, "id"),
+		ClassName:   strVal(am, "className"),
+		SubjectName: strVal(am, "subjectName"),
+		Title:       strVal(am, "title"),
+		Description: strVal(am, "description"),
+		DueDate:     strVal(am, "dueDate"),
+		TeacherName: strVal(am, "teacherName"),
+	}
+}
+
+func parseTaskSubmission(tm map[string]any) ui.TaskSubmissionView {
+	return ui.TaskSubmissionView{
+		ID:           strVal(tm, "id"),
+		AssignmentID: strVal(tm, "assignmentId"),
+		StudentID:    strVal(tm, "studentId"),
+		StudentName:  strVal(tm, "studentName"),
+		SubjectName:  strVal(tm, "subjectName"),
+		TaskTitle:    strVal(tm, "taskTitle"),
+		FileName:     strVal(tm, "fileName"),
+		BlobID:       strVal(tm, "blobId"),
+		FileSizeKB:   intVal(tm, "fileSizeKb"),
+		SubmittedAt:  strVal(tm, "submittedAt"),
+		Status:       strVal(tm, "status"),
+		Score:        intVal(tm, "score"),
 	}
 }
 

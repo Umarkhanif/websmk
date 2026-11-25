@@ -294,13 +294,6 @@ templ StudentPortal(data ui.StudentPortalPage) {
 					</div>
 					<div class="leader-actions">
 						<a href="/student/exam-lobby" class="button button-secondary">Kembali ke Persiapan</a>
-						if data.Shell.DemoMode {
-							<form method="post" action="/student/proctor-status">
-								<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-								<input type="hidden" name="status" value="UNLOCK_DEMO"/>
-								<button type="submit" class="button button-primary">Simulasi Pengawas: Buka Kunci Sesi</button>
-							</form>
-						}
 					</div>
 				</section>
 			} else if data.ExamSubmitted {
@@ -587,30 +580,91 @@ templ StudentPortal(data ui.StudentPortalPage) {
 			<section class="card form-stack">
 				<div class="stat-card-head">
 					<div>
+						<span class="eyebrow">Tugas dari Guru</span>
+						<h3>Daftar Tugas Kelas { data.Student.ClassroomName }</h3>
+					</div>
+				</div>
+				<div class="table-wrap">
+					<table class="data-table">
+						<thead>
+							<tr>
+								<th>Judul Tugas</th>
+								<th>Mata Pelajaran</th>
+								<th>Tenggat</th>
+								<th>Status</th>
+								<th>Nilai</th>
+							</tr>
+						</thead>
+						<tbody>
+							if len(data.Assignments) == 0 {
+								<tr><td colspan="5" class="muted">Belum ada tugas untuk kelas ini.</td></tr>
+							}
+							for _, a := range data.Assignments {
+								<tr>
+									<td><strong>{ a.Title }</strong><br/><span class="muted">{ a.Description }</span></td>
+									<td>{ a.SubjectName }</td>
+									<td class="mono">{ a.DueDate }</td>
+									<td>
+										if a.Submitted {
+											<span class="badge badge-success">{ a.SubmissionStatus }</span>
+										} else {
+											<span class="badge badge-warning">Belum dikumpulkan</span>
+										}
+									</td>
+									<td class="mono">
+										if a.Submitted && a.SubmissionStatus != "TERKIRIM" {
+											{ strconv.Itoa(a.Score) }
+										} else {
+											<span class="muted">-</span>
+										}
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</section>
+
+			<section class="card form-stack">
+				<div class="stat-card-head">
+					<div>
 						<span class="eyebrow">Tugas &amp; Portofolio</span>
 						<h3>Unggah Tugas Praktik Lab &amp; Bengkel</h3>
 					</div>
 					@components.InfoBubble("Format berkas PDF atau laporan praktikum (maksimal 10 MB per berkas).")
 				</div>
-				<form method="post" action="/student/task/submit" class="form-row">
+				<form method="post" action="/student/task/submit" enctype="multipart/form-data" class="form-stack">
 					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+					<label class="field">
+						<span class="field-label">Pilih Tugas dari Guru (opsional)</span>
+						<select class="input" name="assignment_id">
+							<option value="">Tugas mandiri / tidak terkait tugas guru</option>
+							for _, a := range data.Assignments {
+								if !a.Submitted {
+									<option value={ a.ID }>{ a.Title } — tenggat { a.DueDate }</option>
+								}
+							}
+						</select>
+					</label>
+					<div class="form-row">
+						<div class="field">
+							<div class="field-head">
+								<label class="field-label">Judul Tugas / Praktik</label>
+							</div>
+							<input class="input" type="text" name="task_title" placeholder="Kosongkan bila memilih tugas guru"/>
+						</div>
 					<div class="field">
 						<div class="field-head">
-							<label class="field-label">Judul Tugas / Praktik</label>
+							<label class="field-label">Berkas Tugas</label>
 						</div>
-						<input class="input" type="text" name="task_title" placeholder="Contoh: Praktik VLAN Mikrotik..." required/>
+						<input class="input" type="file" name="file" accept="application/pdf,image/jpeg,image/png" required/>
 					</div>
-					<div class="field">
-						<div class="field-head">
-							<label class="field-label">Nama Berkas</label>
+						<div class="field">
+							<div class="field-head">
+								<label class="field-label">Aksi</label>
+							</div>
+							<button type="submit" class="button button-primary">Kirim Tugas</button>
 						</div>
-						<input class="input input-mono" type="text" name="file_name" value="praktik_vlan_budi.pdf" required/>
-					</div>
-					<div class="field">
-						<div class="field-head">
-							<label class="field-label">Aksi</label>
-						</div>
-						<button type="submit" class="button button-primary">Kirim Tugas</button>
 					</div>
 				</form>
 
@@ -623,6 +677,7 @@ templ StudentPortal(data ui.StudentPortalPage) {
 								<th>Berkas</th>
 								<th>Waktu Kirim</th>
 								<th>Status</th>
+								<th>Nilai</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -630,9 +685,23 @@ templ StudentPortal(data ui.StudentPortalPage) {
 								<tr>
 									<td>{ t.SubjectName }</td>
 									<td><strong>{ t.TaskTitle }</strong></td>
-									<td class="mono">{ t.FileName } ({ strconv.Itoa(t.FileSizeKB) } KB)</td>
+									<td class="mono">
+										if t.BlobID != "" {
+											<a href={ "/document/" + t.BlobID } target="_blank" rel="noopener">{ t.FileName }</a>
+										} else {
+											{ t.FileName }
+										}
+										({ strconv.Itoa(t.FileSizeKB) } KB)
+									</td>
 									<td class="mono">{ t.SubmittedAt }</td>
 									<td><span class="badge badge-success">{ t.Status }</span></td>
+									<td class="mono">
+										if t.Status != "TERKIRIM" {
+											{ strconv.Itoa(t.Score) }
+										} else {
+											<span class="muted">-</span>
+										}
+									</td>
 								</tr>
 							}
 						</tbody>
@@ -718,17 +787,6 @@ templ StudentPortal(data ui.StudentPortalPage) {
 						</div>
 					</div>
 
-					<div class="cbt-sim-box">
-						if !data.AllExamsGraded {
-							<a href="/student/academic?demo_graded=true" class="cbt-sim-pill">
-								⚡ Simulasi: Semua Ujian Selesai Dinilai
-							</a>
-						} else if data.IsDemoGraded {
-							<a href="/student/academic" class="cbt-sim-pill cbt-sim-pill-reset">
-								↺ Kembalikan ke Status Asli
-							</a>
-						}
-					</div>
 				</section>
 
 				<!-- Right Card: Ringkasan Rapor Holistik 360° -->

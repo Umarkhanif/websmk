@@ -18,6 +18,11 @@ const (
 	maxStateWritesPerMinute = 120
 )
 
+var (
+	errStateNotInitialized = errors.New("state not initialized")
+	errStateTooLarge       = errors.New("state payload too large")
+)
+
 func scopeFor(user *model.User) (access state.Access, scoped bool, linked bool) {
 	if !state.IsScopedRole(user.Role) {
 		return state.Access{}, false, true
@@ -214,7 +219,14 @@ func (s *Server) handlePutState(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dataToSave := []byte(payload.State)
+	audit := store.StateAudit{
+		ActorID: authValue.user.ID,
+		Role:    authValue.user.Role,
+		Action:  "api.state.put",
+	}
+
+	var mergeErr error
+	var saveErr error
 	if scoped {
 		incoming, err := decodeState(payload.State)
 		if err != nil {
@@ -222,60 +234,66 @@ func (s *Server) handlePutState(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		existingRaw, err := s.storeDB.GetState(r.Context())
-		if err != nil {
-			log.Printf("read state for merge failed: %v", err)
-			writeError(w, http.StatusInternalServerError, "Gagal menyimpan state.")
-			return
-		}
-
-		existing := map[string]any{}
-		if existingRaw != nil {
-			existing, err = decodeState(existingRaw)
+		// Merge inside the row lock so a concurrent payment, quiz, or web form
+		// cannot be overwritten by a stale read-modify-write snapshot.
+		_, saveErr = s.storeDB.UpdateStateAudited(r.Context(), audit, func(raw json.RawMessage) (json.RawMessage, error) {
+			existing, err := decodeState(raw)
 			if err != nil {
-				log.Printf("decode existing state failed: %v", err)
-				writeError(w, http.StatusInternalServerError, "Format state tidak valid.")
-				return
+				return nil, err
 			}
-		}
+			if len(existing) == 0 {
+				// A browser snapshot must never become the school's data.
+				return nil, errStateNotInitialized
+			}
+			merged, err := state.MergeOwned(existing, incoming, access)
+			if err != nil {
+				mergeErr = err
+				return nil, err
+			}
+			updated, err := json.Marshal(merged)
+			if err != nil {
+				return nil, err
+			}
+			if len(updated) > maxStateBytes {
+				return nil, errStateTooLarge
+			}
+			return updated, nil
+		})
+	} else {
+		// A full admin snapshot still replaces the row atomically, so it cannot
+		// interleave with a server-side mutation.
+		_, saveErr = s.storeDB.UpdateStateAudited(r.Context(), audit, func(json.RawMessage) (json.RawMessage, error) {
+			return payload.State, nil
+		})
+	}
 
-		if len(existing) == 0 && !s.cfg.DemoMode {
-			// Production must never let a browser snapshot become the school's
-			// data. The initial document is seeded from the embedded default.
+	if errors.Is(saveErr, store.ErrNoState) {
+		if scoped {
 			writeError(w, http.StatusConflict, "Data sekolah belum diinisialisasi di server.")
 			return
 		}
-
-		merged, err := state.MergeOwned(existing, incoming, access)
-		if err != nil {
-			writeError(w, http.StatusForbidden, "Akun belum terhubung ke profil siswa.")
-			return
-		}
-		dataToSave, err = json.Marshal(merged)
-		if err != nil {
-			writeError(w, http.StatusInternalServerError, "Gagal menyimpan state.")
-			return
-		}
-		if len(dataToSave) > maxStateBytes {
-			writeError(w, http.StatusRequestEntityTooLarge, "Ukuran state melebihi batas 2 MB.")
-			return
+		// Admin import: create the initial state row.
+		saveErr = s.storeDB.PutState(r.Context(), payload.State)
+		if saveErr == nil {
+			_ = s.storeDB.RecordStateAudit(r.Context(), audit)
 		}
 	}
 
-	if err := s.storeDB.PutState(r.Context(), dataToSave); err != nil {
-		log.Printf("save state failed: %v", err)
-		writeError(w, http.StatusInternalServerError, "Gagal menyimpan state.")
+	if saveErr != nil {
+		switch {
+		case mergeErr != nil:
+			writeError(w, http.StatusForbidden, "Akun belum terhubung ke profil siswa.")
+		case errors.Is(saveErr, errStateNotInitialized):
+			writeError(w, http.StatusConflict, "Data sekolah belum diinisialisasi di server.")
+		case errors.Is(saveErr, errStateTooLarge):
+			writeError(w, http.StatusRequestEntityTooLarge, "Ukuran state melebihi batas 2 MB.")
+		default:
+			log.Printf("save state failed: %v", saveErr)
+			writeError(w, http.StatusInternalServerError, "Gagal menyimpan state.")
+		}
 		return
 	}
-	auditActor, auditRole := "", ""
-	if auth, ok := requestAuthFromContext(r.Context()); ok {
-		auditActor, auditRole = auth.user.ID, auth.user.Role
-	}
-	if err := s.storeDB.RecordStateAudit(r.Context(), store.StateAudit{
-		ActorID: auditActor, Role: auditRole, Action: "api.state.put",
-	}); err != nil {
-		log.Printf("state audit failed: %v", err)
-	}
+
 	writeJSON(w, http.StatusOK, map[string]string{
 		"status":    "saved",
 		"updatedAt": timestampNow(),

@@ -17,7 +17,9 @@ type User struct {
 	StudentProfileID string
 	Attributes       map[string]any
 	PasswordHash     string
-	IsDemo           bool
+	IsActive         bool
+	TOTPSecret       string
+	TOTPEnabled      bool
 }
 
 func (u User) MarshalJSON() ([]byte, error) {

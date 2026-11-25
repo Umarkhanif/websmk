@@ -48,7 +48,7 @@ templ StudentDashboardPage(data ui.StudentDashboard) {
 
 			<article class="card stat-card">
 				<div class="stat-card-head">
-					<span class="eyebrow">Presensi Hari Ini</span>
+					<span class="eyebrow">{ data.Attendance.Label }</span>
 					<span class={ "badge " + attendanceBadgeClass(data.Attendance.Status) }>
 						@components.Icon(attendanceIcon(data.Attendance.Status), "icon icon-xs")
 						{ data.Attendance.StatusLabel }
@@ -144,16 +144,6 @@ templ FinanceCard(data ui.StudentDashboard) {
 				<span class="info-strip-label">VA Mandiri ({ data.Invoice.Provider })</span>
 				<strong class="mono">{ data.Invoice.VANumber }</strong>
 			</div>
-			if !data.Invoice.IsPaid && data.Shell.DemoMode {
-				<form method="post" action="/student/invoice/pay" hx-post="/student/invoice/pay" hx-target="#finance-card" hx-swap="outerHTML" class="inline-form">
-					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-					<input type="hidden" name="invoice_id" value={ data.Invoice.ID }/>
-					<button type="submit" class="button button-secondary button-small">
-						@components.Icon("wallet", "icon icon-xs")
-						<span>Simulasi bayar VA</span>
-					</button>
-				</form>
-			}
 		} else {
 			<p class="stat-title">Belum ada tagihan</p>
 			<p class="stat-note">Tagihan SPP akan muncul di sini setelah diterbitkan bendahara.</p>
@@ -179,7 +169,7 @@ templ LeaderPanel(data ui.StudentDashboard) {
 		</div>
 
 		<div class="leader-actions">
-			<form method="post" action="/student/leader-validation" hx-post="/student/leader-validation" hx-target="#leader-panel" hx-swap="outerHTML">
+			<form method="post" action="/student/leader-validation" hx-post="/student/leader-validation" hx-target="#leader-panel" hx-swap="outerHTML" hx-disabled-elt="find button[type='submit']">
 				<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 				<input type="hidden" name="status" value="VALID_FULL"/>
 				<button type="submit" class={ leaderButtonClass(data.LeaderStatus, "VALID_FULL") }>
@@ -187,7 +177,7 @@ templ LeaderPanel(data ui.StudentDashboard) {
 					Guru hadir &amp; mengajar penuh
 				</button>
 			</form>
-			<form method="post" action="/student/leader-validation" hx-post="/student/leader-validation" hx-target="#leader-panel" hx-swap="outerHTML">
+			<form method="post" action="/student/leader-validation" hx-post="/student/leader-validation" hx-target="#leader-panel" hx-swap="outerHTML" hx-disabled-elt="find button[type='submit']">
 				<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 				<input type="hidden" name="status" value="TASK_ONLY"/>
 				<button type="submit" class={ leaderButtonClass(data.LeaderStatus, "TASK_ONLY") }>
@@ -195,7 +185,7 @@ templ LeaderPanel(data ui.StudentDashboard) {
 					Guru hanya memberi tugas
 				</button>
 			</form>
-			<form method="post" action="/student/leader-validation" hx-post="/student/leader-validation" hx-target="#leader-panel" hx-swap="outerHTML">
+			<form method="post" action="/student/leader-validation" hx-post="/student/leader-validation" hx-target="#leader-panel" hx-swap="outerHTML" hx-disabled-elt="find button[type='submit']">
 				<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 				<input type="hidden" name="status" value="EMPTY_CLASS"/>
 				<button type="submit" class={ leaderButtonClass(data.LeaderStatus, "EMPTY_CLASS") }>
@@ -233,7 +223,7 @@ templ QuizModal(data ui.StudentDashboard) {
 						<p>Kuis harian akan muncul setelah guru menutup agenda kelas.</p>
 					</div>
 				} else {
-					<form class="quiz-form" hx-post="/student/quiz" hx-target="#quiz-modal-body" hx-swap="innerHTML">
+					<form class="quiz-form" hx-post="/student/quiz" hx-target="#quiz-modal-body" hx-swap="innerHTML" hx-disabled-elt="find button[type='submit']">
 						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 						<div class="quiz-progress-row">
 							<span class="eyebrow" data-quiz-progress>Soal 1 dari { strconv.Itoa(len(data.QuizQuestions)) }</span>

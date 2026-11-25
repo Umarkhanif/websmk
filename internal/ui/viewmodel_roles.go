@@ -26,6 +26,21 @@ type LedgerEntryView struct {
 	CreatedAt        string
 }
 
+type AssignmentView struct {
+	ID               string
+	ClassName        string
+	SubjectName      string
+	Title            string
+	Description      string
+	DueDate          string
+	TeacherName      string
+	Submitted        bool
+	SubmissionID     string
+	SubmissionStatus string
+	Score            int
+	SubmissionCount  int
+}
+
 type PklPlacementView struct {
 	ID              string
 	CompanyName     string
@@ -78,16 +93,18 @@ type StudentDocView struct {
 }
 
 type TaskSubmissionView struct {
-	ID          string
-	StudentID   string
-	StudentName string
-	SubjectName string
-	TaskTitle   string
-	FileName    string
-	FileSizeKB  int
-	SubmittedAt string
-	Status      string
-	Score       int
+	ID           string
+	AssignmentID string
+	StudentID    string
+	StudentName  string
+	SubjectName  string
+	TaskTitle    string
+	FileName     string
+	BlobID       string
+	FileSizeKB   int
+	SubmittedAt  string
+	Status       string
+	Score        int
 }
 
 type BkkJobView struct {
@@ -251,12 +268,24 @@ type CounselingView struct {
 }
 
 type PiketClassroomView struct {
-	ID      string
-	Name    string
-	Subject string
-	Teacher string
-	Status  string
-	Note    string
+	ID         string
+	Name       string
+	Subject    string
+	Teacher    string
+	Time       string
+	Room       string
+	ScheduleID string
+	Status     string
+	Note       string
+}
+
+type SubstituteAssignmentView struct {
+	ID              string
+	ClassName       string
+	Subject         string
+	TeacherName     string
+	OriginalTeacher string
+	Note            string
 }
 
 type GateLogView struct {
@@ -299,20 +328,15 @@ type DapodikLogView struct {
 }
 
 type PublicVerifyPage struct {
-	ActiveTab         string
-	Query             string
-	VerifiedLetter    *LetterView
-	VerifiedReceipt   *LedgerEntryView
-	NotFound          bool
-	Letters           []LetterView
-	Ledger            []LedgerEntryView
-	PklJournals       []PklJournalView
-	PklPlacements     []PklPlacementView
-	SelectedJournalID string
-	Notice            string
-	Error             string
-	CSRFToken         string
-	DemoMode          bool
+	ActiveTab       string
+	Query           string
+	VerifiedLetter  *LetterView
+	VerifiedReceipt *LedgerEntryView
+	NotFound        bool
+	SelectedJournal *PklJournalView
+	Notice          string
+	Error           string
+	CSRFToken       string
 }
 
 type StudentPortalPage struct {
@@ -345,11 +369,11 @@ type StudentPortalPage struct {
 	ExamAverageScore       int
 	AllExamsGraded         bool
 	ExamTier               string
-	IsDemoGraded           bool
 	Proctor                ProctorSessionView
 	ExamSubmitted          bool
 	ExamScore              int
 	Documents              []StudentDocView
+	Assignments            []AssignmentView
 	TaskSubmissions        []TaskSubmissionView
 	PklPlacement           PklPlacementView
 	PklLogs                []PklLogView
@@ -358,6 +382,15 @@ type StudentPortalPage struct {
 	BkkApps                []BkkAppView
 	Expenses               []StudentExpenseView
 	TotalExpense           int
+}
+
+type ParentLeaveView struct {
+	ID        string
+	LeaveType string
+	LeaveDate string
+	Note      string
+	Status    string
+	CreatedAt string
 }
 
 type ParentPortalPage struct {
@@ -375,6 +408,7 @@ type ParentPortalPage struct {
 	Expenses               []StudentExpenseView
 	TotalExpense           int
 	Consultations          []ConsultationView
+	Leaves                 []ParentLeaveView
 }
 
 type TreasurerPortalPage struct {
@@ -392,20 +426,34 @@ type TreasurerPortalPage struct {
 	ExpectedOTP      string
 }
 
+type ClassOptionView struct {
+	ID   string
+	Name string
+}
+
 type TeacherPortalPage struct {
-	Shell           RoleShell
-	Tab             string
-	ActiveStudent   StudentView
-	CbtScore        int
-	Journal         JournalView
-	TeacherNotes    string
-	AiSmartNotes    string
-	Attendances     []AttendanceRowView
-	ExamQuestions   []ExamQuestionView
-	ProctorStudents []ProctorSessionView
-	ExamResetLogs   []ExamResetLogView
-	PklLogs         []PklLogView
-	PklJournals     []PklJournalView
+	Shell            RoleShell
+	Tab              string
+	HomeroomClass    string
+	ActiveClass      string
+	SelectedClassID  string
+	SelectedSchedule string
+	SelectedSubject  string
+	Classes          []ClassOptionView
+	TodaySchedules   []ScheduleView
+	ActiveStudent    StudentView
+	CbtScore         int
+	Journal          JournalView
+	TeacherNotes     string
+	AiSmartNotes     string
+	Attendances      []AttendanceRowView
+	ExamQuestions    []ExamQuestionView
+	ProctorStudents  []ProctorSessionView
+	ExamResetLogs    []ExamResetLogView
+	PklLogs          []PklLogView
+	PklJournals      []PklJournalView
+	Assignments      []AssignmentView
+	TaskSubmissions  []TaskSubmissionView
 }
 
 type DisciplinePortalPage struct {
@@ -422,15 +470,80 @@ type DisciplinePortalPage struct {
 }
 
 type PiketPortalPage struct {
-	Shell      RoleShell
-	Classrooms []PiketClassroomView
-	GateLogs   []GateLogView
-	Teachers   []TeacherImpactView
+	Shell          RoleShell
+	Classrooms     []PiketClassroomView
+	TodaySchedules []ScheduleView
+	Assignments    []SubstituteAssignmentView
+	GateLogs       []GateLogView
+	Teachers       []TeacherImpactView
+}
+
+type AccountView struct {
+	ID          string
+	Identifier  string
+	FullName    string
+	Role        string
+	RoleLabel   string
+	Phone       string
+	Active      bool
+	IsSelf      bool
+	TOTPEnabled bool
+	StudentName string
+}
+
+type AcademicYearView struct {
+	ID        string
+	Label     string
+	Semester  string
+	StartDate string
+	EndDate   string
+	Active    bool
+}
+
+type ClassroomView struct {
+	ID           string
+	Name         string
+	GradeLevel   int
+	MajorCode    string
+	MajorName    string
+	HomeroomID   string
+	HomeroomName string
+	StudentCount int
+}
+
+type ScheduleView struct {
+	ID          string
+	ClassroomID string
+	ClassName   string
+	SubjectID   string
+	TeacherID   string
+	TeacherName string
+	DayName     string
+	StartTime   string
+	EndTime     string
+	RoomName    string
+}
+
+type RolloverRowView struct {
+	ClassID           string
+	ClassName         string
+	GradeLevel        int
+	MajorCode         string
+	StudentCount      int
+	Targets           []ClassroomView
+	SuggestedTargetID string
+	Graduate          bool
 }
 
 type AdminTuPortalPage struct {
 	Shell         RoleShell
 	Tab           string
+	Section       string
+	Query         string
+	Page          int
+	PageCount     int
+	StudentTotal  int
+	StudentRows   []StudentDirectoryView
 	Students      []StudentView
 	Majors        []MajorView
 	Teachers      []TeacherImpactView
@@ -440,6 +553,24 @@ type AdminTuPortalPage struct {
 	PklPlacements []PklPlacementView
 	BkkJobs       []BkkJobView
 	BkkApps       []BkkAppView
+	Accounts      []AccountView
+	AcademicYears []AcademicYearView
+	Classrooms    []ClassroomView
+	Schedules     []ScheduleView
+	RolloverRows  []RolloverRowView
+	RolloverYears []AcademicYearView
+	RolloverReady bool
+}
+
+type StudentDirectoryView struct {
+	ID            string
+	NISN          string
+	FullName      string
+	ClassroomName string
+	MajorCode     string
+	ParentName    string
+	ParentPhone   string
+	IsAlumni      bool
 }
 
 type HeadmasterPortalPage struct {
@@ -451,6 +582,9 @@ type HeadmasterPortalPage struct {
 	TransformationTrend string
 	ActiveOTP           string
 	AiAdvice            string
+	LastSignatureType   string
+	LastSignatureHash   string
+	LastSignatureAt     string
 }
 
 type BugReportView struct {
