@@ -2,7 +2,11 @@
 
 **Tanggal:** 23 November 2026
 **Basis kode:** `c311c2a` (master)
-**Basis audit:** [`audit-2026-11-23.md`](audit-2026-11-23.md), [`production-readiness.md`](production-readiness.md), [`requirements-traceability.md`](requirements-traceability.md)
+**Basis audit:** [`production-readiness.md`](production-readiness.md), [`arsip/requirements-traceability.md`](arsip/requirements-traceability.md)
+
+> Dokumen ini ditulis 23 November 2026 dan sengaja dibiarkan apa adanya sebagai rencana. Rujukan
+> ke "demo" di dalamnya adalah kondisi saat itu — mode demo **sudah dihapus total** pada
+> 25 November 2026. Status terkini: [`PETA-PROYEK.md`](PETA-PROYEK.md).
 **Tujuan:** mengubah aplikasi dari **demo dengan satu blob JSON** menjadi **ERP sekolah yang benar-benar
 berjalan**: setiap alur punya sumber data nyata, otorisasi server per peran, audit, integrasi, dan
 bukti uji — tanpa merombak UI/UX yang sudah ada.
@@ -462,7 +466,7 @@ PR tidak boleh merge bila salah satu gate merah.
 - **Ritme:** sprint 1 minggu, demo di akhir sprint dengan skenario per peran, retrospektif singkat.
 - **Branch:** trunk-based, feature flag untuk cutover; tidak ada branch panjang.
 - **Peran tim:** 1 backend/domain, 1 full-stack/UI+test, QA paruh waktu saat fase D–I.
-- **Dokumentasi:** setiap fase memperbarui `production-readiness.md`, `requirements-traceability.md`,
+- **Dokumentasi:** setiap fase memperbarui `PETA-PROYEK.md` dan `production-readiness.md`,
   dan `docs/pelajaran/<area>.md` untuk bug nyata.
 - **Aturan repo:** tetap patuh `AGENTS.md` (snapshot sebelum perubahan besar, commit pathspec,
   dilarang perintah destruktif, verifikasi `go vet` + `go test`).

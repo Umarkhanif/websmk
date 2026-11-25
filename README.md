@@ -3,6 +3,10 @@
 UI server-rendered dengan **Go + templ + HTMX + Alpine.js + Tailwind** (tanpa React), backend **Go + PostgreSQL 16 + Redis 7**.
 Kontrak JSON (`/api/auth/*`, `/api/state`, `/api/ai/analyze`) dipertahankan untuk integrasi lama.
 
+> **Baru mulai atau sudah lama tidak memegang proyek ini?** Baca
+> [`docs/PETA-PROYEK.md`](docs/PETA-PROYEK.md) dulu — peta peran, arsitektur, status nyata,
+> dan arah kerja ada di satu tempat.
+
 ## Prasyarat
 
 - Go 1.26+ (lihat `go.mod`)
@@ -87,7 +91,7 @@ cookie sesi otomatis `Secure` dan `DATABASE_URL`/`REDIS_URL` wajib diisi eksplis
 - `/security` menampilkan sesi aktif, riwayat login, dan (Admin TU/Developer) audit login global.
 - Magic link orang tua: token sekali pakai, 5 menit, disimpan sebagai hash di Redis. Pengiriman
   WhatsApp lewat webhook `WESMK_WA_WEBHOOK_URL` (JSON `{"to","message"}`, Bearer token opsional).
-  Di production tanpa webhook, permintaan ditolak 503; di mode demo tautan dikembalikan ke browser.
+  Di production tanpa webhook, permintaan ditolak 503.
 - `GET/PUT /api/state` dan `POST /api/ai/analyze` wajib sesi. Reset state hanya untuk `admin_tu` dan
   `headmaster`.
 - Endpoint AI dibatasi 30 request/menit per akun dan hanya menerima tipe yang dikenal.
@@ -106,7 +110,6 @@ Browser tidak lagi menghitung nilai atau menulis saldo tagihan. Endpoint yang di
 | `POST /api/learning/quiz/submit` | siswa | Menilai kuis dengan kunci jawaban di server, satu attempt per siswa (replay mengembalikan skor pertama), memperbarui `dailyQuizAvg` |
 | `POST /api/learning/exam/submit` | siswa | Mengarsipkan jawaban CBT, menilai MCQ (esai menunggu rubrik guru), duplicate question diabaikan, memperbarui `cbtScore` dan proctor `SUBMITTED` |
 | `POST /api/payments/intent` | siswa/ortu | Membuat/mengembalikan VA pending untuk tagihan sendiri; tidak mengubah status bayar |
-| `POST /api/payments/pay` | siswa/ortu | **Hanya mode demo**: settle langsung + kwitansi HMAC |
 | `POST /api/payments/callback` | gateway | Satu-satunya jalur settle produksi; wajib `X-Wesmk-Timestamp` + `X-Wesmk-Signature` (HMAC body), idempoten |
 
 Kunci jawaban, rubrik esai, dan `paidAmount` tidak pernah diterima dari browser. Respons
@@ -121,7 +124,7 @@ internal/auth/        Argon2id, login, sesi, magic link, rate limit
 internal/httpapi/     router, middleware, handler auth/state/AI, UI templ/HTMX
 internal/store/       Postgres (users, app_state) + Redis (sesi, limit, token)
 internal/db/          koneksi pool + migrasi SQL tertanam
-internal/seed/        akun demo & akun dari WESMK_USERS
+internal/seed/        akun dari WESMK_USERS + pembersihan akun demo lama
 internal/state/       scoping baca & merge tulis per peran (siswa/orang tua)
 internal/ai/          klien Gemini generateContent (strict JSON schema)
 ```
@@ -154,10 +157,12 @@ dibatasi per peran:
   ujian, penempatan PKL) tetap dikirim karena dipakai portal siswa.
 - **Orang tua** hanya menerima profil, tagihan, ledger, pengeluaran, presensi, konsultasi karier, dan
   refleksi anak yang terhubung (`studentProfileId`).
-- **Staf** (guru, bendahara, kesiswaan, piket, TU, kepala sekolah) tetap menerima snapshot lengkap.
+- **Staf** (guru, bendahara, kesiswaan, piket, TU) menerima allowlist field sesuai portalnya; kunci
+  jawaban, OTP, dan PIN supervisor dihapus untuk peran yang tidak membutuhkan. **Kepala Sekolah**
+  menerima snapshot penuh karena memegang laporan.
 - `PUT /api/state` dari siswa/ortu tidak mengganti dokumen global. Hanya record miliknya yang digabung;
   unggahan dokumen masuk antrean review, dan field administratif (violations, ledger, OTP, pengaturan
   kelas, dsb.) diabaikan. Nilai (`dailyQuizAvg`, `cbtScore`) dan saldo tagihan tidak lagi diterima dari
   jalur ini — hanya dari endpoint nilai/pembayaran.
-- Saat `app_state` masih kosong, snapshot klien pertama dipakai untuk mengisi data awal demo; setelah
-  itu aturan di atas berlaku.
+- Saat `app_state` masih kosong, server menolak `PUT /api/state` dengan 409. Snapshot dari browser
+  tidak pernah dipakai sebagai data awal sekolah; data awal diisi dari server.

@@ -5,7 +5,7 @@
 
 > **Diperbarui 20 November 2026:** dokumen ini awalnya ditulis 25 Oktober 2026 saat repo masih React.
 > Migrasi ke Go + templ + HTMX **sudah selesai**. Matriks di bawah diperbarui ke kondisi sekarang;
-> untuk audit detail lihat [`AUDIT.md`](AUDIT.md).
+> untuk audit detail lihat [`AUDIT-2026-11-20.md`](AUDIT-2026-11-20.md).
 
 ---
 
@@ -87,7 +87,7 @@ Status: ✅ sesuai · ⚠️ sebagian · ❌ belum / berbeda.
 **Kesimpulan:** repo sudah **implementasi templ/HTMX**, bukan prototipe React. Tampilan, alur, auth, dan
 nilai/keuangan inti sudah jalan dan sebagian server-authoritative. Yang tersisa adalah arsitektur data
 (schema mati + blob `app_state`), keamanan fail-closed (PIN/OTP/secret default), dan integrasi
-antrean/SSE/storage/WA/VA. Detail ada di [`AUDIT.md`](AUDIT.md).
+antrean/SSE/storage/WA/VA. Detail ada di [`AUDIT-2026-11-20.md`](AUDIT-2026-11-20.md).
 
 ---
 
