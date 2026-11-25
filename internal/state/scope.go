@@ -37,7 +37,7 @@ func IsStaffRole(role string) bool {
 // keys its portal actually renders; everything else stays on the server.
 var staffKeys = map[string][]string{
 	"treasurer": {"students", "invoices", "dispensations", "ledger", "reversalRequests"},
-	"teacher":   {"students", "classJournal", "attendances", "examQuestions", "proctorStudents", "pklAttendanceLogs", "pklJournals", "examResetLogs"},
+	"teacher":   {"students", "classJournal", "attendances", "examQuestions", "proctorStudents", "pklAttendanceLogs", "pklJournals", "examResetLogs", "taskSubmissions"},
 	"discipline": {"students", "violations", "peerReports", "careerConsultations",
 		"counselingSessions"},
 	"piket":     {"piketClassrooms", "piketGateLogs", "teacherImpacts"},
@@ -84,6 +84,9 @@ func StaffView(doc map[string]any, role string) map[string]any {
 	}
 	if value, exists := out["reversalRequests"]; exists {
 		out["reversalRequests"] = redactKeys(value, "otpCode")
+	}
+	if value, exists := out["pklPlacements"]; exists {
+		out["pklPlacements"] = redactKeys(value, "supervisorPin")
 	}
 	delete(out, "activeHeadmasterOtp")
 	delete(out, "activeHeadmasterOtpExpiresAt")
@@ -155,6 +158,11 @@ func ScopedView(doc map[string]any, access Access) map[string]any {
 	}
 	if value, ok := doc["examQuestions"]; ok {
 		out["examQuestions"] = redactKeys(value, "correctKey", "essayRubric")
+	}
+	// The supervisor PIN is a credential for DUDI journal approval; a student
+	// may see the placement but never the PIN.
+	if value, ok := out["pklPlacements"]; ok {
+		out["pklPlacements"] = redactKeys(value, "supervisorPin")
 	}
 
 	return out

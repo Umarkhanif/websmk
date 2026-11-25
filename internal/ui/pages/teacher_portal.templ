@@ -16,7 +16,11 @@ templ TeacherPortal(data ui.TeacherPortalPage) {
 					<div class="identity-copy">
 						<span class="eyebrow">Portal Guru</span>
 						<h2>Selamat Mengajar, { data.Shell.FullName }</h2>
-						<p class="identity-meta mono">NIP { data.Shell.Username } · Wali Kelas XII TKJ 1</p>
+						<p class="identity-meta mono">NIP { data.Shell.Username }
+							if data.HomeroomClass != "" {
+								· Wali Kelas { data.HomeroomClass }
+							}
+						</p>
 					</div>
 				</div>
 				<form method="post" action="/teacher/alert-piket">
@@ -29,25 +33,24 @@ templ TeacherPortal(data ui.TeacherPortalPage) {
 			</section>
 
 			<div class="dashboard-grid">
-				<article class="card stat-card">
-					<span class="eyebrow">Lab TKJ 1 (Jam 1–4)</span>
-					<p class="stat-title">XII TKJ 1 • Administrasi Jaringan</p>
-					<p class="stat-note">Topik: { data.Journal.Topic }</p>
-					<div class="stat-card-foot">
-						<span>Validasi Kelas</span>
-						<span class={ "badge " + statusBadgeClass(data.Journal.LeaderStatus) }>{ ui.StatusLabel(data.Journal.LeaderStatus) }</span>
-					</div>
-				</article>
-
-				<article class="card stat-card">
-					<span class="eyebrow">Bengkel Fiber (Jam 5–8)</span>
-					<p class="stat-title">XI TKJ 2 • Troubleshooting WAN</p>
-					<p class="stat-note">Praktik penyambungan serat optik &amp; redaman OPM.</p>
-					<div class="stat-card-foot">
-						<span>Status Ruang</span>
-						<span class="badge badge-success">Siap Praktik</span>
-					</div>
-				</article>
+				if len(data.TodaySchedules) == 0 {
+					<article class="card stat-card">
+						<span class="eyebrow">Jadwal Hari Ini</span>
+						<p class="stat-title">Belum ada jadwal mengajar</p>
+						<p class="stat-note">Minta Admin TU menambahkan jadwal untuk akun Anda di Master Data.</p>
+					</article>
+				}
+				for _, sc := range data.TodaySchedules {
+					<article class="card stat-card">
+						<span class="eyebrow">{ sc.StartTime }–{ sc.EndTime } · { sc.RoomName }</span>
+						<p class="stat-title">{ sc.ClassName } • { sc.SubjectID }</p>
+						<p class="stat-note">Jadwal dari master data sekolah.</p>
+						<div class="stat-card-foot">
+							<span>{ sc.DayName }</span>
+							<span class="badge badge-success">Terjadwal</span>
+						</div>
+					</article>
+				}
 
 				<article class="card stat-card">
 					<span class="eyebrow">Bimbingan Siswa</span>
@@ -62,13 +65,30 @@ templ TeacherPortal(data ui.TeacherPortalPage) {
 			<section class="card form-stack">
 				<div class="stat-card-head">
 					<div>
-						<span class="eyebrow">Agenda Pembelajaran</span>
-						<h2>Agenda Mengajar Kelas XII TKJ 1</h2>
+						<span class="eyebrow">Kelas Aktif</span>
+						<h2>Ruang Mengajar &amp; Agenda</h2>
 					</div>
-					@components.InfoBubble("Jurnal harian mengajar yang otomatis sinkron dengan catatan wali dan presensi siswa.")
+					<form method="get" action="/teacher/classroom" class="leader-actions">
+						<select class="input" name="classroom" data-submit-on-change aria-label="Pilih kelas">
+							for _, class := range data.Classes {
+								<option value={ class.ID } selected={ class.ID == data.SelectedClassID }>{ class.Name }</option>
+							}
+						</select>
+						<noscript><button type="submit" class="button button-secondary button-small">Buka</button></noscript>
+					</form>
 				</div>
+				if data.SelectedClassID == "" {
+					<article class="info-strip">
+						<strong>Belum ada kelas</strong>
+						<span class="muted">Anda belum menjadi wali kelas atau mengajar kelas mana pun hari ini. Minta Admin TU menambahkan jadwal.</span>
+					</article>
+				}
+				if data.SelectedSchedule == "" {
+					<p class="muted">Tidak ada slot jadwal hari ini untuk kelas ini, jadi agenda belum bisa disimpan. Presensi tetap dapat dikoreksi.</p>
+				} else {
 				<form method="post" action="/teacher/journal" class="form-stack">
 					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+					<input type="hidden" name="schedule_id" value={ data.SelectedSchedule }/>
 					<div class="field">
 						<div class="field-head">
 							<label class="field-label">Topik &amp; Kompetensi Dasar</label>
@@ -90,11 +110,16 @@ templ TeacherPortal(data ui.TeacherPortalPage) {
 					</div>
 					<button type="submit" class="button button-primary">Simpan Agenda</button>
 				</form>
+				}
 			</section>
 
 			<section class="card form-stack">
 				<span class="eyebrow">Presensi Kelas</span>
-				<h3>Daftar Siswa Kelas XII TKJ 1</h3>
+				<h3>Daftar Siswa
+					if data.ActiveClass != "" {
+						Kelas { data.ActiveClass }
+					}
+				</h3>
 				<div class="table-wrap">
 					<table class="data-table">
 						<thead>
@@ -118,12 +143,133 @@ templ TeacherPortal(data ui.TeacherPortalPage) {
 									<td>
 										<form method="post" action="/teacher/attendance/toggle">
 											<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
-											<input type="hidden" name="attendance_id" value={ a.ID }/>
+											<input type="hidden" name="student_id" value={ a.StudentID }/>
+											<input type="hidden" name="classroom_id" value={ data.SelectedClassID }/>
 											if a.Status == "ALPA_BOLOS" {
 												<button type="submit" class="button button-secondary button-small">Pulihkan Hadir</button>
 											} else {
 												<button type="submit" class="button button-danger button-small">Tandai Alpa / Bolos</button>
 											}
+										</form>
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</section>
+
+			<section class="card form-stack">
+				<div class="stat-card-head">
+					<div>
+						<span class="eyebrow">Tugas Praktik</span>
+						<h3>Buat Tugas untuk Kelas</h3>
+					</div>
+					@components.InfoBubble("Tenggat divalidasi di server. Siswa hanya bisa mengumpulkan ke tugas kelasnya dan sebelum tenggat.")
+				</div>
+				<form method="post" action="/teacher/assignment/create" class="form-stack">
+					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+					<div class="form-row">
+						<label class="field">
+							<span class="field-label">Judul Tugas</span>
+							<input class="input" type="text" name="title" placeholder="Contoh: Praktik VLAN & Trunking" required/>
+						</label>
+						<label class="field">
+							<span class="field-label">Kelas</span>
+							<input type="hidden" name="classroom_id" value={ data.SelectedClassID }/>
+							<input class="input" type="text" value={ data.ActiveClass } readonly required/>
+						</label>
+						<label class="field">
+							<span class="field-label">Mata Pelajaran</span>
+							<input class="input" type="text" name="subject_name" value={ data.SelectedSubject } readonly required/>
+						</label>
+						<label class="field">
+							<span class="field-label">Tenggat</span>
+							<input class="input" type="date" name="due_date" required/>
+						</label>
+					</div>
+					<label class="field">
+						<span class="field-label">Instruksi</span>
+						<textarea class="input" name="description" placeholder="Apa yang harus dikumpulkan siswa..." required></textarea>
+					</label>
+					<button type="submit" class="button button-primary">Publikasikan Tugas</button>
+				</form>
+
+				<div class="table-wrap">
+					<table class="data-table">
+						<thead>
+							<tr>
+								<th>Judul</th>
+								<th>Kelas</th>
+								<th>Mata Pelajaran</th>
+								<th>Tenggat</th>
+								<th>Terkumpul</th>
+							</tr>
+						</thead>
+						<tbody>
+							if len(data.Assignments) == 0 {
+								<tr><td colspan="5" class="muted">Belum ada tugas yang dipublikasikan.</td></tr>
+							}
+							for _, a := range data.Assignments {
+								<tr>
+									<td><strong>{ a.Title }</strong><br/><span class="muted">{ a.Description }</span></td>
+									<td>{ a.ClassName }</td>
+									<td>{ a.SubjectName }</td>
+									<td class="mono">{ a.DueDate }</td>
+									<td class="mono">{ strconv.Itoa(a.SubmissionCount) }</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</section>
+
+			<section class="card form-stack">
+				<div class="stat-card-head">
+					<div>
+						<span class="eyebrow">Penilaian</span>
+						<h3>Penilaian Tugas Siswa ({ strconv.Itoa(len(data.TaskSubmissions)) })</h3>
+					</div>
+					@components.InfoBubble("Nilai yang disimpan di sini langsung terlihat oleh siswa dan orang tua.")
+				</div>
+				<div class="table-wrap">
+					<table class="data-table">
+						<thead>
+							<tr>
+								<th>Siswa</th>
+								<th>Mata Pelajaran</th>
+								<th>Judul Tugas</th>
+								<th>Berkas</th>
+								<th>Dikumpulkan</th>
+								<th>Status</th>
+								<th>Nilai &amp; Aksi</th>
+							</tr>
+						</thead>
+						<tbody>
+							if len(data.TaskSubmissions) == 0 {
+								<tr><td colspan="7" class="muted">Belum ada tugas yang dikumpulkan.</td></tr>
+							}
+							for _, t := range data.TaskSubmissions {
+								<tr>
+									<td><strong>{ t.StudentName }</strong></td>
+									<td>{ t.SubjectName }</td>
+									<td>{ t.TaskTitle }</td>
+									<td class="mono">
+										if t.BlobID != "" {
+											<a href={ "/document/" + t.BlobID } target="_blank" rel="noopener">{ t.FileName }</a>
+										} else {
+											{ t.FileName }
+										}
+										({ strconv.Itoa(t.FileSizeKB) } KB)
+									</td>
+									<td class="mono">{ t.SubmittedAt }</td>
+									<td><span class="badge badge-neutral">{ t.Status }</span></td>
+									<td>
+										<form method="post" action="/teacher/task/grade" class="leader-actions">
+											<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+											<input type="hidden" name="task_id" value={ t.ID }/>
+											<input class="input input-mono" type="number" name="score" value={ strconv.Itoa(t.Score) } min="0" max="100" required/>
+											<button type="submit" class="button button-primary button-small">Simpan Nilai</button>
 										</form>
 									</td>
 								</tr>
@@ -238,7 +384,7 @@ templ TeacherPortal(data ui.TeacherPortalPage) {
 							<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 							<button type="submit" class="button button-secondary button-small">Buka Kunci Seluruh Lab</button>
 						</form>
-						<form method="post" action="/teacher/proctor/bulk-reset" onsubmit="return confirm('PERINGATAN: Anda akan me-reset ujian SELURUH siswa di ruangan lab ini. Semua status pengerjaan akan dimulai dari 0. Lanjutkan?');">
+						<form method="post" action="/teacher/proctor/bulk-reset" data-confirm="PERINGATAN: Anda akan me-reset ujian SELURUH siswa di ruangan lab ini. Semua status pengerjaan akan dimulai dari 0. Lanjutkan?">
 							<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 							<input type="hidden" name="reset_all" value="1"/>
 							<input type="hidden" name="reason" value="Reset massal seluruh ruangan lab oleh pengawas"/>
@@ -251,18 +397,18 @@ templ TeacherPortal(data ui.TeacherPortalPage) {
 				</div>
 
 				<!-- Bulk Action Bar for Selected Students -->
-				<form method="post" action="/teacher/proctor/bulk-reset" x-show="selectedStudents.length > 0" class="note-card" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; padding:12px 16px; border:1px solid #F59E0B; background:#FFFBEB; border-radius:10px;">
+				<form method="post" action="/teacher/proctor/bulk-reset" x-show="selectedStudents.length > 0" class="note-card" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; padding:12px 16px; border:1px solid var(--warning-text); background:var(--warning-bg); border-radius:10px;">
 					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 					<template x-for="sId in selectedStudents" :key="sId">
 						<input type="hidden" name="student_ids" :value="sId"/>
 					</template>
 					<div style="display:flex; align-items:center; gap:10px;">
 						<span class="badge badge-warning" x-text="selectedStudents.length + ' Peserta Dipilih'"></span>
-						<span style="font-size:0.85rem; font-weight:600; color:#92400E;">Aksi Massal: Reset sesi ujian peserta terpilih</span>
+						<span style="font-size:0.85rem; font-weight:600; color:var(--warning-text);">Aksi Massal: Reset sesi ujian peserta terpilih</span>
 					</div>
 					<div style="display:flex; align-items:center; gap:8px;">
 						<input class="input" style="min-height:36px; padding:4px 10px; font-size:0.82rem; width:220px;" name="reason" placeholder="Alasan reset ujian..." x-model="reason" required/>
-						<button type="submit" class="button button-danger button-small" onclick="return confirm('Yakin ingin mereset ujian siswa yang dipilih? Jawaban mereka akan dikosongkan dan sesi dimulai dari awal.');">
+						<button type="submit" class="button button-danger button-small" data-confirm="Yakin ingin mereset ujian siswa yang dipilih? Jawaban mereka akan dikosongkan dan sesi dimulai dari awal.">
 							@components.Icon("rotate-ccw", "icon-xs")
 							<span>Reset Terpilih</span>
 						</button>
@@ -322,7 +468,7 @@ templ TeacherPortal(data ui.TeacherPortalPage) {
 												<input type="hidden" name="student_id" value={ p.StudentID }/>
 												<button type="submit" class="button button-secondary button-small" title="Beri Tiket Darurat 2 Jam">Tiket 2 Jam</button>
 											</form>
-											<form method="post" action="/teacher/proctor/reset-exam" onsubmit="return confirm('Reset ujian untuk siswa ini? Sesi CBT akan diaktifkan kembali dan jawaban dikosongkan.');" style="display:inline-flex;">
+											<form method="post" action="/teacher/proctor/reset-exam" data-confirm="Reset ujian untuk siswa ini? Sesi CBT akan diaktifkan kembali dan jawaban dikosongkan." style="display:inline-flex;">
 												<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 												<input type="hidden" name="student_id" value={ p.StudentID }/>
 												<input type="hidden" name="reason" value="Kendala teknis / izin pengawas"/>

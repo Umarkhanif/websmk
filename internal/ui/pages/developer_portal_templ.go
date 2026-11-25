@@ -56,40 +56,40 @@ func DeveloperPortal(data ui.DeveloperPortalPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p><p class=\"stat-note\">Semua laporan dari pengguna</p></article><article class=\"card stat-card\"><div class=\"stat-card-head\"><span class=\"eyebrow\">Perlu Penanganan (Open)</span> <span class=\"badge badge-danger\">Antrean</span></div><p class=\"stat-value mono\" style=\"color:#EF4444;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p><p class=\"stat-note\">Semua laporan dari pengguna</p></article><article class=\"card stat-card\"><div class=\"stat-card-head\"><span class=\"eyebrow\">Perlu Penanganan (Open)</span> <span class=\"badge badge-danger\">Antrean</span></div><p class=\"stat-value mono\" style=\"color:var(--danger-text);\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(data.OpenBugs))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/developer_portal.templ`, Line: 27, Col: 83}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/developer_portal.templ`, Line: 27, Col: 94}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</p><p class=\"stat-note\">Tiket baru belum ditindaklanjuti</p></article><article class=\"card stat-card\"><div class=\"stat-card-head\"><span class=\"eyebrow\">Sedang Investigasi</span> <span class=\"badge badge-warning\">Proses</span></div><p class=\"stat-value mono\" style=\"color:#F59E0B;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</p><p class=\"stat-note\">Tiket baru belum ditindaklanjuti</p></article><article class=\"card stat-card\"><div class=\"stat-card-head\"><span class=\"eyebrow\">Sedang Investigasi</span> <span class=\"badge badge-warning\">Proses</span></div><p class=\"stat-value mono\" style=\"color:var(--warning-text);\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(data.InvestigatingBugs))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/developer_portal.templ`, Line: 36, Col: 92}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/developer_portal.templ`, Line: 36, Col: 104}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</p><p class=\"stat-note\">Dalam analisis tim teknis</p></article><article class=\"card stat-card\"><div class=\"stat-card-head\"><span class=\"eyebrow\">Terselesaikan (Resolved)</span> <span class=\"badge badge-success\">Selesai</span></div><p class=\"stat-value mono\" style=\"color:#10B981;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</p><p class=\"stat-note\">Dalam analisis tim teknis</p></article><article class=\"card stat-card\"><div class=\"stat-card-head\"><span class=\"eyebrow\">Terselesaikan (Resolved)</span> <span class=\"badge badge-success\">Selesai</span></div><p class=\"stat-value mono\" style=\"color:var(--success-text);\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(data.ResolvedBugs))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/developer_portal.templ`, Line: 45, Col: 87}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/developer_portal.templ`, Line: 45, Col: 99}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -228,7 +228,7 @@ func DeveloperPortal(data ui.DeveloperPortalPage) templ.Component {
 						return templ_7745c5c3_Err
 					}
 					if b.DeveloperNotes != "" {
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<div style=\"margin-top:6px; padding:4px 8px; background:rgba(10, 108, 116, 0.08); border-radius:6px; font-size:0.75rem; color:#0A6C74;\"><strong>Catatan Dev:</strong> ")
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<div style=\"margin-top:6px; padding:4px 8px; background:var(--teal-soft); border-radius:6px; font-size:0.75rem; color:var(--teal);\"><strong>Catatan Dev:</strong> ")
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}

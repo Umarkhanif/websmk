@@ -1,0 +1,271 @@
+package pages
+
+import (
+	"wesmk/internal/ui"
+	"wesmk/internal/ui/components"
+)
+
+func securityMethodLabel(method string) string {
+	switch method {
+	case "password":
+		return "Kata sandi"
+	case "totp", "mfa":
+		return "Kode autentikator"
+	case "recovery_code":
+		return "Recovery code"
+	case "magic":
+		return "Tautan WhatsApp"
+	case "demo":
+		return "Akun demo"
+	default:
+		if method == "" {
+			return "—"
+		}
+		return method
+	}
+}
+
+templ Security(data ui.SecurityPage) {
+	<div class="page-stack">
+		if data.Required && !data.Enabled {
+			<div class="alert alert-danger" role="alert">
+				@components.Icon("alert", "icon")
+				<span>MFA wajib untuk peran Anda. Aktifkan autentikator sekarang; seluruh menu lain terkunci sampai MFA aktif.</span>
+			</div>
+		}
+		if data.Error != "" {
+			<div class="alert alert-danger" role="alert">
+				@components.Icon("alert", "icon")
+				<span>{ data.Error }</span>
+			</div>
+		}
+
+		<section class="card form-stack">
+			<div class="stat-card-head">
+				<div>
+					<span class="eyebrow">Keamanan Akun</span>
+					<h2>Autentikasi Dua Langkah (TOTP)</h2>
+				</div>
+				if data.Enabled {
+					<span class="badge badge-success">MFA Aktif</span>
+				} else {
+					<span class="badge badge-warning">MFA Belum Aktif</span>
+				}
+			</div>
+			<p class="muted">
+				Kode 6 digit dari aplikasi autentikator melindungi akun istimewa meskipun kata sandi diketahui orang lain.
+				Secret dienkripsi di server dan hanya ditampilkan kepada Anda saat pendaftaran.
+			</p>
+
+			if data.Enabled {
+				<div class="alert alert-info">
+					@components.Icon("lock", "icon")
+					<span>MFA aktif. Login berikutnya meminta kode autentikator atau satu recovery code setelah kata sandi benar.</span>
+				</div>
+				if data.Required {
+					<div class="mfa-help">
+						<strong>MFA wajib untuk peran ini.</strong>
+						<span>Penonaktifan sendiri diblokir. Jika perangkat hilang, minta Admin TU mereset MFA; sesi akan dicabut dan Anda mendaftar ulang.</span>
+					</div>
+				} else {
+					<form method="post" action="/security/totp/disable" class="form-stack" data-confirm="Nonaktifkan MFA untuk akun ini?">
+						<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+						<div class="grid-2">
+							<label class="field">
+								<span class="field-label">Kata sandi saat ini</span>
+								<input class="input" type="password" name="password" autocomplete="current-password" required/>
+							</label>
+							<label class="field">
+								<span class="field-label">Kode autentikator</span>
+								<input class="input input-mono" type="text" name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="000000" required/>
+							</label>
+						</div>
+						<button class="button button-danger" type="submit">Nonaktifkan MFA</button>
+					</form>
+				}
+			} else if data.Secret != "" {
+				<div class="alert alert-warning">
+					@components.Icon("alert", "icon")
+					<span>Belum aktif. Pindai atau salin secret di bawah, lalu masukkan kode 6 digit untuk mengonfirmasi.</span>
+				</div>
+				<div class="mfa-secret">
+					<span class="field-label">Secret manual</span>
+					<code class="mono">{ data.Secret }</code>
+					<a class="button button-secondary button-small" href={ data.OTPAuthURI }>Buka di aplikasi autentikator</a>
+				</div>
+				<form method="post" action="/security/totp/confirm" class="form-stack">
+					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+					<label class="field">
+						<span class="field-label">Kode 6 digit dari aplikasi</span>
+						<input class="input input-mono" type="text" name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="000000" required/>
+					</label>
+					<button class="button button-primary" type="submit">Aktifkan MFA</button>
+				</form>
+			} else {
+				<form method="post" action="/security/totp/start">
+					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+					<button class="button button-primary" type="submit">Mulai Aktifkan MFA</button>
+				</form>
+			}
+		</section>
+
+		if data.Enabled {
+			<section class="card form-stack">
+				<div class="stat-card-head">
+					<div>
+						<span class="eyebrow">Pemulihan Akun</span>
+						<h2>Recovery Code</h2>
+					</div>
+					if data.RecoveryCount > 0 {
+						<span class="badge badge-success">{ data.RecoveryCount } tersisa</span>
+					} else {
+						<span class="badge badge-warning">Belum tersedia</span>
+					}
+				</div>
+				<p class="muted">Recovery code hanya dapat dipakai sekali dan disimpan sebagai hash. Gunakan bila perangkat autentikator hilang.</p>
+
+				if len(data.RecoveryCodes) > 0 {
+					<div class="alert alert-warning" role="alert">
+						@components.Icon("alert", "icon")
+						<span>Salin atau simpan kode berikut sekarang. Halaman ini tidak akan menampilkannya lagi setelah dimuat ulang.</span>
+					</div>
+					<div class="recovery-grid">
+						for _, code := range data.RecoveryCodes {
+							<code class="recovery-code">{ code }</code>
+						}
+					</div>
+				}
+
+				<form method="post" action="/security/recovery/regenerate" class="form-stack" data-confirm="Buat ulang seluruh recovery code? Kode lama langsung tidak berlaku.">
+					<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+					<div class="grid-2">
+						<label class="field">
+							<span class="field-label">Kode autentikator saat ini</span>
+							<input class="input input-mono" type="text" name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="000000" required/>
+						</label>
+						<div class="field">
+							<span class="field-label">Catatan</span>
+							<span class="muted">Membuat 10 kode baru dan membatalkan semua kode lama.</span>
+						</div>
+					</div>
+					<button class="button button-secondary" type="submit">Buat / Ganti Recovery Code</button>
+				</form>
+			</section>
+		}
+
+		<section class="card form-stack">
+			<div class="stat-card-head">
+				<div>
+					<span class="eyebrow">Perangkat</span>
+					<h2>Sesi Aktif</h2>
+				</div>
+				<span class="badge badge-info">Satu perangkat</span>
+			</div>
+			<p class="muted">Akun ini memakai satu sesi aktif. Login di perangkat lain otomatis mengakhiri sesi sebelumnya.</p>
+			<div class="session-grid">
+				<div>
+					<span class="field-label">Alamat IP</span>
+					<code class="mono">{ data.Session.IP }</code>
+				</div>
+				<div>
+					<span class="field-label">Mulai</span>
+					<span>{ ui.FormatDateTimeID(data.Session.StartedAt) }</span>
+				</div>
+				<div>
+					<span class="field-label">Berakhir</span>
+					<span>{ ui.FormatDateTimeID(data.Session.ExpiresAt) }</span>
+				</div>
+				<div>
+					<span class="field-label">Perangkat</span>
+					<span class="session-agent">{ data.Session.UserAgent }</span>
+				</div>
+			</div>
+			<form method="post" action="/logout">
+				<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
+				<button class="button button-secondary" type="submit">Akhiri Sesi Ini</button>
+			</form>
+		</section>
+
+		<section class="card">
+			<div class="stat-card-head">
+				<div>
+					<span class="eyebrow">Jejak Keamanan</span>
+					<h2>Riwayat Login Akun Ini</h2>
+				</div>
+				<span class="badge badge-neutral">{ len(data.LoginEvents) } terakhir</span>
+			</div>
+			if len(data.LoginEvents) == 0 {
+				<p class="muted">Belum ada riwayat login.</p>
+			} else {
+				<div class="table-wrap">
+					<table class="data-table">
+						<thead>
+							<tr><th>Waktu</th><th>Metode</th><th>Status</th><th>IP</th><th>Perangkat</th></tr>
+						</thead>
+						<tbody>
+							for _, event := range data.LoginEvents {
+								<tr>
+									<td class="mono">{ ui.FormatDateTimeID(event.CreatedAt) }</td>
+									<td>{ securityMethodLabel(event.Method) }</td>
+									<td>
+										if event.Success {
+											<span class="badge badge-success">Berhasil</span>
+										} else {
+											<span class="badge badge-danger">Gagal</span>
+											if event.Reason != "" {
+												<span class="muted"> · { event.Reason }</span>
+											}
+										}
+									</td>
+									<td class="mono">{ event.IP }</td>
+									<td class="session-agent">{ event.UserAgent }</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			}
+		</section>
+
+		if data.ShowAdmin {
+			<section class="card">
+				<div class="stat-card-head">
+					<div>
+						<span class="eyebrow">Audit Sekolah</span>
+						<h2>Login Terbaru Seluruh Akun</h2>
+					</div>
+					<span class="badge badge-info">Admin</span>
+				</div>
+				if len(data.AdminEvents) == 0 {
+					<p class="muted">Belum ada event login.</p>
+				} else {
+					<div class="table-wrap">
+						<table class="data-table">
+							<thead>
+								<tr><th>Waktu</th><th>Akun</th><th>Peran</th><th>Metode</th><th>Status</th><th>IP</th></tr>
+							</thead>
+							<tbody>
+								for _, event := range data.AdminEvents {
+									<tr>
+										<td class="mono">{ ui.FormatDateTimeID(event.CreatedAt) }</td>
+										<td class="mono">{ event.Identifier }</td>
+										<td>{ event.Role }</td>
+										<td>{ securityMethodLabel(event.Method) }</td>
+										<td>
+											if event.Success {
+												<span class="badge badge-success">Berhasil</span>
+											} else {
+												<span class="badge badge-danger">Gagal</span>
+											}
+										</td>
+										<td class="mono">{ event.IP }</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+			</section>
+		}
+	</div>
+}

@@ -24,7 +24,7 @@ templ DeveloperPortal(data ui.DeveloperPortalPage) {
 					<span class="eyebrow">Perlu Penanganan (Open)</span>
 					<span class="badge badge-danger">Antrean</span>
 				</div>
-				<p class="stat-value mono" style="color:#EF4444;">{ strconv.Itoa(data.OpenBugs) }</p>
+				<p class="stat-value mono" style="color:var(--danger-text);">{ strconv.Itoa(data.OpenBugs) }</p>
 				<p class="stat-note">Tiket baru belum ditindaklanjuti</p>
 			</article>
 
@@ -33,7 +33,7 @@ templ DeveloperPortal(data ui.DeveloperPortalPage) {
 					<span class="eyebrow">Sedang Investigasi</span>
 					<span class="badge badge-warning">Proses</span>
 				</div>
-				<p class="stat-value mono" style="color:#F59E0B;">{ strconv.Itoa(data.InvestigatingBugs) }</p>
+				<p class="stat-value mono" style="color:var(--warning-text);">{ strconv.Itoa(data.InvestigatingBugs) }</p>
 				<p class="stat-note">Dalam analisis tim teknis</p>
 			</article>
 
@@ -42,7 +42,7 @@ templ DeveloperPortal(data ui.DeveloperPortalPage) {
 					<span class="eyebrow">Terselesaikan (Resolved)</span>
 					<span class="badge badge-success">Selesai</span>
 				</div>
-				<p class="stat-value mono" style="color:#10B981;">{ strconv.Itoa(data.ResolvedBugs) }</p>
+				<p class="stat-value mono" style="color:var(--success-text);">{ strconv.Itoa(data.ResolvedBugs) }</p>
 				<p class="stat-note">Bug telah diperbaiki di server</p>
 			</article>
 		</div>
@@ -92,7 +92,7 @@ templ DeveloperPortal(data ui.DeveloperPortalPage) {
 											<strong>{ b.Title }</strong>
 											<p class="muted" style="font-size:0.8rem; margin-top:4px; max-width:280px; word-break:break-word;">{ b.Description }</p>
 											if b.DeveloperNotes != "" {
-												<div style="margin-top:6px; padding:4px 8px; background:rgba(10, 108, 116, 0.08); border-radius:6px; font-size:0.75rem; color:#0A6C74;">
+												<div style="margin-top:6px; padding:4px 8px; background:var(--teal-soft); border-radius:6px; font-size:0.75rem; color:var(--teal);">
 													<strong>Catatan Dev:</strong> { b.DeveloperNotes }
 												</div>
 											}

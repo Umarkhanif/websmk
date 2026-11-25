@@ -23,6 +23,11 @@ templ HeadmasterPortal(data ui.HeadmasterPortalPage) {
 				<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 				<button type="submit" class="button button-primary">Tanda Tangani Laporan (E-Sign)</button>
 			</form>
+			if data.LastSignatureHash != "" {
+				<p class="muted mono" style="font-size:0.78rem;">Terakhir: { data.LastSignatureType } · { data.LastSignatureAt } · hash { data.LastSignatureHash }</p>
+			} else {
+				<p class="muted" style="font-size:0.78rem;">Belum ada laporan yang ditandatangani.</p>
+			}
 		</section>
 
 		<div class="dashboard-grid">
@@ -33,11 +38,16 @@ templ HeadmasterPortal(data ui.HeadmasterPortalPage) {
 			</article>
 			<article class="card stat-card">
 				<div class="stat-card-head">
-					<span class="eyebrow">Kode OTP Aktif</span>
-					@components.InfoBubble("Otorisasi koreksi kas kasir bendahara.")
+					<span class="eyebrow">Otorisasi Kas</span>
+					@components.InfoBubble("Kode OTP hanya dibuka saat akan diberikan kepada bendahara.")
 				</div>
-				<p class="stat-value mono">{ data.ActiveOTP }</p>
-				<p class="stat-note">Masa aktif 15 menit</p>
+				if data.ActiveOTP != "" {
+					<p class="stat-title">OTP siap digunakan</p>
+					<p class="stat-note">Masa aktif singkat. Buka bagian Otorisasi Kas untuk melihat kode.</p>
+				} else {
+					<p class="stat-title">Tidak ada OTP aktif</p>
+					<p class="stat-note">Terbitkan OTP dari permintaan pembalik jika diperlukan.</p>
+				}
 			</article>
 			<article class="card stat-card">
 				<span class="eyebrow">Pendidik Terkalibrasi</span>
@@ -91,8 +101,15 @@ templ HeadmasterPortal(data ui.HeadmasterPortalPage) {
 						<span class="eyebrow">Otorisasi Kas</span>
 						<h3>Persetujuan Jurnal Pembalik</h3>
 					</div>
-					@components.InfoBubble("Kode OTP aktif saat ini: " + data.ActiveOTP + ". Berikan kode ini hanya kepada bendahara setelah bukti kesalahan diverifikasi.")
+					@components.InfoBubble("Berikan kode hanya kepada bendahara setelah bukti kesalahan diverifikasi.")
 				</div>
+				if data.ActiveOTP != "" {
+					<details class="info-strip">
+						<summary>Lihat kode OTP aktif</summary>
+						<p class="stat-value mono">{ data.ActiveOTP }</p>
+						<p class="muted">Jangan bagikan kode ini melalui grup atau kanal publik.</p>
+					</details>
+				}
 				for _, req := range data.ReversalRequests {
 					<div class="info-strip">
 						<div class="stat-card-head">

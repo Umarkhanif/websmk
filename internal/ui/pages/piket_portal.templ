@@ -13,64 +13,102 @@ templ PiketPortal(data ui.PiketPortalPage) {
 					<span class="eyebrow">Posko Guru Piket</span>
 					<h2>Pemantauan Kelas &amp; Log Gerbang</h2>
 				</div>
-				@components.InfoBubble("Radar kehadiran kelas dan log gerbang sekolah real-time.")
+				@components.InfoBubble("Radar di bawah hanya menampilkan slot jadwal hari ini dari master data sekolah.")
 			</div>
 
-			<div class="grid-4">
-				for _, cls := range data.Classrooms {
-					<article class="card stat-card">
-						<div class="stat-card-head">
-							<strong>{ cls.Name }</strong>
-							if cls.Status == "RED_EMPTY" {
-								<span class="badge badge-danger">KELAS KOSONG</span>
-							} else {
-								<span class="badge badge-success">TERISI PENUH</span>
-							}
-						</div>
-						<p class="stat-title">{ cls.Subject }</p>
-						<p class="stat-note">Pengampu: { cls.Teacher }</p>
-						<p class="muted">{ cls.Note }</p>
-					</article>
-				}
+			if len(data.Classrooms) == 0 {
+				<article class="info-strip">
+					<strong>Belum ada jadwal hari ini</strong>
+					<span class="muted">Minta Admin TU menambahkan jadwal kelas. Piket tetap dapat mencatat log gerbang.</span>
+				</article>
+			} else {
+				<div class="grid-4">
+					for _, cls := range data.Classrooms {
+						<article class="card stat-card">
+							<div class="stat-card-head">
+								<strong>{ cls.Name }</strong>
+								<span class="badge badge-teal">TERJADWAL</span>
+							</div>
+							<p class="stat-title">{ cls.Subject }</p>
+							<p class="stat-note">{ cls.Time } · { cls.Room }</p>
+							<p class="muted">Pengampu: { cls.Teacher }</p>
+						</article>
+					}
+				</div>
+			}
+
+			<div class="stat-card-head">
+				<h3>Jadwal Hari Ini ({ len(data.TodaySchedules) })</h3>
+				@components.InfoBubble("Diambil dari master jadwal yang disusun Admin TU.")
 			</div>
+			if len(data.TodaySchedules) == 0 {
+				<p class="muted">Belum ada jadwal untuk hari ini. Piket tetap bisa mencatat log gerbang.</p>
+			} else {
+				<div class="table-wrap">
+					<table class="data-table">
+						<thead><tr><th>Jam</th><th>Kelas</th><th>Mapel</th><th>Guru</th><th>Ruang</th></tr></thead>
+						<tbody>
+							for _, sc := range data.TodaySchedules {
+								<tr><td class="mono">{ sc.StartTime }–{ sc.EndTime }</td><td>{ sc.ClassName }</td><td>{ sc.SubjectID }</td><td>{ sc.TeacherName }</td><td>{ sc.RoomName }</td></tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			}
 
 			<form method="post" action="/piket/assign-inval" class="info-strip form-stack">
 				<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
 				<div class="stat-card-head">
 					<h3>Tugaskan Guru Pengganti (Inval)</h3>
-					@components.InfoBubble("Penugasan guru pengganti untuk kelas kosong tercatat ke poin kontribusi mengajar guru.")
+					@components.InfoBubble("Penugasan terikat ke slot jadwal hari ini dan tersimpan di database.")
 				</div>
-				<div class="form-row">
-					<div class="field">
-						<div class="field-head">
-							<label class="field-label">Pilih Ruang Kelas</label>
+				if len(data.TodaySchedules) == 0 || len(data.Teachers) == 0 {
+					<p class="muted">Penugasan inval aktif setelah ada jadwal hari ini dan akun guru.</p>
+				} else {
+					<div class="form-row">
+						<div class="field">
+							<div class="field-head">
+								<label class="field-label">Slot Jadwal</label>
+							</div>
+							<select class="input" name="schedule_id" required>
+								for _, sc := range data.TodaySchedules {
+									<option value={ sc.ID }>{ sc.StartTime }–{ sc.EndTime } · { sc.ClassName } · { sc.SubjectID }</option>
+								}
+							</select>
 						</div>
-						<select class="input" name="classroom_id">
-							for _, cls := range data.Classrooms {
-								<option value={ cls.ID }>{ cls.Name } — { cls.Subject } ({ cls.Status })</option>
-							}
-						</select>
-					</div>
-					<div class="field">
-						<div class="field-head">
-							<label class="field-label">Guru Pengganti</label>
+						<div class="field">
+							<div class="field-head">
+								<label class="field-label">Guru Pengganti</label>
+							</div>
+							<select class="input" name="teacher_id" required>
+								for _, t := range data.Teachers {
+									<option value={ t.ID }>{ t.TeacherName }</option>
+								}
+							</select>
 						</div>
-						<select class="input" name="teacher_name">
-							for _, t := range data.Teachers {
-								<option value={ t.TeacherName }>{ t.TeacherName } ({ t.Subject })</option>
-							}
-						</select>
-					</div>
-					<div class="field">
-						<div class="field-head">
-							<label class="field-label">Modul / Materi Titipan</label>
-							@components.InfoBubble("Materi atau modul latihan yang harus diselesaikan siswa selama jam kosong.")
+						<div class="field">
+							<div class="field-head">
+								<label class="field-label">Modul / Materi Titipan</label>
+							</div>
+							<input class="input" type="text" name="task_note" placeholder="Materi atau instruksi untuk kelas..." required/>
 						</div>
-						<input class="input" type="text" name="task_note" value="Materi Titipan Guru Asli (Modul Praktik 04)" required/>
 					</div>
-				</div>
-				<button type="submit" class="button button-primary">Tugaskan Guru Inval</button>
+					<button type="submit" class="button button-primary">Tugaskan Guru Inval</button>
+				}
 			</form>
+
+			if len(data.Assignments) > 0 {
+				<div class="table-wrap">
+					<table class="data-table">
+						<thead><tr><th>Kelas</th><th>Mapel</th><th>Guru Inval</th><th>Guru Asli</th><th>Catatan</th></tr></thead>
+						<tbody>
+							for _, a := range data.Assignments {
+								<tr><td>{ a.ClassName }</td><td>{ a.Subject }</td><td><strong>{ a.TeacherName }</strong></td><td>{ a.OriginalTeacher }</td><td>{ a.Note }</td></tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			}
 		</section>
 
 		<section class="card form-stack">
@@ -79,7 +117,7 @@ templ PiketPortal(data ui.PiketPortalPage) {
 					<span class="eyebrow">Akses Gerbang</span>
 					<h3>Pencatatan Keterlambatan &amp; Izin Keluar</h3>
 				</div>
-				@components.InfoBubble("Mencatat izin keluar siswa dengan QR Pass dan keterlambatan gerbang.")
+				@components.InfoBubble("NISN harus terdaftar. Nama siswa diambil dari master data, bukan diketik manual.")
 			</div>
 			<form method="post" action="/piket/gate-log" class="form-stack">
 				<input type="hidden" name="_csrf" value={ data.Shell.CSRFToken }/>
@@ -88,18 +126,12 @@ templ PiketPortal(data ui.PiketPortalPage) {
 						<div class="field-head">
 							<label class="field-label">NISN Siswa</label>
 						</div>
-						<input class="input input-mono" type="text" name="nisn" value="0058471292" required/>
-					</div>
-					<div class="field">
-						<div class="field-head">
-							<label class="field-label">Nama Siswa &amp; Kelas</label>
-						</div>
-						<input class="input" type="text" name="student_name" value="Deni Kurniawan (XII TKJ 1)" required/>
+						<input class="input input-mono" type="text" name="nisn" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" placeholder="10 digit NISN" required/>
 					</div>
 					<div class="field">
 						<div class="field-head">
 							<label class="field-label">Jenis Pencatatan</label>
-							@components.InfoBubble("Izin keluar sementara menghasilkan kode pass; keterlambatan terhubung ke catatan tata tertib.")
+							@components.InfoBubble("Izin keluar sementara menghasilkan kode pass; keterlambatan memerlukan keterangan.")
 						</div>
 						<select class="input" name="log_type">
 							<option value="IZIN_KELUAR_SEMENTARA">Izin Keluar Sementara</option>
@@ -111,7 +143,7 @@ templ PiketPortal(data ui.PiketPortalPage) {
 					<div class="field-head">
 						<label class="field-label">Alasan / Keperluan</label>
 					</div>
-					<input class="input" type="text" name="reason" value="Membeli Perlengkapan Praktik di Koperasi" required/>
+					<input class="input" type="text" name="reason" placeholder="Keterangan singkat..." required/>
 				</div>
 				<button type="submit" class="button button-secondary">Simpan Log Gerbang</button>
 			</form>
@@ -125,10 +157,13 @@ templ PiketPortal(data ui.PiketPortalPage) {
 							<th>Nama Siswa</th>
 							<th>Jenis Log</th>
 							<th>Keterangan</th>
-							<th>Kode QR Pass</th>
+							<th>Kode Pass</th>
 						</tr>
 					</thead>
 					<tbody>
+						if len(data.GateLogs) == 0 {
+							<tr><td colspan="6" class="muted">Belum ada log gerbang.</td></tr>
+						}
 						for _, g := range data.GateLogs {
 							<tr>
 								<td class="mono">{ g.RecordedAt }</td>

@@ -806,6 +806,28 @@
       "uploadedAt": "2026-10-24"
     }
   ],
+  "assignments": [
+    {
+      "id": "asg-bgp-01",
+      "className": "XII TKJ 1",
+      "subjectName": "Administrasi Infrastruktur Jaringan",
+      "title": "Laporan Topologi BGP Dual-Homing",
+      "description": "Unggah laporan praktik (.pkt/PDF) berisi topologi, tabel routing, dan analisis failover.",
+      "dueDate": "2026-10-30",
+      "teacherName": "Ir. Hendro Wijaya, S.T., M.Kom.",
+      "createdAt": "2026-10-24 08:00 WIB"
+    },
+    {
+      "id": "asg-vlan-02",
+      "className": "XII TKJ 1",
+      "subjectName": "Administrasi Infrastruktur Jaringan",
+      "title": "Praktik VLAN & Trunking Mikrotik",
+      "description": "Kumpulkan konfigurasi VLAN, trunking, dan bukti ping antar-VLAN.",
+      "dueDate": "2026-12-15",
+      "teacherName": "Ir. Hendro Wijaya, S.T., M.Kom.",
+      "createdAt": "2026-11-20 08:00 WIB"
+    }
+  ],
   "taskSubmissions": [
     {
       "id": "tsk-01",
@@ -831,7 +853,7 @@
       "radiusMeters": 100,
       "supervisorName": "Bagus Wicaksono, S.T. (Senior Network Engineer)",
       "supervisorPhone": "081198765432",
-      "supervisorPin": "829104"
+      "supervisorPin": "sha256:fcc494ccaef9eada1515f3c44e54df60edfdb3bb4e4f5617526a9ab5ac58742d"
     },
     {
       "id": "pkl-astra-02",
@@ -843,7 +865,7 @@
       "radiusMeters": 150,
       "supervisorName": "Ir. Bambang Prasetyo (Lead Maintenance)",
       "supervisorPhone": "081122334455",
-      "supervisorPin": "654321"
+      "supervisorPin": "sha256:481f6cc0511143ccdd7e2d1b1b94faf0a700a8b49cd13922a70b5ae28acaa8c5"
     }
   ],
   "pklAttendanceLogs": [

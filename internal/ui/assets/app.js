@@ -1,6 +1,18 @@
 (function () {
   "use strict";
 
+  // 0. Connection status in the shell topbar.
+  function updateConnectionStatus() {
+    var offline = navigator.onLine === false;
+    document.querySelectorAll("[data-connection-status]").forEach(function (chip) {
+      chip.hidden = !offline;
+    });
+  }
+
+  window.addEventListener("online", updateConnectionStatus);
+  window.addEventListener("offline", updateConnectionStatus);
+  updateConnectionStatus();
+
   // 1. Mobile drawer toggle & close
   function setDrawerOpen(open) {
     var drawer = document.getElementById("mobile-drawer");
@@ -10,9 +22,11 @@
     if (open) {
       drawer.removeAttribute("hidden");
       backdrop.removeAttribute("hidden");
+      document.body.classList.add("drawer-open");
     } else {
       drawer.setAttribute("hidden", "");
       backdrop.setAttribute("hidden", "");
+      document.body.classList.remove("drawer-open");
     }
     toggles.forEach(function (btn) {
       btn.setAttribute("aria-expanded", open ? "true" : "false");
@@ -892,6 +906,282 @@
     }
   }
 
+  // Turn ordinary data tables into labelled cards on narrow screens.
+  // Header text is copied into data-label so CSS can render it above each value.
+  function initMobileCards() {
+    var tables = document.querySelectorAll("table.data-table");
+    tables.forEach(function (table) {
+      if (table.classList.contains("rollover-table")) return;
+
+      var head = table.tHead;
+      var headRow = head && head.rows[head.rows.length - 1];
+      if (!headRow) return;
+
+      var headers = Array.prototype.slice.call(headRow.cells);
+      if (headers.length < 2) return;
+      if (headers.some(function (cell) { return cell.colSpan > 1; })) return;
+
+      var labels = headers.map(function (cell) {
+        return (cell.textContent || "").replace(/\s+/g, " ").trim();
+      });
+      if (labels.some(function (label) { return !label; })) return;
+
+      table.classList.add("mobile-cards");
+      var wrap = table.closest(".table-wrap");
+      if (wrap) wrap.classList.add("has-mobile-cards");
+
+      Array.prototype.forEach.call(table.tBodies, function (body) {
+        Array.prototype.forEach.call(body.rows, function (row) {
+          var cells = row.cells;
+          if (cells.length === 1 && cells[0].colSpan > 1) {
+            row.classList.add("is-empty-row");
+            return;
+          }
+          var column = 0;
+          Array.prototype.forEach.call(cells, function (cell) {
+            if (cell.colSpan > 1) {
+              column += cell.colSpan;
+              return;
+            }
+            var label = labels[column];
+            column += 1;
+            if (label && !cell.hasAttribute("data-label")) {
+              cell.setAttribute("data-label", label);
+            }
+          });
+        });
+      });
+    });
+  }
+
+  // Auto-submit a filter form when its control changes. Inline onchange
+  // handlers are blocked by CSP, so controls declare data-submit-on-change.
+  document.addEventListener("change", function (e) {
+    var control = e.target.closest("[data-submit-on-change]");
+    if (!control || !control.form) return;
+    if (control.form.requestSubmit) control.form.requestSubmit();
+    else control.form.submit();
+  });
+
+  // Confirmation for destructive forms. CSP blocks inline onsubmit handlers,
+  // so forms declare data-confirm="..." instead.
+  document.addEventListener("submit", function (e) {
+    var form = e.target;
+    if (!form || !form.getAttribute) return;
+    var message = form.getAttribute("data-confirm");
+    if (message && !window.confirm(message)) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }, true);
+
+  // 8. Failure feedback: htmx errors should be visible, not only logged.
+  var appToast = null;
+  var appToastTimer = null;
+  var appToastAction = null;
+  var lastFailedElt = null;
+
+  function hideAppToast() {
+    clearTimeout(appToastTimer);
+    if (!appToast) return;
+    appToast.classList.remove("is-visible");
+    appToast.setAttribute("aria-hidden", "true");
+  }
+
+  function getAppToast() {
+    if (appToast) return appToast;
+    appToast = document.createElement("div");
+    appToast.className = "app-toast";
+    appToast.setAttribute("role", "alert");
+    appToast.setAttribute("aria-live", "assertive");
+    appToast.setAttribute("aria-atomic", "true");
+    appToast.setAttribute("aria-hidden", "true");
+    appToast.innerHTML = '<span class="app-toast-mark" aria-hidden="true">!</span>' +
+      '<div class="app-toast-copy">' +
+      '<p class="app-toast-message"></p>' +
+      '<button type="button" class="app-toast-action" hidden></button>' +
+      '</div>' +
+      '<button type="button" class="app-toast-close" aria-label="Tutup notifikasi">\u00d7</button>';
+    appToast.querySelector(".app-toast-close").addEventListener("click", hideAppToast);
+    appToast.querySelector(".app-toast-action").addEventListener("click", function () {
+      if (!appToastAction || !appToastAction.handler) return;
+      appToastAction.handler();
+    });
+    (document.body || document.documentElement).appendChild(appToast);
+    return appToast;
+  }
+
+  function setAppToastAction(action) {
+    var button = appToast.querySelector(".app-toast-action");
+    appToastAction = action || null;
+    if (!appToastAction) {
+      button.hidden = true;
+      button.textContent = "";
+      return;
+    }
+    button.textContent = appToastAction.label;
+    button.hidden = false;
+  }
+
+  function showAppToast(message, action) {
+    var toast = getAppToast();
+    toast.querySelector(".app-toast-message").textContent = message;
+    setAppToastAction(action);
+    toast.removeAttribute("aria-hidden");
+    toast.classList.remove("is-visible");
+    void toast.offsetWidth;
+    toast.classList.add("is-visible");
+    clearTimeout(appToastTimer);
+    appToastTimer = setTimeout(hideAppToast, 7000);
+  }
+
+  function retryLastFailedRequest() {
+    var elt = lastFailedElt;
+    hideAppToast();
+    if (!elt || !document.body.contains(elt)) {
+      window.location.reload();
+      return;
+    }
+    if (elt.tagName === "FORM" && elt.requestSubmit) {
+      elt.requestSubmit();
+      return;
+    }
+    if (elt.click) elt.click();
+  }
+
+  function reportHtmxFailure(evt, message, action) {
+    if (isBackgroundHtmx(evt)) return;
+    if (action && action.retry) {
+      lastFailedElt = evt.detail && evt.detail.elt;
+      action = { label: "Coba lagi", handler: retryLastFailedRequest };
+    }
+    showAppToast(message, action);
+  }
+
+  document.addEventListener("htmx:sendError", function (e) {
+    reportHtmxFailure(e, "Koneksi terputus. Perubahan belum tersimpan.", { retry: true });
+  });
+  document.addEventListener("htmx:timeout", function (e) {
+    reportHtmxFailure(e, "Server terlalu lama merespons. Coba lagi.", { retry: true });
+  });
+  document.addEventListener("htmx:responseError", function (e) {
+    var status = e.detail && e.detail.xhr ? e.detail.xhr.status : 0;
+    if (status === 403) {
+      reportHtmxFailure(e, "Sesi keamanan tidak valid. Muat ulang halaman lalu coba lagi.", {
+        label: "Muat ulang",
+        handler: function () {
+          window.location.reload();
+        },
+      });
+      return;
+    }
+    if (status === 429) {
+      reportHtmxFailure(e, "Terlalu banyak percobaan. Tunggu sebentar lalu coba lagi.");
+      return;
+    }
+    reportHtmxFailure(e, "Aksi gagal diproses. Coba lagi.", { retry: true });
+  });
+
+  // 9. Navigation feedback: a slim progress bar for full-page moves and htmx.
+  var navProgress = null;
+  var navProgressTimer = null;
+
+  function getNavProgress() {
+    if (!navProgress) {
+      navProgress = document.createElement("div");
+      navProgress.className = "nav-progress";
+      navProgress.setAttribute("aria-hidden", "true");
+      (document.body || document.documentElement).appendChild(navProgress);
+    }
+    return navProgress;
+  }
+
+  function startNavProgress() {
+    var bar = getNavProgress();
+    clearTimeout(navProgressTimer);
+    bar.classList.remove("is-done");
+    bar.classList.remove("is-active");
+    void bar.offsetWidth;
+    bar.classList.add("is-active");
+    navProgressTimer = setTimeout(finishNavProgress, 10000);
+  }
+
+  function finishNavProgress() {
+    clearTimeout(navProgressTimer);
+    if (!navProgress) return;
+    navProgress.classList.remove("is-active");
+    navProgress.classList.add("is-done");
+    setTimeout(function () {
+      if (navProgress) navProgress.classList.remove("is-done");
+    }, 240);
+  }
+
+  function isPlainNavigation(e) {
+    return !e.defaultPrevented && e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
+  }
+
+  document.addEventListener("click", function (e) {
+    if (!isPlainNavigation(e)) return;
+    if (!e.target || !e.target.closest) return;
+    var link = e.target.closest("a[href]");
+    if (!link || link.hasAttribute("data-no-progress")) return;
+    if (link.target && link.target !== "_self") return;
+    if (link.hasAttribute("download")) return;
+    var href = link.getAttribute("href");
+    if (!href || href.charAt(0) === "#" || /^(mailto:|tel:|javascript:)/i.test(href)) return;
+    var url;
+    try {
+      url = new URL(link.href, window.location.href);
+    } catch (err) {
+      return;
+    }
+    if (url.origin !== window.location.origin) return;
+    if (url.pathname === window.location.pathname && url.search === window.location.search && url.hash) return;
+    startNavProgress();
+  });
+
+  document.addEventListener("submit", function (e) {
+    var form = e.target;
+    if (!form || !form.getAttribute || e.defaultPrevented) return;
+    if (form.hasAttribute("data-no-progress")) return;
+    if (form.target && form.target !== "_self") return;
+    startNavProgress();
+  });
+
+  function isBackgroundHtmx(evt) {
+    var elt = evt.detail && evt.detail.elt;
+    if (!elt || !elt.getAttribute) return false;
+    if (elt.hasAttribute("data-no-progress")) return true;
+    var trigger = (elt.getAttribute("hx-trigger") || "").trim();
+    return trigger === "load" || trigger === "revealed" || /\bevery\b/.test(trigger);
+  }
+
+  function setHtmxTargetBusy(evt, busy) {
+    var target = evt.detail && evt.detail.target;
+    if (!target || !target.setAttribute) return;
+    if (busy) {
+      target.setAttribute("aria-busy", "true");
+      target.classList.add("is-htmx-busy");
+    } else {
+      target.removeAttribute("aria-busy");
+      target.classList.remove("is-htmx-busy");
+    }
+  }
+
+  document.addEventListener("htmx:beforeRequest", function (e) {
+    if (isBackgroundHtmx(e)) return;
+    startNavProgress();
+    setHtmxTargetBusy(e, true);
+  });
+  ["htmx:afterRequest", "htmx:responseError", "htmx:sendError", "htmx:timeout", "htmx:abort"].forEach(function (name) {
+    document.addEventListener(name, function (e) {
+      finishNavProgress();
+      setHtmxTargetBusy(e, false);
+    });
+  });
+  document.addEventListener("htmx:historyRestore", finishNavProgress);
+  window.addEventListener("pageshow", finishNavProgress);
+
   // Global delegated click listener
   document.addEventListener("click", function (e) {
     var toggleBtn = e.target.closest("[data-drawer-toggle]");
@@ -962,11 +1252,13 @@
     initCbtKiosk();
     initRewindSlides();
     initMysteryOrb();
+    initMobileCards();
   });
 
   document.addEventListener("htmx:afterSwap", function () {
     initCbtKiosk();
     initRewindSlides();
     initMysteryOrb();
+    initMobileCards();
   });
 })();

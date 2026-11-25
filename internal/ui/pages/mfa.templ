@@ -1,0 +1,60 @@
+package pages
+
+import (
+	"wesmk/internal/ui"
+	"wesmk/internal/ui/components"
+)
+
+templ MFA(page ui.MFAPage) {
+	<!DOCTYPE html>
+	<html lang="id">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+			<meta name="color-scheme" content="light"/>
+			<meta name="theme-color" content="#172E26"/>
+			<meta name="robots" content="noindex,nofollow"/>
+			<title>Verifikasi MFA — WESMK</title>
+			<link rel="icon" type="image/svg+xml" href="/ui-assets/favicon.svg"/>
+			<link rel="manifest" href="/ui-assets/manifest.webmanifest"/>
+			<link rel="apple-touch-icon" href="/ui-assets/apple-touch-icon.png"/>
+			<meta name="apple-mobile-web-app-capable" content="yes"/>
+			<meta name="apple-mobile-web-app-title" content="WESMK"/>
+			<link rel="preconnect" href="https://fonts.googleapis.com"/>
+			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+			<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+			<link rel="stylesheet" href="/ui-assets/app.css?v=20261124p"/>
+		</head>
+		<body class="login-body">
+			<main class="login-shell mfa-shell">
+				<section class="login-panel" aria-label="Verifikasi dua langkah">
+					<div class="login-panel-inner">
+						<div class="login-panel-head">
+							<span class="eyebrow">Keamanan akun</span>
+							<h2>Verifikasi dua langkah</h2>
+							<p>Masukkan kode 6 digit dari aplikasi autentikator, atau salah satu recovery code sekali pakai bila perangkat hilang.</p>
+						</div>
+						if page.Error != "" {
+							<div class="alert alert-danger" role="alert">
+								@components.Icon("alert", "icon")
+								<span>{ page.Error }</span>
+							</div>
+						}
+						<form method="post" action="/login/mfa" class="form-stack">
+							<input type="hidden" name="_csrf" value={ page.CSRFToken }/>
+							<div class="field">
+								<label class="field-label" for="mfa-code">Kode autentikator atau recovery code</label>
+								<input id="mfa-code" class="input input-mono" type="text" name="code" autocomplete="one-time-code" placeholder="000000 atau XXXX-XXXX" maxlength="12" required autofocus/>
+							</div>
+							<button class="button button-primary button-block" type="submit">Verifikasi &amp; Masuk</button>
+						</form>
+						<form method="post" action="/login/mfa/cancel" class="login-mfa-cancel">
+							<input type="hidden" name="_csrf" value={ page.CSRFToken }/>
+							<button class="button button-ghost button-small" type="submit">Batal, login ulang</button>
+						</form>
+					</div>
+				</section>
+			</main>
+		</body>
+	</html>
+}

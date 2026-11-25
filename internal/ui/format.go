@@ -39,6 +39,14 @@ func FormatDateID(value string) string {
 	return value
 }
 
+// FormatDateTimeID renders time.Time values for the security page.
+func FormatDateTimeID(value time.Time) string {
+	if value.IsZero() {
+		return "—"
+	}
+	return value.In(time.FixedZone("WIB", 7*60*60)).Format("02 Jan 2006, 15:04 WIB")
+}
+
 func FormatClockID(value string) string {
 	if strings.TrimSpace(value) == "" {
 		return "—"

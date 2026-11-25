@@ -1,5 +1,27 @@
 package pages
 
+import (
+	"fmt"
+	"net/url"
+)
+
+func sectionTabClass(current, target string) string {
+	if current == target {
+		return "section-tab is-active"
+	}
+	return "section-tab"
+}
+
+func studentPageURL(query string, page int) string {
+	values := url.Values{}
+	values.Set("section", "students")
+	if query != "" {
+		values.Set("q", query)
+	}
+	values.Set("page", fmt.Sprintf("%d", page))
+	return "/admin/master-data?" + values.Encode()
+}
+
 func attendanceBadgeClass(status string) string {
 	switch status {
 	case "HADIR_GERBANG":

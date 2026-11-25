@@ -12,17 +12,21 @@ templ PublicVerify(data ui.PublicVerifyPage) {
 	<html lang="id">
 		<head>
 			<meta charset="UTF-8"/>
-			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 			<meta name="color-scheme" content="light"/>
-			<meta name="theme-color" content="#0B1730"/>
+			<meta name="theme-color" content="#172E26"/>
 			<title>Verifikasi Publik &amp; Portal DUDI — WESMK</title>
 			<link rel="icon" type="image/svg+xml" href="/ui-assets/favicon.svg"/>
+			<link rel="manifest" href="/ui-assets/manifest.webmanifest"/>
+			<link rel="apple-touch-icon" href="/ui-assets/apple-touch-icon.png"/>
+			<meta name="apple-mobile-web-app-capable" content="yes"/>
+			<meta name="apple-mobile-web-app-title" content="WESMK"/>
 			<link rel="preconnect" href="https://fonts.googleapis.com"/>
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 			<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-			<link rel="stylesheet" href="/ui-assets/app.css?v=20261030c"/>
+			<link rel="stylesheet" href="/ui-assets/app.css?v=20261124p"/>
 			<script src="/ui-assets/htmx.min.js" defer></script>
-			<script src="/ui-assets/app.js?v=20261030a" defer></script>
+			<script src="/ui-assets/app.js?v=20261124p" defer></script>
 		</head>
 		<body class="app-body">
 			<main class="page">
@@ -64,72 +68,75 @@ templ PublicVerify(data ui.PublicVerifyPage) {
 									<span class="eyebrow">Persetujuan Pembimbing Industri</span>
 									<h3>Validasi Jurnal PKL Siswa</h3>
 								</div>
-								@components.InfoBubble("Supervisor mitra industri memasukkan PIN otorisasi untuk mengesahkan aktivitas magang siswa.")
+								@components.InfoBubble("Supervisor mitra industri memasukkan kode jurnal dan PIN otorisasi untuk mengesahkan aktivitas magang siswa.")
 							</div>
 
-							<form method="post" action="/verify/dudi-approve" class="form-stack">
-								<input type="hidden" name="_csrf" value={ data.CSRFToken }/>
+							<form method="get" action="/verify" class="form-stack">
+								<input type="hidden" name="tab" value="dudi"/>
 								<div class="field">
 									<div class="field-head">
-										<label class="field-label">Pilih Jurnal Siswa Magang</label>
+										<label class="field-label">Kode Jurnal PKL</label>
+										@components.InfoBubble("Kode jurnal tercantum pada tautan atau QR jurnal yang dikirim sekolah kepada supervisor mitra.")
 									</div>
-									<select class="input" name="journal_id">
-										for _, j := range data.PklJournals {
-											<option value={ j.ID }>{ j.StudentName } — { j.ActivityTitle } ({ j.Date })</option>
-										}
-									</select>
-								</div>
-								<div class="field">
-									<div class="field-head">
-										<label class="field-label">PIN Supervisor DUDI</label>
-										@components.InfoBubble("PIN resmi dari nota kerja sama sekolah (demo PT Telkom Akses: 445566 · PT Astra Honda Motor: 112233).")
-									</div>
-									<input class="input input-mono" type="password" name="pin" placeholder="••••••" required/>
+									<input class="input input-mono" type="text" name="q" value={ data.Query } placeholder="Mis. pkl-jrn-0001" required/>
 								</div>
 								<button type="submit" class="button button-primary">
-									@components.Icon("check", "icon")
-									<span>Sahkan Jurnal Magang</span>
+									@components.Icon("file-check", "icon")
+									<span>Cari Jurnal</span>
 								</button>
 							</form>
 
-							<div class="table-wrap">
-								<table class="data-table">
-									<thead>
-										<tr>
-											<th>Tanggal</th>
-											<th>Nama Siswa</th>
-											<th>Perusahaan DUDI</th>
-											<th>Aktivitas &amp; Kompetensi</th>
-											<th>Status DUDI</th>
-											<th>Status Guru</th>
-										</tr>
-									</thead>
-									<tbody>
-										for _, j := range data.PklJournals {
-											<tr>
-												<td class="mono">{ j.Date }</td>
-												<td><strong>{ j.StudentName }</strong></td>
-												<td>{ j.CompanyName }</td>
-												<td><strong>{ j.ActivityTitle }</strong><br/><span class="muted">{ j.CompetencyLearned }</span></td>
-												<td>
-													if j.SupervisorApproved {
-														<span class="badge badge-success">Disetujui DUDI</span>
-													} else {
-														<span class="badge badge-warning">Menunggu PIN</span>
-													}
-												</td>
-												<td>
-													if j.TeacherApproved {
-														<span class="badge badge-success">ACC Pembimbing</span>
-													} else {
-														<span class="badge badge-neutral">Menunggu Guru</span>
-													}
-												</td>
-											</tr>
-										}
-									</tbody>
-								</table>
-							</div>
+							if data.NotFound {
+								<div class="alert alert-danger" role="alert">
+									@components.Icon("alert", "icon")
+									<span>Jurnal dengan kode "{ data.Query }" tidak ditemukan.</span>
+								</div>
+							}
+
+							if data.SelectedJournal != nil {
+								<div class="stat-card-head">
+									<div>
+										<span class="eyebrow">Jurnal { data.SelectedJournal.ID }</span>
+										<h3>{ data.SelectedJournal.StudentName } — { data.SelectedJournal.CompanyName }</h3>
+									</div>
+									<span class="badge badge-neutral">{ data.SelectedJournal.Date }</span>
+								</div>
+								<div class="info-strip">
+									<span class="info-strip-label">Aktivitas</span>
+									<strong>{ data.SelectedJournal.ActivityTitle }</strong>
+									<span class="muted">{ data.SelectedJournal.CompetencyLearned }</span>
+								</div>
+								<div class="flex-actions" style="display:flex; gap:8px; flex-wrap:wrap;">
+									if data.SelectedJournal.SupervisorApproved {
+										<span class="badge badge-success">Disetujui DUDI</span>
+									} else {
+										<span class="badge badge-warning">Menunggu PIN DUDI</span>
+									}
+									if data.SelectedJournal.TeacherApproved {
+										<span class="badge badge-success">ACC Pembimbing</span>
+									} else {
+										<span class="badge badge-neutral">Menunggu Guru</span>
+									}
+								</div>
+
+								if !data.SelectedJournal.SupervisorApproved {
+									<form method="post" action="/verify/dudi-approve" class="form-stack">
+										<input type="hidden" name="_csrf" value={ data.CSRFToken }/>
+										<input type="hidden" name="journal_id" value={ data.SelectedJournal.ID }/>
+										<div class="field">
+											<div class="field-head">
+												<label class="field-label">PIN Supervisor DUDI</label>
+												@components.InfoBubble("Masukkan PIN resmi dari nota kerja sama sekolah dengan mitra industri.")
+											</div>
+											<input class="input input-mono" type="password" name="pin" placeholder="••••••" required/>
+										</div>
+										<button type="submit" class="button button-primary">
+											@components.Icon("check", "icon")
+											<span>Sahkan Jurnal Magang</span>
+										</button>
+									</form>
+								}
+							}
 						</section>
 					} else {
 						<section class="card form-stack">
@@ -146,15 +153,6 @@ templ PublicVerify(data ui.PublicVerifyPage) {
 									<span>Periksa Keaslian Dokumen</span>
 								</button>
 							</form>
-
-							<div class="leader-actions">
-								for _, l := range data.Letters {
-									<a class="button button-secondary button-small" href={ "/verify?q=" + l.HmacHash }>Cek Surat: { l.LetterNumber }</a>
-								}
-								for _, item := range data.Ledger {
-									<a class="button button-secondary button-small" href={ "/verify?q=" + item.ReceiptNumber }>Cek Kwitansi: { item.ReceiptNumber }</a>
-								}
-							</div>
 						</section>
 
 						if data.VerifiedLetter != nil {

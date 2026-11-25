@@ -3,6 +3,7 @@ package state
 import (
 	"crypto/hmac"
 	"crypto/sha256"
+	"crypto/subtle"
 	"encoding/hex"
 	"fmt"
 	"math"
@@ -124,16 +125,77 @@ func UploadStudentDocument(doc map[string]any, studentID, docID string, upload D
 	return ErrNotFound
 }
 
-// SubmitStudentTask records a workshop task submission.
-func SubmitStudentTask(doc map[string]any, studentID, taskTitle, fileName string, fileSizeKB int, now time.Time) error {
+// CreateAssignment publishes a teacher task for one classroom. The due date is
+// validated server-side so a client cannot backdate a closed task.
+func CreateAssignment(doc map[string]any, teacherName, className, subjectName, title, description, dueDate string, now time.Time) error {
+	dueDate = strings.TrimSpace(dueDate)
+	if strings.TrimSpace(title) == "" || strings.TrimSpace(className) == "" || strings.TrimSpace(subjectName) == "" {
+		return ErrInvalid
+	}
+	if _, err := time.Parse("2006-01-02", dueDate); err != nil {
+		return ErrInvalid
+	}
+	today := now.In(time.FixedZone("WIB", 7*3600)).Format("2006-01-02")
+	if dueDate < today {
+		return ErrInvalid
+	}
+	entry := map[string]any{
+		"id":          fmt.Sprintf("asg-%04d", now.UnixNano()%10000),
+		"className":   strings.TrimSpace(className),
+		"subjectName": strings.TrimSpace(subjectName),
+		"title":       strings.TrimSpace(title),
+		"description": strings.TrimSpace(description),
+		"dueDate":     dueDate,
+		"teacherName": teacherName,
+		"createdAt":   now.In(time.FixedZone("WIB", 7*3600)).Format("2006-01-02 15:04 WIB"),
+	}
+	doc["assignments"] = append([]any{entry}, asList(doc["assignments"])...)
+	return nil
+}
+
+// SubmitStudentTask records a workshop task submission. When assignmentID is
+// set, the task must belong to the student's classroom and not be past due.
+func SubmitStudentTask(doc map[string]any, studentID, assignmentID, taskTitle, fileName, blobID, mimeType string, fileSizeKB int, now time.Time) error {
 	student := findStudent(doc, studentID)
-	if student == nil || strings.TrimSpace(taskTitle) == "" {
+	if student == nil || strings.TrimSpace(blobID) == "" {
 		return ErrInvalid
 	}
 	journal := asMap(doc["classJournal"])
 	subject := "Administrasi Infrastruktur Jaringan"
 	if journal != nil && text(journal["subjectName"]) != "" {
 		subject = text(journal["subjectName"])
+	}
+	var assignment map[string]any
+	dueDate := ""
+	if strings.TrimSpace(assignmentID) != "" {
+		for _, item := range asList(doc["assignments"]) {
+			candidate := asMap(item)
+			if candidate != nil && text(candidate["id"]) == assignmentID {
+				assignment = candidate
+				break
+			}
+		}
+		if assignment == nil || text(assignment["className"]) != text(student["classroomName"]) {
+			return ErrNotFound
+		}
+		for _, item := range asList(doc["taskSubmissions"]) {
+			existing := asMap(item)
+			if existing != nil && text(existing["assignmentId"]) == assignmentID && text(existing["studentId"]) == studentID {
+				return ErrInvalid
+			}
+		}
+		dueDate = text(assignment["dueDate"])
+		today := now.In(time.FixedZone("WIB", 7*3600)).Format("2006-01-02")
+		if dueDate != "" && dueDate < today {
+			return ErrInvalid
+		}
+		subject = text(assignment["subjectName"])
+		if strings.TrimSpace(taskTitle) == "" {
+			taskTitle = text(assignment["title"])
+		}
+	}
+	if strings.TrimSpace(taskTitle) == "" {
+		return ErrInvalid
 	}
 	if strings.TrimSpace(fileName) == "" {
 		fileName = "laporan_praktik.pdf"
@@ -142,18 +204,39 @@ func SubmitStudentTask(doc map[string]any, studentID, taskTitle, fileName string
 		fileSizeKB = 310
 	}
 	entry := map[string]any{
-		"id":          fmt.Sprintf("tsk-%04d", now.UnixNano()%10000),
-		"studentId":   studentID,
-		"studentName": text(student["fullName"]),
-		"subjectName": subject,
-		"taskTitle":   strings.TrimSpace(taskTitle),
-		"fileName":    strings.TrimSpace(fileName),
-		"fileSizeKb":  fileSizeKB,
-		"submittedAt": now.In(time.FixedZone("WIB", 7*3600)).Format("2006-01-02 15:04 WIB"),
-		"status":      "TERKIRIM",
+		"id":           fmt.Sprintf("tsk-%04d", now.UnixNano()%10000),
+		"assignmentId": strings.TrimSpace(assignmentID),
+		"studentId":    studentID,
+		"studentName":  text(student["fullName"]),
+		"subjectName":  subject,
+		"taskTitle":    strings.TrimSpace(taskTitle),
+		"fileName":     strings.TrimSpace(fileName),
+		"fileSizeKb":   fileSizeKB,
+		"blobId":       blobID,
+		"mimeType":     mimeType,
+		"submittedAt":  now.In(time.FixedZone("WIB", 7*3600)).Format("2006-01-02 15:04 WIB"),
+		"status":       "TERKIRIM",
 	}
 	doc["taskSubmissions"] = append([]any{entry}, asList(doc["taskSubmissions"])...)
 	return nil
+}
+
+// GradeTaskSubmission stores a teacher score for a submitted workshop task.
+func GradeTaskSubmission(doc map[string]any, taskID string, score int, now time.Time) error {
+	if strings.TrimSpace(taskID) == "" || score < 0 || score > 100 {
+		return ErrInvalid
+	}
+	for _, item := range asList(doc["taskSubmissions"]) {
+		record := asMap(item)
+		if record == nil || text(record["id"]) != taskID {
+			continue
+		}
+		record["score"] = score
+		record["status"] = "DINILAI"
+		record["gradedAt"] = now.In(time.FixedZone("WIB", 7*3600)).Format("2006-01-02 15:04 WIB")
+		return nil
+	}
+	return ErrNotFound
 }
 
 // AddPklCheckin validates GPS distance with Haversine and records a PKL attendance log.
@@ -570,9 +653,10 @@ func ExecuteReversal(doc map[string]any, ledgerID int64, reason, otpInput, actor
 		"actorUserId":          actorID,
 		"actorName":            actorName,
 		"treasurerPinVerified": true,
-		"reversalApprovalId":   "appr-otp-" + expectedOTP,
-		"signatureHmac":        sig,
-		"createdAt":            createdAt,
+		// Never persist the OTP itself; keep an opaque approval reference.
+		"reversalApprovalId": "appr-" + randomHex(4),
+		"signatureHmac":      sig,
+		"createdAt":          createdAt,
 	}
 	doc["ledger"] = append([]any{entry}, asList(doc["ledger"])...)
 
@@ -582,9 +666,14 @@ func ExecuteReversal(doc map[string]any, ledgerID int64, reason, otpInput, actor
 			reqLedgerID, _ := number(req["ledgerId"])
 			if int64(reqLedgerID) == ledgerID {
 				req["status"] = "SELESAI_DIBUKUKAN"
+				delete(req, "otpCode")
 			}
 		}
 	}
+
+	// An OTP authorizes exactly one reversal.
+	delete(doc, "activeHeadmasterOtp")
+	delete(doc, "activeHeadmasterOtpExpiresAt")
 	return nil
 }
 
@@ -946,61 +1035,107 @@ func VerifyStudentDoc(doc map[string]any, docID string, approved bool, rejectRea
 	}
 }
 
+// NewStudentInput is the identity part shared by the blob snapshot and the
+// normalized onboarding transaction. IDs are generated by the handler so both
+// stores use the same values.
+type NewStudentInput struct {
+	ID           string
+	UserID       string
+	ParentUserID string
+	FullName     string
+	NISN         string
+	ClassroomID  string
+	Classroom    string
+	MajorCode    string
+	ParentName   string
+	ParentPhone  string
+}
+
 // AddNewStudent adds a student profile and initial tuition invoice in Admin TU.
-func AddNewStudent(doc map[string]any, fullName, nisn, classroomName, majorCode string, now time.Time) error {
-	if strings.TrimSpace(fullName) == "" || strings.TrimSpace(nisn) == "" {
+// The NISN must be exactly ten digits and unique inside the current snapshot.
+func AddNewStudent(doc map[string]any, input NewStudentInput, now time.Time) error {
+	fullName := strings.TrimSpace(input.FullName)
+	nisn := strings.TrimSpace(input.NISN)
+	classroom := strings.TrimSpace(input.Classroom)
+	majorCode := strings.TrimSpace(input.MajorCode)
+	parentName := strings.TrimSpace(input.ParentName)
+	parentPhone := strings.TrimSpace(input.ParentPhone)
+	if fullName == "" || classroom == "" || majorCode == "" || parentName == "" || parentPhone == "" {
 		return ErrInvalid
 	}
-	newID := fmt.Sprintf("std-%04d", now.UnixNano()%10000)
-	nikSuffix := nisn
-	if len(nikSuffix) > 10 {
-		nikSuffix = nikSuffix[:10]
+	if len(nisn) != 10 {
+		return fmt.Errorf("%w: NISN harus 10 digit", ErrInvalid)
+	}
+	for _, r := range nisn {
+		if r < '0' || r > '9' {
+			return fmt.Errorf("%w: NISN hanya boleh angka", ErrInvalid)
+		}
+	}
+	for _, item := range asList(doc["students"]) {
+		existing := asMap(item)
+		if existing != nil && text(existing["nisn"]) == nisn {
+			return fmt.Errorf("%w: NISN sudah terdaftar", ErrInvalid)
+		}
+	}
+
+	classroomID := strings.TrimSpace(input.ClassroomID)
+	if classroomID == "" {
+		classroomID = "cls-" + strings.ToLower(strings.ReplaceAll(classroom, " ", "-"))
 	}
 	std := map[string]any{
-		"id":                     newID,
-		"userId":                 "usr-" + newID,
-		"nisn":                   strings.TrimSpace(nisn),
-		"nik":                    "320128" + nikSuffix,
-		"fullName":               strings.TrimSpace(fullName),
-		"classroomId":            "cls-" + strings.ToLower(strings.ReplaceAll(classroomName, " ", "-")),
-		"classroomName":          classroomName,
+		"id":                     input.ID,
+		"userId":                 input.UserID,
+		"nisn":                   nisn,
+		"nik":                    "",
+		"fullName":               fullName,
+		"classroomId":            classroomID,
+		"classroomName":          classroom,
 		"majorCode":              majorCode,
-		"parentId":               "prt-" + newID,
-		"parentName":             "Wali dari " + strings.TrimSpace(fullName),
-		"parentPhone":            "081234567899",
+		"parentId":               input.ParentUserID,
+		"parentName":             parentName,
+		"parentPhone":            parentPhone,
 		"isKetuaKelas":           false,
 		"isSekretaris":           false,
 		"isAlumni":               false,
 		"scholarshipType":        "NONE",
 		"discountPercent":        0,
 		"attitudeScore":          90,
-		"cbtScore":               85,
-		"dailyQuizAvg":           88,
-		"attendanceConductScore": 95,
-		"activeBadge":            "Siswa Vokasi Aktif",
-		"activeBadgeReason":      "Disiplin mengikuti kegiatan praktikum bengkel.",
-		"homeroomNote":           "Terus pertahankan semangat belajar kejuruan.",
-		"bmwChoice":              "BEKERJA",
+		"cbtScore":               0,
+		"dailyQuizAvg":           0,
+		"attendanceConductScore": 100,
+		"activeBadge":            "Siswa Baru",
+		"activeBadgeReason":      "Profil baru dibuat oleh Admin TU.",
+		"homeroomNote":           "",
+		"bmwChoice":              "",
 	}
 	doc["students"] = append(asList(doc["students"]), std)
 
 	inv := map[string]any{
 		"id":                   fmt.Sprintf("inv-%04d", now.UnixNano()%10000),
-		"invoiceNumber":        fmt.Sprintf("INV/2026/11/%04d", 1000+(now.UnixNano()%9000)),
-		"studentId":            newID,
-		"studentName":          strings.TrimSpace(fullName),
-		"periodMonthYear":      "November 2026",
+		"invoiceNumber":        fmt.Sprintf("INV/%d/%02d/%04d", now.Year(), int(now.Month()), 1000+(now.UnixNano()%9000)),
+		"studentId":            input.ID,
+		"studentName":          fullName,
+		"periodMonthYear":      indonesianMonth(now.Month()) + " " + fmt.Sprintf("%d", now.Year()),
 		"baseAmount":           350000,
 		"scholarshipDeduction": 0,
 		"finalAmount":          350000,
 		"paidAmount":           0,
 		"status":               "UNPAID",
-		"vaNumber":             "88019" + strings.TrimSpace(nisn),
-		"gatewayProvider":      "Bank Mandiri (Midtrans)",
+		"vaNumber":             "",
+		"gatewayProvider":      "",
 		"createdAt":            now.UTC().Format(time.RFC3339),
 	}
 	doc["invoices"] = append(asList(doc["invoices"]), inv)
 	return nil
+}
+
+func indonesianMonth(month time.Month) string {
+	names := []string{"Januari", "Februari", "Maret", "April", "Mei", "Juni",
+		"Juli", "Agustus", "September", "Oktober", "November", "Desember"}
+	if month < time.January || month > time.December {
+		return ""
+	}
+	return names[int(month)-1]
 }
 
 // CreateOfficialLetter issues an HMAC-SHA256 signed official school letter.
@@ -1048,8 +1183,9 @@ func AddPklPlacement(doc map[string]any, companyName, sector, address string, la
 	if radius <= 0 {
 		radius = 100
 	}
-	if strings.TrimSpace(pin) == "" {
-		pin = "112233"
+	pin = strings.TrimSpace(pin)
+	if !validSupervisorPin(pin) {
+		return fmt.Errorf("%w: PIN supervisor harus 6 digit angka", ErrInvalid)
 	}
 	entry := map[string]any{
 		"id":              fmt.Sprintf("pkl-%04d", now.UnixNano()%10000),
@@ -1061,7 +1197,7 @@ func AddPklPlacement(doc map[string]any, companyName, sector, address string, la
 		"radiusMeters":    radius,
 		"supervisorName":  "Supervisor Mitra DUDI",
 		"supervisorPhone": "081199887766",
-		"supervisorPin":   strings.TrimSpace(pin),
+		"supervisorPin":   hashSupervisorPin(pin),
 	}
 	doc["pklPlacements"] = append(asList(doc["pklPlacements"]), entry)
 	return nil
@@ -1109,6 +1245,40 @@ func GenerateReversalOTP(doc map[string]any, reqID string, now time.Time) string
 	return otp
 }
 
+const supervisorPinHashPrefix = "sha256:"
+
+func hashSupervisorPin(pin string) string {
+	sum := sha256.Sum256([]byte(strings.TrimSpace(pin)))
+	return supervisorPinHashPrefix + hex.EncodeToString(sum[:])
+}
+
+func validSupervisorPin(pin string) bool {
+	if len(pin) != 6 {
+		return false
+	}
+	for _, char := range pin {
+		if char < '0' || char > '9' {
+			return false
+		}
+	}
+	return true
+}
+
+// supervisorPinMatches compares a stored PIN (hash or legacy plaintext) with the
+// submitted value in constant time.
+func supervisorPinMatches(stored, input string) bool {
+	stored = strings.TrimSpace(stored)
+	input = strings.TrimSpace(input)
+	if stored == "" || input == "" {
+		return false
+	}
+	if strings.HasPrefix(stored, supervisorPinHashPrefix) {
+		expected := hashSupervisorPin(input)
+		return subtle.ConstantTimeCompare([]byte(expected), []byte(stored)) == 1
+	}
+	return subtle.ConstantTimeCompare([]byte(stored), []byte(input)) == 1
+}
+
 // ApprovePklJournalByDudi verifies the DUDI supervisor's 6-digit PIN and approves the journal.
 func ApprovePklJournalByDudi(doc map[string]any, journalID, pinInput string, now time.Time) error {
 	var targetJournal map[string]any
@@ -1121,18 +1291,28 @@ func ApprovePklJournalByDudi(doc map[string]any, journalID, pinInput string, now
 	if targetJournal == nil {
 		return ErrNotFound
 	}
-	expectedPin := "445566"
+
 	placementID := text(targetJournal["placementId"])
+	var placement map[string]any
 	for _, item := range asList(doc["pklPlacements"]) {
 		if p := asMap(item); p != nil && (text(p["id"]) == placementID || placementID == "") {
-			if text(p["supervisorPin"]) != "" {
-				expectedPin = text(p["supervisorPin"])
-			}
+			placement = p
 			break
 		}
 	}
-	if strings.TrimSpace(pinInput) != expectedPin {
-		return fmt.Errorf("%w: PIN Supervisor DUDI salah (Gunakan PIN resmi mitra, demo: %s)", ErrInvalid, expectedPin)
+	storedPin := ""
+	if placement != nil {
+		storedPin = text(placement["supervisorPin"])
+	}
+	if storedPin == "" {
+		return fmt.Errorf("%w: PIN Supervisor DUDI belum diatur untuk mitra ini", ErrInvalid)
+	}
+	if !supervisorPinMatches(storedPin, pinInput) {
+		return fmt.Errorf("%w: PIN Supervisor DUDI tidak valid", ErrInvalid)
+	}
+	if !strings.HasPrefix(storedPin, supervisorPinHashPrefix) {
+		// Legacy plaintext PIN: upgrade at rest after a successful check.
+		placement["supervisorPin"] = hashSupervisorPin(pinInput)
 	}
 	targetJournal["supervisorApproved"] = true
 	targetJournal["approvedAt"] = now.UTC().Format(time.RFC3339)
