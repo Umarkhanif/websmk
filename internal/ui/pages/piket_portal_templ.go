@@ -163,7 +163,7 @@ func PiketPortal(data ui.PiketPortalPage) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Jam</th><th>Kelas</th><th>Mapel</th><th>Guru</th><th>Ruang</th></tr></thead> <tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<div class=\"table-wrap\" tabindex=\"0\" role=\"region\" aria-label=\"Tabel data\"><table class=\"data-table\"><thead><tr><th>Jam</th><th>Kelas</th><th>Mapel</th><th>Guru</th><th>Ruang</th></tr></thead> <tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -408,7 +408,7 @@ func PiketPortal(data ui.PiketPortalPage) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if len(data.Assignments) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Kelas</th><th>Mapel</th><th>Guru Inval</th><th>Guru Asli</th><th>Catatan</th></tr></thead> <tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<div class=\"table-wrap\" tabindex=\"0\" role=\"region\" aria-label=\"Tabel data\"><table class=\"data-table\"><thead><tr><th>Kelas</th><th>Mapel</th><th>Guru Inval</th><th>Guru Asli</th><th>Catatan</th></tr></thead> <tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -517,7 +517,7 @@ func PiketPortal(data ui.PiketPortalPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "</div><select class=\"input\" name=\"log_type\"><option value=\"IZIN_KELUAR_SEMENTARA\">Izin Keluar Sementara</option> <option value=\"TERLAMBAT_MASUK\">Terlambat Masuk Gerbang</option></select></div></div><div class=\"field\"><div class=\"field-head\"><label class=\"field-label\">Alasan / Keperluan</label></div><input class=\"input\" type=\"text\" name=\"reason\" placeholder=\"Keterangan singkat...\" required></div><button type=\"submit\" class=\"button button-secondary\">Simpan Log Gerbang</button></form><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Waktu</th><th>NISN</th><th>Nama Siswa</th><th>Jenis Log</th><th>Keterangan</th><th>Kode Pass</th></tr></thead> <tbody>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "</div><select class=\"input\" name=\"log_type\"><option value=\"IZIN_KELUAR_SEMENTARA\">Izin Keluar Sementara</option> <option value=\"TERLAMBAT_MASUK\">Terlambat Masuk Gerbang</option></select></div></div><div class=\"field\"><div class=\"field-head\"><label class=\"field-label\">Alasan / Keperluan</label></div><input class=\"input\" type=\"text\" name=\"reason\" placeholder=\"Keterangan singkat...\" required></div><button type=\"submit\" class=\"button button-secondary\">Simpan Log Gerbang</button></form><div class=\"table-wrap\" tabindex=\"0\" role=\"region\" aria-label=\"Tabel data\"><table class=\"data-table\"><thead><tr><th>Waktu</th><th>NISN</th><th>Nama Siswa</th><th>Jenis Log</th><th>Keterangan</th><th>Kode Pass</th></tr></thead> <tbody>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

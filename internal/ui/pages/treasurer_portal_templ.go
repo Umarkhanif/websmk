@@ -396,7 +396,7 @@ func TreasurerPortal(data ui.TreasurerPortalPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<span>Catat Pembayaran Tunai</span></button></form></section><section class=\"card form-stack\"><h3>Daftar Tagihan Siswa</h3><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>No. Tagihan</th><th>Periode</th><th>Tagihan Akhir</th><th>Sudah Dibayar</th><th>Sisa</th><th>Nomor VA</th><th>Status</th></tr></thead> <tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<span>Catat Pembayaran Tunai</span></button></form></section><section class=\"card form-stack\"><h3>Daftar Tagihan Siswa</h3><div class=\"table-wrap\" tabindex=\"0\" role=\"region\" aria-label=\"Tabel data\"><table class=\"data-table\"><thead><tr><th>No. Tagihan</th><th>Periode</th><th>Tagihan Akhir</th><th>Sudah Dibayar</th><th>Sisa</th><th>Nomor VA</th><th>Status</th></tr></thead> <tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -628,7 +628,7 @@ func TreasurerPortal(data ui.TreasurerPortalPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, ")</h3><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Nama Siswa</th><th>Periode Ujian</th><th>Jenis Izin</th><th>Alasan / Dasar</th><th>Berlaku Sampai</th><th>Otorisator</th></tr></thead> <tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, ")</h3><div class=\"table-wrap\" tabindex=\"0\" role=\"region\" aria-label=\"Tabel data\"><table class=\"data-table\"><thead><tr><th>Nama Siswa</th><th>Periode Ujian</th><th>Jenis Izin</th><th>Alasan / Dasar</th><th>Berlaku Sampai</th><th>Otorisator</th></tr></thead> <tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -721,7 +721,7 @@ func TreasurerPortal(data ui.TreasurerPortalPage) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else if data.Tab == "reports" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "<section class=\"card form-stack\"><div class=\"stat-card-head\"><div><span class=\"eyebrow\">Buku Kas Utama</span><h2>Jurnal Transaksi Kas Sekolah</h2></div><span class=\"badge badge-teal\">Tervalidasi Sistem</span></div><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>ID</th><th>No. Kwitansi</th><th>Tipe</th><th>Siswa</th><th>Mutasi (Rp)</th><th>Otorisator</th><th>Hash HMAC</th></tr></thead> <tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "<section class=\"card form-stack\"><div class=\"stat-card-head\"><div><span class=\"eyebrow\">Buku Kas Utama</span><h2>Jurnal Transaksi Kas Sekolah</h2></div><span class=\"badge badge-teal\">Tervalidasi Sistem</span></div><div class=\"table-wrap\" tabindex=\"0\" role=\"region\" aria-label=\"Tabel data\"><table class=\"data-table\"><thead><tr><th>ID</th><th>No. Kwitansi</th><th>Tipe</th><th>Siswa</th><th>Mutasi (Rp)</th><th>Otorisator</th><th>Hash HMAC</th></tr></thead> <tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

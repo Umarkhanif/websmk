@@ -1161,6 +1161,12 @@ textarea.input {
   border-radius: var(--radius-sm);
 }
 
+/* The wrapper is focusable so keyboard users can scroll a wide table. */
+.table-wrap:focus-visible {
+  outline: 2px solid var(--accent, #1F5C46);
+  outline-offset: 2px;
+}
+
 .data-table {
   width: 100%;
   border-collapse: collapse;
@@ -1519,26 +1525,25 @@ textarea.input {
   color: var(--teal);
 }
 
-/* Modal & Quiz */
-.modal {
-  position: fixed;
-  inset: 0;
-  z-index: 80;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
+/* Modal & Quiz. Uses the native <dialog> element, so the browser handles the
+   top layer, backdrop, focus containment, Esc and focus return. */
+dialog.modal {
+  width: min(620px, calc(100vw - 32px));
+  max-width: none;
+  max-height: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  overflow: visible;
 }
 
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
+dialog.modal::backdrop {
   background: rgba(23, 46, 38, 0.55);
 }
 
 .modal-panel {
   position: relative;
-  z-index: 81;
   background: var(--surface);
   border-radius: var(--radius);
   border: 1px solid var(--border);
@@ -1546,8 +1551,9 @@ textarea.input {
   max-width: 620px;
   padding: 24px;
   box-shadow: 0 20px 40px rgba(23, 46, 38, 0.25);
-  max-height: 90vh;
+  max-height: min(90vh, 90dvh);
   overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .modal-head {

@@ -120,7 +120,7 @@ templ TeacherPortal(data ui.TeacherPortalPage) {
 						Kelas { data.ActiveClass }
 					}
 				</h3>
-				<div class="table-wrap">
+				<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 					<table class="data-table">
 						<thead>
 							<tr>
@@ -195,7 +195,7 @@ templ TeacherPortal(data ui.TeacherPortalPage) {
 					<button type="submit" class="button button-primary">Publikasikan Tugas</button>
 				</form>
 
-				<div class="table-wrap">
+				<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 					<table class="data-table">
 						<thead>
 							<tr>
@@ -232,7 +232,7 @@ templ TeacherPortal(data ui.TeacherPortalPage) {
 					</div>
 					@components.InfoBubble("Nilai yang disimpan di sini langsung terlihat oleh siswa dan orang tua.")
 				</div>
-				<div class="table-wrap">
+				<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 					<table class="data-table">
 						<thead>
 							<tr>
@@ -335,7 +335,7 @@ templ TeacherPortal(data ui.TeacherPortalPage) {
 					<button type="submit" class="button button-primary">Tambah ke Bank Soal</button>
 				</form>
 
-				<div class="table-wrap">
+				<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 					<table class="data-table">
 						<thead>
 							<tr>
@@ -416,7 +416,7 @@ templ TeacherPortal(data ui.TeacherPortalPage) {
 					</div>
 				</form>
 
-				<div class="table-wrap">
+				<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 					<table class="data-table">
 						<thead>
 							<tr>
@@ -498,7 +498,7 @@ templ TeacherPortal(data ui.TeacherPortalPage) {
 				if len(data.ExamResetLogs) == 0 {
 					<p class="muted">Belum ada riwayat reset ujian yang tercatat hari ini.</p>
 				} else {
-					<div class="table-wrap">
+					<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 						<table class="data-table">
 							<thead>
 								<tr>
@@ -599,7 +599,7 @@ templ TeacherPortal(data ui.TeacherPortalPage) {
 					</form>
 				</div>
 
-				<div class="table-wrap">
+				<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 					<table class="data-table">
 						<thead>
 							<tr>

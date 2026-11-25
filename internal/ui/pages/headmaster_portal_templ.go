@@ -200,7 +200,7 @@ func HeadmasterPortal(data ui.HeadmasterPortalPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Nama Pendidik</th><th>Mata Pelajaran</th><th>Pertumbuhan Nilai</th><th>Kejelasan Materi</th><th>Validasi Kelas</th><th>Bonus Inval</th><th>Skor Akhir</th></tr></thead> <tbody>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div><div class=\"table-wrap\" tabindex=\"0\" role=\"region\" aria-label=\"Tabel data\"><table class=\"data-table\"><thead><tr><th>Nama Pendidik</th><th>Mata Pelajaran</th><th>Pertumbuhan Nilai</th><th>Kejelasan Materi</th><th>Validasi Kelas</th><th>Bonus Inval</th><th>Skor Akhir</th></tr></thead> <tbody>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

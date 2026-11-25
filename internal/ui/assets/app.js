@@ -20,30 +20,50 @@
     var toggles = document.querySelectorAll("[data-drawer-toggle]");
     if (!drawer || !backdrop) return;
     if (open) {
+      if (!drawer._returnFocus) drawer._returnFocus = document.activeElement;
       drawer.removeAttribute("hidden");
       backdrop.removeAttribute("hidden");
       document.body.classList.add("drawer-open");
+      var firstItem = drawer.querySelector("a[href], button:not([disabled])");
+      if (firstItem) firstItem.focus();
     } else {
       drawer.setAttribute("hidden", "");
       backdrop.setAttribute("hidden", "");
       document.body.classList.remove("drawer-open");
+      if (drawer._returnFocus && document.contains(drawer._returnFocus)) {
+        drawer._returnFocus.focus();
+      }
+      drawer._returnFocus = null;
     }
     toggles.forEach(function (btn) {
       btn.setAttribute("aria-expanded", open ? "true" : "false");
     });
   }
 
-  // 2. Modal open & close
+  // 2. Modal open & close. The modal is a native <dialog>, so the browser
+  // provides the backdrop, inert page, Esc handling and focus return.
   function openModal(selector) {
     var modal = document.querySelector(selector);
     if (!modal) return;
-    modal.removeAttribute("hidden");
+    if (typeof modal.showModal === "function") {
+      if (!modal.open) modal.showModal();
+    } else {
+      modal.setAttribute("open", "");
+    }
     initQuizWizard(modal);
   }
 
   function closeModal(modal) {
     if (!modal) return;
-    modal.setAttribute("hidden", "");
+    if (typeof modal.close === "function") {
+      if (modal.open) modal.close();
+    } else {
+      modal.removeAttribute("open");
+    }
+    stopModalTimers(modal);
+  }
+
+  function stopModalTimers(modal) {
     if (modal._quizTimer) {
       clearInterval(modal._quizTimer);
       modal._quizTimer = null;
@@ -1241,21 +1261,45 @@
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") {
       setDrawerOpen(false);
-      document.querySelectorAll(".modal:not([hidden])").forEach(closeModal);
       document.querySelectorAll("details.user-menu[open], details.info-bubble[open]").forEach(function (m) {
         m.removeAttribute("open");
       });
     }
   });
 
+  // Clicks on the ::backdrop report the dialog itself as the target, outside
+  // its own box. Native Esc handling stays with the browser.
+  document.addEventListener("click", function (e) {
+    var dialog = e.target;
+    if (!dialog || dialog.tagName !== "DIALOG" || !dialog.classList.contains("modal")) return;
+    var rect = dialog.getBoundingClientRect();
+    var outside = e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom;
+    if (outside) closeModal(dialog);
+  });
+
   document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("dialog.modal").forEach(function (dialog) {
+      dialog.addEventListener("close", function () { stopModalTimers(dialog); });
+    });
+    focusFormError();
     initCbtKiosk();
     initRewindSlides();
     initMysteryOrb();
     initMobileCards();
   });
 
+  // After a rejected submit the message is announced by role="alert"; moving
+  // focus there also tells keyboard users why the form did not go through.
+  function focusFormError() {
+    var error = document.querySelector(".alert-danger[role='alert']");
+    if (!error || error.hasAttribute("data-error-focused")) return;
+    error.setAttribute("data-error-focused", "");
+    error.setAttribute("tabindex", "-1");
+    error.focus({ preventScroll: false });
+  }
+
   document.addEventListener("htmx:afterSwap", function () {
+    focusFormError();
     initCbtKiosk();
     initRewindSlides();
     initMysteryOrb();

@@ -78,7 +78,7 @@ func DisciplinePortal(data ui.DisciplinePortalPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div><input class=\"input input-mono\" type=\"number\" name=\"points\" value=\"10\" min=\"1\" max=\"100\" required></div><div class=\"field\"><div class=\"field-head\"><label class=\"field-label\">Simpan</label></div><button type=\"submit\" class=\"button button-primary\">Catat Pelanggaran</button></div></form><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Siswa</th><th>Pasal &amp; Uraian</th><th>Sumber</th><th>Poin</th><th>Status &amp; Surat Panggilan</th><th>Aksi</th></tr></thead> <tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div><input class=\"input input-mono\" type=\"number\" name=\"points\" value=\"10\" min=\"1\" max=\"100\" required></div><div class=\"field\"><div class=\"field-head\"><label class=\"field-label\">Simpan</label></div><button type=\"submit\" class=\"button button-primary\">Catat Pelanggaran</button></div></form><div class=\"table-wrap\" tabindex=\"0\" role=\"region\" aria-label=\"Tabel data\"><table class=\"data-table\"><thead><tr><th>Siswa</th><th>Pasal &amp; Uraian</th><th>Sumber</th><th>Poin</th><th>Status &amp; Surat Panggilan</th><th>Aksi</th></tr></thead> <tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

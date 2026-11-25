@@ -1393,7 +1393,7 @@ func StudentPortal(data ui.StudentPortalPage) templ.Component {
 				}
 			}
 		} else if data.Tab == "documents" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 145, "<section class=\"card form-stack\"><div><span class=\"eyebrow\">Validasi Dokumen TU</span><h2>Arsip Dokumen Resmi Siswa</h2></div><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Nama Dokumen</th><th>File Terunggah</th><th>Ukuran</th><th>Status TU</th><th>Aksi</th></tr></thead> <tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 145, "<section class=\"card form-stack\"><div><span class=\"eyebrow\">Validasi Dokumen TU</span><h2>Arsip Dokumen Resmi Siswa</h2></div><div class=\"table-wrap\" tabindex=\"0\" role=\"region\" aria-label=\"Tabel data\"><table class=\"data-table\"><thead><tr><th>Nama Dokumen</th><th>File Terunggah</th><th>Ukuran</th><th>Status TU</th><th>Aksi</th></tr></thead> <tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -1550,7 +1550,7 @@ func StudentPortal(data ui.StudentPortalPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 162, "</h3></div></div><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Judul Tugas</th><th>Mata Pelajaran</th><th>Tenggat</th><th>Status</th><th>Nilai</th></tr></thead> <tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 162, "</h3></div></div><div class=\"table-wrap\" tabindex=\"0\" role=\"region\" aria-label=\"Tabel data\"><table class=\"data-table\"><thead><tr><th>Judul Tugas</th><th>Mata Pelajaran</th><th>Tenggat</th><th>Status</th><th>Nilai</th></tr></thead> <tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -1738,7 +1738,7 @@ func StudentPortal(data ui.StudentPortalPage) templ.Component {
 					}
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 182, "</select></label><div class=\"form-row\"><div class=\"field\"><div class=\"field-head\"><label class=\"field-label\">Judul Tugas / Praktik</label></div><input class=\"input\" type=\"text\" name=\"task_title\" placeholder=\"Kosongkan bila memilih tugas guru\"></div><div class=\"field\"><div class=\"field-head\"><label class=\"field-label\">Berkas Tugas</label></div><input class=\"input\" type=\"file\" name=\"file\" accept=\"application/pdf,image/jpeg,image/png\" required></div><div class=\"field\"><div class=\"field-head\"><label class=\"field-label\">Aksi</label></div><button type=\"submit\" class=\"button button-primary\">Kirim Tugas</button></div></div></form><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Mata Pelajaran</th><th>Judul Tugas</th><th>Berkas</th><th>Waktu Kirim</th><th>Status</th><th>Nilai</th></tr></thead> <tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 182, "</select></label><div class=\"form-row\"><div class=\"field\"><div class=\"field-head\"><label class=\"field-label\">Judul Tugas / Praktik</label></div><input class=\"input\" type=\"text\" name=\"task_title\" placeholder=\"Kosongkan bila memilih tugas guru\"></div><div class=\"field\"><div class=\"field-head\"><label class=\"field-label\">Berkas Tugas</label></div><input class=\"input\" type=\"file\" name=\"file\" accept=\"application/pdf,image/jpeg,image/png\" required></div><div class=\"field\"><div class=\"field-head\"><label class=\"field-label\">Aksi</label></div><button type=\"submit\" class=\"button button-primary\">Kirim Tugas</button></div></div></form><div class=\"table-wrap\" tabindex=\"0\" role=\"region\" aria-label=\"Tabel data\"><table class=\"data-table\"><thead><tr><th>Mata Pelajaran</th><th>Judul Tugas</th><th>Berkas</th><th>Waktu Kirim</th><th>Status</th><th>Nilai</th></tr></thead> <tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -2293,7 +2293,7 @@ func StudentPortal(data ui.StudentPortalPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 236, ")</h4><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Tanggal</th><th>Aktivitas</th><th>Kompetensi</th><th>Validasi DUDI</th><th>Validasi Guru</th></tr></thead> <tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 236, ")</h4><div class=\"table-wrap\" tabindex=\"0\" role=\"region\" aria-label=\"Tabel data\"><table class=\"data-table\"><thead><tr><th>Tanggal</th><th>Aktivitas</th><th>Kompetensi</th><th>Validasi DUDI</th><th>Validasi Guru</th></tr></thead> <tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

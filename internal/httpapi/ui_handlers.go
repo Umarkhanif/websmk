@@ -302,7 +302,6 @@ func (s *Server) handleLoginPage(w http.ResponseWriter, r *http.Request) {
 		Tab:          tab,
 		Error:        errMsg,
 		Notice:       r.URL.Query().Get("notice"),
-		MagicLink:    r.URL.Query().Get("magic"),
 		CSRFToken:    s.csrfTokenFor("login"),
 		AcademicYear: s.activeAcademicYearLabel(r.Context()),
 	}

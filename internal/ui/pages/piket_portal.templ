@@ -44,7 +44,7 @@ templ PiketPortal(data ui.PiketPortalPage) {
 			if len(data.TodaySchedules) == 0 {
 				<p class="muted">Belum ada jadwal untuk hari ini. Piket tetap bisa mencatat log gerbang.</p>
 			} else {
-				<div class="table-wrap">
+				<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 					<table class="data-table">
 						<thead><tr><th>Jam</th><th>Kelas</th><th>Mapel</th><th>Guru</th><th>Ruang</th></tr></thead>
 						<tbody>
@@ -98,7 +98,7 @@ templ PiketPortal(data ui.PiketPortalPage) {
 			</form>
 
 			if len(data.Assignments) > 0 {
-				<div class="table-wrap">
+				<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 					<table class="data-table">
 						<thead><tr><th>Kelas</th><th>Mapel</th><th>Guru Inval</th><th>Guru Asli</th><th>Catatan</th></tr></thead>
 						<tbody>
@@ -148,7 +148,7 @@ templ PiketPortal(data ui.PiketPortalPage) {
 				<button type="submit" class="button button-secondary">Simpan Log Gerbang</button>
 			</form>
 
-			<div class="table-wrap">
+			<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 				<table class="data-table">
 					<thead>
 						<tr>

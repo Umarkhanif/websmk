@@ -19,7 +19,7 @@ templ MobileNav(shell ui.RoleShell) {
 	</nav>
 
 	<div id="mobile-drawer-backdrop" class="drawer-backdrop" hidden data-drawer-close></div>
-	<div id="mobile-drawer" class="mobile-drawer" hidden aria-label="Menu lainnya">
+	<nav id="mobile-drawer" class="mobile-drawer" hidden aria-label="Menu lainnya">
 		<div class="drawer-head">
 			<div>
 				<span class="eyebrow">{ shell.RoleLabel }</span>
@@ -29,7 +29,7 @@ templ MobileNav(shell ui.RoleShell) {
 				@Icon("x", "icon")
 			</button>
 		</div>
-		<nav class="drawer-nav" aria-label="Semua menu">
+		<div class="drawer-nav">
 			for _, item := range shell.Nav {
 				<a href={ item.Href } class={ ui.NavClass(item, shell.ActiveTab) } aria-current={ ui.AriaCurrent(item, shell.ActiveTab) } data-drawer-close>
 					@Icon(item.Icon, "icon")
@@ -43,7 +43,7 @@ templ MobileNav(shell ui.RoleShell) {
 				@Icon("bug", "icon")
 				<span class="nav-copy">Kontak &amp; Lapor Bug</span>
 			</a>
-		</nav>
+		</div>
 		<form method="post" action="/logout" class="drawer-logout">
 			<input type="hidden" name="_csrf" value={ shell.CSRFToken }/>
 			<button type="submit" class="button button-secondary button-block">
@@ -51,5 +51,5 @@ templ MobileNav(shell ui.RoleShell) {
 				<span>Keluar dari portal</span>
 			</button>
 		</form>
-	</div>
+	</nav>
 }

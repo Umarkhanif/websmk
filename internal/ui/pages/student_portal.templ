@@ -533,7 +533,7 @@ templ StudentPortal(data ui.StudentPortalPage) {
 					<h2>Arsip Dokumen Resmi Siswa</h2>
 				</div>
 
-				<div class="table-wrap">
+				<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 					<table class="data-table">
 						<thead>
 							<tr>
@@ -584,7 +584,7 @@ templ StudentPortal(data ui.StudentPortalPage) {
 						<h3>Daftar Tugas Kelas { data.Student.ClassroomName }</h3>
 					</div>
 				</div>
-				<div class="table-wrap">
+				<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 					<table class="data-table">
 						<thead>
 							<tr>
@@ -668,7 +668,7 @@ templ StudentPortal(data ui.StudentPortalPage) {
 					</div>
 				</form>
 
-				<div class="table-wrap">
+				<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 					<table class="data-table">
 						<thead>
 							<tr>
@@ -854,7 +854,7 @@ templ StudentPortal(data ui.StudentPortalPage) {
 				</div>
 
 				<h4>Riwayat Jurnal Harian ({ strconv.Itoa(len(data.PklJournals)) })</h4>
-				<div class="table-wrap">
+				<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 					<table class="data-table">
 						<thead>
 							<tr>

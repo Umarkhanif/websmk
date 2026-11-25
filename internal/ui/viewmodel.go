@@ -134,7 +134,6 @@ type LoginPage struct {
 	ParentWA     string
 	Error        string
 	Notice       string
-	MagicLink    string
 	CSRFToken    string
 	AcademicYear string
 }

@@ -197,7 +197,7 @@ templ Security(data ui.SecurityPage) {
 			if len(data.LoginEvents) == 0 {
 				<p class="muted">Belum ada riwayat login.</p>
 			} else {
-				<div class="table-wrap">
+				<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 					<table class="data-table">
 						<thead>
 							<tr><th>Waktu</th><th>Metode</th><th>Status</th><th>IP</th><th>Perangkat</th></tr>
@@ -239,7 +239,7 @@ templ Security(data ui.SecurityPage) {
 				if len(data.AdminEvents) == 0 {
 					<p class="muted">Belum ada event login.</p>
 				} else {
-					<div class="table-wrap">
+					<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 						<table class="data-table">
 							<thead>
 								<tr><th>Waktu</th><th>Akun</th><th>Peran</th><th>Metode</th><th>Status</th><th>IP</th></tr>

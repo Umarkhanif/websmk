@@ -50,7 +50,7 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 					<div class="grid-2">
 						<div class="form-stack">
 							<h4>Tahun Ajaran</h4>
-							<div class="table-wrap">
+							<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 								<table class="data-table">
 									<thead><tr><th>Periode</th><th>Tanggal</th><th>Status</th><th>Aksi</th></tr></thead>
 									<tbody>
@@ -94,7 +94,7 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 						</div>
 						<div class="form-stack">
 							<h4>Kelas ({ strconv.Itoa(len(data.Classrooms)) })</h4>
-							<div class="table-wrap">
+							<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 								<table class="data-table">
 									<thead><tr><th>Kelas</th><th>Jurusan</th><th>Wali Kelas</th><th>Siswa</th></tr></thead>
 									<tbody>
@@ -192,7 +192,7 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 								</select>
 								<span class="field-hint">Tambahkan tahun ajaran berikutnya di panel Tahun Ajaran bila belum ada.</span>
 							</div>
-							<div class="table-wrap">
+							<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 								<table class="data-table rollover-table">
 									<thead><tr><th>Kelas Asal</th><th>Siswa Aktif</th><th>Tindakan</th></tr></thead>
 									<tbody>
@@ -240,7 +240,7 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 						</div>
 						@components.InfoBubble("Jadwal ini dipakai guru dan piket. Tambahkan slot per kelas agar agenda harian tidak kosong.")
 					</div>
-					<div class="table-wrap table-scroll-hint">
+					<div class="table-wrap table-scroll-hint" tabindex="0" role="region" aria-label="Tabel data">
 						<table class="data-table">
 							<thead><tr><th>Hari</th><th>Jam</th><th>Kelas</th><th>Mapel</th><th>Guru</th><th>Ruang</th></tr></thead>
 							<tbody>
@@ -325,7 +325,7 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 
 				if data.Section == "documents" {
 				<h3>Verifikasi Dokumen Siswa ({ strconv.Itoa(len(data.Documents)) })</h3>
-				<div class="table-wrap">
+				<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 					<table class="data-table">
 						<thead>
 							<tr>
@@ -444,7 +444,7 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 							<button type="submit" class="button button-secondary button-small">Cari</button>
 						</form>
 					</div>
-					<div class="table-wrap">
+					<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 						<table class="data-table">
 							<thead><tr><th>Nama</th><th>NISN</th><th>Kelas</th><th>Jurusan</th><th>Wali</th><th>Status</th></tr></thead>
 							<tbody>
@@ -488,7 +488,7 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 					<section class="card form-stack">
 						<span class="eyebrow">Data Guru &amp; Staf</span>
 					<h3>Direktori Pendidik ({ strconv.Itoa(len(data.Teachers)) })</h3>
-					<div class="table-wrap">
+					<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 						<table class="data-table">
 							<thead>
 								<tr>
@@ -520,7 +520,7 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 					</div>
 					@components.InfoBubble("Reset kata sandi dan nonaktifkan akun tanpa menghapus riwayat. Setiap tindakan masuk audit log.")
 				</div>
-				<div class="table-wrap">
+				<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 					<table class="data-table">
 						<thead>
 							<tr>
@@ -651,7 +651,7 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 					</div>
 				</div>
 
-				<div class="table-wrap">
+				<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 					<table class="data-table">
 						<thead>
 							<tr>
@@ -715,7 +715,7 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 					</div>
 				</form>
 
-				<div class="table-wrap">
+				<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 					<table class="data-table">
 						<thead>
 							<tr>
@@ -803,7 +803,7 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 						<button type="submit" class="button button-primary">Simpan Mitra PKL</button>
 					</form>
 
-					<div class="table-wrap">
+					<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 						<table class="data-table">
 							<thead>
 								<tr>
@@ -867,7 +867,7 @@ templ AdminTuPortal(data ui.AdminTuPortalPage) {
 						<button type="submit" class="button button-primary">Publikasikan Lowongan</button>
 					</form>
 
-					<div class="table-wrap">
+					<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 						<table class="data-table">
 							<thead>
 								<tr>

@@ -407,7 +407,7 @@ func TeacherPortal(data ui.TeacherPortalPage) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "</h3><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Nama Siswa</th><th>NISN</th><th>Jam Gerbang</th><th>Sumber Verifikasi</th><th>Status Kehadiran</th><th>Tindakan Guru</th></tr></thead> <tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "</h3><div class=\"table-wrap\" tabindex=\"0\" role=\"region\" aria-label=\"Tabel data\"><table class=\"data-table\"><thead><tr><th>Nama Siswa</th><th>NISN</th><th>Jam Gerbang</th><th>Sumber Verifikasi</th><th>Status Kehadiran</th><th>Tindakan Guru</th></tr></thead> <tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -618,7 +618,7 @@ func TeacherPortal(data ui.TeacherPortalPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "\" readonly required></label> <label class=\"field\"><span class=\"field-label\">Tenggat</span> <input class=\"input\" type=\"date\" name=\"due_date\" required></label></div><label class=\"field\"><span class=\"field-label\">Instruksi</span> <textarea class=\"input\" name=\"description\" placeholder=\"Apa yang harus dikumpulkan siswa...\" required></textarea></label> <button type=\"submit\" class=\"button button-primary\">Publikasikan Tugas</button></form><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Judul</th><th>Kelas</th><th>Mata Pelajaran</th><th>Tenggat</th><th>Terkumpul</th></tr></thead> <tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "\" readonly required></label> <label class=\"field\"><span class=\"field-label\">Tenggat</span> <input class=\"input\" type=\"date\" name=\"due_date\" required></label></div><label class=\"field\"><span class=\"field-label\">Instruksi</span> <textarea class=\"input\" name=\"description\" placeholder=\"Apa yang harus dikumpulkan siswa...\" required></textarea></label> <button type=\"submit\" class=\"button button-primary\">Publikasikan Tugas</button></form><div class=\"table-wrap\" tabindex=\"0\" role=\"region\" aria-label=\"Tabel data\"><table class=\"data-table\"><thead><tr><th>Judul</th><th>Kelas</th><th>Mata Pelajaran</th><th>Tenggat</th><th>Terkumpul</th></tr></thead> <tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -733,7 +733,7 @@ func TeacherPortal(data ui.TeacherPortalPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 69, "</div><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Siswa</th><th>Mata Pelajaran</th><th>Judul Tugas</th><th>Berkas</th><th>Dikumpulkan</th><th>Status</th><th>Nilai &amp; Aksi</th></tr></thead> <tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 69, "</div><div class=\"table-wrap\" tabindex=\"0\" role=\"region\" aria-label=\"Tabel data\"><table class=\"data-table\"><thead><tr><th>Siswa</th><th>Mata Pelajaran</th><th>Judul Tugas</th><th>Berkas</th><th>Dikumpulkan</th><th>Status</th><th>Nilai &amp; Aksi</th></tr></thead> <tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -979,7 +979,7 @@ func TeacherPortal(data ui.TeacherPortalPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 93, "</div><input class=\"input\" type=\"text\" name=\"essay_rubric\" placeholder=\"Mis. Menjelaskan subnet mask /24 dengan benar (skor maks: 25)...\"></div><button type=\"submit\" class=\"button button-primary\">Tambah ke Bank Soal</button></form><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>No</th><th>Tipe</th><th>Pertanyaan</th><th>Kunci / Rubrik</th><th>Aksi</th></tr></thead> <tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 93, "</div><input class=\"input\" type=\"text\" name=\"essay_rubric\" placeholder=\"Mis. Menjelaskan subnet mask /24 dengan benar (skor maks: 25)...\"></div><button type=\"submit\" class=\"button button-primary\">Tambah ke Bank Soal</button></form><div class=\"table-wrap\" tabindex=\"0\" role=\"region\" aria-label=\"Tabel data\"><table class=\"data-table\"><thead><tr><th>No</th><th>Tipe</th><th>Pertanyaan</th><th>Kunci / Rubrik</th><th>Aksi</th></tr></thead> <tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -1143,7 +1143,7 @@ func TeacherPortal(data ui.TeacherPortalPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 108, "<span>Reset Terpilih</span></button> <button type=\"button\" class=\"button button-secondary button-small\" @click=\"selectedStudents = []; selectAll = false\">Batal</button></div></form><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th style=\"width:36px; text-align:center;\"><input type=\"checkbox\" x-model=\"selectAll\" @change=\"selectedStudents = selectAll ? ['std-budi-01', 'std-budi-02', 'std-budi-03', 'std-budi-04'] : []\" title=\"Pilih Semua\"></th><th>Nama Peserta</th><th>NISN</th><th>Progres</th><th>Status Kiosk</th><th>Catatan / Token</th><th>Tindakan Pengawas</th></tr></thead> <tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 108, "<span>Reset Terpilih</span></button> <button type=\"button\" class=\"button button-secondary button-small\" @click=\"selectedStudents = []; selectAll = false\">Batal</button></div></form><div class=\"table-wrap\" tabindex=\"0\" role=\"region\" aria-label=\"Tabel data\"><table class=\"data-table\"><thead><tr><th style=\"width:36px; text-align:center;\"><input type=\"checkbox\" x-model=\"selectAll\" @change=\"selectedStudents = selectAll ? ['std-budi-01', 'std-budi-02', 'std-budi-03', 'std-budi-04'] : []\" title=\"Pilih Semua\"></th><th>Nama Peserta</th><th>NISN</th><th>Progres</th><th>Status Kiosk</th><th>Catatan / Token</th><th>Tindakan Pengawas</th></tr></thead> <tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -1396,7 +1396,7 @@ func TeacherPortal(data ui.TeacherPortalPage) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 134, "<div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Waktu Audit</th><th>Nama Peserta</th><th>Pengawas Bertugas</th><th>Alasan Reset</th><th>Metode</th></tr></thead> <tbody>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 134, "<div class=\"table-wrap\" tabindex=\"0\" role=\"region\" aria-label=\"Tabel data\"><table class=\"data-table\"><thead><tr><th>Waktu Audit</th><th>Nama Peserta</th><th>Pengawas Bertugas</th><th>Alasan Reset</th><th>Metode</th></tr></thead> <tbody>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -1613,7 +1613,7 @@ func TeacherPortal(data ui.TeacherPortalPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 155, "\"> <button type=\"submit\" class=\"button button-primary button-small\">Bulk ACC Seluruh Jurnal PKL</button></form></div><div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Tanggal</th><th>Siswa</th><th>Mitra DUDI</th><th>Aktivitas &amp; Kompetensi</th><th>Status DUDI</th><th>Status Guru Pembimbing</th></tr></thead> <tbody>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 155, "\"> <button type=\"submit\" class=\"button button-primary button-small\">Bulk ACC Seluruh Jurnal PKL</button></form></div><div class=\"table-wrap\" tabindex=\"0\" role=\"region\" aria-label=\"Tabel data\"><table class=\"data-table\"><thead><tr><th>Tanggal</th><th>Siswa</th><th>Mitra DUDI</th><th>Aktivitas &amp; Kompetensi</th><th>Status DUDI</th><th>Status Guru Pembimbing</th></tr></thead> <tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

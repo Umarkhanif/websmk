@@ -113,12 +113,6 @@ templ Login(page ui.LoginPage) {
 									@components.Icon("mail", "icon")
 									<span>Kirim Tautan WhatsApp</span>
 								</button>
-								if page.MagicLink != "" {
-									<div class="alert alert-info">
-										@components.Icon("external", "icon")
-										<span>Mode demo: <a href={ page.MagicLink }>buka tautan masuk</a>.</span>
-									</div>
-								}
 							</form>
 						} else {
 							<form method="post" action="/login" class="form-stack">

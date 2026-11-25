@@ -94,7 +94,7 @@ templ ParentPortal(data ui.ParentPortalPage) {
 					<h3>Rekap Pengeluaran Alat Praktik</h3>
 					<strong class="mono">{ ui.FormatRupiah(data.TotalExpense) }</strong>
 				</div>
-				<div class="table-wrap">
+				<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 					<table class="data-table">
 						<thead>
 							<tr>
@@ -170,7 +170,7 @@ templ ParentPortal(data ui.ParentPortalPage) {
 					<button type="submit" class="button button-primary">Ajukan Jadwal Konsultasi</button>
 				</form>
 
-				<div class="table-wrap">
+				<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 					<table class="data-table">
 						<thead>
 							<tr>
@@ -232,7 +232,7 @@ templ ParentPortal(data ui.ParentPortalPage) {
 					</form>
 
 					<h4>Riwayat Izin</h4>
-					<div class="table-wrap">
+					<div class="table-wrap" tabindex="0" role="region" aria-label="Tabel data">
 						<table class="data-table">
 							<thead><tr><th>Tanggal</th><th>Jenis</th><th>Keterangan</th><th>Status</th></tr></thead>
 							<tbody>

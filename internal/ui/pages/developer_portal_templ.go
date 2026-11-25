@@ -118,7 +118,7 @@ func DeveloperPortal(data ui.DeveloperPortalPage) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>ID &amp; Waktu</th><th>Kategori &amp; Keparahan</th><th>Masalah &amp; Detail</th><th>Pelapor &amp; Halaman</th><th>Status Tiket</th><th>Tindakan Developer</th></tr></thead> <tbody>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"table-wrap\" tabindex=\"0\" role=\"region\" aria-label=\"Tabel data\"><table class=\"data-table\"><thead><tr><th>ID &amp; Waktu</th><th>Kategori &amp; Keparahan</th><th>Masalah &amp; Detail</th><th>Pelapor &amp; Halaman</th><th>Status Tiket</th><th>Tindakan Developer</th></tr></thead> <tbody>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -447,7 +447,7 @@ func DeveloperPortal(data ui.DeveloperPortalPage) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<div class=\"table-wrap\"><table class=\"data-table\"><thead><tr><th>Waktu Server</th><th>Peserta Ujian</th><th>Mapel / Ujian</th><th>Pengawas Bertugas</th><th>Alasan Reset</th><th>Tipe Reset</th></tr></thead> <tbody>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<div class=\"table-wrap\" tabindex=\"0\" role=\"region\" aria-label=\"Tabel data\"><table class=\"data-table\"><thead><tr><th>Waktu Server</th><th>Peserta Ujian</th><th>Mapel / Ujian</th><th>Pengawas Bertugas</th><th>Alasan Reset</th><th>Tipe Reset</th></tr></thead> <tbody>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
