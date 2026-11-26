@@ -389,7 +389,63 @@ func (s *Server) buildStudentDashboard(ctx context.Context, doc map[string]any, 
 		Journal:         journal,
 		ShowLeaderPanel: student.IsKetuaKelas || student.IsSekretaris,
 		LeaderStatus:    leaderStatus,
+		Progress:        s.buildStudentProgress(doc, student, invoice, hasInvoice),
 	}
+}
+
+// buildStudentProgress collects the numbers that already exist in the state
+// document so the student home page can show one honest snapshot instead of
+// making the student open four different tabs to piece it together.
+func (s *Server) buildStudentProgress(doc map[string]any, student ui.StudentView, invoice ui.InvoiceView, hasInvoice bool) ui.StudentProgressView {
+	stdMap := findStudentMap(doc, student.ID)
+	attendance := intVal(stdMap, "attendanceConductScore")
+	progress := ui.StudentProgressView{
+		QuizAverage:    student.DailyQuizAvg,
+		AttitudeScore:  student.AttitudeScore,
+		Attendance:     attendance,
+		TotalExams:     4,
+		PendingTasks:   0,
+		HolisticScore:  fmt.Sprintf("%.1f", state.CalculateHolisticScore(float64(intVal(stdMap, "cbtScore")), float64(student.DailyQuizAvg), float64(student.AttitudeScore), float64(attendance))),
+	}
+	if hasInvoice {
+		progress.SppRemaining = invoice.Remaining
+	}
+
+	examTotal, examSum := 0, 0
+	for _, sub := range asMapSlice(doc["examSubmissions"]) {
+		if strVal(sub, "studentId") != student.ID {
+			continue
+		}
+		examTotal++
+		examSum += intVal(sub, "mcqScore")
+	}
+	if examTotal > 0 {
+		progress.ExamAverage = examSum / examTotal
+	}
+	progress.CompletedExams = examTotal
+	if progress.CompletedExams > progress.TotalExams {
+		progress.CompletedExams = progress.TotalExams
+	}
+
+	for _, jm := range asMapSlice(doc["pklJournals"]) {
+		if strVal(jm, "studentId") == student.ID {
+			progress.PklJournals++
+		}
+	}
+
+	submitted := map[string]bool{}
+	for _, tm := range asMapSlice(doc["taskSubmissions"]) {
+		if strVal(tm, "studentId") == student.ID && strVal(tm, "assignmentId") != "" {
+			submitted[strVal(tm, "assignmentId")] = true
+		}
+	}
+	for _, am := range asMapSlice(doc["assignments"]) {
+		if strVal(am, "className") == student.ClassroomName && !submitted[strVal(am, "id")] {
+			progress.PendingTasks++
+		}
+	}
+
+	return progress
 }
 
 func (s *Server) domainStudentProfile(ctx context.Context, user *model.User, studentID string) *identity.StudentProfile {

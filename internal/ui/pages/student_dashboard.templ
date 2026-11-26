@@ -43,6 +43,10 @@ templ StudentDashboardPage(data ui.StudentDashboard) {
 			</div>
 		</section>
 
+		@components.RoleBrief(data.Shell.Role)
+
+		@StudentProgressBoard(data)
+
 		<div class="dashboard-grid">
 			@FinanceCard(data)
 
@@ -153,6 +157,80 @@ templ FinanceCard(data ui.StudentDashboard) {
 			<strong class="mono">{ ui.FormatRupiah(data.Invoice.PaidAmount) }</strong>
 		</div>
 	</article>
+}
+
+// StudentProgressBoard is the student's running report card. It pulls together
+// numbers that already exist elsewhere in the portal so the home page answers
+// "how am I doing?" at a glance.
+templ StudentProgressBoard(data ui.StudentDashboard) {
+	<section class="progress-board" aria-labelledby="progress-board-title">
+		<div class="progress-board-summary">
+			<span class="eyebrow">Rapor berjalan</span>
+			<h2 id="progress-board-title">Potret perkembanganmu</h2>
+			<p class="progress-score">
+				<strong class="mono">{ data.Progress.HolisticScore }</strong>
+				<span>/100 skor holistik</span>
+			</p>
+			<p class="progress-note">Gabungan nilai CBT, kuis, sikap, dan presensi. Bukan nilai rapor resmi — rapor resmi tetap dari wali kelas.</p>
+		</div>
+
+		<div class="progress-meters">
+			<div class="progress-meter">
+				<div class="progress-meter-head">
+					<span>Ujian CBT</span>
+					<strong class="mono">{ strconv.Itoa(data.Progress.ExamAverage) }</strong>
+				</div>
+				<div class="progress-track"><span style={ meterWidth(data.Progress.ExamAverage) }></span></div>
+				<span class="progress-hint">{ strconv.Itoa(data.Progress.CompletedExams) } dari { strconv.Itoa(data.Progress.TotalExams) } ujian selesai</span>
+			</div>
+			<div class="progress-meter">
+				<div class="progress-meter-head">
+					<span>Kuis harian</span>
+					<strong class="mono">{ strconv.Itoa(data.Progress.QuizAverage) }</strong>
+				</div>
+				<div class="progress-track"><span style={ meterWidth(data.Progress.QuizAverage) }></span></div>
+				<span class="progress-hint">Rata-rata kuis yang sudah dikerjakan</span>
+			</div>
+			<div class="progress-meter">
+				<div class="progress-meter-head">
+					<span>Sikap &amp; etika</span>
+					<strong class="mono">{ strconv.Itoa(data.Progress.AttitudeScore) }</strong>
+				</div>
+				<div class="progress-track"><span style={ meterWidth(data.Progress.AttitudeScore) }></span></div>
+				<span class="progress-hint">Poin karakter dari kesiswaan</span>
+			</div>
+			<div class="progress-meter">
+				<div class="progress-meter-head">
+					<span>Presensi</span>
+					<strong class="mono">{ strconv.Itoa(data.Progress.Attendance) }</strong>
+				</div>
+				<div class="progress-track"><span style={ meterWidth(data.Progress.Attendance) }></span></div>
+				<span class="progress-hint">Kehadiran tepat waktu di gerbang</span>
+			</div>
+		</div>
+
+		<div class="progress-facts">
+			<a class="progress-fact" href={ templ.SafeURL("/student/documents") }>
+				<span class="progress-fact-label">Tugas belum dikumpulkan</span>
+				<strong class="mono">{ strconv.Itoa(data.Progress.PendingTasks) }</strong>
+			</a>
+			<a class="progress-fact" href={ templ.SafeURL("/student/academic") }>
+				<span class="progress-fact-label">Jurnal PKL tercatat</span>
+				<strong class="mono">{ strconv.Itoa(data.Progress.PklJournals) }</strong>
+			</a>
+			if data.HasInvoice {
+				<a class="progress-fact" href={ templ.SafeURL("/student/dashboard") }>
+					<span class="progress-fact-label">Sisa SPP</span>
+					<strong class="mono">{ ui.FormatRupiah(data.Progress.SppRemaining) }</strong>
+				</a>
+			} else {
+				<div class="progress-fact">
+					<span class="progress-fact-label">Sisa SPP</span>
+					<strong class="mono">Tidak ada tagihan</strong>
+				</div>
+			}
+		</div>
+	</section>
 }
 
 templ LeaderPanel(data ui.StudentDashboard) {

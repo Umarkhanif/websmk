@@ -1,0 +1,258 @@
+package pages
+
+import (
+	"strconv"
+
+	"wesmk/internal/ui"
+	"wesmk/internal/ui/components"
+)
+
+// Home is the public front door of the school. It answers "sekolah apa ini dan
+// apa yang bisa saya lakukan di sini" before asking anyone to log in.
+templ Home(page ui.HomePage) {
+	<!DOCTYPE html>
+	<html lang="id">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+			<meta name="color-scheme" content="light"/>
+			<meta name="theme-color" content="#172E26"/>
+			<title>SMK Negeri 1 Rekayasa — Portal Layanan Sekolah</title>
+			<meta name="description" content="Portal layanan SMK Negeri 1 Rekayasa: akademik, keuangan, PKL, dan komunikasi sekolah untuk siswa, guru, orang tua, dan staf."/>
+			<link rel="icon" type="image/svg+xml" href="/ui-assets/favicon.svg"/>
+			<link rel="manifest" href="/ui-assets/manifest.webmanifest"/>
+			<link rel="apple-touch-icon" href="/ui-assets/apple-touch-icon.png"/>
+			<meta name="apple-mobile-web-app-capable" content="yes"/>
+			<meta name="apple-mobile-web-app-title" content="WESMK"/>
+			<link rel="preload" href="/ui-assets/fonts/plus-jakarta-sans-latin.woff2" as="font" type="font/woff2" crossorigin/>
+			<link rel="stylesheet" href="/ui-assets/app.css?v=20261126e"/>
+			<script src="/ui-assets/app.js?v=20261126a" defer></script>
+		</head>
+		<body class="home-body">
+			<a class="skip-link" href="#main-content">Lewati ke konten utama</a>
+
+			<header class="home-topbar">
+				<div class="home-wrap home-topbar-inner">
+					<a class="home-lockup" href="/">
+						<span class="home-mark" aria-hidden="true">SMK</span>
+						<span class="home-lockup-copy">
+							<strong>SMK Negeri 1 Rekayasa</strong>
+							<span>Portal layanan sekolah</span>
+						</span>
+					</a>
+					<nav class="home-nav" aria-label="Navigasi utama">
+						<a href="#layanan">Layanan</a>
+						<a href="#jurusan">Program keahlian</a>
+						<a href="/verify">Verifikasi dokumen</a>
+					</nav>
+					<a class="button button-primary home-login" href="/login">Masuk Portal</a>
+				</div>
+			</header>
+
+			<main id="main-content">
+				<section class="home-hero">
+					<div class="home-hero-bg">
+						<img
+							src="/ui-assets/images/home-hero.jpg"
+							alt="Siswa SMK berpraktik di laboratorium jaringan komputer bersama guru"
+							width="1392"
+							height="752"
+							fetchpriority="high"
+							decoding="async"
+						/>
+					</div>
+					<div class="home-wrap home-hero-inner">
+						<p class="home-kicker">Tahun ajaran { page.AcademicYear }</p>
+						<h1>Sekolah kejuruan untuk kerja, kuliah, dan berwirausaha.</h1>
+						<p class="home-lead">
+							Akademik, keuangan, PKL, dan komunikasi sekolah dalam satu portal.
+							Satu akun untuk siswa, guru, orang tua, dan staf sekolah.
+						</p>
+						<div class="home-actions">
+							<a class="button button-gold" href="/login">
+								@components.Icon("arrow-right", "icon")
+								<span>Masuk ke Portal</span>
+							</a>
+							<a class="button home-hero-outline" href="/verify">
+								@components.Icon("file-check", "icon")
+								<span>Verifikasi Dokumen</span>
+							</a>
+						</div>
+					</div>
+				</section>
+
+				<div class="home-facts">
+					<div class="home-wrap">
+						<dl class="home-facts-grid">
+							<div class="home-fact">
+								<dt>Tahun ajaran</dt>
+								<dd class="home-fact-text">{ page.AcademicYear }</dd>
+							</div>
+							for _, stat := range page.Stats {
+								<div class="home-fact">
+									<dt>{ stat.Label }</dt>
+									<dd class="mono">{ stat.Value }</dd>
+								</div>
+							}
+						</dl>
+					</div>
+				</div>
+
+				<section class="home-section" id="layanan">
+					<div class="home-wrap">
+						<header class="home-section-head">
+							<p class="eyebrow">Pintu masuk</p>
+							<h2>Masuk sesuai peran Anda</h2>
+							<p>
+								Setiap peran punya ruang kerjanya sendiri. Tidak ada data orang lain
+								yang ikut terkirim ke layar Anda.
+							</p>
+						</header>
+
+						<div class="home-doors">
+							<a class="home-door" href="/login?tab=staff">
+								<span class="home-door-icon">@components.Icon("users", "icon")</span>
+								<span class="home-door-eyebrow">Portal sekolah</span>
+								<strong>Siswa, guru &amp; staf</strong>
+								<p>
+									Presensi, jadwal, tugas, ujian CBT, jurnal mengajar, dan nilai
+									dalam satu akun.
+								</p>
+								<span class="home-door-go">Masuk dengan NISN atau NIP <span aria-hidden="true">→</span></span>
+							</a>
+							<a class="home-door" href="/login?tab=parent">
+								<span class="home-door-icon">@components.Icon("heart", "icon")</span>
+								<span class="home-door-eyebrow">Portal keluarga</span>
+								<strong>Orang tua &amp; wali</strong>
+								<p>
+									Pantau perkembangan anak, tagihan SPP, izin tidak masuk, dan
+									komunikasi dengan sekolah.
+								</p>
+								<span class="home-door-go">Masuk dengan WhatsApp <span aria-hidden="true">→</span></span>
+							</a>
+						</div>
+
+						<div class="home-utils">
+							<a class="home-util" href="/verify">
+								<span class="home-util-icon">@components.Icon("shield-alert", "icon")</span>
+								<span>
+									<strong>Verifikasi dokumen</strong>
+									<span>Cek keaslian kwitansi, surat resmi, dan jurnal PKL.</span>
+								</span>
+							</a>
+							<a class="home-util" href="/contact">
+								<span class="home-util-icon">@components.Icon("help", "icon")</span>
+								<span>
+									<strong>Bantuan &amp; laporan</strong>
+									<span>Lupa kata sandi, kendala akun, atau gangguan aplikasi.</span>
+								</span>
+							</a>
+						</div>
+					</div>
+				</section>
+
+				<section class="home-section home-section-alt">
+					<div class="home-wrap">
+						<header class="home-section-head">
+							<p class="eyebrow">Layanan</p>
+							<h2>Yang bisa dilakukan di portal</h2>
+							<p>Fitur yang dipakai sekolah setiap hari, dari presensi sampai penyaluran kerja.</p>
+						</header>
+
+						<div class="home-features">
+							<article class="home-feature">
+								<span class="home-feature-icon">@components.Icon("calendar", "icon")</span>
+								<h3>Presensi &amp; jurnal</h3>
+								<p>Kehadiran harian dan jurnal mengajar guru tercatat rapi.</p>
+							</article>
+							<article class="home-feature">
+								<span class="home-feature-icon">@components.Icon("file-check", "icon")</span>
+								<h3>Kuis, tugas, dan nilai</h3>
+								<p>Tugas, kuis, dan penilaian siswa dalam satu alur.</p>
+							</article>
+							<article class="home-feature">
+								<span class="home-feature-icon">@components.Icon("monitor", "icon")</span>
+								<h3>Ujian CBT</h3>
+								<p>Ujian berbasis komputer dengan sesi dan pemantauan.</p>
+							</article>
+							<article class="home-feature">
+								<span class="home-feature-icon">@components.Icon("wallet", "icon")</span>
+								<h3>Keuangan &amp; SPP</h3>
+								<p>Tagihan, pembayaran, dan kwitansi yang bisa diverifikasi.</p>
+							</article>
+							<article class="home-feature">
+								<span class="home-feature-icon">@components.Icon("briefcase", "icon")</span>
+								<h3>PKL &amp; bursa kerja</h3>
+								<p>Penempatan PKL, jurnal harian, dan penyaluran kerja (BKK).</p>
+							</article>
+							<article class="home-feature">
+								<span class="home-feature-icon">@components.Icon("graduation", "icon")</span>
+								<h3>Administrasi akademik</h3>
+								<p>Data kelas, jadwal, dan wali kelas yang selalu terbarui.</p>
+							</article>
+						</div>
+					</div>
+				</section>
+
+				if len(page.Majors) > 0 {
+					<section class="home-section" id="jurusan">
+						<div class="home-wrap">
+							<header class="home-section-head">
+								<p class="eyebrow">Program keahlian</p>
+								<h2>Belajar lewat praktik, bukan hanya teori</h2>
+								<p>Jalur kejuruan dengan mitra industri untuk PKL dan penyaluran kerja.</p>
+							</header>
+
+							<div class="home-majors">
+								for _, major := range page.Majors {
+									<article class="home-major">
+										<span class="home-major-code mono">{ major.Code }</span>
+										<h3>{ major.Name }</h3>
+										if major.Detail != "" {
+											<p>{ major.Detail }</p>
+										}
+										if major.Classes > 0 {
+											<p class="home-major-meta mono">
+												<span>{ strconv.Itoa(major.Classes) } rombel</span>
+												if major.Students > 0 {
+													<span>{ strconv.Itoa(major.Students) } siswa</span>
+												}
+											</p>
+										}
+									</article>
+								}
+							</div>
+						</div>
+					</section>
+				}
+
+				<section class="home-cta">
+					<div class="home-wrap home-cta-inner">
+						<div>
+							<h2>Sudah punya akun sekolah?</h2>
+							<p>Gunakan NISN, NIP, atau nomor WhatsApp orang tua yang terdaftar.</p>
+						</div>
+						<a class="button button-gold" href="/login">
+							<span>Masuk ke Portal</span>
+							@components.Icon("arrow-right", "icon")
+						</a>
+					</div>
+				</section>
+			</main>
+
+			<footer class="home-footer">
+				<div class="home-wrap home-footer-inner">
+					<div>
+						<strong>SMK Negeri 1 Rekayasa</strong>
+						<p>Portal WESMK · Tahun ajaran { page.AcademicYear }</p>
+					</div>
+					<nav class="home-footer-links" aria-label="Tautan kaki">
+						<a href="/login">Masuk</a>
+						<a href="/verify">Verifikasi</a>
+						<a href="/contact">Kontak</a>
+					</nav>
+				</div>
+			</footer>
+		</body>
+	</html>
+}

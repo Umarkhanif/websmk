@@ -48,6 +48,8 @@ templ DeveloperPortal(data ui.DeveloperPortalPage) {
 		</div>
 
 		if data.Tab == "dashboard" || data.Tab == "" {
+			@components.RoleBrief(data.Shell.Role)
+
 			<section class="card form-stack">
 				<div class="stat-card-head">
 					<div>

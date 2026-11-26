@@ -32,6 +32,8 @@ templ TeacherPortal(data ui.TeacherPortalPage) {
 				</form>
 			</section>
 
+			@components.RoleBrief(data.Shell.Role)
+
 			<div class="dashboard-grid">
 				if len(data.TodaySchedules) == 0 {
 					<article class="card stat-card">

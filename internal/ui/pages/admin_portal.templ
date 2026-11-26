@@ -11,6 +11,8 @@ import (
 templ AdminTuPortal(data ui.AdminTuPortalPage) {
 	<div class="page-stack">
 		if data.Tab == "master-data" {
+			@components.RoleBrief(data.Shell.Role)
+
 			<section class="card form-stack">
 				<div class="stat-card-head">
 					<div>

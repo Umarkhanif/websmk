@@ -29,6 +29,8 @@ templ ParentPortal(data ui.ParentPortalPage) {
 		</section>
 
 		if data.Tab == "dashboard" {
+			@components.RoleBrief(data.Shell.Role)
+
 			<div class="dashboard-grid">
 				<article class="card stat-card">
 					<div class="stat-card-head">

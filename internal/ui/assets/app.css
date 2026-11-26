@@ -4588,3 +4588,987 @@ h3 { font-size: 1.05rem; }
     display: none;
   }
 }
+
+/* ── Papan tugas peran ────────────────────────────────────────────────
+   A working notebook page instead of another KPI card: ruled paper, a
+   punched margin, a stamp, and the hand-off written down explicitly. */
+.role-brief {
+  position: relative;
+  padding: 20px 24px 18px 48px;
+  background-color: #FFFDF6;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0 33px,
+    rgba(31, 92, 70, 0.075) 33px 34px
+  );
+  border: 1px solid var(--border-strong);
+  border-left: 5px solid var(--gold);
+  border-radius: 3px var(--radius) var(--radius) 3px;
+  box-shadow: 5px 5px 0 rgba(203, 189, 165, 0.32);
+  overflow: hidden;
+}
+
+.role-brief::before {
+  content: "";
+  position: absolute;
+  inset: 12px auto 12px 33px;
+  border-left: 1px dashed rgba(154, 59, 41, 0.38);
+  pointer-events: none;
+}
+
+.role-brief-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.role-brief-stamp {
+  flex: none;
+  margin-top: 2px;
+  padding: 4px 9px;
+  border: 1px solid rgba(210, 160, 74, 0.75);
+  border-radius: 3px;
+  background: var(--gold-soft);
+  color: var(--gold-text);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transform: rotate(-2deg);
+  white-space: nowrap;
+}
+
+.role-brief-intro h2 {
+  font-size: 1.3rem;
+  line-height: 1.25;
+}
+
+.role-brief-intro p {
+  max-width: 70ch;
+  margin-top: 2px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.role-brief-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.45fr);
+  gap: 22px;
+  margin-top: 16px;
+}
+
+.role-brief-label {
+  display: block;
+  margin: 0 0 8px;
+  color: var(--text-soft);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.role-duties {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.role-duties li {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.role-duty-mark {
+  width: 11px;
+  height: 11px;
+  margin-top: 5px;
+  border: 1.5px solid var(--teal);
+  border-radius: 2px;
+  background: #fff;
+}
+
+.role-duties strong {
+  display: block;
+  font-size: 0.87rem;
+  color: var(--text);
+}
+
+.role-duty-detail {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.role-flow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(136px, 1fr));
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.role-flow-item {
+  position: relative;
+  display: flex;
+}
+
+.role-flow-link {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: 9px 10px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 252, 245, 0.9);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+}
+
+.role-flow-link:hover {
+  border-color: var(--teal);
+  background: var(--teal-soft);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.role-flow-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  background: var(--teal-soft);
+  color: var(--teal);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.role-flow-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.role-flow-detail {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.role-flow-arrow {
+  position: absolute;
+  top: 50%;
+  right: -13px;
+  color: var(--border-strong);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.role-brief-handoff {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border-strong);
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.role-brief-handoff .role-brief-label {
+  margin: 2px 0 0;
+  color: var(--gold-text);
+}
+
+/* ── Rapor berjalan murid ─────────────────────────────────────────────
+   A dark scoreboard so the student's own progress reads as a report,
+   not as another row of generic dashboard tiles. */
+.progress-board {
+  display: grid;
+  grid-template-columns: minmax(210px, 0.85fr) minmax(0, 1.6fr);
+  gap: 20px 24px;
+  padding: 22px 24px;
+  border-radius: var(--radius);
+  background:
+    radial-gradient(circle at 92% -20%, rgba(210, 160, 74, 0.22), transparent 55%),
+    var(--navy);
+  color: #F4EFE3;
+  box-shadow: var(--shadow);
+}
+
+.progress-board .eyebrow {
+  color: var(--gold);
+}
+
+.progress-board-summary h2 {
+  color: #FFFCF5;
+  font-size: 1.3rem;
+  line-height: 1.25;
+}
+
+.progress-score {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.progress-score strong {
+  color: var(--gold);
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.progress-score span {
+  color: rgba(244, 239, 227, 0.72);
+  font-size: 0.78rem;
+}
+
+.progress-note {
+  max-width: 38ch;
+  margin-top: 10px;
+  color: rgba(244, 239, 227, 0.62);
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.progress-meters {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 20px;
+}
+
+.progress-meter-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: rgba(244, 239, 227, 0.85);
+}
+
+.progress-meter-head strong {
+  color: #FFFCF5;
+  font-size: 0.95rem;
+}
+
+.progress-track {
+  height: 7px;
+  margin: 6px 0 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  overflow: hidden;
+}
+
+.progress-track span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #C08E3C, #E4BE76);
+}
+
+.progress-hint {
+  display: block;
+  color: rgba(244, 239, 227, 0.55);
+  font-size: 0.7rem;
+  line-height: 1.35;
+}
+
+.progress-facts {
+  display: flex;
+  grid-column: 1 / -1;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.progress-fact {
+  flex: 1 1 150px;
+  padding: 9px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.055);
+  color: inherit;
+  text-decoration: none;
+}
+
+a.progress-fact:hover {
+  border-color: rgba(210, 160, 74, 0.7);
+  background: rgba(255, 255, 255, 0.09);
+  text-decoration: none;
+}
+
+.progress-fact-label {
+  display: block;
+  color: rgba(244, 239, 227, 0.62);
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.progress-fact strong {
+  display: block;
+  margin-top: 2px;
+  color: #FFFCF5;
+  font-size: 1rem;
+}
+
+@media (max-width: 900px) {
+  .role-brief-body,
+  .progress-board {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .progress-facts {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .role-brief {
+    padding: 16px 16px 16px 34px;
+  }
+
+  .role-brief::before {
+    left: 22px;
+  }
+
+  .role-brief-head {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .role-flow {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .role-flow-arrow {
+    display: none;
+  }
+
+  .progress-meters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.role-flow-link.is-static {
+  border-style: dashed;
+  background: rgba(247, 241, 229, 0.7);
+}
+
+.role-flow-link.is-static:hover {
+  border-color: var(--border);
+  background: rgba(247, 241, 229, 0.7);
+  transform: none;
+}
+
+/* Public landing page ("/"). Sits before login, so it uses the same warm
+   institutional palette but a wider editorial rhythm than the app shell. */
+.home-body {
+  background: var(--bg);
+}
+
+.home-wrap {
+  width: min(1160px, 100% - 48px);
+  margin-inline: auto;
+}
+
+.home-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: rgba(255, 252, 245, 0.92);
+  backdrop-filter: blur(14px) saturate(150%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  border-bottom: 1px solid var(--border);
+}
+
+.home-topbar-inner {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  min-height: 72px;
+}
+
+.home-lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--navy);
+  text-decoration: none;
+  margin-right: auto;
+}
+
+.home-lockup:hover {
+  text-decoration: none;
+}
+
+.home-mark {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #E7C177 0%, #D2A04A 100%);
+  color: var(--navy);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.home-lockup-copy strong {
+  display: block;
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.home-lockup-copy span {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.home-nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.home-nav a {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.home-nav a:hover {
+  color: var(--navy);
+  text-decoration: none;
+}
+
+.home-login {
+  flex-shrink: 0;
+}
+
+/* Hero: full-bleed photograph with a dark institutional wash on the left so
+   the copy keeps AA contrast no matter how bright the picture is. */
+.home-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  min-height: clamp(540px, 64vh, 660px);
+  padding: 84px 0 150px;
+}
+
+.home-hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--navy);
+}
+
+.home-hero-bg img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 42%;
+}
+
+.home-hero-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(96deg, rgba(9, 24, 19, 0.93) 0%, rgba(9, 24, 19, 0.87) 28%, rgba(9, 24, 19, 0.66) 50%, rgba(9, 24, 19, 0.38) 74%, rgba(9, 24, 19, 0.16) 100%);
+}
+
+.home-hero-inner {
+  position: relative;
+  width: min(1160px, 100% - 48px);
+}
+
+.home-kicker {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #F2DCAE;
+  background: rgba(210, 160, 74, 0.16);
+  border: 1px solid rgba(226, 189, 122, 0.4);
+  border-radius: 999px;
+  padding: 6px 13px;
+  margin-bottom: 20px;
+}
+
+.home-hero h1 {
+  max-width: 17ch;
+  font-size: clamp(2.15rem, 1.15rem + 3.9vw, 3.9rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  color: #FFFCF5;
+  text-wrap: balance;
+}
+
+.home-lead {
+  margin-top: 20px;
+  max-width: 56ch;
+  font-size: clamp(0.98rem, 0.94rem + 0.2vw, 1.08rem);
+  line-height: 1.65;
+  color: rgba(255, 252, 245, 0.84);
+}
+
+.home-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.home-hero-outline {
+  background: transparent;
+  color: #FFFCF5;
+  border-color: rgba(255, 252, 245, 0.42);
+}
+
+.home-hero-outline:hover {
+  background: rgba(255, 252, 245, 0.12);
+  border-color: #FFFCF5;
+  color: #FFFCF5;
+}
+
+/* Facts band overlapping the hero, so the first scroll reveals proof before
+   any marketing copy. Only real numbers reach this list. */
+.home-facts {
+  position: relative;
+  z-index: 2;
+  margin-top: -76px;
+}
+
+.home-facts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+  margin: 0;
+  padding: 6px 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 18px 44px rgba(23, 46, 38, 0.14);
+}
+
+.home-fact {
+  padding: 16px 24px;
+}
+
+.home-fact + .home-fact {
+  border-left: 1px solid var(--border);
+}
+
+.home-fact dt {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-soft);
+}
+
+.home-fact dd {
+  margin: 6px 0 0;
+  font-size: 1.7rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--navy);
+}
+
+.home-fact dd.home-fact-text {
+  font-size: 1.02rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.home-section {
+  padding: 72px 0;
+  scroll-margin-top: 88px;
+}
+
+.home-section-alt {
+  background: var(--surface-subtle);
+  border-block: 1px solid var(--border);
+}
+
+.home-section-head {
+  max-width: 62ch;
+}
+
+.home-section-head h2 {
+  margin-top: 6px;
+  font-size: clamp(1.5rem, 1.05rem + 1.6vw, 2.05rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--navy);
+}
+
+.home-section-head p {
+  margin-top: 10px;
+  font-size: 0.94rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.home-doors {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 34px;
+}
+
+.home-door {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 28px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  color: inherit;
+  transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.home-door:hover {
+  text-decoration: none;
+  transform: translateY(-3px);
+  border-color: var(--teal);
+  box-shadow: 0 20px 44px rgba(23, 46, 38, 0.14);
+}
+
+.home-door-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--teal-soft);
+  color: var(--teal);
+  margin-bottom: 4px;
+}
+
+.home-door-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--gold-text);
+}
+
+.home-door strong {
+  font-size: 1.24rem;
+  letter-spacing: -0.01em;
+  color: var(--navy);
+}
+
+.home-door p {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.home-door-go {
+  margin-top: auto;
+  padding-top: 12px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--teal);
+}
+
+.home-utils {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.home-util {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 1px dashed var(--border-strong);
+  border-radius: 14px;
+  background: rgba(255, 252, 245, 0.6);
+  color: inherit;
+}
+
+.home-util:hover {
+  text-decoration: none;
+  border-style: solid;
+  border-color: var(--teal);
+  background: var(--surface);
+}
+
+.home-util-icon {
+  display: inline-flex;
+  color: var(--teal);
+  flex-shrink: 0;
+}
+
+.home-util strong {
+  display: block;
+  font-size: 0.92rem;
+  color: var(--navy);
+}
+
+.home-util span span {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.home-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.home-feature {
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.home-feature-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: var(--gold-soft);
+  color: var(--gold-text);
+}
+
+.home-feature h3 {
+  margin-top: 12px;
+  font-size: 0.98rem;
+  color: var(--navy);
+}
+
+.home-feature p {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+@media (min-width: 900px) {
+  .home-features {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.home-majors {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(224px, 1fr));
+  gap: 14px;
+  margin-top: 32px;
+}
+
+.home-major {
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.home-major-code {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--gold-soft);
+  color: var(--gold-text);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.home-major h3 {
+  margin-top: 10px;
+  font-size: 1.04rem;
+  line-height: 1.3;
+  color: var(--navy);
+}
+
+.home-major p {
+  margin-top: 6px;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.home-major-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  font-size: 0.78rem;
+  color: var(--text-soft);
+}
+
+.home-major-meta span + span::before {
+  content: "·";
+  margin-right: 12px;
+  color: var(--border-strong);
+}
+
+.home-cta {
+  background: var(--navy);
+  padding: 52px 0;
+}
+
+.home-cta-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.home-cta h2 {
+  font-size: clamp(1.4rem, 1.1rem + 1.2vw, 1.9rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: #FFFCF5;
+}
+
+.home-cta p {
+  margin-top: 6px;
+  font-size: 0.94rem;
+  color: rgba(255, 252, 245, 0.78);
+}
+
+.home-footer {
+  background: var(--bg);
+  padding: 26px 0;
+}
+
+.home-footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.home-footer strong {
+  display: block;
+  font-size: 0.92rem;
+  color: var(--navy);
+}
+
+.home-footer p {
+  margin-top: 2px;
+  font-size: 0.8rem;
+  color: var(--text-soft);
+}
+
+.home-footer-links {
+  display: flex;
+  gap: 20px;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 900px) {
+  .home-nav {
+    display: none;
+  }
+  .home-topbar-inner {
+    min-height: 64px;
+    gap: 12px;
+  }
+  .home-hero {
+    min-height: 560px;
+    padding: 64px 0 120px;
+  }
+  .home-hero h1 {
+    max-width: none;
+  }
+  .home-facts {
+    margin-top: -60px;
+  }
+  .home-section {
+    padding: 54px 0;
+  }
+  .home-doors,
+  .home-utils {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .home-door {
+    padding: 22px;
+  }
+}
+
+@media (max-width: 560px) {
+  .home-wrap,
+  .home-hero-inner {
+    width: calc(100% - 32px);
+  }
+  .home-lockup-copy span {
+    display: none;
+  }
+  .home-hero {
+    min-height: 500px;
+    padding: 52px 0 104px;
+  }
+  .home-hero-bg::after {
+    background:
+      linear-gradient(180deg, rgba(11, 26, 21, 0.72) 0%, rgba(11, 26, 21, 0.92) 62%, rgba(11, 26, 21, 0.96) 100%);
+  }
+  .home-actions .button {
+    width: 100%;
+    justify-content: center;
+  }
+  .home-facts {
+    margin-top: -52px;
+  }
+  .home-facts-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .home-fact {
+    padding: 14px 16px;
+    border-left: 0 !important;
+    border-top: 1px solid var(--border);
+  }
+  .home-fact:nth-child(-n + 2) {
+    border-top: 0;
+  }
+  .home-fact:nth-child(even) {
+    border-left: 1px solid var(--border) !important;
+  }
+  .home-fact dd {
+    font-size: 1.35rem;
+  }
+  .home-fact dd.home-fact-text {
+    font-size: 0.92rem;
+  }
+}

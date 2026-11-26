@@ -46,6 +46,22 @@ type StudentDashboard struct {
 	ShowLeaderPanel bool
 	LeaderStatus    string
 	LeaderFeedback  string
+	Progress        StudentProgressView
+}
+
+// StudentProgressView is the ongoing report card: the numbers a student (and
+// their parent) can act on, rather than raw tables.
+type StudentProgressView struct {
+	HolisticScore  string
+	ExamAverage    int
+	CompletedExams int
+	TotalExams     int
+	QuizAverage    int
+	AttitudeScore  int
+	Attendance     int
+	SppRemaining   int
+	PendingTasks   int
+	PklJournals    int
 }
 
 type QuizQuestionView struct {
@@ -128,6 +144,28 @@ type JournalView struct {
 	LeaderStatus string
 }
 
+// HomePage is the public school landing page. Guests see it before login;
+// signed-in accounts are redirected straight to their own portal. Every number
+// on it comes from the database, never from a hardcoded fixture.
+type HomePage struct {
+	AcademicYear string
+	Stats        []HomeStat
+	Majors       []HomeMajor
+}
+
+type HomeStat struct {
+	Label string
+	Value string
+}
+
+type HomeMajor struct {
+	Code     string
+	Name     string
+	Detail   string
+	Classes  int
+	Students int
+}
+
 type LoginPage struct {
 	Tab          string
 	Identifier   string
@@ -190,40 +228,40 @@ func NavFor(role string) []NavItem {
 	switch role {
 	case "student":
 		return []NavItem{
-			{ID: "dashboard", Label: "Beranda Belajar", ShortLabel: "Beranda", Icon: "dashboard", Href: "/student/dashboard"},
-			{ID: "classroom", Label: "Kelas & Materi Harian", ShortLabel: "Kelas", Badge: "Kuis Singkat", Icon: "book", Href: "/student/classroom"},
-			{ID: "exam-lobby", Label: "Ruang Persiapan Ujian", ShortLabel: "Persiapan", Icon: "file-check", Href: "/student/exam-lobby"},
-			{ID: "exam-kiosk", Label: "Ruang Ujian Siswa", ShortLabel: "Ujian CBT", Badge: "Terjadwal", Icon: "monitor", Href: "/student/exam-kiosk"},
-			{ID: "documents", Label: "Unggah Berkas Siswa", ShortLabel: "Berkas", Icon: "file-text", Href: "/student/documents"},
-			{ID: "academic", Label: "Rapor, Nilai PKL & Karir", ShortLabel: "Rapor & PKL", Badge: "Prestasi", Icon: "award", Href: "/student/academic"},
-			{ID: "rewind", Label: "Kilas Catatan Siswa", ShortLabel: "Kilas Balik", Badge: "Ringkasan", Icon: "sparkles", Href: "/student/rewind"},
+			{ID: "dashboard", Label: "Beranda Murid", ShortLabel: "Beranda", Icon: "dashboard", Href: "/student/dashboard"},
+			{ID: "classroom", Label: "Kelas & Kuis", ShortLabel: "Kelas", Badge: "Kuis", Icon: "book", Href: "/student/classroom"},
+			{ID: "exam-lobby", Label: "Persiapan Ujian", ShortLabel: "Persiapan", Icon: "file-check", Href: "/student/exam-lobby"},
+			{ID: "exam-kiosk", Label: "Ujian CBT", ShortLabel: "Ujian", Badge: "Terjadwal", Icon: "monitor", Href: "/student/exam-kiosk"},
+			{ID: "documents", Label: "Berkas & Tugas", ShortLabel: "Berkas", Icon: "file-text", Href: "/student/documents"},
+			{ID: "academic", Label: "Rapor, PKL & Karir", ShortLabel: "Rapor & PKL", Badge: "Prestasi", Icon: "award", Href: "/student/academic"},
+			{ID: "rewind", Label: "Kilas Balik", ShortLabel: "Kilas", Badge: "Ringkasan", Icon: "sparkles", Href: "/student/rewind"},
 		}
 	case "parent":
 		return []NavItem{
-			{ID: "dashboard", Label: "Perkembangan Belajar Anak", ShortLabel: "Perkembangan", Badge: "Info Anak", Icon: "heart", Href: "/parent/dashboard"},
-			{ID: "roadmap", Label: "Rencana Biaya Pendidikan", ShortLabel: "Biaya SPP", Icon: "trending", Href: "/parent/roadmap"},
-			{ID: "future-plan", Label: "Konsultasi Masa Depan BMW", ShortLabel: "Karir BMW", Icon: "compass", Href: "/parent/future-plan"},
-			{ID: "services", Label: "Layanan Izin / SPP Siswa", ShortLabel: "Layanan", Icon: "wallet", Href: "/parent/services"},
+			{ID: "dashboard", Label: "Perkembangan Anak", ShortLabel: "Perkembangan", Badge: "Info Anak", Icon: "heart", Href: "/parent/dashboard"},
+			{ID: "roadmap", Label: "Biaya SPP", ShortLabel: "Biaya SPP", Icon: "trending", Href: "/parent/roadmap"},
+			{ID: "future-plan", Label: "Konsultasi Karir", ShortLabel: "Karir", Icon: "compass", Href: "/parent/future-plan"},
+			{ID: "services", Label: "Izin & Layanan", ShortLabel: "Layanan", Icon: "wallet", Href: "/parent/services"},
 		}
 	case "treasurer":
 		return []NavItem{
-			{ID: "dashboard", Label: "Ringkasan Keuangan Sekolah", ShortLabel: "Ringkasan", Badge: "Arus Kas", Icon: "dashboard", Href: "/treasurer/dashboard"},
-			{ID: "billing", Label: "Loket Pembayaran SPP", ShortLabel: "Loket SPP", Badge: "Kwitansi", Icon: "receipt", Href: "/treasurer/billing"},
-			{ID: "exam-clearance", Label: "Pemeriksaan Izin Ujian", ShortLabel: "Izin Ujian", Badge: "Dispensasi", Icon: "shield-alert", Href: "/treasurer/exam-clearance"},
-			{ID: "reports", Label: "Buku Kas & Pembukuan", ShortLabel: "Buku Kas", Badge: "Catatan Baku", Icon: "file-text", Href: "/treasurer/reports"},
+			{ID: "dashboard", Label: "Ringkasan Kas", ShortLabel: "Ringkasan", Badge: "Arus Kas", Icon: "dashboard", Href: "/treasurer/dashboard"},
+			{ID: "billing", Label: "Loket SPP", ShortLabel: "Loket SPP", Badge: "Kwitansi", Icon: "receipt", Href: "/treasurer/billing"},
+			{ID: "exam-clearance", Label: "Izin Ujian", ShortLabel: "Izin Ujian", Badge: "Dispensasi", Icon: "shield-alert", Href: "/treasurer/exam-clearance"},
+			{ID: "reports", Label: "Buku Kas", ShortLabel: "Buku Kas", Badge: "Pembukuan", Icon: "file-text", Href: "/treasurer/reports"},
 		}
 	case "teacher":
 		return []NavItem{
-			{ID: "dashboard", Label: "Beranda Guru & Izin Mengajar", ShortLabel: "Beranda", Icon: "dashboard", Href: "/teacher/dashboard"},
-			{ID: "classroom", Label: "Ruang Mengajar & Agenda", ShortLabel: "Kelas", Badge: "Presensi", Icon: "calendar", Href: "/teacher/classroom"},
-			{ID: "exam-control", Label: "Pengawasan Ujian Siswa", ShortLabel: "Pengawasan", Badge: "Langsung", Icon: "monitor", Href: "/teacher/exam-control"},
-			{ID: "question-bank", Label: "Bank Soal Kejuruan", ShortLabel: "Bank Soal", Icon: "help", Href: "/teacher/question-bank"},
-			{ID: "homeroom-pkl", Label: "Wali Kelas & Magang Siswa", ShortLabel: "Wali & PKL", Badge: "Pantau", Icon: "users", Href: "/teacher/homeroom-pkl"},
+			{ID: "dashboard", Label: "Beranda Guru", ShortLabel: "Beranda", Icon: "dashboard", Href: "/teacher/dashboard"},
+			{ID: "classroom", Label: "Kelas & Presensi", ShortLabel: "Kelas", Badge: "Presensi", Icon: "calendar", Href: "/teacher/classroom"},
+			{ID: "exam-control", Label: "Pengawasan Ujian", ShortLabel: "Pengawasan", Badge: "Langsung", Icon: "monitor", Href: "/teacher/exam-control"},
+			{ID: "question-bank", Label: "Bank Soal", ShortLabel: "Bank Soal", Icon: "help", Href: "/teacher/question-bank"},
+			{ID: "homeroom-pkl", Label: "Wali Kelas & PKL", ShortLabel: "Wali & PKL", Badge: "Pantau", Icon: "users", Href: "/teacher/homeroom-pkl"},
 		}
 	case "discipline":
 		return []NavItem{
-			{ID: "violations", Label: "Bimbingan & Tata Tertib", ShortLabel: "Tata Tertib", Badge: "Konseling", Icon: "alert", Href: "/discipline/violations"},
-			{ID: "transformation-index", Label: "Perkembangan Sikap Siswa", ShortLabel: "Perkembangan", Badge: "Evaluasi", Icon: "flame", Href: "/discipline/transformation-index"},
+			{ID: "violations", Label: "Tata Tertib & BK", ShortLabel: "Tata Tertib", Badge: "Konseling", Icon: "alert", Href: "/discipline/violations"},
+			{ID: "transformation-index", Label: "Perkembangan Sikap", ShortLabel: "Perkembangan", Badge: "Evaluasi", Icon: "flame", Href: "/discipline/transformation-index"},
 		}
 	case "piket":
 		return []NavItem{
@@ -231,19 +269,19 @@ func NavFor(role string) []NavItem {
 		}
 	case "admin_tu":
 		return []NavItem{
-			{ID: "master-data", Label: "Data Pokok & Arsip Berkas", ShortLabel: "Data Pokok", Icon: "sliders", Href: "/admin/master-data"},
-			{ID: "dapodik-erapor", Label: "Layanan Surat & e-Rapor", ShortLabel: "e-Rapor", Badge: "Resmi", Icon: "file-text", Href: "/admin/dapodik-erapor"},
-			{ID: "pkl-bkk", Label: "Mitra Industri & Bursa Kerja", ShortLabel: "Mitra & BKK", Icon: "briefcase", Href: "/admin/pkl-bkk"},
+			{ID: "master-data", Label: "Data Pokok", ShortLabel: "Data Pokok", Icon: "sliders", Href: "/admin/master-data"},
+			{ID: "dapodik-erapor", Label: "Surat & e-Rapor", ShortLabel: "e-Rapor", Badge: "Resmi", Icon: "file-text", Href: "/admin/dapodik-erapor"},
+			{ID: "pkl-bkk", Label: "PKL & BKK", ShortLabel: "PKL & BKK", Icon: "briefcase", Href: "/admin/pkl-bkk"},
 		}
 	case "headmaster":
 		return []NavItem{
-			{ID: "executive", Label: "Pusat Kendali Kepala Sekolah", ShortLabel: "Pusat Kendali", Badge: "Utama", Icon: "graduation", Href: "/headmaster/executive"},
+			{ID: "executive", Label: "Pusat Kendali", ShortLabel: "Pusat Kendali", Badge: "Utama", Icon: "graduation", Href: "/headmaster/executive"},
 		}
 	case "developer":
 		return []NavItem{
-			{ID: "dashboard", Label: "Bug Reports & Issue Tracker", ShortLabel: "Bug Reports", Badge: "Active", Icon: "bug", Href: "/developer/dashboard"},
-			{ID: "resets", Label: "Audit Trail Reset Ujian", ShortLabel: "Audit Ujian", Icon: "rotate-ccw", Href: "/developer/resets"},
-			{ID: "system", Label: "Diagnostik & Status Sistem", ShortLabel: "Status Sistem", Icon: "sliders", Href: "/developer/system"},
+			{ID: "dashboard", Label: "Laporan Bug", ShortLabel: "Bug", Badge: "Aktif", Icon: "bug", Href: "/developer/dashboard"},
+			{ID: "resets", Label: "Audit Reset Ujian", ShortLabel: "Audit Ujian", Icon: "rotate-ccw", Href: "/developer/resets"},
+			{ID: "system", Label: "Status Sistem", ShortLabel: "Sistem", Icon: "sliders", Href: "/developer/system"},
 		}
 	default:
 		return nil

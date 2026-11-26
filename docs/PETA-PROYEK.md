@@ -73,6 +73,7 @@ Halaman non-portal:
 
 | Route | Siapa | Fungsi |
 |---|---|---|
+| `/` | publik | beranda sekolah; akun yang sudah login langsung diarahkan ke portalnya |
 | `/login` | publik | login + form magic link orang tua |
 | `/login/mfa` | publik | langkah kedua MFA |
 | `/security` | semua login | enrollment TOTP, recovery code, sesi aktif, riwayat login |

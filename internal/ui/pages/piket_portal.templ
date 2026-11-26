@@ -7,6 +7,8 @@ import (
 
 templ PiketPortal(data ui.PiketPortalPage) {
 	<div class="page-stack">
+		@components.RoleBrief(data.Shell.Role)
+
 		<section class="card form-stack">
 			<div class="stat-card-head">
 				<div>

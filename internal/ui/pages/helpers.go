@@ -22,6 +22,18 @@ func studentPageURL(query string, page int) string {
 	return "/admin/master-data?" + values.Encode()
 }
 
+// meterWidth turns a 0-100 score into a CSS width and keeps bad data from
+// breaking the layout.
+func meterWidth(value int) string {
+	if value < 0 {
+		value = 0
+	}
+	if value > 100 {
+		value = 100
+	}
+	return fmt.Sprintf("width:%d%%", value)
+}
+
 func attendanceBadgeClass(status string) string {
 	switch status {
 	case "HADIR_GERBANG":

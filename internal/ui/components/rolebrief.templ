@@ -1,0 +1,75 @@
+package components
+
+import (
+	"strconv"
+
+	"wesmk/internal/ui"
+)
+
+// RoleBrief is the "working notebook" banner shown on a role's home page. It
+// answers three questions the dashboards used to leave implicit: what this role
+// owns, in what order the work happens, and who receives the result.
+templ RoleBrief(role string) {
+	{{ guide := ui.RoleGuideFor(role) }}
+	if guide.Mission != "" {
+		<section class="role-brief" aria-labelledby={ "role-brief-" + role }>
+			<header class="role-brief-head">
+				<span class="role-brief-stamp">{ guide.Tagline }</span>
+				<div class="role-brief-intro">
+					<h2 id={ "role-brief-" + role }>{ ui.RoleLabel(role) }</h2>
+					<p>{ guide.Mission }</p>
+				</div>
+			</header>
+
+			<div class="role-brief-body">
+				<div class="role-brief-duties">
+					<h3 class="role-brief-label">Yang kamu pegang</h3>
+					<ul class="role-duties">
+						for _, duty := range guide.Duties {
+							<li>
+								<span class="role-duty-mark" aria-hidden="true"></span>
+								<span>
+									<strong>{ duty.Title }</strong>
+									<span class="role-duty-detail">{ duty.Detail }</span>
+								</span>
+							</li>
+						}
+					</ul>
+				</div>
+
+				<div class="role-brief-flow-wrap">
+					<h3 class="role-brief-label">Urutan kerjanya</h3>
+					<ol class="role-flow">
+						for i, step := range guide.Steps {
+							<li class="role-flow-item">
+								if step.Href != "" {
+									<a class="role-flow-link" href={ step.Href }>
+										<span class="role-flow-num">{ strconv.Itoa(i + 1) }</span>
+										<span class="role-flow-title">{ step.Title }</span>
+										<span class="role-flow-detail">{ step.Detail }</span>
+									</a>
+								} else {
+									<div class="role-flow-link is-static">
+										<span class="role-flow-num">{ strconv.Itoa(i + 1) }</span>
+										<span class="role-flow-title">{ step.Title }</span>
+										<span class="role-flow-detail">{ step.Detail }</span>
+									</div>
+								}
+								if i < len(guide.Steps)-1 {
+									<span class="role-flow-arrow" aria-hidden="true">
+										@Icon("arrow-right", "icon icon-xs")
+									</span>
+								}
+							</li>
+						}
+					</ol>
+				</div>
+			</div>
+
+			<p class="role-brief-handoff">
+				<span class="role-brief-label">Serah terima</span>
+				<span>{ guide.Handoff }</span>
+			</p>
+		</section>
+	}
+}

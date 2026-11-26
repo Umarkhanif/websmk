@@ -287,7 +287,77 @@ func (s *Server) handleRootUI(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, ui.RoleHome(authVal.user.Role), http.StatusFound)
 		return
 	}
-	http.Redirect(w, r, "/login", http.StatusFound)
+	s.renderHomePage(w, r)
+}
+
+// renderHomePage builds the public landing page from normalized master data.
+// It never seeds app_state: a public visitor must not create school data as a
+// side effect of opening the homepage.
+func (s *Server) renderHomePage(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	page := ui.HomePage{AcademicYear: s.activeAcademicYearLabel(ctx)}
+
+	if s.storeDB != nil {
+		if classes, err := s.storeDB.ListClassrooms(ctx); err == nil && len(classes) > 0 {
+			students := 0
+			majors := make([]ui.HomeMajor, 0, 4)
+			majorIndex := map[string]int{}
+			for _, class := range classes {
+				students += class.StudentCount
+				if class.MajorCode == "" {
+					continue
+				}
+				idx, seen := majorIndex[class.MajorCode]
+				if !seen {
+					idx = len(majors)
+					majorIndex[class.MajorCode] = idx
+					majors = append(majors, ui.HomeMajor{Code: class.MajorCode, Name: class.MajorName})
+				}
+				majors[idx].Classes++
+				majors[idx].Students += class.StudentCount
+			}
+			if students > 0 {
+				page.Stats = append(page.Stats, ui.HomeStat{Label: "Siswa aktif", Value: strconv.Itoa(students)})
+			}
+			page.Stats = append(page.Stats, ui.HomeStat{Label: "Kelas aktif", Value: strconv.Itoa(len(classes))})
+			if len(majors) > 0 {
+				page.Stats = append(page.Stats, ui.HomeStat{Label: "Program keahlian", Value: strconv.Itoa(len(majors))})
+				page.Majors = majors
+			}
+		}
+	}
+
+	// Until master data is filled, show the programs already configured in the
+	// state document. Read-only: no auto-seed from a public page.
+	if len(page.Majors) == 0 && s.storeDB != nil {
+		if raw, err := s.storeDB.GetState(ctx); err == nil && len(raw) > 0 {
+			if doc, err := decodeState(raw); err == nil {
+				for _, major := range asMapSlice(doc["majors"]) {
+					code := strings.TrimSpace(strVal(major, "code"))
+					name := strings.TrimSpace(strVal(major, "name"))
+					if code == "" || name == "" {
+						continue
+					}
+					page.Majors = append(page.Majors, ui.HomeMajor{
+						Code:   code,
+						Name:   name,
+						Detail: strings.TrimSpace(strVal(major, "workshopRoom")),
+					})
+					if len(page.Majors) == 6 {
+						break
+					}
+				}
+			}
+		}
+	}
+
+	// Keep the proof strip meaningful while classrooms are still empty: the
+	// number of programmes is real master data, not a placeholder figure.
+	if len(page.Stats) == 0 && len(page.Majors) > 0 {
+		page.Stats = append(page.Stats, ui.HomeStat{Label: "Program keahlian", Value: strconv.Itoa(len(page.Majors))})
+	}
+
+	renderComponent(w, r, http.StatusOK, pages.Home(page))
 }
 
 func (s *Server) handleLoginPage(w http.ResponseWriter, r *http.Request) {

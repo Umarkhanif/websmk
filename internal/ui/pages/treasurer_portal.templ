@@ -10,6 +10,8 @@ import (
 templ TreasurerPortal(data ui.TreasurerPortalPage) {
 	<div class="page-stack">
 		if data.Tab == "dashboard" {
+			@components.RoleBrief(data.Shell.Role)
+
 			<div class="grid-4">
 				<article class="card stat-card">
 					<span class="eyebrow">Total Tagihan SPP</span>
