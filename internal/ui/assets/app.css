@@ -5237,6 +5237,9 @@ html:has(.home-body) {
   background: #FFFFFF;
   border-radius: 20px;
   box-shadow: 0 30px 60px rgba(8, 21, 44, 0.28);
+  max-height: calc(100dvh - 96px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .home-menu-panel a {
@@ -5330,13 +5333,19 @@ html:has(.home-body) {
   color: rgba(255, 255, 255, 0.7);
 }
 
+.home-hero .home-brand-name {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.3em;
+}
+
 .home-hero-foot {
   max-width: 60rem;
 }
 
-/* The hero call to action only exists on phones, where the pill navigation is
-   hidden and the menu would otherwise be the only way to sign in. */
-.home-hero-actions {
+/* On phones the pill navigation is hidden, so sign-in becomes a second round
+   button next to the menu, mirroring the reference site's icon dock. */
+.home-dock-login {
   display: none;
 }
 
@@ -5452,6 +5461,10 @@ html:has(.home-body) {
    ink label instead of inheriting the white text around it. */
 .home-body a.home-pill {
   color: var(--home-ink);
+}
+
+.home-body a.home-dock-login {
+  color: #FFFFFF;
 }
 
 /* Facts: a hairline band, no card, so the numbers read as a caption to the
@@ -6204,30 +6217,69 @@ html:has(.home-body) {
   }
   .home-hero,
   .home-hero-inner {
-    min-height: 88svh;
-  }
-  .home-hero-inner {
-    padding: 26px 0 38px;
+    min-height: 100svh;
   }
   .home-menu {
     top: 16px;
     right: 16px;
   }
-  .home-hero-actions {
-    display: flex;
-    margin-top: 24px;
+  .home-dock-login {
+    position: fixed;
+    top: 16px;
+    right: 76px;
+    z-index: 60;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--home-ink);
+    color: #FFFFFF;
+    box-shadow: 0 12px 30px rgba(8, 21, 44, 0.24);
+    transition: transform 0.28s ease, opacity 0.28s ease;
+  }
+  .home-dock-login .icon {
+    width: 20px;
+    height: 20px;
+  }
+  .home-dock-login.is-tucked {
+    transform: translateY(-150%);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .home-dock-login.is-tucked:focus-visible {
+    transform: none;
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .home-hero-inner {
+    padding: 26px 0 44px;
+  }
+  .home-hero-foot {
+    max-width: none;
+    width: 100%;
+    text-align: center;
+  }
+  .home-hero h1 {
+    font-size: clamp(2.4rem, 1rem + 7.4vw, 3.4rem);
+    text-wrap: balance;
+  }
+  .home-hero-kicker {
+    display: none;
+  }
+  .home-hero .home-brand-name {
+    display: block;
+    line-height: 1.14;
+  }
+  .home-hero .home-brand-line {
+    display: block;
   }
   /* Phones crop the photograph tighter, so the copy needs a deeper wash to
      stay legible over a bright uniform or laptop screen. */
   .home-hero-bg::after {
     background:
       linear-gradient(180deg, rgba(6, 17, 38, 0.6) 0%, rgba(6, 17, 38, 0.06) 24%, rgba(6, 17, 38, 0.46) 46%, rgba(6, 17, 38, 0.88) 72%, rgba(6, 17, 38, 0.96) 100%);
-  }
-  .home-hero-kicker {
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.84);
-    text-shadow: 0 1px 14px rgba(6, 17, 38, 0.55);
   }
   .home-scroll {
     display: none;

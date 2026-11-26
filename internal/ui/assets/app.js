@@ -41,7 +41,8 @@
   (function () {
     var nav = document.querySelector(".home-nav");
     var menu = document.querySelector(".home-menu");
-    var controls = [nav, menu].filter(Boolean);
+    var login = document.querySelector(".home-dock-login");
+    var controls = [nav, menu, login].filter(Boolean);
     if (!controls.length) return;
     var lastY = window.scrollY;
     var queued = false;
