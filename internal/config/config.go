@@ -47,6 +47,12 @@ type Config struct {
 	DomainPklBkk bool
 
 	SessionTTL time.Duration
+
+	// DemoNoAuth disables authentication entirely for local demos. It is always
+	// forced off in production regardless of the env value.
+	DemoNoAuth bool
+	// DemoRole is the role attached to the synthetic demo user (default teacher).
+	DemoRole string
 }
 
 func Load() Config {
@@ -109,6 +115,16 @@ func Load() Config {
 		mfaKey = receiptSecret
 	}
 
+	// Demo mode is never allowed in production.
+	demoNoAuth := false
+	if env != "production" {
+		demoNoAuth = parseBool(os.Getenv("WESMK_DEMO_NOAUTH"), false)
+	}
+	demoRole := strings.TrimSpace(os.Getenv("WESMK_DEMO_ROLE"))
+	if demoRole == "" {
+		demoRole = "teacher"
+	}
+
 	return Config{
 		Env:                  env,
 		Port:                 envOrDefault("PORT", "3000"),
@@ -130,6 +146,8 @@ func Load() Config {
 		DomainExam:           domainExam,
 		DomainPklBkk:         domainPklBkk,
 		SessionTTL:           8 * time.Hour,
+		DemoNoAuth:           demoNoAuth,
+		DemoRole:             demoRole,
 	}
 }
 

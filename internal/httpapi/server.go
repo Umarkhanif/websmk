@@ -295,6 +295,17 @@ func (s *Server) attachAuth(next http.Handler) http.Handler {
 			return
 		}
 
+		// Demo mode: no login required; attach the synthetic demo user.
+		if s.cfg.DemoNoAuth {
+			user, err := s.storeDB.UserByID(r.Context(), "usr-demo")
+			if err == nil && user != nil {
+				ctx := context.WithValue(r.Context(), authContextKey{}, requestAuth{user: user, token: "demo"})
+				r = r.WithContext(ctx)
+			}
+			next.ServeHTTP(w, r)
+			return
+		}
+
 		cookie, err := r.Cookie(sessionCookieName)
 		if err == nil && cookie.Value != "" {
 			user, err := s.authSvc.UserForToken(r.Context(), cookie.Value)
@@ -314,6 +325,12 @@ func (s *Server) attachAuth(next http.Handler) http.Handler {
 // open /security, but every other portal and API route is blocked.
 func (s *Server) enforcePrivilegedMFA(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Demo mode skips the MFA gate entirely.
+		if s.cfg.DemoNoAuth {
+			next.ServeHTTP(w, r)
+			return
+		}
+
 		authVal, ok := currentAuth(r)
 		if !ok || !auth.RequiresMFA(authVal.user) || authVal.user.TOTPEnabled {
 			next.ServeHTTP(w, r)

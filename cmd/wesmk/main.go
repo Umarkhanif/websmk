@@ -17,6 +17,7 @@ import (
 	"wesmk/internal/config"
 	"wesmk/internal/db"
 	"wesmk/internal/httpapi"
+	"wesmk/internal/model"
 	"wesmk/internal/secure"
 	"wesmk/internal/seed"
 	"wesmk/internal/store"
@@ -66,6 +67,26 @@ func main() {
 		EnvUsersJSON: os.Getenv("WESMK_USERS"),
 	}); err != nil {
 		log.Fatalf("seed failed: %v", err)
+	}
+
+	// Demo mode: ensure a synthetic user exists so the bypass can attach it.
+	if cfg.DemoNoAuth {
+		hash, err := auth.HashPassword("demo-not-used")
+		if err != nil {
+			log.Fatalf("demo user hash failed: %v", err)
+		}
+		if err := storeDB.UpsertUser(ctx, &model.User{
+			ID:         "usr-demo",
+			Username:   "demo",
+			FullName:   "Pengguna Demo",
+			Role:       cfg.DemoRole,
+			PasswordHash: hash,
+			IsActive:   true,
+			Attributes: map[string]any{},
+		}); err != nil {
+			log.Fatalf("demo user seed failed: %v", err)
+		}
+		log.Printf("[WARN] DEMO_NOAUTH aktif: login dinonaktifkan, semua request memakai user demo (role=%s)", cfg.DemoRole)
 	}
 
 	// Shadow-copy core entities from the JSON blob into normalized tables.
