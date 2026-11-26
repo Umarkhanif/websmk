@@ -4981,15 +4981,15 @@ a.progress-fact:hover {
 }
 
 .home-wrap {
-  width: min(1160px, 100% - 48px);
+  width: min(1180px, 100% - 48px);
   margin-inline: auto;
 }
 
 .home-topbar {
   position: sticky;
   top: 0;
-  z-index: 30;
-  background: rgba(255, 252, 245, 0.92);
+  z-index: 40;
+  background: rgba(255, 252, 245, 0.93);
   backdrop-filter: blur(14px) saturate(150%);
   -webkit-backdrop-filter: blur(14px) saturate(150%);
   border-bottom: 1px solid var(--border);
@@ -4998,8 +4998,8 @@ a.progress-fact:hover {
 .home-topbar-inner {
   display: flex;
   align-items: center;
-  gap: 24px;
-  min-height: 72px;
+  gap: 22px;
+  min-height: 74px;
 }
 
 .home-lockup {
@@ -5046,11 +5046,11 @@ a.progress-fact:hover {
 .home-nav {
   display: flex;
   align-items: center;
-  gap: 22px;
+  gap: 20px;
 }
 
 .home-nav a {
-  font-size: 0.88rem;
+  font-size: 0.87rem;
   font-weight: 600;
   color: var(--text-muted);
 }
@@ -5064,6 +5064,107 @@ a.progress-fact:hover {
   flex-shrink: 0;
 }
 
+/* Mobile menu without JavaScript: a details element keeps it keyboard
+   accessible and costs no script budget on the first paint. */
+.home-menu {
+  display: none;
+  position: relative;
+}
+
+.home-menu-btn {
+  list-style: none;
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--navy);
+  cursor: pointer;
+}
+
+.home-menu-btn::-webkit-details-marker {
+  display: none;
+}
+
+.home-menu-bars,
+.home-menu-bars::before,
+.home-menu-bars::after {
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  content: "";
+}
+
+.home-menu-bars {
+  position: relative;
+}
+
+.home-menu-bars::before {
+  position: absolute;
+  top: -6px;
+}
+
+.home-menu-bars::after {
+  position: absolute;
+  top: 6px;
+}
+
+.home-menu[open] .home-menu-bars {
+  background: transparent;
+}
+
+.home-menu[open] .home-menu-bars::before {
+  top: 0;
+  transform: rotate(45deg);
+}
+
+.home-menu[open] .home-menu-bars::after {
+  top: 0;
+  transform: rotate(-45deg);
+}
+
+.home-menu-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 12px);
+  width: min(280px, calc(100vw - 32px));
+  display: grid;
+  padding: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 24px 50px rgba(23, 46, 38, 0.18);
+}
+
+.home-menu-panel a {
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.home-menu-panel a:hover {
+  background: var(--surface-subtle);
+  text-decoration: none;
+}
+
+.home-menu-panel a.home-menu-cta {
+  background: var(--teal);
+  color: #FFFCF5;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.home-menu-panel a.home-menu-cta:hover {
+  background: #1F4A3C;
+}
+
 /* Hero: full-bleed photograph with a dark institutional wash on the left so
    the copy keeps AA contrast no matter how bright the picture is. */
 .home-hero {
@@ -5072,8 +5173,8 @@ a.progress-fact:hover {
   overflow: hidden;
   display: flex;
   align-items: center;
-  min-height: clamp(540px, 64vh, 660px);
-  padding: 84px 0 150px;
+  min-height: clamp(580px, 78vh, 780px);
+  padding: 96px 0 170px;
 }
 
 .home-hero-bg {
@@ -5088,7 +5189,7 @@ a.progress-fact:hover {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 42%;
+  object-position: center 40%;
 }
 
 .home-hero-bg::after {
@@ -5096,12 +5197,19 @@ a.progress-fact:hover {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(96deg, rgba(9, 24, 19, 0.93) 0%, rgba(9, 24, 19, 0.87) 28%, rgba(9, 24, 19, 0.66) 50%, rgba(9, 24, 19, 0.38) 74%, rgba(9, 24, 19, 0.16) 100%);
+    linear-gradient(96deg, rgba(9, 24, 19, 0.94) 0%, rgba(9, 24, 19, 0.88) 30%, rgba(9, 24, 19, 0.68) 52%, rgba(9, 24, 19, 0.34) 76%, rgba(9, 24, 19, 0.12) 100%);
 }
 
 .home-hero-inner {
   position: relative;
-  width: min(1160px, 100% - 48px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 372px;
+  align-items: center;
+  gap: clamp(32px, 5vw, 72px);
+}
+
+.home-hero-copy {
+  max-width: 40rem;
 }
 
 .home-kicker {
@@ -5115,31 +5223,31 @@ a.progress-fact:hover {
   border: 1px solid rgba(226, 189, 122, 0.4);
   border-radius: 999px;
   padding: 6px 13px;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 
 .home-hero h1 {
-  max-width: 17ch;
-  font-size: clamp(2.15rem, 1.15rem + 3.9vw, 3.9rem);
-  line-height: 1.02;
-  letter-spacing: -0.035em;
+  max-width: 19ch;
+  font-size: clamp(2.35rem, 1.05rem + 4.2vw, 4.3rem);
+  line-height: 1;
+  letter-spacing: -0.038em;
   color: #FFFCF5;
   text-wrap: balance;
 }
 
 .home-lead {
-  margin-top: 20px;
-  max-width: 56ch;
-  font-size: clamp(0.98rem, 0.94rem + 0.2vw, 1.08rem);
+  margin-top: 22px;
+  max-width: 52ch;
+  font-size: clamp(1rem, 0.94rem + 0.25vw, 1.1rem);
   line-height: 1.65;
-  color: rgba(255, 252, 245, 0.84);
+  color: rgba(255, 252, 245, 0.85);
 }
 
 .home-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 30px;
+  margin-top: 32px;
 }
 
 .home-hero-outline {
@@ -5154,27 +5262,106 @@ a.progress-fact:hover {
   color: #FFFCF5;
 }
 
+/* Quick-access card floats on the photograph, so the right half of the hero
+   carries a real action instead of empty image area. */
+.home-quick {
+  display: grid;
+  gap: 4px;
+  padding: 16px;
+  border-radius: 22px;
+  background: rgba(10, 26, 21, 0.58);
+  border: 1px solid rgba(255, 252, 245, 0.16);
+  box-shadow: 0 30px 60px rgba(4, 14, 11, 0.36);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  animation: home-fade-up 0.7s 0.16s ease-out both;
+}
+
+.home-quick-title {
+  padding: 6px 10px 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 252, 245, 0.62);
+}
+
+.home-quick-row {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) 16px;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  color: #FFFCF5;
+  transition: background 0.16s ease;
+}
+
+.home-quick-row:hover {
+  background: rgba(255, 252, 245, 0.1);
+  text-decoration: none;
+}
+
+.home-quick-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: rgba(226, 189, 122, 0.18);
+  color: #F2DCAE;
+}
+
+.home-quick-icon .icon {
+  width: 18px;
+  height: 18px;
+}
+
+.home-quick-row strong {
+  display: block;
+  font-size: 0.93rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.home-quick-row span span {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.79rem;
+  color: rgba(255, 252, 245, 0.66);
+}
+
+.home-quick-go {
+  color: rgba(255, 252, 245, 0.5);
+  font-size: 0.95rem;
+}
+
+.home-quick-row:hover .home-quick-go {
+  color: #F2DCAE;
+}
+
 /* Facts band overlapping the hero, so the first scroll reveals proof before
    any marketing copy. Only real numbers reach this list. */
 .home-facts {
   position: relative;
   z-index: 2;
-  margin-top: -76px;
+  margin-top: -84px;
 }
 
 .home-facts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   margin: 0;
   padding: 6px 0;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 18px;
-  box-shadow: 0 18px 44px rgba(23, 46, 38, 0.14);
+  border-radius: 20px;
+  box-shadow: 0 20px 50px rgba(23, 46, 38, 0.16);
 }
 
 .home-fact {
-  padding: 16px 24px;
+  padding: 18px 26px;
 }
 
 .home-fact + .home-fact {
@@ -5191,7 +5378,7 @@ a.progress-fact:hover {
 
 .home-fact dd {
   margin: 6px 0 0;
-  font-size: 1.7rem;
+  font-size: 1.8rem;
   font-weight: 600;
   line-height: 1.1;
   color: var(--navy);
@@ -5204,8 +5391,8 @@ a.progress-fact:hover {
 }
 
 .home-section {
-  padding: 72px 0;
-  scroll-margin-top: 88px;
+  padding: 88px 0;
+  scroll-margin-top: 96px;
 }
 
 .home-section-alt {
@@ -5217,18 +5404,21 @@ a.progress-fact:hover {
   max-width: 62ch;
 }
 
-.home-section-head h2 {
+.home-section-head h2,
+.home-practice-copy h2 {
   margin-top: 6px;
-  font-size: clamp(1.5rem, 1.05rem + 1.6vw, 2.05rem);
-  line-height: 1.15;
-  letter-spacing: -0.02em;
+  font-size: clamp(1.6rem, 1.05rem + 1.8vw, 2.3rem);
+  line-height: 1.12;
+  letter-spacing: -0.025em;
   color: var(--navy);
+  text-wrap: balance;
 }
 
-.home-section-head p {
-  margin-top: 10px;
-  font-size: 0.94rem;
-  line-height: 1.6;
+.home-section-head p,
+.home-practice-copy > p {
+  margin-top: 12px;
+  font-size: 0.95rem;
+  line-height: 1.65;
   color: var(--text-muted);
 }
 
@@ -5236,16 +5426,16 @@ a.progress-fact:hover {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
-  margin-top: 34px;
+  margin-top: 36px;
 }
 
 .home-door {
   display: flex;
   flex-direction: column;
   gap: 9px;
-  padding: 28px;
+  padding: 30px;
   border: 1px solid var(--border);
-  border-radius: 18px;
+  border-radius: 20px;
   background: var(--surface);
   box-shadow: var(--shadow);
   color: inherit;
@@ -5256,7 +5446,7 @@ a.progress-fact:hover {
   text-decoration: none;
   transform: translateY(-3px);
   border-color: var(--teal);
-  box-shadow: 0 20px 44px rgba(23, 46, 38, 0.14);
+  box-shadow: 0 22px 46px rgba(23, 46, 38, 0.14);
 }
 
 .home-door-icon {
@@ -5280,7 +5470,7 @@ a.progress-fact:hover {
 }
 
 .home-door strong {
-  font-size: 1.24rem;
+  font-size: 1.26rem;
   letter-spacing: -0.01em;
   color: var(--navy);
 }
@@ -5293,7 +5483,7 @@ a.progress-fact:hover {
 
 .home-door-go {
   margin-top: auto;
-  padding-top: 12px;
+  padding-top: 14px;
   font-size: 0.86rem;
   font-weight: 700;
   color: var(--teal);
@@ -5348,13 +5538,13 @@ a.progress-fact:hover {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 16px;
-  margin-top: 32px;
+  margin-top: 34px;
 }
 
 .home-feature {
-  padding: 20px;
+  padding: 22px;
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 16px;
   background: var(--surface);
 }
 
@@ -5388,23 +5578,36 @@ a.progress-fact:hover {
   }
 }
 
+/* Programmes: each card carries the workshop and the head of programme, so the
+   section reads like a prospectus instead of a list of acronyms. */
 .home-majors {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(224px, 1fr));
-  gap: 14px;
-  margin-top: 32px;
+  grid-template-columns: repeat(auto-fit, minmax(252px, 1fr));
+  gap: 16px;
+  margin-top: 34px;
 }
 
 .home-major {
-  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px;
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 18px;
   background: var(--surface);
+  box-shadow: 0 1px 0 rgba(23, 46, 38, 0.03);
+}
+
+.home-major-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
 }
 
 .home-major-code {
   display: inline-block;
-  padding: 3px 9px;
+  padding: 3px 10px;
   border-radius: 999px;
   background: var(--gold-soft);
   color: var(--gold-text);
@@ -5413,37 +5616,345 @@ a.progress-fact:hover {
   letter-spacing: 0.06em;
 }
 
-.home-major h3 {
-  margin-top: 10px;
-  font-size: 1.04rem;
-  line-height: 1.3;
-  color: var(--navy);
+.home-major-flag {
+  font-size: 0.74rem;
+  color: var(--text-soft);
 }
 
-.home-major p {
-  margin-top: 6px;
-  font-size: 0.84rem;
+.home-major h3 {
+  font-size: 1.06rem;
+  line-height: 1.3;
+  color: var(--navy);
+  text-wrap: balance;
+}
+
+.home-major-lab {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: 0.85rem;
   line-height: 1.5;
   color: var(--text-muted);
 }
 
-.home-major-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 12px;
-  font-size: 0.78rem;
+.home-major-lab .icon {
+  margin-top: 2px;
+  color: var(--teal);
+}
+
+.home-major-head {
+  font-size: 0.82rem;
+  line-height: 1.5;
   color: var(--text-soft);
 }
 
-.home-major-meta span + span::before {
-  content: "·";
-  margin-right: 12px;
-  color: var(--border-strong);
+.home-major-meta {
+  display: flex;
+  gap: 22px;
+  margin: 6px 0 0;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+}
+
+.home-major-meta dt {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-soft);
+}
+
+.home-major-meta dd {
+  margin: 2px 0 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+/* Practice band: deliberately dark so the page has one strong contrast beat
+   between two light sections. */
+.home-practice {
+  background: var(--navy);
+  padding: 84px 0;
+  scroll-margin-top: 96px;
+}
+
+.home-practice-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(28px, 4vw, 60px);
+}
+
+.home-practice-media {
+  margin: 0;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(4, 14, 11, 0.4);
+}
+
+.home-practice-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.home-practice-copy .eyebrow {
+  color: #E2BD7A;
+}
+
+.home-practice-copy h2 {
+  color: #FFFCF5;
+}
+
+.home-practice-copy > p {
+  color: rgba(255, 252, 245, 0.78);
+}
+
+.home-practice-list {
+  display: grid;
+  gap: 10px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-practice-list li {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255, 252, 245, 0.06);
+  border: 1px solid rgba(255, 252, 245, 0.1);
+}
+
+.home-practice-code {
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #E2BD7A;
+}
+
+.home-practice-list strong {
+  display: block;
+  font-size: 0.9rem;
+  color: #FFFCF5;
+}
+
+.home-practice-list span span {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.8rem;
+  color: rgba(255, 252, 245, 0.6);
+}
+
+/* Partners: plain chips. Only company names and sectors are published. */
+.home-partners {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  margin: 34px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-partner {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.home-partner-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--teal-soft);
+  color: var(--teal);
+}
+
+.home-partner-icon .icon {
+  width: 17px;
+  height: 17px;
+}
+
+.home-partner strong {
+  grid-column: 2;
+  font-size: 0.92rem;
+  line-height: 1.35;
+  color: var(--navy);
+}
+
+.home-partner span:last-child {
+  grid-column: 2;
+  margin-top: -8px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.home-lead-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  margin-top: 24px;
+  padding: 24px;
+  border-radius: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.home-lead-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--teal-soft);
+  color: var(--teal);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.home-lead-role {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--gold-text);
+}
+
+.home-lead-name {
+  margin-top: 2px;
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.home-lead-line {
+  margin-top: 6px;
+  font-size: 0.87rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* Account steps: numbered, so the "no self sign-up" rule is easy to follow. */
+.home-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 34px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: none;
+}
+
+.home-step {
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface);
+}
+
+.home-step-num {
+  display: inline-block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--gold-text);
+}
+
+.home-step h3 {
+  margin-top: 10px;
+  font-size: 1rem;
+  line-height: 1.35;
+  color: var(--navy);
+}
+
+.home-step p {
+  margin-top: 8px;
+  font-size: 0.87rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.home-steps-foot {
+  margin-top: 22px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* FAQ: native details/summary keeps it usable without JS. */
+.home-faq-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: clamp(24px, 4vw, 56px);
+  align-items: start;
+}
+
+.home-faq {
+  display: grid;
+  gap: 10px;
+}
+
+.home-faq-item {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  padding: 16px 18px;
+}
+
+.home-faq-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.93rem;
+  font-weight: 600;
+  color: var(--navy);
+  cursor: pointer;
+  list-style: none;
+}
+
+.home-faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.home-faq-item summary::after {
+  content: "+";
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: var(--teal);
+  flex-shrink: 0;
+}
+
+.home-faq-item[open] summary::after {
+  content: "−";
+}
+
+.home-faq-item p {
+  margin-top: 10px;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: var(--text-muted);
 }
 
 .home-cta {
   background: var(--navy);
-  padding: 52px 0;
+  padding: 56px 0;
 }
 
 .home-cta-inner {
@@ -5455,7 +5966,7 @@ a.progress-fact:hover {
 }
 
 .home-cta h2 {
-  font-size: clamp(1.4rem, 1.1rem + 1.2vw, 1.9rem);
+  font-size: clamp(1.45rem, 1.1rem + 1.3vw, 2rem);
   line-height: 1.15;
   letter-spacing: -0.02em;
   color: #FFFCF5;
@@ -5469,87 +5980,129 @@ a.progress-fact:hover {
 
 .home-footer {
   background: var(--bg);
-  padding: 26px 0;
+  padding: 40px 0 34px;
 }
 
 .home-footer-inner {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 16px;
+  gap: 32px;
   flex-wrap: wrap;
 }
 
-.home-footer strong {
-  display: block;
-  font-size: 0.92rem;
-  color: var(--navy);
+.home-footer-lockup {
+  margin-right: 0;
 }
 
-.home-footer p {
-  margin-top: 2px;
-  font-size: 0.8rem;
+.home-footer-cols {
+  display: flex;
+  gap: 56px;
+}
+
+.home-footer-cols a {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.86rem;
+  color: var(--text-muted);
+}
+
+.home-footer-title {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   color: var(--text-soft);
 }
 
-.home-footer-links {
-  display: flex;
-  gap: 20px;
-  font-size: 0.85rem;
+.home-footer-brand {
+  max-width: 22rem;
+}
+
+@media (max-width: 1080px) {
+  .home-hero-inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 34px;
+  }
+  .home-quick {
+    max-width: 420px;
+  }
+  .home-practice-inner,
+  .home-faq-wrap {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .home-steps {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 @media (max-width: 900px) {
   .home-nav {
     display: none;
   }
+  .home-menu {
+    display: block;
+  }
   .home-topbar-inner {
     min-height: 64px;
-    gap: 12px;
+    gap: 10px;
   }
   .home-hero {
-    min-height: 560px;
-    padding: 64px 0 120px;
+    min-height: 0;
+    padding: 56px 0 130px;
   }
   .home-hero h1 {
     max-width: none;
   }
   .home-facts {
-    margin-top: -60px;
+    margin-top: -66px;
   }
-  .home-section {
-    padding: 54px 0;
+  .home-section,
+  .home-practice {
+    padding: 60px 0;
   }
   .home-doors,
   .home-utils {
     grid-template-columns: minmax(0, 1fr);
   }
   .home-door {
-    padding: 22px;
+    padding: 24px;
+  }
+  .home-footer-cols {
+    gap: 40px;
   }
 }
 
 @media (max-width: 560px) {
-  .home-wrap,
-  .home-hero-inner {
+  .home-wrap {
     width: calc(100% - 32px);
   }
   .home-lockup-copy span {
     display: none;
   }
+  .home-lockup-copy strong {
+    font-size: 0.9rem;
+    line-height: 1.3;
+  }
+  .home-topbar .home-login {
+    display: none;
+  }
   .home-hero {
-    min-height: 500px;
-    padding: 52px 0 104px;
+    padding: 40px 0 118px;
   }
   .home-hero-bg::after {
     background:
-      linear-gradient(180deg, rgba(11, 26, 21, 0.72) 0%, rgba(11, 26, 21, 0.92) 62%, rgba(11, 26, 21, 0.96) 100%);
+      linear-gradient(180deg, rgba(11, 26, 21, 0.7) 0%, rgba(11, 26, 21, 0.92) 58%, rgba(11, 26, 21, 0.96) 100%);
+  }
+  .home-quick {
+    max-width: none;
   }
   .home-actions .button {
     width: 100%;
     justify-content: center;
   }
   .home-facts {
-    margin-top: -52px;
+    margin-top: -58px;
   }
   .home-facts-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -5565,10 +6118,49 @@ a.progress-fact:hover {
   .home-fact:nth-child(even) {
     border-left: 1px solid var(--border) !important;
   }
+  /* An odd number of facts would leave a hole in the last row. */
+  .home-fact:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    border-left: 0 !important;
+    border-top: 1px solid var(--border);
+  }
   .home-fact dd {
-    font-size: 1.35rem;
+    font-size: 1.4rem;
   }
   .home-fact dd.home-fact-text {
     font-size: 0.92rem;
+  }
+  .home-lead-note {
+    padding: 20px;
+  }
+  .home-footer-cols {
+    gap: 40px;
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .home-hero-copy > * {
+    animation: home-fade-up 0.65s ease-out both;
+  }
+  .home-hero-copy > *:nth-child(2) {
+    animation-delay: 0.06s;
+  }
+  .home-hero-copy > *:nth-child(3) {
+    animation-delay: 0.12s;
+  }
+  .home-hero-copy > *:nth-child(4) {
+    animation-delay: 0.18s;
+  }
+}
+
+@keyframes home-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

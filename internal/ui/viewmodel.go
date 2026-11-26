@@ -151,6 +151,8 @@ type HomePage struct {
 	AcademicYear string
 	Stats        []HomeStat
 	Majors       []HomeMajor
+	Partners     []HomePartner
+	Headmaster   string
 }
 
 type HomeStat struct {
@@ -162,8 +164,17 @@ type HomeMajor struct {
 	Code     string
 	Name     string
 	Detail   string
+	Head     string
+	Partners int
 	Classes  int
 	Students int
+}
+
+// HomePartner is an industry partner that already hosts PKL placements. Only
+// the company name and sector are published; supervisor contacts stay private.
+type HomePartner struct {
+	Name   string
+	Sector string
 }
 
 type LoginPage struct {

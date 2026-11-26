@@ -10,6 +10,7 @@ URL stok. Tiga foto login gratis untuk penggunaan komersial di bawah
 | `login-campus.jpg` | [Pexels 35161340](https://www.pexels.com/photo/ceremonial-flag-exchange-in-school-yard-35161340/) | Tommy Kurniawan |
 | `login-lab.jpg` | [Pexels 7742816](https://www.pexels.com/photo/students-busy-using-laptops-in-the-classroom-7742816/) | Alena Darmel |
 | `home-hero.jpg` | Gambar placeholder hasil generate, **bukan foto sekolah sungguhan** | — |
+| `home-workshop.jpg` | Gambar placeholder hasil generate, **bukan foto sekolah sungguhan** | — |
 
 ## Mengganti dengan foto sekolah sendiri
 
@@ -20,6 +21,7 @@ URL stok. Tiga foto login gratis untuk penggunaan komersial di bawah
    - `login-hero.jpg`: sekitar 1800×1200 px, objek utama di tengah.
    - `login-campus.jpg` dan `login-lab.jpg`: sekitar 1100×730 px, objek utama
      di tengah karena gambar dipotong `object-fit: cover`.
+   - `home-workshop.jpg`: sekitar 1400×1050 px, dipotong `4 / 3` di beranda.
 3. Jalankan `go build ./...` atau restart server agar aset embedded ikut berubah.
 4. Jika memakai reverse proxy/CDN, naikkan query cache pada
    `internal/ui/pages/login.templ` dan `internal/ui/layout/base.templ`
@@ -27,5 +29,6 @@ URL stok. Tiga foto login gratis untuk penggunaan komersial di bawah
 
 Jangan memakai foto siswa tanpa izin sekolah/wali. Foto suasana kelas, lab,
 gedung, atau kegiatan tanpa wajah yang jelas lebih aman untuk template yang
-dijual ke banyak sekolah. `home-hero.jpg` wajib diganti sebelum dipakai publik:
-gambar itu hanya pengisi tata letak, bukan dokumentasi sekolah.
+dijual ke banyak sekolah. `home-hero.jpg` dan `home-workshop.jpg` wajib diganti
+sebelum dipakai publik: keduanya hanya pengisi tata letak, bukan dokumentasi
+sekolah.

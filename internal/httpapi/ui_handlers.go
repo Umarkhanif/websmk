@@ -296,6 +296,7 @@ func (s *Server) handleRootUI(w http.ResponseWriter, r *http.Request) {
 func (s *Server) renderHomePage(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	page := ui.HomePage{AcademicYear: s.activeAcademicYearLabel(ctx)}
+	pklPartners := 0
 
 	if s.storeDB != nil {
 		if classes, err := s.storeDB.ListClassrooms(ctx); err == nil && len(classes) > 0 {
@@ -327,37 +328,106 @@ func (s *Server) renderHomePage(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Until master data is filled, show the programs already configured in the
-	// state document. Read-only: no auto-seed from a public page.
-	if len(page.Majors) == 0 && s.storeDB != nil {
+	// The state document carries the details classrooms cannot: workshop rooms,
+	// heads of programme, and the industry partners that already host PKL.
+	// Read-only: a public page must never seed demo data as a side effect.
+	if s.storeDB != nil {
 		if raw, err := s.storeDB.GetState(ctx); err == nil && len(raw) > 0 {
 			if doc, err := decodeState(raw); err == nil {
+				index := make(map[string]int, len(page.Majors))
+				for i, major := range page.Majors {
+					index[major.Code] = i
+				}
 				for _, major := range asMapSlice(doc["majors"]) {
 					code := strings.TrimSpace(strVal(major, "code"))
 					name := strings.TrimSpace(strVal(major, "name"))
 					if code == "" || name == "" {
 						continue
 					}
-					page.Majors = append(page.Majors, ui.HomeMajor{
-						Code:   code,
-						Name:   name,
-						Detail: strings.TrimSpace(strVal(major, "workshopRoom")),
-					})
-					if len(page.Majors) == 6 {
-						break
+					detail := strings.TrimSpace(strVal(major, "workshopRoom"))
+					head := strings.TrimSpace(strVal(major, "headOfMajor"))
+					partners := intVal(major, "dudiPartnerCount")
+					if i, ok := index[code]; ok {
+						if page.Majors[i].Detail == "" {
+							page.Majors[i].Detail = detail
+						}
+						page.Majors[i].Head = head
+						page.Majors[i].Partners = partners
+						continue
 					}
+					if len(page.Majors) >= 6 {
+						continue
+					}
+					index[code] = len(page.Majors)
+					page.Majors = append(page.Majors, ui.HomeMajor{
+						Code:     code,
+						Name:     name,
+						Detail:   detail,
+						Head:     head,
+						Partners: partners,
+					})
 				}
+
+				// Only the company name and sector are public; supervisor names,
+				// phone numbers, and PINs stay inside the portal.
+				seen := map[string]bool{}
+				partners := make([]ui.HomePartner, 0, 8)
+				for _, placement := range asMapSlice(doc["pklPlacements"]) {
+					name := strings.TrimSpace(strVal(placement, "companyName"))
+					if name == "" || seen[name] {
+						continue
+					}
+					seen[name] = true
+					if len(partners) == 8 {
+						continue
+					}
+					partners = append(partners, ui.HomePartner{
+						Name:   name,
+						Sector: strings.TrimSpace(strVal(placement, "industrySector")),
+					})
+				}
+				page.Partners = partners
+				pklPartners = len(seen)
 			}
 		}
 	}
 
 	// Keep the proof strip meaningful while classrooms are still empty: the
 	// number of programmes is real master data, not a placeholder figure.
-	if len(page.Stats) == 0 && len(page.Majors) > 0 {
+	if len(page.Majors) > 0 && !hasHomeStat(page.Stats, "Program keahlian") {
 		page.Stats = append(page.Stats, ui.HomeStat{Label: "Program keahlian", Value: strconv.Itoa(len(page.Majors))})
+	}
+	if pklPartners > 0 {
+		page.Stats = append(page.Stats, ui.HomeStat{Label: "Mitra PKL", Value: strconv.Itoa(pklPartners)})
+	}
+
+	// The head of school is a real account, not a stock photo caption. Skip the
+	// role suffix some accounts carry so the page does not read twice.
+	if s.storeDB != nil {
+		if users, err := s.storeDB.ListUsers(ctx); err == nil {
+			for _, user := range users {
+				if user.Role != "headmaster" || !user.IsActive {
+					continue
+				}
+				page.Headmaster = strings.TrimSpace(strings.TrimSuffix(
+					strings.TrimSpace(user.FullName), "(Kepala Sekolah)"))
+				break
+			}
+		}
 	}
 
 	renderComponent(w, r, http.StatusOK, pages.Home(page))
+}
+
+// hasHomeStat keeps the proof strip from printing the same label twice when
+// both normalized tables and the state document can supply it.
+func hasHomeStat(stats []ui.HomeStat, label string) bool {
+	for _, stat := range stats {
+		if stat.Label == label {
+			return true
+		}
+	}
+	return false
 }
 
 func (s *Server) handleLoginPage(w http.ResponseWriter, r *http.Request) {
