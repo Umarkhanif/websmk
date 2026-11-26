@@ -26,8 +26,8 @@ templ Home(page ui.HomePage) {
 			<meta name="apple-mobile-web-app-title" content="WESMK"/>
 			<link rel="preload" href="/ui-assets/fonts/plus-jakarta-sans-latin.woff2" as="font" type="font/woff2" crossorigin/>
 			<link rel="preload" href="/ui-assets/images/home-hero.jpg" as="image"/>
-			<link rel="stylesheet" href="/ui-assets/app.css?v=20261127a"/>
-			<script src="/ui-assets/app.js?v=20261126a" defer></script>
+			<link rel="stylesheet" href="/ui-assets/app.css?v=20261127b"/>
+			<script src="/ui-assets/app.js?v=20261127b" defer></script>
 		</head>
 		<body class="home-body">
 			<a class="skip-link" href="#main-content">Lewati ke konten utama</a>
@@ -98,6 +98,10 @@ templ Home(page ui.HomePage) {
 									<span>Lihat program keahlian</span>
 								</a>
 							</div>
+							<p class="home-hero-note">
+								<span>@components.Icon("check", "icon-xs") Akun dibuat oleh sekolah</span>
+								<span>@components.Icon("check", "icon-xs") Data hanya untuk warga sekolah</span>
+							</p>
 						</div>
 
 						<aside class="home-quick" aria-label="Akses cepat">
@@ -126,6 +130,10 @@ templ Home(page ui.HomePage) {
 								</span>
 								<span class="home-quick-go" aria-hidden="true">→</span>
 							</a>
+							<a class="home-quick-help" href="/contact">
+								<span>Butuh bantuan masuk?</span>
+								<span aria-hidden="true">→</span>
+							</a>
 						</aside>
 					</div>
 				</section>
@@ -144,6 +152,7 @@ templ Home(page ui.HomePage) {
 								</div>
 							}
 						</dl>
+						<p class="home-facts-note">Angka diambil langsung dari data sekolah.</p>
 					</div>
 				</div>
 
@@ -371,6 +380,50 @@ templ Home(page ui.HomePage) {
 						</div>
 					</section>
 				}
+
+				<section class="home-trust" id="keamanan">
+					<div class="home-wrap home-trust-inner">
+						<header class="home-trust-head">
+							<p class="eyebrow">Keamanan &amp; kepercayaan</p>
+							<h2>Akun aman, data tetap terbatas</h2>
+							<p>
+								Portal menyimpan data pribadi siswa, jadi aksesnya dijaga berlapis
+								dan setiap dokumen bisa dilacak.
+							</p>
+						</header>
+
+						<ul class="home-trust-list">
+							<li>
+								<span class="home-trust-icon">@components.Icon("lock", "icon")</span>
+								<span>
+									<strong>Verifikasi dua langkah</strong>
+									<span>Akun staf butuh lapisan kedua saat masuk, di luar kata sandi.</span>
+								</span>
+							</li>
+							<li>
+								<span class="home-trust-icon">@components.Icon("eye", "icon")</span>
+								<span>
+									<strong>Akses per peran</strong>
+									<span>Siswa, guru, dan orang tua hanya menerima datanya sendiri.</span>
+								</span>
+							</li>
+							<li>
+								<span class="home-trust-icon">@components.Icon("file-check", "icon")</span>
+								<span>
+									<strong>Tanda tangan elektronik</strong>
+									<span>Surat dan kwitansi resmi ditandatangani secara elektronik.</span>
+								</span>
+							</li>
+							<li>
+								<span class="home-trust-icon">@components.Icon("shield-alert", "icon")</span>
+								<span>
+									<strong>Verifikasi publik</strong>
+									<span>Nomor dokumen bisa dicek siapa saja lewat halaman verifikasi.</span>
+								</span>
+							</li>
+						</ul>
+					</div>
+				</section>
 
 				<section class="home-section" id="akun">
 					<div class="home-wrap">

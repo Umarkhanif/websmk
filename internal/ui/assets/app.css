@@ -5250,6 +5250,28 @@ a.progress-fact:hover {
   margin-top: 32px;
 }
 
+/* Two short facts under the buttons: they answer "do I need to sign up?"
+   before anyone scrolls. */
+.home-hero-note {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin-top: 24px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: rgba(255, 252, 245, 0.74);
+}
+
+.home-hero-note span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.home-hero-note .icon-xs {
+  color: #E2BD7A;
+}
+
 .home-hero-outline {
   background: transparent;
   color: #FFFCF5;
@@ -5269,9 +5291,9 @@ a.progress-fact:hover {
   gap: 4px;
   padding: 16px;
   border-radius: 22px;
-  background: rgba(10, 26, 21, 0.58);
-  border: 1px solid rgba(255, 252, 245, 0.16);
-  box-shadow: 0 30px 60px rgba(4, 14, 11, 0.36);
+  background: rgba(8, 23, 18, 0.74);
+  border: 1px solid rgba(255, 252, 245, 0.22);
+  box-shadow: 0 30px 60px rgba(4, 14, 11, 0.4);
   backdrop-filter: blur(16px) saturate(140%);
   -webkit-backdrop-filter: blur(16px) saturate(140%);
   animation: home-fade-up 0.7s 0.16s ease-out both;
@@ -5295,6 +5317,11 @@ a.progress-fact:hover {
   border-radius: 14px;
   color: #FFFCF5;
   transition: background 0.16s ease;
+}
+
+.home-quick-row + .home-quick-row {
+  border-top: 1px solid rgba(255, 252, 245, 0.09);
+  border-radius: 0;
 }
 
 .home-quick-row:hover {
@@ -5341,6 +5368,24 @@ a.progress-fact:hover {
   color: #F2DCAE;
 }
 
+.home-quick-help {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 6px;
+  padding: 12px 12px 6px;
+  border-top: 1px solid rgba(255, 252, 245, 0.14);
+  font-size: 0.81rem;
+  font-weight: 600;
+  color: rgba(255, 252, 245, 0.72);
+}
+
+.home-quick-help:hover {
+  text-decoration: none;
+  color: #F2DCAE;
+}
+
 /* Facts band overlapping the hero, so the first scroll reveals proof before
    any marketing copy. Only real numbers reach this list. */
 .home-facts {
@@ -5351,9 +5396,9 @@ a.progress-fact:hover {
 
 .home-facts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
   margin: 0;
-  padding: 6px 0;
+  padding: 8px 0;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 20px;
@@ -5361,7 +5406,7 @@ a.progress-fact:hover {
 }
 
 .home-fact {
-  padding: 18px 26px;
+  padding: 20px 28px;
 }
 
 .home-fact + .home-fact {
@@ -5378,10 +5423,18 @@ a.progress-fact:hover {
 
 .home-fact dd {
   margin: 6px 0 0;
-  font-size: 1.8rem;
+  font-size: clamp(1.9rem, 1.4rem + 1.2vw, 2.5rem);
   font-weight: 600;
-  line-height: 1.1;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
   color: var(--navy);
+}
+
+.home-facts-note {
+  margin-top: 12px;
+  font-size: 0.76rem;
+  color: var(--text-soft);
+  text-align: right;
 }
 
 .home-fact dd.home-fact-text {
@@ -5402,6 +5455,26 @@ a.progress-fact:hover {
 
 .home-section-head {
   max-width: 62ch;
+}
+
+/* A short rule before each section label gives the long page a rhythm that
+   the cards alone do not provide. */
+.home-section .eyebrow,
+.home-practice .eyebrow,
+.home-trust .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.home-section .eyebrow::before,
+.home-practice .eyebrow::before,
+.home-trust .eyebrow::before {
+  content: "";
+  width: 26px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.5;
 }
 
 .home-section-head h2,
@@ -5851,6 +5924,85 @@ a.progress-fact:hover {
   color: var(--text-muted);
 }
 
+/* Trust band: compact and factual. It sits between the industrial partners and
+   the account steps, where a parent starts asking about data safety. */
+.home-trust {
+  background: var(--surface);
+  border-block: 1px solid var(--border);
+  padding: 58px 0;
+  scroll-margin-top: 96px;
+}
+
+.home-trust-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 56px);
+}
+
+.home-trust-head h2 {
+  margin-top: 6px;
+  font-size: clamp(1.45rem, 1.05rem + 1.4vw, 2rem);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: var(--navy);
+  text-wrap: balance;
+}
+
+.home-trust-head p {
+  margin-top: 10px;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--text-muted);
+}
+
+.home-trust-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-trust-list li {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+}
+
+.home-trust-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: var(--teal-soft);
+  color: var(--teal);
+}
+
+.home-trust-icon .icon {
+  width: 17px;
+  height: 17px;
+}
+
+.home-trust-list strong {
+  display: block;
+  font-size: 0.92rem;
+  line-height: 1.35;
+  color: var(--navy);
+}
+
+.home-trust-list li > span:last-child > span {
+  display: block;
+  margin-top: 3px;
+  font-size: 0.81rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
 /* Account steps: numbered, so the "no self sign-up" rule is easy to follow. */
 .home-steps {
   display: grid;
@@ -6028,7 +6180,8 @@ a.progress-fact:hover {
     max-width: 420px;
   }
   .home-practice-inner,
-  .home-faq-wrap {
+  .home-faq-wrap,
+  .home-trust-inner {
     grid-template-columns: minmax(0, 1fr);
   }
   .home-steps {
@@ -6058,7 +6211,8 @@ a.progress-fact:hover {
     margin-top: -66px;
   }
   .home-section,
-  .home-practice {
+  .home-practice,
+  .home-trust {
     padding: 60px 0;
   }
   .home-doors,
@@ -6132,6 +6286,13 @@ a.progress-fact:hover {
   }
   .home-lead-note {
     padding: 20px;
+  }
+  .home-trust-list {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  .home-facts-note {
+    text-align: left;
   }
   .home-footer-cols {
     gap: 40px;

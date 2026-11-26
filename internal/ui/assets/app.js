@@ -13,6 +13,28 @@
   window.addEventListener("offline", updateConnectionStatus);
   updateConnectionStatus();
 
+  // 0b. The public landing menu is a <details>; close it once a link is picked
+  // so the panel does not stay on top of the section it just scrolled to.
+  function closeHomeMenu() {
+    document.querySelectorAll(".home-menu[open]").forEach(function (menu) {
+      menu.removeAttribute("open");
+    });
+  }
+
+  document.addEventListener("click", function (event) {
+    var target = event.target;
+    if (!target || !target.closest) return;
+    if (target.closest(".home-menu")) {
+      if (target.closest(".home-menu-panel a")) closeHomeMenu();
+      return;
+    }
+    closeHomeMenu();
+  });
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") closeHomeMenu();
+  });
+
   // 1. Mobile drawer toggle & close
   function setDrawerOpen(open) {
     var drawer = document.getElementById("mobile-drawer");
