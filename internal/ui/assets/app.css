@@ -5039,7 +5039,6 @@ html:has(.home-body) {
 .home-body summary:focus-visible {
   outline: 2px solid #5B86C4;
   outline-offset: 3px;
-  border-radius: 4px;
 }
 
 .home-wrap {
@@ -5156,6 +5155,19 @@ html:has(.home-body) {
   top: 18px;
   right: 22px;
   z-index: 60;
+  transition: transform 0.28s ease, opacity 0.28s ease;
+}
+
+.home-menu.is-tucked {
+  transform: translateY(-150%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.home-menu:focus-within {
+  transform: none;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .home-menu-btn {
@@ -5320,6 +5332,12 @@ html:has(.home-body) {
 
 .home-hero-foot {
   max-width: 60rem;
+}
+
+/* The hero call to action only exists on phones, where the pill navigation is
+   hidden and the menu would otherwise be the only way to sign in. */
+.home-hero-actions {
+  display: none;
 }
 
 .home-hero-kicker {
@@ -6191,6 +6209,26 @@ html:has(.home-body) {
   .home-hero-inner {
     padding: 26px 0 38px;
   }
+  .home-menu {
+    top: 16px;
+    right: 16px;
+  }
+  .home-hero-actions {
+    display: flex;
+    margin-top: 24px;
+  }
+  /* Phones crop the photograph tighter, so the copy needs a deeper wash to
+     stay legible over a bright uniform or laptop screen. */
+  .home-hero-bg::after {
+    background:
+      linear-gradient(180deg, rgba(6, 17, 38, 0.6) 0%, rgba(6, 17, 38, 0.06) 24%, rgba(6, 17, 38, 0.46) 46%, rgba(6, 17, 38, 0.88) 72%, rgba(6, 17, 38, 0.96) 100%);
+  }
+  .home-hero-kicker {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.84);
+    text-shadow: 0 1px 14px rgba(6, 17, 38, 0.55);
+  }
   .home-scroll {
     display: none;
   }
@@ -6214,6 +6252,33 @@ html:has(.home-body) {
   .home-wrap {
     width: calc(100% - 36px);
   }
+  .home-band {
+    min-height: 0;
+    padding: 72px 0;
+  }
+  .home-band::after {
+    background: linear-gradient(180deg, rgba(6, 17, 38, 0.74) 0%, rgba(6, 17, 38, 0.88) 100%);
+  }
+  .home-band h2 {
+    font-size: clamp(1.75rem, 1.2rem + 3vw, 2.2rem);
+  }
+  .home-major-meta {
+    gap: 6px 18px;
+    padding-top: 10px;
+  }
+  .home-major-meta > span {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 6px;
+  }
+  .home-major-meta > span > span {
+    font-size: 0.78rem;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .home-major-meta strong {
+    font-size: 0.85rem;
+  }
   .home-hero-inner {
     width: calc(100% - 36px);
   }
@@ -6233,21 +6298,37 @@ html:has(.home-body) {
   }
   .home-major-meta {
     grid-column: 1;
-    gap: 22px;
+    gap: 6px 18px;
   }
   .home-facts-grid {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .home-fact {
-    padding: 18px 0 0;
+    padding: 16px 14px 0 0;
     border-left: 0;
   }
-  .home-fact + .home-fact {
-    margin-top: 18px;
-    padding-top: 18px;
-    padding-left: 0;
+  .home-fact:first-child {
+    grid-column: 1 / -1;
+    padding-right: 0;
+  }
+  .home-fact:nth-child(n + 2) {
+    margin-top: 16px;
+    padding-top: 16px;
     border-top: 1px solid var(--home-rule-soft);
+  }
+  .home-fact + .home-fact {
+    padding-left: 14px;
+    border-left: 1px solid var(--home-rule-soft);
+  }
+  .home-fact:nth-child(2) {
+    padding-left: 0;
     border-left: 0;
+  }
+  .home-fact dd {
+    font-size: 1.4rem;
+  }
+  .home-fact dd.home-fact-text {
+    font-size: 1.15rem;
   }
   .home-trust-list {
     grid-template-columns: minmax(0, 1fr);

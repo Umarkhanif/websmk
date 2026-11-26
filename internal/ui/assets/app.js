@@ -35,21 +35,31 @@
     if (event.key === "Escape") closeHomeMenu();
   });
 
-  // 0c. The floating landing nav tucks away while the page is read downwards
-  // and returns on the first upward scroll, so it never sits on a heading.
+  // 0c. The floating landing controls tuck away while the page is read
+  // downwards and return on the first upward scroll, so they never sit on a
+  // heading (on a phone the menu button otherwise lands on body copy).
   (function () {
     var nav = document.querySelector(".home-nav");
-    if (!nav) return;
+    var menu = document.querySelector(".home-menu");
+    var controls = [nav, menu].filter(Boolean);
+    if (!controls.length) return;
     var lastY = window.scrollY;
     var queued = false;
+
+    function setTucked(tucked) {
+      controls.forEach(function (control) {
+        if (tucked && control === menu && control.hasAttribute("open")) return;
+        control.classList.toggle("is-tucked", tucked);
+      });
+    }
 
     function update() {
       queued = false;
       var y = window.scrollY;
       if (y > lastY + 4 && y > 200) {
-        nav.classList.add("is-tucked");
+        setTucked(true);
       } else if (y < lastY - 4 || y < 80) {
-        nav.classList.remove("is-tucked");
+        setTucked(false);
       }
       lastY = y;
     }

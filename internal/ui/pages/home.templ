@@ -27,8 +27,8 @@ templ Home(page ui.HomePage) {
 			<link rel="preload" href="/ui-assets/fonts/source-serif-4-latin.woff2" as="font" type="font/woff2" crossorigin/>
 			<link rel="preload" href="/ui-assets/fonts/plus-jakarta-sans-latin.woff2" as="font" type="font/woff2" crossorigin/>
 			<link rel="preload" href="/ui-assets/images/home-hero.jpg" as="image"/>
-			<link rel="stylesheet" href="/ui-assets/app.css?v=20261127d"/>
-			<script src="/ui-assets/app.js?v=20261127d" defer></script>
+			<link rel="stylesheet" href="/ui-assets/app.css?v=20261127h"/>
+			<script src="/ui-assets/app.js?v=20261127h" defer></script>
 		</head>
 		<body class="home-body">
 			<a class="skip-link" href="#main-content">Lewati ke konten utama</a>
@@ -74,11 +74,17 @@ templ Home(page ui.HomePage) {
 					<div class="home-hero-inner">
 						<a class="home-brand" href="/">
 							<span class="home-brand-name">SMK Negeri 1 Rekayasa</span>
-							<span class="home-brand-sub">WESMK</span>
+							<span class="home-brand-sub">Portal layanan sekolah</span>
 						</a>
 						<div class="home-hero-foot">
-							<p class="home-hero-kicker">Portal layanan sekolah · Tahun ajaran { page.AcademicYear }</p>
+							<p class="home-hero-kicker">Tahun ajaran { page.AcademicYear }</p>
 							<h1>SMK Negeri 1 Rekayasa</h1>
+							<div class="home-hero-actions">
+								<a class="home-pill" href="/login">
+									<span>Masuk ke portal</span>
+									@components.Icon("arrow-right", "icon")
+								</a>
+							</div>
 						</div>
 					</div>
 					<p class="home-scroll" aria-hidden="true">Gulir</p>
