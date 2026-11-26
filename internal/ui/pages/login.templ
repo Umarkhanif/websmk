@@ -12,7 +12,7 @@ templ Login(page ui.LoginPage) {
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 			<meta name="color-scheme" content="light"/>
-			<meta name="theme-color" content="#172E26"/>
+			<meta name="theme-color" content="#0F254C"/>
 			<title>Masuk — SMK Negeri 1 Rekayasa</title>
 			<meta name="description" content="Masuk ke portal layanan SMK Negeri 1 Rekayasa."/>
 			<link rel="icon" type="image/svg+xml" href="/ui-assets/favicon.svg"/>
@@ -21,19 +21,17 @@ templ Login(page ui.LoginPage) {
 			<meta name="apple-mobile-web-app-capable" content="yes"/>
 			<meta name="apple-mobile-web-app-title" content="WESMK"/>
 			<link rel="preload" href="/ui-assets/fonts/plus-jakarta-sans-latin.woff2" as="font" type="font/woff2" crossorigin/>
-			<link rel="stylesheet" href="/ui-assets/app.css?v=20261126e"/>
-			<script src="/ui-assets/app.js?v=20261124p" defer></script>
+			<link rel="preload" href="/ui-assets/fonts/source-serif-4-latin.woff2" as="font" type="font/woff2" crossorigin/>
+			<link rel="stylesheet" href="/ui-assets/app.css?v=20261127l"/>
+			<script src="/ui-assets/app.js?v=20261127l" defer></script>
 		</head>
 		<body class="login-body">
 			<main class="login-shell">
 				<section class="login-visual" aria-label="Identitas sekolah">
 					<div class="login-visual-inner">
 						<div class="login-school-lockup">
-							<span class="login-school-mark" aria-hidden="true">SMK</span>
-							<div>
-								<strong>SMK Negeri 1 Rekayasa</strong>
-								<span>Portal layanan sekolah</span>
-							</div>
+							<strong>SMK Negeri 1 Rekayasa</strong>
+							<span>Portal layanan sekolah</span>
 						</div>
 
 						<div class="login-visual-copy">
@@ -55,24 +53,23 @@ templ Login(page ui.LoginPage) {
 						</div>
 					</div>
 
-					<div class="login-photo-stack" aria-hidden="true">
-						<figure class="login-photo">
-							<img src="/ui-assets/images/login-campus.jpg" alt="" width="1100" height="733"/>
-							<figcaption>Kegiatan sekolah</figcaption>
-						</figure>
-						<figure class="login-photo">
-							<img src="/ui-assets/images/login-lab.jpg" alt="" width="1100" height="733"/>
-							<figcaption>Lab komputer</figcaption>
-						</figure>
-					</div>
 				</section>
 
 				<section class="login-panel" aria-label="Form masuk">
 					<div class="login-panel-inner">
+						<a class="login-back" href="/">
+							@components.Icon("arrow-right", "icon")
+							<span>Beranda</span>
+						</a>
+
 						<div class="login-panel-head">
-							<span class="eyebrow">Portal sekolah</span>
+							<span class="eyebrow">Akun sekolah</span>
 							<h2>Masuk ke akun Anda</h2>
-							<p>Gunakan NISN, NIP, atau nomor WhatsApp orang tua yang terdaftar.</p>
+							if page.Tab == "parent" {
+								<p>Masuk dengan nomor WhatsApp orang tua atau wali yang terdaftar di sekolah.</p>
+							} else {
+								<p>Masuk dengan NISN siswa atau NIP guru dan staf sekolah.</p>
+							}
 						</div>
 
 						<nav class="login-tabs" aria-label="Jenis akun">
@@ -108,8 +105,8 @@ templ Login(page ui.LoginPage) {
 									<input id="parent-phone" class="input input-mono" type="tel" name="phone" value={ page.ParentWA } placeholder="081234567800" autocomplete="tel" required/>
 								</div>
 								<button class="button button-primary button-block" type="submit">
-									@components.Icon("mail", "icon")
 									<span>Kirim Tautan WhatsApp</span>
+									@components.Icon("mail", "icon")
 								</button>
 							</form>
 						} else {
@@ -130,15 +127,17 @@ templ Login(page ui.LoginPage) {
 									<input id="password" class="input" type="password" name="password" placeholder="••••••••" autocomplete="current-password" required/>
 								</div>
 								<button class="button button-primary button-block" type="submit">
-									@components.Icon("arrow-right", "icon")
 									<span>Masuk ke Portal</span>
+									@components.Icon("arrow-right", "icon")
 								</button>
 							</form>
 						}
 
-						<p class="login-help">
-							Lupa kata sandi? <a href="/contact">Hubungi Admin TU</a>.
-						</p>
+						if page.Tab != "parent" {
+							<p class="login-help">
+								Lupa kata sandi? <a href="/contact">Hubungi Admin TU</a>.
+							</p>
+						}
 
 
 						<div class="login-panel-footer">
