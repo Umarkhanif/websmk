@@ -35,6 +35,36 @@
     if (event.key === "Escape") closeHomeMenu();
   });
 
+  // 0c. The floating landing nav tucks away while the page is read downwards
+  // and returns on the first upward scroll, so it never sits on a heading.
+  (function () {
+    var nav = document.querySelector(".home-nav");
+    if (!nav) return;
+    var lastY = window.scrollY;
+    var queued = false;
+
+    function update() {
+      queued = false;
+      var y = window.scrollY;
+      if (y > lastY + 4 && y > 200) {
+        nav.classList.add("is-tucked");
+      } else if (y < lastY - 4 || y < 80) {
+        nav.classList.remove("is-tucked");
+      }
+      lastY = y;
+    }
+
+    window.addEventListener(
+      "scroll",
+      function () {
+        if (queued) return;
+        queued = true;
+        window.requestAnimationFrame(update);
+      },
+      { passive: true }
+    );
+  })();
+
   // 1. Mobile drawer toggle & close
   function setDrawerOpen(open) {
     var drawer = document.getElementById("mobile-drawer");

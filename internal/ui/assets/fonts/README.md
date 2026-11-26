@@ -16,6 +16,8 @@ Diambil dari Google Fonts API (subset **latin** dan **latin-ext** saja):
 | `ibm-plex-mono-500-latin-ext.woff2` | IBM Plex Mono | 500 | ±14 KB |
 | `ibm-plex-mono-600-latin.woff2` | IBM Plex Mono | 600 | ±16 KB |
 | `ibm-plex-mono-600-latin-ext.woff2` | IBM Plex Mono | 600 | ±14 KB |
+| `source-serif-4-latin.woff2` | Source Serif 4 | 300–600 (variable) | ±122 KB |
+| `source-serif-4-latin-ext.woff2` | Source Serif 4 | 300–600 (variable) | ±101 KB |
 
 `@font-face` untuk file-file ini ada di bagian atas `../app.css` (lengkap dengan
 `unicode-range`). Keduanya memakai `font-display: swap`.
@@ -26,6 +28,7 @@ Keduanya **SIL Open Font License 1.1**, boleh dipakai komersial dan dibundel:
 
 - `OFL-PlusJakartaSans.txt`
 - `OFL-IBMPlexMono.txt`
+- `OFL-SourceSerif4.txt`
 
 Jangan hapus file lisensi ini saat memperbarui font.
 
