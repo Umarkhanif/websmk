@@ -124,7 +124,7 @@ func (s *Server) buildRoleShell(ctx context.Context, authVal requestAuth, active
 		FullName:     authVal.user.FullName,
 		Initials:     ui.Initials(authVal.user.FullName),
 		Username:     authVal.user.Username,
-		SchoolName:   "SMK Negeri 1 Rekayasa",
+		SchoolName:   ui.SchoolName(),
 		AcademicYear: academicYear,
 		ActiveTab:    activeTab,
 		PageTitle:    ui.ActiveLabel(nav, activeTab),
@@ -400,12 +400,12 @@ func (s *Server) buildStudentProgress(doc map[string]any, student ui.StudentView
 	stdMap := findStudentMap(doc, student.ID)
 	attendance := intVal(stdMap, "attendanceConductScore")
 	progress := ui.StudentProgressView{
-		QuizAverage:    student.DailyQuizAvg,
-		AttitudeScore:  student.AttitudeScore,
-		Attendance:     attendance,
-		TotalExams:     4,
-		PendingTasks:   0,
-		HolisticScore:  fmt.Sprintf("%.1f", state.CalculateHolisticScore(float64(intVal(stdMap, "cbtScore")), float64(student.DailyQuizAvg), float64(student.AttitudeScore), float64(attendance))),
+		QuizAverage:   student.DailyQuizAvg,
+		AttitudeScore: student.AttitudeScore,
+		Attendance:    attendance,
+		TotalExams:    4,
+		PendingTasks:  0,
+		HolisticScore: fmt.Sprintf("%.1f", state.CalculateHolisticScore(float64(intVal(stdMap, "cbtScore")), float64(student.DailyQuizAvg), float64(student.AttitudeScore), float64(attendance))),
 	}
 	if hasInvoice {
 		progress.SppRemaining = invoice.Remaining

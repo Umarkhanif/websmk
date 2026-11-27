@@ -63,3 +63,9 @@ Masalah: Pengawas CBT belum memiliki kontrol reset ujian siswa/lab dan belum ada
 Penyebab: Ketiadaan endpoint reset & audit trail reset CBT di state serta tidak tersedianya peran developer internal.
 Perbaikan: Tambahkan reset ujian individu & bulk di live proctoring beserta audit log, buat form `/contact` terintegrasi, dan hadirkan portal peran `developer` (`developer.admin`).
 Verifikasi: `templ generate`, `go vet ./...`, `go test ./...`, HTTP 200 OK di `/contact`, `/teacher/exam-control`, dan `/developer/dashboard`.
+
+## 2026-11-27 — templ-raw-dalam-script-tag
+Masalah: `@templ.Raw(...)` di dalam `<script>` dirender literal, bukan JSON.
+Penyebab: templ memperlakukan isi `<script>` sebagai teks mentah, tidak mengevaluasi sintaks `@`.
+Perbaikan: Bungkus seluruh tag: `@templ.Raw("<script ...>" + json + "</script>")`.
+Verifikasi: `templ generate`, `go vet ./...`, `go test ./...`, output render diperiksa.

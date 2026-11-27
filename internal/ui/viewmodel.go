@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"os"
 	"strings"
 	"time"
 )
@@ -153,6 +154,8 @@ type HomePage struct {
 	Majors       []HomeMajor
 	Partners     []HomePartner
 	Headmaster   string
+	SiteURL      string // absolute origin, no trailing slash, for canonical/OG
+	JSONLD       string // schema.org EducationalOrganization, raw JSON
 }
 
 type HomeStat struct {
@@ -395,6 +398,15 @@ func RoleLabel(role string) string {
 	default:
 		return "Pengguna"
 	}
+}
+
+// SchoolName returns the school display name. WESMK_SCHOOL_NAME overrides it
+// so a sales-preview instance can show a fictional school.
+func SchoolName() string {
+	if name := strings.TrimSpace(os.Getenv("WESMK_SCHOOL_NAME")); name != "" {
+		return name
+	}
+	return "SMK Negeri 1 Rekayasa"
 }
 
 func Initials(name string) string {

@@ -5204,6 +5204,32 @@ html:has(.home-body) {
   pointer-events: none;
 }
 
+/* Anchor targets clear the floating nav, not just the sectioned ones. */
+.home-body [id] {
+  scroll-margin-top: 96px;
+}
+
+/* Hero calls to action: white capsule for sign-in, ghost capsule for anchors. */
+.home-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 28px;
+}
+
+.home-hero a.home-pill-ghost {
+  background: rgba(255, 255, 255, 0.08);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: none;
+}
+
+.home-hero a.home-pill-ghost:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #FFFFFF;
+  transform: translateY(-1px);
+}
+
 /* Keyboard focus always brings the nav back, even after it was tucked away. */
 .home-nav:focus-within {
   transform: translateX(-50%);
@@ -5558,7 +5584,7 @@ html:has(.home-body) {
 }
 
 .home-fact dt {
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -5808,7 +5834,7 @@ html:has(.home-body) {
 }
 
 .home-major-meta > span > span {
-  font-size: 0.66rem;
+  font-size: 0.72rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--home-muted);

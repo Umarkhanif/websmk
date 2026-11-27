@@ -13,8 +13,8 @@ templ Login(page ui.LoginPage) {
 			<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 			<meta name="color-scheme" content="light"/>
 			<meta name="theme-color" content="#0F254C"/>
-			<title>Masuk — SMK Negeri 1 Rekayasa</title>
-			<meta name="description" content="Masuk ke portal layanan SMK Negeri 1 Rekayasa."/>
+			<title>Masuk — { ui.SchoolName() }</title>
+			<meta name="description" content={ "Masuk ke portal layanan " + ui.SchoolName() + "." }/>
 			<link rel="icon" type="image/svg+xml" href="/ui-assets/favicon.svg"/>
 			<link rel="manifest" href="/ui-assets/manifest.webmanifest"/>
 			<link rel="apple-touch-icon" href="/ui-assets/apple-touch-icon.png"/>
@@ -30,7 +30,7 @@ templ Login(page ui.LoginPage) {
 				<section class="login-visual" aria-label="Identitas sekolah">
 					<div class="login-visual-inner">
 						<div class="login-school-lockup">
-							<strong>SMK Negeri 1 Rekayasa</strong>
+							<strong>{ ui.SchoolName() }</strong>
 							<span>Portal layanan sekolah</span>
 						</div>
 

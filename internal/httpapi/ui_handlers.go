@@ -416,7 +416,36 @@ func (s *Server) renderHomePage(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	page.SiteURL = requestSiteURL(r, s.cfg.TrustProxy)
+	page.JSONLD = homeJSONLD(page)
+
 	renderComponent(w, r, http.StatusOK, pages.Home(page))
+}
+
+// requestSiteURL reconstructs the absolute origin for canonical and OG URLs.
+func requestSiteURL(r *http.Request, trustProxy bool) string {
+	scheme := "http"
+	if r.TLS != nil || (trustProxy && strings.EqualFold(r.Header.Get("X-Forwarded-Proto"), "https")) {
+		scheme = "https"
+	}
+	return scheme + "://" + r.Host
+}
+
+// homeJSONLD describes the school for search engines.
+func homeJSONLD(page ui.HomePage) string {
+	doc := map[string]any{
+		"@context":    "https://schema.org",
+		"@type":       "EducationalOrganization",
+		"name":        ui.SchoolName(),
+		"url":         page.SiteURL + "/",
+		"inLanguage":  "id-ID",
+		"description": "Portal layanan sekolah: akademik, keuangan, PKL, dan komunikasi untuk siswa, guru, orang tua, dan staf.",
+	}
+	raw, err := json.Marshal(doc)
+	if err != nil {
+		return "{}"
+	}
+	return string(raw)
 }
 
 // hasHomeStat keeps the proof strip from printing the same label twice when
@@ -549,7 +578,7 @@ func (s *Server) renderSecurityPage(w http.ResponseWriter, r *http.Request, auth
 	}
 	if !user.TOTPEnabled && user.TOTPSecret != "" {
 		data.Secret = user.TOTPSecret
-		data.OTPAuthURI = auth.TOTPURI(user.TOTPSecret, user.Username, "WESMK SMK Negeri 1 Rekayasa")
+		data.OTPAuthURI = auth.TOTPURI(user.TOTPSecret, user.Username, "WESMK "+ui.SchoolName())
 	}
 	data.Session.IP = s.clientIP(r)
 	data.Session.UserAgent = r.UserAgent()
@@ -2934,7 +2963,7 @@ func (s *Server) handleContactPage(w http.ResponseWriter, r *http.Request) {
 		RoleLabel:    "Pengunjung",
 		FullName:     "Pengunjung / Siswa",
 		Initials:     "WB",
-		SchoolName:   "SMK Negeri 1 Rekayasa",
+		SchoolName:   ui.SchoolName(),
 		AcademicYear: s.activeAcademicYearLabel(r.Context()),
 		ActiveTab:    "contact",
 		PageTitle:    "Hubungi & Lapor Bug",

@@ -17,8 +17,18 @@ templ Home(page ui.HomePage) {
 			<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 			<meta name="color-scheme" content="light"/>
 			<meta name="theme-color" content="#0F254C"/>
-			<title>SMK Negeri 1 Rekayasa — Portal Layanan Sekolah</title>
-			<meta name="description" content="Portal layanan SMK Negeri 1 Rekayasa: akademik, keuangan, PKL, dan komunikasi sekolah untuk siswa, guru, orang tua, dan staf."/>
+			<title>{ ui.SchoolName() } — Portal Layanan Sekolah</title>
+			<meta name="description" content={ "Portal layanan " + ui.SchoolName() + ": akademik, keuangan, PKL, dan komunikasi sekolah untuk siswa, guru, orang tua, dan staf." }/>
+			<link rel="canonical" href={ page.SiteURL + "/" }/>
+			<meta property="og:type" content="website"/>
+			<meta property="og:site_name" content={ ui.SchoolName() }/>
+			<meta property="og:title" content={ ui.SchoolName() + " — Portal Layanan Sekolah" }/>
+			<meta property="og:description" content={ "Portal layanan " + ui.SchoolName() + ": akademik, keuangan, PKL, dan komunikasi sekolah untuk siswa, guru, orang tua, dan staf." }/>
+			<meta property="og:url" content={ page.SiteURL + "/" }/>
+			<meta property="og:image" content={ page.SiteURL + "/ui-assets/images/home-hero.jpg" }/>
+			<meta property="og:locale" content="id_ID"/>
+			<meta name="twitter:card" content="summary_large_image"/>
+			@templ.Raw(`<script type="application/ld+json">` + page.JSONLD + `</script>`)
 			<link rel="icon" type="image/svg+xml" href="/ui-assets/favicon.svg"/>
 			<link rel="manifest" href="/ui-assets/manifest.webmanifest"/>
 			<link rel="apple-touch-icon" href="/ui-assets/apple-touch-icon.png"/>
@@ -27,7 +37,7 @@ templ Home(page ui.HomePage) {
 			<link rel="preload" href="/ui-assets/fonts/source-serif-4-latin.woff2" as="font" type="font/woff2" crossorigin/>
 			<link rel="preload" href="/ui-assets/fonts/plus-jakarta-sans-latin.woff2" as="font" type="font/woff2" crossorigin/>
 			<link rel="preload" href="/ui-assets/images/home-hero.jpg" as="image"/>
-			<link rel="stylesheet" href="/ui-assets/app.css?v=20261127l"/>
+			<link rel="stylesheet" href="/ui-assets/app.css?v=20261127m"/>
 			<script src="/ui-assets/app.js?v=20261127l" defer></script>
 		</head>
 		<body class="home-body">
@@ -38,7 +48,7 @@ templ Home(page ui.HomePage) {
 				<a href="#jurusan">Program keahlian</a>
 				<a href="#mitra">Mitra industri</a>
 				<a href="#faq">Pertanyaan</a>
-				<a class="home-pill-cta" href="/login">Masuk portal</a>
+				<a class="home-pill-cta" href="/login">Masuk ke portal</a>
 			</nav>
 
 			<a class="home-dock-login" href="/login" aria-label="Masuk ke portal">
@@ -50,7 +60,7 @@ templ Home(page ui.HomePage) {
 					<span class="sr-only">Buka menu</span>
 				</summary>
 				<nav class="home-menu-panel" aria-label="Navigasi selengkapnya">
-					<a class="home-menu-cta" href="/login">Masuk ke Portal</a>
+					<a class="home-menu-cta" href="/login">Masuk ke portal</a>
 					<a href="#layanan">Layanan</a>
 					<a href="#jurusan">Program keahlian</a>
 					<a href="#mitra">Mitra industri</a>
@@ -77,13 +87,19 @@ templ Home(page ui.HomePage) {
 					<div class="home-hero-inner">
 						<a class="home-brand" href="/">
 							<span class="home-brand-name">
-								<span class="home-brand-line">SMK Negeri 1</span>
-								<span class="home-brand-line">Rekayasa</span>
+								<span class="home-brand-line">{ ui.SchoolName() }</span>
 							</span>
 						</a>
 						<div class="home-hero-foot">
 							<p class="home-hero-kicker">Tahun ajaran { page.AcademicYear }</p>
 							<h1>Portal layanan sekolah</h1>
+							<div class="home-hero-actions">
+								<a class="home-pill" href="/login">
+									<span>Masuk ke portal</span>
+									@components.Icon("arrow-right", "icon")
+								</a>
+								<a class="home-pill home-pill-ghost" href="#layanan">Lihat layanan</a>
+							</div>
 						</div>
 					</div>
 					<p class="home-scroll" aria-hidden="true">Gulir</p>
@@ -493,7 +509,7 @@ templ Home(page ui.HomePage) {
 				<div class="home-wrap home-footer-top">
 					<div class="home-footer-brand">
 						<a class="home-brand" href="/">
-							<span class="home-brand-name">SMK Negeri 1 Rekayasa</span>
+							<span class="home-brand-name">{ ui.SchoolName() }</span>
 							<span class="home-brand-sub">Portal layanan sekolah</span>
 						</a>
 						<p class="home-footer-note">
@@ -516,7 +532,7 @@ templ Home(page ui.HomePage) {
 					</div>
 				</div>
 				<div class="home-wrap home-footer-bottom">
-					<span>© SMK Negeri 1 Rekayasa</span>
+					<span>© { ui.SchoolName() }</span>
 					<span>Portal WESMK · Tahun ajaran { page.AcademicYear }</span>
 				</div>
 			</footer>
