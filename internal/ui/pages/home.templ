@@ -37,7 +37,7 @@ templ Home(page ui.HomePage) {
 			<link rel="preload" href="/ui-assets/fonts/source-serif-4-latin.woff2" as="font" type="font/woff2" crossorigin/>
 			<link rel="preload" href="/ui-assets/fonts/plus-jakarta-sans-latin.woff2" as="font" type="font/woff2" crossorigin/>
 			<link rel="preload" href="/ui-assets/images/home-hero.jpg" as="image"/>
-			<link rel="stylesheet" href="/ui-assets/app.css?v=20261127m"/>
+			<link rel="stylesheet" href="/ui-assets/app.css?v=20261127n"/>
 			<script src="/ui-assets/app.js?v=20261127l" defer></script>
 		</head>
 		<body class="home-body">
@@ -45,8 +45,12 @@ templ Home(page ui.HomePage) {
 
 			<nav class="home-nav" aria-label="Navigasi utama">
 				<a href="#layanan">Layanan</a>
-				<a href="#jurusan">Program keahlian</a>
-				<a href="#mitra">Mitra industri</a>
+				if len(page.Majors) > 0 {
+					<a href="#jurusan">Program keahlian</a>
+				}
+				if len(page.Partners) > 0 {
+					<a href="#mitra">Mitra industri</a>
+				}
 				<a href="#faq">Pertanyaan</a>
 				<a class="home-pill-cta" href="/login">Masuk ke portal</a>
 			</nav>
@@ -62,8 +66,12 @@ templ Home(page ui.HomePage) {
 				<nav class="home-menu-panel" aria-label="Navigasi selengkapnya">
 					<a class="home-menu-cta" href="/login">Masuk ke portal</a>
 					<a href="#layanan">Layanan</a>
-					<a href="#jurusan">Program keahlian</a>
-					<a href="#mitra">Mitra industri</a>
+					if len(page.Majors) > 0 {
+						<a href="#jurusan">Program keahlian</a>
+					}
+					if len(page.Partners) > 0 {
+						<a href="#mitra">Mitra industri</a>
+					}
 					<a href="#keamanan">Keamanan &amp; kepercayaan</a>
 					<a href="#akun">Cara dapat akun</a>
 					<a href="#faq">Pertanyaan</a>
@@ -526,8 +534,12 @@ templ Home(page ui.HomePage) {
 					<div>
 						<p class="home-footer-title">Jelajahi</p>
 						<a href="#layanan">Layanan</a>
-						<a href="#jurusan">Program keahlian</a>
-						<a href="#mitra">Mitra industri</a>
+						if len(page.Majors) > 0 {
+							<a href="#jurusan">Program keahlian</a>
+						}
+						if len(page.Partners) > 0 {
+							<a href="#mitra">Mitra industri</a>
+						}
 						<a href="#faq">Pertanyaan</a>
 					</div>
 				</div>

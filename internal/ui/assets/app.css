@@ -5230,6 +5230,13 @@ html:has(.home-body) {
   transform: translateY(-1px);
 }
 
+/* Wide screens have the pill navigation; the hamburger is redundant. */
+@media (min-width: 901px) {
+  .home-menu {
+    display: none;
+  }
+}
+
 /* Keyboard focus always brings the nav back, even after it was tucked away. */
 .home-nav:focus-within {
   transform: translateX(-50%);
@@ -5365,7 +5372,8 @@ html:has(.home-body) {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  min-height: clamp(560px, 92vh, 900px);
+  min-height: 100vh; /* full-bleed hero on every screen width */
+  min-height: 100dvh;
   background: var(--home-ink);
   color: #FFFFFF;
 }
@@ -5398,7 +5406,8 @@ html:has(.home-body) {
   justify-content: space-between;
   gap: 56px;
   width: min(1180px, 100% - 48px);
-  min-height: clamp(560px, 92vh, 900px);
+  min-height: 100vh;
+  min-height: 100dvh;
   margin-inline: auto;
   padding: 30px 0 46px;
 }
