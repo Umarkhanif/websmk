@@ -288,6 +288,20 @@ func (s *Server) csrfGuard(next http.Handler) http.Handler {
 	})
 }
 
+// guestFacingPath lists the public pages that must stay guest-visible even
+// when DEMO_NOAUTH auto-logs the visitor in. The landing page and the other
+// public pages come before the portal, so demo mode must show them instead of
+// redirecting straight to a role dashboard. Portal links on those pages still
+// open the demo role, which is the point of demo mode.
+func guestFacingPath(path string) bool {
+	switch {
+	case path == "/", path == "/contact", path == "/verify",
+		strings.HasPrefix(path, "/verify/"):
+		return true
+	}
+	return false
+}
+
 func (s *Server) attachAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if strings.HasPrefix(r.URL.Path, "/ui-assets/") || r.URL.Path == "/api/health" {
@@ -295,24 +309,25 @@ func (s *Server) attachAuth(next http.Handler) http.Handler {
 			return
 		}
 
-		// Demo mode: no login required; attach the synthetic demo user.
-		if s.cfg.DemoNoAuth {
-			user, err := s.storeDB.UserByID(r.Context(), "usr-demo")
-			if err == nil && user != nil {
-				ctx := context.WithValue(r.Context(), authContextKey{}, requestAuth{user: user, token: "demo"})
-				r = r.WithContext(ctx)
-			}
-			next.ServeHTTP(w, r)
-			return
-		}
-
-		cookie, err := r.Cookie(sessionCookieName)
-		if err == nil && cookie.Value != "" {
+		// A real session always wins, so signing in works even in demo mode.
+		if cookie, err := r.Cookie(sessionCookieName); err == nil && cookie.Value != "" {
 			user, err := s.authSvc.UserForToken(r.Context(), cookie.Value)
 			if err != nil {
 				log.Printf("session lookup failed: %v", err)
 			} else if user != nil {
 				ctx := context.WithValue(r.Context(), authContextKey{}, requestAuth{user: user, token: cookie.Value})
+				r = r.WithContext(ctx)
+				next.ServeHTTP(w, r)
+				return
+			}
+		}
+
+		// Demo mode: no login required; attach the synthetic demo user to the
+		// portal only, leaving the public pages above as a guest sees them.
+		if s.cfg.DemoNoAuth && !guestFacingPath(r.URL.Path) {
+			user, err := s.storeDB.UserByID(r.Context(), "usr-demo")
+			if err == nil && user != nil {
+				ctx := context.WithValue(r.Context(), authContextKey{}, requestAuth{user: user, token: "demo"})
 				r = r.WithContext(ctx)
 			}
 		}

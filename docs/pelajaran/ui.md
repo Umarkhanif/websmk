@@ -69,3 +69,9 @@ Masalah: `@templ.Raw(...)` di dalam `<script>` dirender literal, bukan JSON.
 Penyebab: templ memperlakukan isi `<script>` sebagai teks mentah, tidak mengevaluasi sintaks `@`.
 Perbaikan: Bungkus seluruh tag: `@templ.Raw("<script ...>" + json + "</script>")`.
 Verifikasi: `templ generate`, `go vet ./...`, `go test ./...`, output render diperiksa.
+
+## 2026-11-28 — landing-terlewati-saat-demo-noauth
+Masalah: Dengan `WESMK_DEMO_NOAUTH=true`, `/` dan `/login` langsung 302 ke dashboard peran sehingga landing page tidak pernah tampil.
+Penyebab: `attachAuth` menempelkan user demo ke semua path, termasuk halaman publik.
+Perbaikan: Halaman tamu (`/`, `/contact`, `/verify*`) tidak lagi memakai user demo, sesi nyata selalu diutamakan, dan tautan portal di landing tetap membuka portal demo.
+Verifikasi: `go vet ./...`, `go test ./...`; mode demo `/` 200 landing, `/login?tab=staff` 302 ke `/teacher/dashboard` 200.
