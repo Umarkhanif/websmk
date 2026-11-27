@@ -286,6 +286,7 @@
 }
 @media (max-width: 900px) {
   .sf-hero { margin-left: 0; width: 100%; }
+  .sf-slide, .sf-body .sf-hero-overlay { border-radius: 0 0 0 90px; }
   .sf-dots { top: auto; right: auto; bottom: 22px; left: 50%; transform: translateX(-50%); flex-direction: row; }
   .sf-body .sf-caption { right: 0; width: 100%; }
   .sf-brandcard { position: relative; top: auto; left: auto; width: auto; height: auto; padding: 8px 16px; border-bottom-right-radius: 60px; flex-direction: row; align-items: center; gap: 8px; }
