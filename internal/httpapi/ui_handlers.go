@@ -246,9 +246,18 @@ func (s *Server) handleUIAsset(w http.ResponseWriter, r *http.Request) {
 	case "icon-192.png", "icon-512.png", "apple-touch-icon.png":
 		w.Header().Set("Content-Type", "image/png")
 	default:
-		if strings.HasPrefix(name, "images/") && filepath.Ext(name) == ".jpg" {
-			w.Header().Set("Content-Type", "image/jpeg")
-			break
+		if strings.HasPrefix(name, "images/") {
+			switch filepath.Ext(name) {
+			case ".jpg":
+				w.Header().Set("Content-Type", "image/jpeg")
+				break
+			case ".png":
+				w.Header().Set("Content-Type", "image/png")
+				break
+			}
+			if w.Header().Get("Content-Type") != "" {
+				break
+			}
 		}
 		if strings.HasPrefix(name, "fonts/") && filepath.Ext(name) == ".woff2" {
 			w.Header().Set("Content-Type", "font/woff2")

@@ -87,3 +87,9 @@ Masalah: Setelah "Keluar dari portal", pengunjung mendarat di `/login` (dan di m
 Penyebab: `handleLogoutForm` mengarahkan ke `/login`, bukan halaman publik.
 Perbaikan: Logout sekarang redirect ke `/` (landing page).
 Verifikasi: `go vet ./...`, `go test ./internal/httpapi/...`; POST `/logout` → 303 `/`, GET `/` → 200 landing.
+
+## 2026-11-28 — kartu-logo-pakai-lambang-png
+Masalah: Kartu logo landing memakai emblem SVG kecil + tiga baris wordmark, padahal situs acuan hanya menampilkan lambang tanpa teks; PNG logo baru juga 404 walau filenya ada di `assets/images`.
+Penyebab: Aset gambar di-embed lewat pola `images/*.jpg` saja, dan `handleUIAsset` hanya mengizinkan ekstensi `.jpg` di bawah `images/`.
+Perbaikan: Tambah `images/*.png` ke `//go:embed`, izinkan `.png` dengan `Content-Type: image/png`, lalu ganti isi `.sf-brandcard` dengan satu `<img>` lambang (600×542, `object-fit: contain`) tanpa wordmark.
+Verifikasi: `templ generate`, `go vet ./...`, `go test ./...`; `/ui-assets/images/logo-crest.png` 200 `image/png`, kartu 270×240 dengan gambar 234×208, mobile lambang 46px.
