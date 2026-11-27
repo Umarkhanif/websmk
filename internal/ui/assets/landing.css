@@ -108,16 +108,16 @@
 .sf-menu-panel .sf-btn { margin-top: 8px; color: #fff; }
 
 /* ---- hero: wide banner, right-aligned title, dots, fade slider ---- */
-.sf-hero { position: relative; isolation: isolate; overflow: hidden; margin-left: 80px; width: calc(100% - 80px); height: clamp(420px, 60vh, 650px); background: transparent; color: #fff; display: flex; align-items: center; justify-content: flex-end; }
+.sf-hero { position: relative; isolation: isolate; overflow: hidden; margin-left: 80px; width: calc(100% - 80px); height: 650px; background: transparent; color: #fff; display: flex; align-items: center; justify-content: flex-end; }
 .sf-hero-track { position: absolute; inset: 0; z-index: -2; display: flex; width: 400%; height: 100%; animation: sf-slide 16s infinite; }
-.sf-slide { width: 25%; height: 100%; background-size: cover; background-position: center; border-radius: 0 0 0 44px; }
-.sf-body .sf-hero-overlay { position: absolute; inset: 0; z-index: -1; background: rgba(0, 0, 0, 0.3); border-radius: 0 0 0 44px; }
-.sf-body .sf-hero-inner { width: 100%; max-width: none; margin: 0; height: 100%; padding: 100px 0 70px; display: flex; align-items: center; }
-.sf-body .sf-hero-captions { position: relative; width: 100%; height: 245px; display: flex; align-items: center; justify-content: flex-end; align-self: flex-end; margin-bottom: 29px; }
-.sf-caption { position: absolute; right: 0; width: min(660px, 100%); margin: 0; text-align: right; font-family: var(--sf-sans); font-weight: 800; font-size: clamp(2.2rem, 1rem + 3.4vw, 4.25rem); font-weight: 900; line-height: 1.2; text-transform: uppercase; color: #fff; opacity: 0; animation: sf-caption 16s infinite; }
+.sf-slide { width: 25%; height: 100%; background-size: cover; background-position: center; border-radius: 0 0 0 300px; }
+.sf-body .sf-hero-overlay { position: absolute; inset: 0; z-index: -1; background: rgba(0, 0, 0, 0.3); border-radius: 0 0 0 300px; }
+.sf-body .sf-hero-inner { width: 100%; max-width: none; margin: 0; height: 100%; padding: 100px 0 50px; display: flex; align-items: center; }
+.sf-body .sf-hero-captions { position: relative; width: 100%; height: 245px; display: flex; align-items: flex-end; justify-content: flex-end; align-self: flex-end; margin-bottom: 0; }
+.sf-caption { position: absolute; top: auto; bottom: 0; right: 0; width: min(660px, 100%); margin: 0; text-align: right; font-family: var(--sf-sans); font-weight: 800; font-size: clamp(2.2rem, 1rem + 3.4vw, 4.25rem); font-weight: 900; line-height: 1.2; text-transform: uppercase; color: #fff; opacity: 0; animation: sf-caption 16s infinite; }
 .sf-body .sf-caption span { display: block; }
 .sf-body .sf-caption span { display: block; }
-.sf-body .sf-caption { color: #fff; font-weight: 900; font-size: clamp(2.2rem, 1rem + 3.4vw, 68px); width: min(800px, 100%); right: 14vw; }
+.sf-body .sf-caption { color: #fff; font-weight: 900; font-size: 68px; width: min(800px, 100%); right: 35px; }
 .sf-caption:nth-child(1) { animation-delay: 0s; }
 .sf-caption:nth-child(2) { animation-delay: 4s; }
 .sf-caption:nth-child(3) { animation-delay: 8s; }
@@ -134,7 +134,7 @@
   27%, 100% { opacity: 0; }
 }
 /* School identity card: white block overlapping header + hero. */
-.sf-brandcard { position: absolute; z-index: 70; top: 0; left: 50px; width: 270px; height: 240px; padding: 18px 20px; background: #fff; border-bottom-right-radius: 44px; display: flex; flex-direction: column; justify-content: space-between; gap: 10px; color: var(--sf-ink); }
+.sf-brandcard { position: absolute; z-index: 70; top: 0; left: 0; width: 270px; height: 240px; padding: 18px 20px; background: #fff; border-bottom-right-radius: 60px; display: flex; flex-direction: column; justify-content: space-between; gap: 10px; color: var(--sf-ink); }
 .sf-brandcard:hover { color: var(--sf-ink); }
 .sf-brandmark svg { width: 100px; height: 100px; display: block; }
 .sf-brandwords { display: flex; flex-direction: column; font-weight: 800; font-size: 1.05rem; line-height: 1.18; letter-spacing: 0.06em; text-transform: uppercase; color: #181818; }
@@ -175,7 +175,7 @@
 /* ---- cards: image + color block, hover reveals description + white pill ---- */
 .sf-cards { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 30px; }
 .sf-cards-3 { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
-.sf-card { position: relative; overflow: hidden; aspect-ratio: 650 / 488; border-radius: 0 40px 0 0; background: var(--c, var(--sf-primary)); }
+.sf-card { position: relative; overflow: hidden; aspect-ratio: 650 / 488; border-radius: 0 76px 0 0; background: var(--c, var(--sf-primary)); }
 .sf-color-primary { --c: var(--sf-primary); }
 .sf-color-secondary { --c: var(--sf-secondary); }
 .sf-color-third { --c: var(--sf-third); }
@@ -255,7 +255,7 @@
 .sf-reach { padding: 76px 45px; background: #fff; border-top: 1px solid var(--sf-rule-soft); }
 
 /* ---- footer: light slate, 3 columns + non-discrimination ---- */
-.sf-footer { background: #373e43; color: #fff; border-radius: 0 60px 0 0; padding: 140px 0 55px; }
+.sf-footer { background: #373e43; color: #fff; border-radius: 0 200px 0 0; padding: 140px 0 55px; }
 .sf-footer-main { display: grid; grid-template-columns: 1fr 2fr; gap: 50px; }
 .sf-footer .sf-logo-mark { background: #fff; color: #373e43; }
 .sf-footer .sf-logo-text strong { color: #fff; }
@@ -282,9 +282,10 @@
 }
 @media (max-width: 900px) {
   .sf-hero { margin-left: 0; width: 100%; }
-  .sf-slide, .sf-body .sf-hero-overlay { border-radius: 0 0 0 32px; }
+  .sf-hero { height: 380px; }
+  .sf-slide, .sf-body .sf-hero-overlay { border-radius: 0 0 0 150px; }
   .sf-dots { top: auto; right: auto; bottom: 22px; left: 50%; transform: translateX(-50%); flex-direction: row; }
-  .sf-body .sf-caption { right: 0; width: 100%; font-size: clamp(1.75rem, 7.2vw, 2.4rem); line-height: 1.15; }
+  .sf-body .sf-caption { right: 0; width: 100%; font-size: clamp(30px, 5vw, 40px); line-height: 1.2; }
   #header-area { display: flex; align-items: center; gap: 8px; padding: 10px 16px; }
   .sf-brandcard { position: static; width: auto; height: auto; padding: 0; background: transparent; border-radius: 0; flex: 1 1 auto; flex-direction: row; align-items: center; justify-content: flex-start; gap: 10px; }
   .sf-brandmark svg { width: 38px; height: 38px; }
@@ -293,7 +294,7 @@
   .sf-header-inner { width: auto; min-height: 0; padding: 0; }
   .sf-header-actions { gap: 0; }
   .sf-nav { padding-left: 0; }
-  .sf-body .sf-hero-inner { padding: 40px 16px 60px; }
+  .sf-body .sf-hero-inner { padding: 40px 30px 50px; }
   .sf-body .sf-hero-captions { height: auto; min-height: 180px; }
   .sf-nav { display: none; }
   .sf-menu { display: inline-flex; }
@@ -328,5 +329,5 @@
 .sf-popup-body p { color: var(--sf-text); margin: 0 0 20px; }
 .sf-popup-close { position: absolute; top: 10px; right: 10px; width: 36px; height: 36px; border: 0; border-radius: 50%; background: #fff; color: var(--sf-ink); font-size: 1.5rem; line-height: 1; cursor: pointer; z-index: 2; }
 .sf-popup-close:hover { background: var(--sf-primary); color: #fff; }
-@media (max-width: 560px) { .sf-footer { border-radius: 0 32px 0 0; } }
+@media (max-width: 560px) { .sf-footer { border-radius: 0 100px 0 0; } }
 @media (prefers-reduced-motion: reduce) { .sf-popup-dialog { transition: none; } }
