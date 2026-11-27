@@ -150,233 +150,226 @@ func Home(page ui.HomePage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<link rel=\"icon\" type=\"image/svg+xml\" href=\"/ui-assets/favicon.svg\"><link rel=\"manifest\" href=\"/ui-assets/manifest.webmanifest\"><link rel=\"apple-touch-icon\" href=\"/ui-assets/apple-touch-icon.png\"><meta name=\"apple-mobile-web-app-capable\" content=\"yes\"><meta name=\"apple-mobile-web-app-title\" content=\"WESMK\"><link rel=\"preload\" href=\"/ui-assets/fonts/poppins-400-latin.woff2\" as=\"font\" type=\"font/woff2\" crossorigin><link rel=\"preload\" href=\"/ui-assets/fonts/poppins-700-latin.woff2\" as=\"font\" type=\"font/woff2\" crossorigin><link rel=\"preload\" href=\"/ui-assets/fonts/pt-serif-400-latin.woff2\" as=\"font\" type=\"font/woff2\" crossorigin><link rel=\"preload\" href=\"/ui-assets/images/home-hero.jpg\" as=\"image\"><link rel=\"stylesheet\" href=\"/ui-assets/app.css?v=20261127o\"><link rel=\"stylesheet\" href=\"/ui-assets/landing.css?v=20261127h\"><script src=\"/ui-assets/app.js?v=20261127o\" defer></script></head><body class=\"sf-body\"><a class=\"skip-link\" href=\"#main-content\">Lewati ke konten utama</a><header id=\"header-area\"><div class=\"sf-utility\"><div class=\"sf-wrap sf-utility-inner\"><nav class=\"sf-utility-links\" aria-label=\"Tautan cepat\"><a href=\"#berita\">Berita</a> <a href=\"/verify\">Verifikasi dokumen</a> <a href=\"/contact\">Kontak</a></nav><div class=\"sf-utility-right\"><a class=\"sf-btn sf-btn-sm sf-btn-outline-light\" href=\"#pendaftaran\">Cara dapat akun</a> <a class=\"sf-btn sf-btn-sm sf-btn-white\" href=\"/login\">Masuk ke portal</a></div></div></div><div class=\"sf-header-main\"><div class=\"sf-wrap sf-header-inner\"><a class=\"sf-logo\" href=\"/\" aria-label=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<link rel=\"icon\" type=\"image/svg+xml\" href=\"/ui-assets/favicon.svg\"><link rel=\"manifest\" href=\"/ui-assets/manifest.webmanifest\"><link rel=\"apple-touch-icon\" href=\"/ui-assets/apple-touch-icon.png\"><meta name=\"apple-mobile-web-app-capable\" content=\"yes\"><meta name=\"apple-mobile-web-app-title\" content=\"WESMK\"><link rel=\"preload\" href=\"/ui-assets/fonts/poppins-400-latin.woff2\" as=\"font\" type=\"font/woff2\" crossorigin><link rel=\"preload\" href=\"/ui-assets/fonts/poppins-700-latin.woff2\" as=\"font\" type=\"font/woff2\" crossorigin><link rel=\"preload\" href=\"/ui-assets/fonts/pt-serif-400-latin.woff2\" as=\"font\" type=\"font/woff2\" crossorigin><link rel=\"preload\" href=\"/ui-assets/images/home-hero.jpg\" as=\"image\"><link rel=\"stylesheet\" href=\"/ui-assets/app.css?v=20261127o\"><link rel=\"stylesheet\" href=\"/ui-assets/landing.css?v=20261127m\"><script src=\"/ui-assets/app.js?v=20261127o\" defer></script></head><body class=\"sf-body\"><a class=\"skip-link\" href=\"#main-content\">Lewati ke konten utama</a><header id=\"header-area\"><!-- Kartu identitas sekolah: menimpa header & hero, sudut kanan-bawah membulat. --><a class=\"sf-brandcard\" href=\"/\" aria-label=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(ui.SchoolName() + " beranda")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 65, Col: 75}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 50, Col: 78}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\"><span class=\"sf-logo-mark\" aria-hidden=\"true\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\"><span class=\"sf-brandmark\" aria-hidden=\"true\"><i></i><i></i><i></i><i></i></span> <span class=\"sf-brandwords\"><span>SMK</span><span>Cendekia</span><span>Nusantara</span></span></a><div class=\"sf-utility\"><div class=\"sf-wrap sf-utility-inner\"><nav class=\"sf-utility-links\" aria-label=\"Tautan cepat\"><a href=\"#berita\">Berita</a> <a href=\"/verify\">Verifikasi dokumen</a> <a href=\"/contact\">Kontak</a></nav><div class=\"sf-utility-right\"><a class=\"sf-btn sf-btn-sm sf-btn-outline-light\" href=\"#pendaftaran\">Cara dapat akun</a> <a class=\"sf-btn sf-btn-sm sf-btn-white\" href=\"/login\">Masuk ke portal</a></div></div></div><div class=\"sf-header-main\"><div class=\"sf-wrap sf-header-inner\"><nav class=\"sf-nav\" aria-label=\"Navigasi utama\"><details class=\"sf-drop\"><summary>Tentang</summary><div class=\"sf-drop-panel\"><a href=\"#tentang\">Tentang sekolah</a><a href=\"#magic\">Nilai &amp; pembelajaran</a><a href=\"#keamanan\">Keamanan</a><a href=\"/contact\">Kontak</a></div></details> <details class=\"sf-drop\"><summary>Akademik</summary><div class=\"sf-drop-panel\"><a href=\"#program\">Program keahlian</a><a href=\"#layanan\">Layanan portal</a><a href=\"#mitra\">Mitra industri</a></div></details> <details class=\"sf-drop\"><summary>Kehidupan siswa</summary><div class=\"sf-drop-panel\"><a href=\"#siswa\">Kampus &amp; praktik</a><a href=\"#mitra\">PKL &amp; bursa kerja</a></div></details> <details class=\"sf-drop\"><summary>Pendaftaran</summary><div class=\"sf-drop-panel\"><a href=\"#pendaftaran\">Cara dapat akun</a><a href=\"#masuk\">Pintu masuk peran</a><a href=\"#faq\">FAQ</a></div></details> <a href=\"#berita\">Berita</a></nav><div class=\"sf-header-actions\"><a class=\"sf-btn sf-btn-primary sf-btn-round\" href=\"/login\">Masuk ke portal</a> <details class=\"sf-menu\"><summary class=\"sf-menu-btn\" aria-label=\"Buka menu\"><span class=\"sf-menu-bars\" aria-hidden=\"true\"></span></summary><nav class=\"sf-menu-panel\" aria-label=\"Navigasi selengkapnya\"><a href=\"#tentang\">Tentang</a><a href=\"#magic\">Nilai &amp; pembelajaran</a><a href=\"#program\">Program keahlian</a> <a href=\"#siswa\">Kehidupan siswa</a><a href=\"#mitra\">Mitra industri</a><a href=\"#layanan\">Layanan portal</a> <a href=\"#masuk\">Pintu masuk peran</a><a href=\"#pendaftaran\">Cara dapat akun</a><a href=\"#keamanan\">Keamanan</a> <a href=\"#berita\">Berita</a><a href=\"#faq\">Pertanyaan</a><a href=\"/verify\">Verifikasi dokumen</a> <a href=\"/contact\">Bantuan &amp; laporan</a><a class=\"sf-btn sf-btn-primary\" href=\"/login\">Masuk ke portal</a></nav></details></div></div></div></header><!-- Popup info (SFS-style): muncul 2 detik setelah load, cookie 7 hari. --><div class=\"sf-popup\" id=\"sf-popup\" aria-hidden=\"true\"><div class=\"sf-popup-backdrop\"></div><div class=\"sf-popup-dialog\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"sf-popup-title\"><button class=\"sf-popup-close\" type=\"button\" aria-label=\"Tutup popup\">×</button> <img src=\"/ui-assets/images/home-hero.jpg\" alt=\"Siswa di laboratorium komputer\" width=\"1392\" height=\"752\" loading=\"lazy\" decoding=\"async\"><div class=\"sf-popup-body\"><h2 id=\"sf-popup-title\">Pengenalan sekolah &amp; tur kampus dibuka</h2><p>Kenali program keahlian, fasilitas praktik, dan cara mendapatkan akun portal sekolah.</p><a class=\"sf-btn sf-btn-primary sf-btn-round\" href=\"#pendaftaran\">Lihat cara dapat akun</a></div></div></div><main id=\"main-content\"><h1 class=\"sf-sr-only\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var11 string
-		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(ui.Initials(ui.SchoolName()))
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(ui.SchoolName())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 66, Col: 83}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 119, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</span> <span class=\"sf-logo-text\"><strong>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</h1><!-- Slider bergaya SFS: banner lebar, teks kanan, dots, fade. --><section class=\"sf-hero\" aria-label=\"Sorotan\"><div class=\"sf-hero-track\" aria-hidden=\"true\"><div class=\"sf-slide\" style=\"background-image:url('/ui-assets/images/home-hero.jpg')\"></div><div class=\"sf-slide\" style=\"background-image:url('/ui-assets/images/login-hero.jpg')\"></div><div class=\"sf-slide\" style=\"background-image:url('/ui-assets/images/home-workshop.jpg')\"></div><div class=\"sf-slide\" style=\"background-image:url('/ui-assets/images/login-campus.jpg')\"></div></div><div class=\"sf-hero-overlay\"></div><div class=\"sf-wrap sf-hero-inner\"><div class=\"sf-hero-captions\"><h2 class=\"sf-caption\">Menumbuhkan potensi. Menghargai perbedaan. Mencintai pembelajaran.</h2><h2 class=\"sf-caption\">Menumbuhkan cinta belajar seumur hidup. Setiap hari.</h2><h2 class=\"sf-caption\">Belajar praktik, tumbuh bersama industri. Siap berkarya.</h2><h2 class=\"sf-caption\">Sekolah kejuruan dengan suasana kekeluargaan.</h2></div></div><div class=\"sf-dots\" aria-hidden=\"true\"><span></span><span></span><span></span><span></span></div></section><!-- Intro / misi: max 840px, tengah, bagian italic. --><section class=\"sf-intro\" id=\"tentang\"><div class=\"sf-wrap\"><div class=\"sf-narrow\"><p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(ui.SchoolName())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 67, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 144, Col: 27}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</strong><small>Portal Layanan Sekolah</small></span></a><nav class=\"sf-nav\" aria-label=\"Navigasi utama\"><details class=\"sf-drop\"><summary>Tentang</summary><div class=\"sf-drop-panel\"><a href=\"#tentang\">Tentang sekolah</a><a href=\"#magic\">Nilai &amp; pembelajaran</a><a href=\"#keamanan\">Keamanan</a><a href=\"/contact\">Kontak</a></div></details> <details class=\"sf-drop\"><summary>Akademik</summary><div class=\"sf-drop-panel\"><a href=\"#program\">Program keahlian</a><a href=\"#layanan\">Layanan portal</a><a href=\"#mitra\">Mitra industri</a></div></details> <details class=\"sf-drop\"><summary>Kehidupan siswa</summary><div class=\"sf-drop-panel\"><a href=\"#siswa\">Kampus &amp; praktik</a><a href=\"#mitra\">PKL &amp; bursa kerja</a></div></details> <details class=\"sf-drop\"><summary>Pendaftaran</summary><div class=\"sf-drop-panel\"><a href=\"#pendaftaran\">Cara dapat akun</a><a href=\"#masuk\">Pintu masuk peran</a><a href=\"#faq\">FAQ</a></div></details> <a href=\"#berita\">Berita</a></nav><div class=\"sf-header-actions\"><a class=\"sf-btn sf-btn-primary sf-btn-round\" href=\"/login\">Masuk ke portal</a> <details class=\"sf-menu\"><summary class=\"sf-menu-btn\" aria-label=\"Buka menu\"><span class=\"sf-menu-bars\" aria-hidden=\"true\"></span></summary><nav class=\"sf-menu-panel\" aria-label=\"Navigasi selengkapnya\"><a href=\"#tentang\">Tentang</a><a href=\"#magic\">Nilai &amp; pembelajaran</a><a href=\"#program\">Program keahlian</a> <a href=\"#siswa\">Kehidupan siswa</a><a href=\"#mitra\">Mitra industri</a><a href=\"#layanan\">Layanan portal</a> <a href=\"#masuk\">Pintu masuk peran</a><a href=\"#pendaftaran\">Cara dapat akun</a><a href=\"#keamanan\">Keamanan</a> <a href=\"#berita\">Berita</a><a href=\"#faq\">Pertanyaan</a><a href=\"/verify\">Verifikasi dokumen</a> <a href=\"/contact\">Bantuan &amp; laporan</a><a class=\"sf-btn sf-btn-primary\" href=\"/login\">Masuk ke portal</a></nav></details></div></div></div></header><!-- Popup info (SFS-style): muncul 2 detik setelah load, cookie 7 hari. --><div class=\"sf-popup\" id=\"sf-popup\" aria-hidden=\"true\"><div class=\"sf-popup-backdrop\"></div><div class=\"sf-popup-dialog\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"sf-popup-title\"><button class=\"sf-popup-close\" type=\"button\" aria-label=\"Tutup popup\">×</button> <img src=\"/ui-assets/images/home-hero.jpg\" alt=\"Siswa di laboratorium komputer\" width=\"1392\" height=\"752\" loading=\"lazy\" decoding=\"async\"><div class=\"sf-popup-body\"><h2 id=\"sf-popup-title\">Pengenalan sekolah &amp; tur kampus dibuka</h2><p>Kenali program keahlian, fasilitas praktik, dan cara mendapatkan akun portal sekolah.</p><a class=\"sf-btn sf-btn-primary sf-btn-round\" href=\"#pendaftaran\">Lihat cara dapat akun</a></div></div></div><main id=\"main-content\"><h1 class=\"sf-sr-only\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, " adalah sekolah menengah kejuruan yang menyiapkan siswa untuk kerja, kuliah, dan berwirausaha. Pembelajaran praktik di laboratorium dan bengkel dipadukan dengan kurikulum yang mengikuti kebutuhan dunia usaha dan industri.</p><p class=\"sf-intro-em\"><em>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(ui.SchoolName())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 118, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 145, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</h1><!-- Slider bergaya SFS: banner lebar, teks kanan, dots, fade. --><section class=\"sf-hero\" aria-label=\"Sorotan\"><div class=\"sf-hero-track\" aria-hidden=\"true\"><div class=\"sf-slide\" style=\"background-image:url('/ui-assets/images/home-hero.jpg')\"></div><div class=\"sf-slide\" style=\"background-image:url('/ui-assets/images/login-hero.jpg')\"></div><div class=\"sf-slide\" style=\"background-image:url('/ui-assets/images/home-workshop.jpg')\"></div><div class=\"sf-slide\" style=\"background-image:url('/ui-assets/images/login-campus.jpg')\"></div></div><div class=\"sf-hero-overlay\"></div><div class=\"sf-wrap sf-hero-inner\"><div class=\"sf-hero-captions\"><h2 class=\"sf-caption\">Menumbuhkan potensi. Menghargai perbedaan. Mencintai pembelajaran.</h2><h2 class=\"sf-caption\">Menumbuhkan cinta belajar seumur hidup. Setiap hari.</h2><h2 class=\"sf-caption\">Belajar praktik, tumbuh bersama industri. Siap berkarya.</h2><h2 class=\"sf-caption\">Sekolah kejuruan dengan suasana kekeluargaan.</h2></div></div><div class=\"sf-dots\" aria-hidden=\"true\"><span></span><span></span><span></span><span></span></div></section><!-- Intro / misi: max 840px, tengah, bagian italic. --><section class=\"sf-intro\" id=\"tentang\"><div class=\"sf-wrap\"><div class=\"sf-narrow\"><p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, " menumbuhkan dan merayakan potensi setiap siswa dalam komunitas yang saling menghormati, menghargai keberagaman, dan mencintai pembelajaran.</em></p></div></div></section><div class=\"sf-divider sf-divider-yellow\" aria-hidden=\"true\"></div><section class=\"sf-section sf-section-alt\" id=\"magic\"><div class=\"sf-wrap\"><div class=\"sf-head-center\"><h2>The Magic of ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(ui.SchoolName())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 143, Col: 27}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 155, Col: 41}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, " adalah sekolah menengah kejuruan yang menyiapkan siswa untuk kerja, kuliah, dan berwirausaha. Pembelajaran praktik di laboratorium dan bengkel dipadukan dengan kurikulum yang mengikuti kebutuhan dunia usaha dan industri.</p><p class=\"sf-intro-em\"><em>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</h2><p>Di ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(ui.SchoolName())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 144, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 156, Col: 30}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, " menumbuhkan dan merayakan potensi setiap siswa dalam komunitas yang saling menghormati, menghargai keberagaman, dan mencintai pembelajaran.</em></p></div></div></section><div class=\"sf-divider sf-divider-yellow\" aria-hidden=\"true\"></div><section class=\"sf-section sf-section-alt\" id=\"magic\"><div class=\"sf-wrap\"><div class=\"sf-head-center\"><h2>The Magic of ")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var16 string
-		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(ui.SchoolName())
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 154, Col: 41}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</h2><p>Di ")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var17 string
-		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(ui.SchoolName())
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 155, Col: 30}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, ", pembelajaran yang menyenangkan tumbuh karena setiap siswa dilihat dan didukung oleh komunitas yang beragam dan dekat. Lewat praktik, seni, dan proyek nyata, kami menumbuhkan kebaikan, kreativitas, kolaborasi, dan keunggulan.</p></div><div class=\"sf-cards\"><article class=\"sf-card sf-color-primary\"><div class=\"sf-card-media\"><img src=\"/ui-assets/images/login-hero.jpg\" alt=\"Siswa belajar di kelas\" width=\"1800\" height=\"1200\" loading=\"lazy\" decoding=\"async\"></div><div class=\"sf-card-base\"><h3>Karakter &amp; kepedulian</h3></div><div class=\"sf-card-hover\"><h3>Karakter &amp; kepedulian</h3><p>Dari kurikulum karakter until nilai inti, kami membentuk warga yang baik dan berani.</p><a class=\"sf-btn sf-btn-white sf-btn-sm\" href=\"#tentang\">Pelajari</a></div></article><article class=\"sf-card sf-color-secondary\"><div class=\"sf-card-media\"><img src=\"/ui-assets/images/login-lab.jpg\" alt=\"Siswa bekerja di laboratorium\" width=\"1000\" height=\"667\" loading=\"lazy\" decoding=\"async\"></div><div class=\"sf-card-base\"><h3>Belajar lewat praktik</h3></div><div class=\"sf-card-hover\"><h3>Belajar lewat praktik</h3><p>Siswa berpikir mendalam dan menjadi pembelajar seumur hidup lewat proyek kolaboratif.</p><a class=\"sf-btn sf-btn-white sf-btn-sm\" href=\"#program\">Pelajari</a></div></article><article class=\"sf-card sf-color-third\"><div class=\"sf-card-media\"><img src=\"/ui-assets/images/home-workshop.jpg\" alt=\"Siswa praktik di bengkel\" width=\"1392\" height=\"752\" loading=\"lazy\" decoding=\"async\"></div><div class=\"sf-card-base\"><h3>Kampus praktik</h3></div><div class=\"sf-card-hover\"><h3>Kampus praktik</h3><p>Laboratorium dan bengkel dipakai setiap hari, jadi belajar dekat dengan dunia kerja.</p><a class=\"sf-btn sf-btn-white sf-btn-sm\" href=\"#siswa\">Pelajari</a></div></article><article class=\"sf-card sf-color-fourth\"><div class=\"sf-card-media\"><img src=\"/ui-assets/images/login-campus.jpg\" alt=\"Upacara di halaman sekolah\" width=\"1100\" height=\"730\" loading=\"lazy\" decoding=\"async\"></div><div class=\"sf-card-base\"><h3>Rasa memiliki</h3></div><div class=\"sf-card-hover\"><h3>Rasa memiliki</h3><p>Komunitas yang hangat dan beragam memberi ruang bagi setiap siswa untuk tumbuh.</p><a class=\"sf-btn sf-btn-white sf-btn-sm\" href=\"#mitra\">Pelajari</a></div></article></div></div></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, ", pembelajaran yang menyenangkan tumbuh karena setiap siswa dilihat dan didukung oleh komunitas yang beragam dan dekat. Lewat praktik, seni, dan proyek nyata, kami menumbuhkan kebaikan, kreativitas, kolaborasi, dan keunggulan.</p></div><div class=\"sf-cards\"><article class=\"sf-card sf-color-primary\"><div class=\"sf-card-media\"><img src=\"/ui-assets/images/login-hero.jpg\" alt=\"Siswa belajar di kelas\" width=\"1800\" height=\"1200\" loading=\"lazy\" decoding=\"async\"></div><div class=\"sf-card-base\"><h3>Karakter &amp; kepedulian</h3></div><div class=\"sf-card-hover\"><h3>Karakter &amp; kepedulian</h3><p>Dari kurikulum karakter until nilai inti, kami membentuk warga yang baik dan berani.</p><a class=\"sf-btn sf-btn-white sf-btn-sm\" href=\"#tentang\">Pelajari</a></div></article><article class=\"sf-card sf-color-secondary\"><div class=\"sf-card-media\"><img src=\"/ui-assets/images/login-lab.jpg\" alt=\"Siswa bekerja di laboratorium\" width=\"1000\" height=\"667\" loading=\"lazy\" decoding=\"async\"></div><div class=\"sf-card-base\"><h3>Belajar lewat praktik</h3></div><div class=\"sf-card-hover\"><h3>Belajar lewat praktik</h3><p>Siswa berpikir mendalam dan menjadi pembelajar seumur hidup lewat proyek kolaboratif.</p><a class=\"sf-btn sf-btn-white sf-btn-sm\" href=\"#program\">Pelajari</a></div></article><article class=\"sf-card sf-color-third\"><div class=\"sf-card-media\"><img src=\"/ui-assets/images/home-workshop.jpg\" alt=\"Siswa praktik di bengkel\" width=\"1392\" height=\"752\" loading=\"lazy\" decoding=\"async\"></div><div class=\"sf-card-base\"><h3>Kampus praktik</h3></div><div class=\"sf-card-hover\"><h3>Kampus praktik</h3><p>Laboratorium dan bengkel dipakai setiap hari, jadi belajar dekat dengan dunia kerja.</p><a class=\"sf-btn sf-btn-white sf-btn-sm\" href=\"#siswa\">Pelajari</a></div></article><article class=\"sf-card sf-color-fourth\"><div class=\"sf-card-media\"><img src=\"/ui-assets/images/login-campus.jpg\" alt=\"Upacara di halaman sekolah\" width=\"1100\" height=\"730\" loading=\"lazy\" decoding=\"async\"></div><div class=\"sf-card-base\"><h3>Rasa memiliki</h3></div><div class=\"sf-card-hover\"><h3>Rasa memiliki</h3><p>Komunitas yang hangat dan beragam memberi ruang bagi setiap siswa untuk tumbuh.</p><a class=\"sf-btn sf-btn-white sf-btn-sm\" href=\"#mitra\">Pelajari</a></div></article></div></div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(page.Stats) > 0 || page.AcademicYear != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<section class=\"sf-stats\" aria-label=\"Sekolah dalam angka\"><div class=\"sf-wrap sf-stats-grid\"><div class=\"sf-stat\"><strong>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<section class=\"sf-stats\" aria-label=\"Sekolah dalam angka\"><div class=\"sf-wrap sf-stats-grid\"><div class=\"sf-stat\"><strong>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var18 string
-			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(page.AcademicYear)
+			var templ_7745c5c3_Var16 string
+			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(page.AcademicYear)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 185, Col: 55}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 186, Col: 55}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</strong><span>Tahun ajaran</span></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</strong><span>Tahun ajaran</span></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			for _, stat := range page.Stats {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div class=\"sf-stat\"><strong>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div class=\"sf-stat\"><strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var17 string
+				templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(stat.Value)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 188, Col: 49}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</strong><span>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var18 string
+				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(stat.Label)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 188, Col: 78}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</span></div>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div></section>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<div class=\"sf-divider sf-divider-pink\" aria-hidden=\"true\"></div><section class=\"sf-section\" id=\"program\"><div class=\"sf-wrap\"><div class=\"sf-head-center\"><h2>Program keahlian</h2><p>Baik siswa bergabung di TKJ, RPL, TBSM, atau AKL, mereka disambut dalam program keahlian yang membangkitkan semangat belajar.</p></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if len(page.Majors) > 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<div class=\"sf-cards sf-cards-3\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			for _, major := range page.Majors {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<article class=\"sf-card sf-color-primary\"><div class=\"sf-card-media sf-card-photo\"></div><div class=\"sf-card-base\"><h3>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var19 string
-				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(stat.Value)
+				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(major.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 187, Col: 49}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 204, Col: 52}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</strong><span>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</h3></div><div class=\"sf-card-hover\"><h3>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var20 string
-				templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(stat.Label)
+				templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(major.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 187, Col: 78}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 206, Col: 27}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</span></div>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</div></section>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<div class=\"sf-divider sf-divider-pink\" aria-hidden=\"true\"></div><section class=\"sf-section\" id=\"program\"><div class=\"sf-wrap\"><div class=\"sf-head-center\"><h2>Program keahlian</h2><p>Baik siswa bergabung di TKJ, RPL, TBSM, atau AKL, mereka disambut dalam program keahlian yang membangkitkan semangat belajar.</p></div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if len(page.Majors) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<div class=\"sf-cards sf-cards-3\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			for _, major := range page.Majors {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<article class=\"sf-card sf-color-primary\"><div class=\"sf-card-media sf-card-photo\"></div><div class=\"sf-card-base\"><h3>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</h3><p class=\"sf-code\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var21 string
-				templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(major.Name)
+				templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(major.Code)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 203, Col: 52}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 207, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</h3></div><div class=\"sf-card-hover\"><h3>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var22 string
-				templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(major.Name)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 205, Col: 27}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</h3><p class=\"sf-code\">")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var23 string
-				templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(major.Code)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 206, Col: 42}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</p>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</p>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				if major.Detail != "" {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<p>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<p>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var24 string
-					templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(major.Detail)
+					var templ_7745c5c3_Var22 string
+					templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(major.Detail)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 208, Col: 29}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 209, Col: 29}
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</p>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				if major.Head != "" {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<p class=\"sf-muted\">Ka. program: ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var23 string
+					templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(major.Head)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 212, Col: 57}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -385,179 +378,160 @@ func Home(page ui.HomePage) templ.Component {
 						return templ_7745c5c3_Err
 					}
 				}
-				if major.Head != "" {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<p class=\"sf-muted\">Ka. program: ")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var25 string
-					templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(major.Head)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 211, Col: 57}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</p>")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-				}
 				if major.Classes > 0 {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<p class=\"sf-muted\">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<p class=\"sf-muted\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var26 string
-					templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(major.Classes))
+					var templ_7745c5c3_Var24 string
+					templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(major.Classes))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 214, Col: 61}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 215, Col: 61}
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, " rombel</p>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, " rombel</p>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
 				if major.Students > 0 {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<p class=\"sf-muted\">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<p class=\"sf-muted\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					var templ_7745c5c3_Var27 string
-					templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(major.Students))
+					var templ_7745c5c3_Var25 string
+					templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(major.Students))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 217, Col: 62}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 218, Col: 62}
 					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, " siswa</p>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, " siswa</p>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<a class=\"sf-btn sf-btn-white sf-btn-sm\" href=\"#layanan\">Lihat layanan</a></div></article>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<a class=\"sf-btn sf-btn-white sf-btn-sm\" href=\"#layanan\">Lihat layanan</a></div></article>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</div></section><section class=\"sf-quote\"><div class=\"sf-wrap sf-narrow\"><blockquote>“Bersekolah di sini adalah salah satu keputusan terbaik untuk anak kami. Dia tumbuh percaya diri, dan kami pun ikut berkembang.”</blockquote><p>— Orang tua siswa ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</div></section><section class=\"sf-quote\"><div class=\"sf-wrap sf-narrow\"><blockquote>“Bersekolah di sini adalah salah satu keputusan terbaik untuk anak kami. Dia tumbuh percaya diri, dan kami pun ikut berkembang.”</blockquote><p>— Orang tua siswa ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var28 string
-		templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(ui.SchoolName())
+		var templ_7745c5c3_Var26 string
+		templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(ui.SchoolName())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 231, Col: 46}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 232, Col: 46}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</p></div></section><div class=\"sf-divider sf-divider-teal\" aria-hidden=\"true\"></div><section class=\"sf-section\" id=\"siswa\"><div class=\"sf-wrap sf-grid-2\"><figure class=\"sf-figure\"><img src=\"/ui-assets/images/home-workshop.jpg\" alt=\"Guru mendampingi siswa di bengkel\" width=\"1392\" height=\"752\" loading=\"lazy\" decoding=\"async\"></figure><div class=\"sf-prose\"><h2>Ruang praktik yang dipakai setiap hari</h2><p>Setiap program keahlian punya laboratorium atau bengkel sendiri, jadi jam produktif benar-benar dipakai untuk bekerja.</p><a class=\"sf-btn sf-btn-primary sf-btn-round\" href=\"#program\">Lihat program keahlian</a></div></div></section><section class=\"sf-section sf-section-alt\" id=\"berita\"><div class=\"sf-wrap\"><div class=\"sf-head-center\"><h2>Berita &amp; kegiatan</h2></div><div class=\"sf-posts\"><a class=\"sf-post\" href=\"#berita\"><img src=\"/ui-assets/images/home-workshop.jpg\" alt=\"Siswa praktik mesin di bengkel\" width=\"1392\" height=\"752\" loading=\"lazy\" decoding=\"async\"><div class=\"sf-post-body\"><p class=\"sf-post-date\">21 September 2026</p><h3>Siswa mengikuti pelatihan jaringan bersama mitra industri</h3><p>Siswa belajar langsung di laboratorium dan bengkel mitra sebagai bagian dari PKL.</p><span class=\"sf-btn sf-btn-outline sf-btn-round sf-btn-sm\">Baca selengkapnya</span></div></a> <a class=\"sf-post\" href=\"#berita\"><img src=\"/ui-assets/images/login-campus.jpg\" alt=\"Upacara bendera\" width=\"1100\" height=\"730\" loading=\"lazy\" decoding=\"async\"><div class=\"sf-post-body\"><p class=\"sf-post-date\">29 Agustus 2026</p><h3>Upacara dan kegiatan komunitas sekolah</h3><p>Warga sekolah berkumpul untuk kegiatan bersama yang menumbuhkan rasa memiliki.</p><span class=\"sf-btn sf-btn-outline sf-btn-round sf-btn-sm\">Baca selengkapnya</span></div></a> <a class=\"sf-post\" href=\"#berita\"><img src=\"/ui-assets/images/login-hero.jpg\" alt=\"Siswa mengerjakan tugas di kelas\" width=\"1800\" height=\"1200\" loading=\"lazy\" decoding=\"async\"><div class=\"sf-post-body\"><p class=\"sf-post-date\">27 Maret 2026</p><h3>Proyek kolaboratif siswa dalam pelajaran</h3><p>Belajar lewat proyek membantu siswa berpikir kritis dan bekerja tim.</p><span class=\"sf-btn sf-btn-outline sf-btn-round sf-btn-sm\">Baca selengkapnya</span></div></a></div></div></section><section class=\"sf-section\" id=\"layanan\"><div class=\"sf-wrap\"><div class=\"sf-head-center\"><h2>Satu portal untuk keperluan sekolah sehari-hari</h2><p>Fitur yang dipakai sekolah setiap hari, dari presensi sampai penyaluran kerja. Akun dibuat oleh sekolah.</p></div><ul class=\"sf-services\"><li><strong>Presensi &amp; jurnal</strong><p>Kehadiran harian dan jurnal mengajar guru tercatat rapi.</p></li><li><strong>Kuis, tugas, dan nilai</strong><p>Tugas, kuis, dan penilaian siswa dalam satu alur.</p></li><li><strong>Ujian CBT</strong><p>Ujian berbasis komputer dengan sesi dan pemantauan.</p></li><li><strong>Keuangan &amp; SPP</strong><p>Tagihan, pembayaran, dan kwitansi yang bisa diverifikasi.</p></li><li><strong>PKL &amp; bursa kerja</strong><p>Penempatan PKL, jurnal harian, dan penyaluran kerja (BKK).</p></li><li><strong>Administrasi akademik</strong><p>Data kelas, jadwal, dan wali kelas yang selalu terbaru.</p></li></ul></div></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</p></div></section><div class=\"sf-divider sf-divider-teal\" aria-hidden=\"true\"></div><section class=\"sf-section\" id=\"siswa\"><div class=\"sf-wrap sf-grid-2\"><figure class=\"sf-figure\"><img src=\"/ui-assets/images/home-workshop.jpg\" alt=\"Guru mendampingi siswa di bengkel\" width=\"1392\" height=\"752\" loading=\"lazy\" decoding=\"async\"></figure><div class=\"sf-prose\"><h2>Ruang praktik yang dipakai setiap hari</h2><p>Setiap program keahlian punya laboratorium atau bengkel sendiri, jadi jam produktif benar-benar dipakai untuk bekerja.</p><a class=\"sf-btn sf-btn-primary sf-btn-round\" href=\"#program\">Lihat program keahlian</a></div></div></section><section class=\"sf-section sf-section-alt\" id=\"berita\"><div class=\"sf-wrap\"><div class=\"sf-head-center\"><h2>Berita &amp; kegiatan</h2></div><div class=\"sf-posts\"><a class=\"sf-post\" href=\"#berita\"><img src=\"/ui-assets/images/home-workshop.jpg\" alt=\"Siswa praktik mesin di bengkel\" width=\"1392\" height=\"752\" loading=\"lazy\" decoding=\"async\"><div class=\"sf-post-body\"><p class=\"sf-post-date\">21 September 2026</p><h3>Siswa mengikuti pelatihan jaringan bersama mitra industri</h3><p>Siswa belajar langsung di laboratorium dan bengkel mitra sebagai bagian dari PKL.</p><span class=\"sf-btn sf-btn-outline sf-btn-round sf-btn-sm\">Baca selengkapnya</span></div></a> <a class=\"sf-post\" href=\"#berita\"><img src=\"/ui-assets/images/login-campus.jpg\" alt=\"Upacara bendera\" width=\"1100\" height=\"730\" loading=\"lazy\" decoding=\"async\"><div class=\"sf-post-body\"><p class=\"sf-post-date\">29 Agustus 2026</p><h3>Upacara dan kegiatan komunitas sekolah</h3><p>Warga sekolah berkumpul untuk kegiatan bersama yang menumbuhkan rasa memiliki.</p><span class=\"sf-btn sf-btn-outline sf-btn-round sf-btn-sm\">Baca selengkapnya</span></div></a> <a class=\"sf-post\" href=\"#berita\"><img src=\"/ui-assets/images/login-hero.jpg\" alt=\"Siswa mengerjakan tugas di kelas\" width=\"1800\" height=\"1200\" loading=\"lazy\" decoding=\"async\"><div class=\"sf-post-body\"><p class=\"sf-post-date\">27 Maret 2026</p><h3>Proyek kolaboratif siswa dalam pelajaran</h3><p>Belajar lewat proyek membantu siswa berpikir kritis dan bekerja tim.</p><span class=\"sf-btn sf-btn-outline sf-btn-round sf-btn-sm\">Baca selengkapnya</span></div></a></div></div></section><section class=\"sf-section\" id=\"layanan\"><div class=\"sf-wrap\"><div class=\"sf-head-center\"><h2>Satu portal untuk keperluan sekolah sehari-hari</h2><p>Fitur yang dipakai sekolah setiap hari, dari presensi sampai penyaluran kerja. Akun dibuat oleh sekolah.</p></div><ul class=\"sf-services\"><li><strong>Presensi &amp; jurnal</strong><p>Kehadiran harian dan jurnal mengajar guru tercatat rapi.</p></li><li><strong>Kuis, tugas, dan nilai</strong><p>Tugas, kuis, dan penilaian siswa dalam satu alur.</p></li><li><strong>Ujian CBT</strong><p>Ujian berbasis komputer dengan sesi dan pemantauan.</p></li><li><strong>Keuangan &amp; SPP</strong><p>Tagihan, pembayaran, dan kwitansi yang bisa diverifikasi.</p></li><li><strong>PKL &amp; bursa kerja</strong><p>Penempatan PKL, jurnal harian, dan penyaluran kerja (BKK).</p></li><li><strong>Administrasi akademik</strong><p>Data kelas, jadwal, dan wali kelas yang selalu terbaru.</p></li></ul></div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(page.Partners) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<section class=\"sf-section sf-section-alt\" id=\"mitra\"><div class=\"sf-wrap\"><div class=\"sf-head-center\"><h2>Tempat siswa belajar bekerja</h2><p>Perusahaan yang sudah menerima siswa PKL. Nama pembimbing dan nomor kontak tetap di dalam portal.</p></div><ul class=\"sf-partners\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<section class=\"sf-section sf-section-alt\" id=\"mitra\"><div class=\"sf-wrap\"><div class=\"sf-head-center\"><h2>Tempat siswa belajar bekerja</h2><p>Perusahaan yang sudah menerima siswa PKL. Nama pembimbing dan nomor kontak tetap di dalam portal.</p></div><ul class=\"sf-partners\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			for _, partner := range page.Partners {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<li><strong>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<li><strong>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var27 string
+				templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(partner.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 290, Col: 32}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</strong> ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				if partner.Sector != "" {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<span>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var28 string
+					templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(partner.Sector)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 292, Col: 33}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "</span>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</ul>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if page.Headmaster != "" {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<div class=\"sf-lead\"><span class=\"sf-lead-avatar\" aria-hidden=\"true\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var29 string
-				templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(partner.Name)
+				templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(ui.Initials(page.Headmaster))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 289, Col: 32}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 298, Col: 107}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "</strong> ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</span><div><p class=\"sf-eyebrow\">Kepala sekolah</p><p class=\"sf-lead-name\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				if partner.Sector != "" {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<span>")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var30 string
-					templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(partner.Sector)
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 291, Col: 33}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "</span>")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
+				var templ_7745c5c3_Var30 string
+				templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(page.Headmaster)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 298, Col: 202}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</li>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</p><p>Menandatangani dokumen resmi secara elektronik dan memantau mutu akademik lewat portal yang sama.</p></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</ul>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if page.Headmaster != "" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<div class=\"sf-lead\"><span class=\"sf-lead-avatar\" aria-hidden=\"true\">")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var31 string
-				templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(ui.Initials(page.Headmaster))
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 297, Col: 107}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "</span><div><p class=\"sf-eyebrow\">Kepala sekolah</p><p class=\"sf-lead-name\">")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var32 string
-				templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(page.Headmaster)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 297, Col: 202}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "</p><p>Menandatangani dokumen resmi secara elektronik dan memantau mutu akademik lewat portal yang sama.</p></div></div>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "</div></section>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "</div></section>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<section class=\"sf-section\" id=\"keamanan\"><div class=\"sf-wrap\"><div class=\"sf-head-center\"><h2>Akun aman, data tetap terbatas</h2><p>Portal menyimpan data pribadi siswa, jadi aksesnya dijaga berlapis dan setiap dokumen bisa dilacak.</p></div><ul class=\"sf-trust\"><li><span class=\"sf-trust-icon\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<section class=\"sf-section\" id=\"keamanan\"><div class=\"sf-wrap\"><div class=\"sf-head-center\"><h2>Akun aman, data tetap terbatas</h2><p>Portal menyimpan data pribadi siswa, jadi aksesnya dijaga berlapis dan setiap dokumen bisa dilacak.</p></div><ul class=\"sf-trust\"><li><span class=\"sf-trust-icon\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -565,7 +539,7 @@ func Home(page ui.HomePage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "</span><span><strong>Verifikasi dua langkah</strong><span>Akun staf butuh lapisan kedua saat masuk.</span></span></li><li><span class=\"sf-trust-icon\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "</span><span><strong>Verifikasi dua langkah</strong><span>Akun staf butuh lapisan kedua saat masuk.</span></span></li><li><span class=\"sf-trust-icon\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -573,7 +547,7 @@ func Home(page ui.HomePage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "</span><span><strong>Akses per peran</strong><span>Siswa, guru, dan orang tua hanya menerima datanya sendiri.</span></span></li><li><span class=\"sf-trust-icon\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "</span><span><strong>Akses per peran</strong><span>Siswa, guru, dan orang tua hanya menerima datanya sendiri.</span></span></li><li><span class=\"sf-trust-icon\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -581,7 +555,7 @@ func Home(page ui.HomePage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "</span><span><strong>Tanda tangan elektronik</strong><span>Surat dan kwitansi resmi ditandatangani secara elektronik.</span></span></li><li><span class=\"sf-trust-icon\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "</span><span><strong>Tanda tangan elektronik</strong><span>Surat dan kwitansi resmi ditandatangani secara elektronik.</span></span></li><li><span class=\"sf-trust-icon\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -589,72 +563,72 @@ func Home(page ui.HomePage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "</span><span><strong>Verifikasi publik</strong><span>Nomor dokumen bisa dicek siapa saja lewat halaman verifikasi.</span></span></li></ul></div></section><section class=\"sf-section sf-section-alt\" id=\"masuk\"><div class=\"sf-wrap sf-grid-2\"><div class=\"sf-prose\"><h2>Masuk sesuai peran Anda</h2><p>Setiap peran punya ruang kerjanya sendiri. Tidak ada data orang lain yang ikut terkirim ke layar Anda.</p><p><a href=\"/verify\">Verifikasi dokumen</a> · <a href=\"/contact\">Bantuan &amp; laporan</a></p></div><div class=\"sf-gates\"><a class=\"sf-gate\" href=\"/login?tab=staff\"><strong>Siswa, guru &amp; staf</strong><span>Masuk dengan NISN atau NIP</span><span class=\"sf-muted\">Presensi · jadwal · tugas · CBT · nilai</span></a> <a class=\"sf-gate\" href=\"/login?tab=parent\"><strong>Orang tua &amp; wali</strong><span>Masuk dengan nomor WhatsApp terdaftar</span><span class=\"sf-muted\">Perkembangan anak · SPP · izin · komunikasi</span></a></div></div></section><section class=\"sf-section\" id=\"pendaftaran\"><div class=\"sf-wrap\"><div class=\"sf-head-center\"><h2>Tidak ada pendaftaran mandiri</h2><p>Akun dibuat oleh sekolah supaya hanya orang yang benar-benar terdaftar yang bisa masuk.</p></div><ol class=\"sf-steps\"><li><span>01</span><h3>Sekolah mendaftarkan Anda</h3><p>Admin TU membuat akun dari data induk.</p></li><li><span>02</span><h3>Terima identitas masuk</h3><p>NISN/NIP untuk siswa dan guru, WhatsApp terdaftar untuk orang tua.</p></li><li><span>03</span><h3>Masuk dan amankan akun</h3><p>Ganti kata sandi awal, aktifkan verifikasi dua langkah untuk staf.</p></li></ol></div></section><section class=\"sf-section sf-section-alt\" id=\"faq\"><div class=\"sf-wrap sf-narrow\"><div class=\"sf-head-center\"><h2>Pertanyaan yang sering diajukan</h2></div><div class=\"sf-faq\"><details><summary>Bagaimana cara mendapatkan akun?</summary><p>Akun dibuat oleh sekolah. Hubungi Admin TU atau wali kelas untuk didaftarkan.</p></details> <details><summary>Saya lupa kata sandi.</summary><p>Buka halaman <a href=\"/contact\">Bantuan &amp; laporan</a> dan sebutkan peran serta identitas Anda.</p></details> <details><summary>NISN atau NIP saya tidak dikenali.</summary><p>Pastikan nomor yang dipakai sama dengan data induk sekolah. Laporkan lewat halaman bantuan.</p></details> <details><summary>Orang tua tidak punya WhatsApp?</summary><p>Minta sekolah mengganti nomor wali yang terdaftar.</p></details> <details><summary>Bagaimana memastikan dokumen itu asli?</summary><p>Buka <a href=\"/verify\">Verifikasi dokumen</a> dan masukkan nomor dokumen yang tertera.</p></details></div></div></section><section class=\"sf-reach\"><div class=\"sf-wrap sf-grid-2\"><div class=\"sf-prose\"><h2>Ada pertanyaan?</h2><p>Lupa kata sandi, kendala akun, atau data yang perlu diperbaiki — sampaikan lewat halaman bantuan.</p><a class=\"sf-btn sf-btn-primary sf-btn-round\" href=\"/contact\">Hubungi sekolah</a></div><figure class=\"sf-figure\"><img src=\"/ui-assets/images/login-campus.jpg\" alt=\"Upacara bendera di halaman sekolah\" width=\"1100\" height=\"730\" loading=\"lazy\" decoding=\"async\"></figure></div></section></main><footer class=\"sf-footer\"><div class=\"sf-wrap sf-footer-main\"><div class=\"sf-footer-left\"><a class=\"sf-logo\" href=\"/\"><span class=\"sf-logo-mark\" aria-hidden=\"true\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "</span><span><strong>Verifikasi publik</strong><span>Nomor dokumen bisa dicek siapa saja lewat halaman verifikasi.</span></span></li></ul></div></section><section class=\"sf-section sf-section-alt\" id=\"masuk\"><div class=\"sf-wrap sf-grid-2\"><div class=\"sf-prose\"><h2>Masuk sesuai peran Anda</h2><p>Setiap peran punya ruang kerjanya sendiri. Tidak ada data orang lain yang ikut terkirim ke layar Anda.</p><p><a href=\"/verify\">Verifikasi dokumen</a> · <a href=\"/contact\">Bantuan &amp; laporan</a></p></div><div class=\"sf-gates\"><a class=\"sf-gate\" href=\"/login?tab=staff\"><strong>Siswa, guru &amp; staf</strong><span>Masuk dengan NISN atau NIP</span><span class=\"sf-muted\">Presensi · jadwal · tugas · CBT · nilai</span></a> <a class=\"sf-gate\" href=\"/login?tab=parent\"><strong>Orang tua &amp; wali</strong><span>Masuk dengan nomor WhatsApp terdaftar</span><span class=\"sf-muted\">Perkembangan anak · SPP · izin · komunikasi</span></a></div></div></section><section class=\"sf-section\" id=\"pendaftaran\"><div class=\"sf-wrap\"><div class=\"sf-head-center\"><h2>Tidak ada pendaftaran mandiri</h2><p>Akun dibuat oleh sekolah supaya hanya orang yang benar-benar terdaftar yang bisa masuk.</p></div><ol class=\"sf-steps\"><li><span>01</span><h3>Sekolah mendaftarkan Anda</h3><p>Admin TU membuat akun dari data induk.</p></li><li><span>02</span><h3>Terima identitas masuk</h3><p>NISN/NIP untuk siswa dan guru, WhatsApp terdaftar untuk orang tua.</p></li><li><span>03</span><h3>Masuk dan amankan akun</h3><p>Ganti kata sandi awal, aktifkan verifikasi dua langkah untuk staf.</p></li></ol></div></section><section class=\"sf-section sf-section-alt\" id=\"faq\"><div class=\"sf-wrap sf-narrow\"><div class=\"sf-head-center\"><h2>Pertanyaan yang sering diajukan</h2></div><div class=\"sf-faq\"><details><summary>Bagaimana cara mendapatkan akun?</summary><p>Akun dibuat oleh sekolah. Hubungi Admin TU atau wali kelas untuk didaftarkan.</p></details> <details><summary>Saya lupa kata sandi.</summary><p>Buka halaman <a href=\"/contact\">Bantuan &amp; laporan</a> dan sebutkan peran serta identitas Anda.</p></details> <details><summary>NISN atau NIP saya tidak dikenali.</summary><p>Pastikan nomor yang dipakai sama dengan data induk sekolah. Laporkan lewat halaman bantuan.</p></details> <details><summary>Orang tua tidak punya WhatsApp?</summary><p>Minta sekolah mengganti nomor wali yang terdaftar.</p></details> <details><summary>Bagaimana memastikan dokumen itu asli?</summary><p>Buka <a href=\"/verify\">Verifikasi dokumen</a> dan masukkan nomor dokumen yang tertera.</p></details></div></div></section><section class=\"sf-reach\"><div class=\"sf-wrap sf-grid-2\"><div class=\"sf-prose\"><h2>Ada pertanyaan?</h2><p>Lupa kata sandi, kendala akun, atau data yang perlu diperbaiki — sampaikan lewat halaman bantuan.</p><a class=\"sf-btn sf-btn-primary sf-btn-round\" href=\"/contact\">Hubungi sekolah</a></div><figure class=\"sf-figure\"><img src=\"/ui-assets/images/login-campus.jpg\" alt=\"Upacara bendera di halaman sekolah\" width=\"1100\" height=\"730\" loading=\"lazy\" decoding=\"async\"></figure></div></section></main><footer class=\"sf-footer\"><div class=\"sf-wrap sf-footer-main\"><div class=\"sf-footer-left\"><a class=\"sf-logo\" href=\"/\"><span class=\"sf-logo-mark\" aria-hidden=\"true\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var31 string
+		templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(ui.Initials(ui.SchoolName()))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 361, Col: 110}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "</span><span class=\"sf-logo-text\"><strong>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var32 string
+		templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(ui.SchoolName())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 361, Col: 171}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "</strong><small>Portal Layanan Sekolah</small></span></a><div class=\"sf-social\" aria-label=\"Tautan sekolah\"><a href=\"/contact\">Kontak</a><a href=\"/verify\">Verifikasi</a><a href=\"/login\">Portal</a></div></div><div class=\"sf-footer-cols\"><div><h4>Tentang</h4><a href=\"#tentang\">Tentang sekolah</a><a href=\"#magic\">Nilai &amp; pembelajaran</a><a href=\"#program\">Program keahlian</a><a href=\"/contact\">Kontak</a></div><div><h4>Get involved</h4><a href=\"#pendaftaran\">Cara dapat akun</a><a href=\"#masuk\">Pintu masuk peran</a><a href=\"/verify\">Verifikasi dokumen</a><a href=\"/contact\">Bantuan</a></div><div><h4>Hubungi</h4><a href=\"/contact\">Hubungi sekolah</a><a href=\"#berita\">Berita</a><a href=\"#faq\">Pertanyaan</a><a href=\"/login\">Masuk portal</a></div></div></div><div class=\"sf-wrap sf-footer-note\"><h4>Kebijakan sekolah</h4><p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var33 string
-		templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(ui.Initials(ui.SchoolName()))
+		templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(ui.SchoolName())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 360, Col: 110}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 370, Col: 86}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "</span><span class=\"sf-logo-text\"><strong>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, " menerima siswa tanpa memandang suku, agama, jenis kelamin, atau keadaan apapun dalam seluruh program dan kegiatan sekolah.</p></div><div class=\"sf-wrap sf-footer-bottom\"><span>© ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var34 string
 		templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(ui.SchoolName())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 360, Col: 171}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 371, Col: 68}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "</strong><small>Portal Layanan Sekolah</small></span></a><div class=\"sf-social\" aria-label=\"Tautan sekolah\"><a href=\"/contact\">Kontak</a><a href=\"/verify\">Verifikasi</a><a href=\"/login\">Portal</a></div></div><div class=\"sf-footer-cols\"><div><h4>Tentang</h4><a href=\"#tentang\">Tentang sekolah</a><a href=\"#magic\">Nilai &amp; pembelajaran</a><a href=\"#program\">Program keahlian</a><a href=\"/contact\">Kontak</a></div><div><h4>Get involved</h4><a href=\"#pendaftaran\">Cara dapat akun</a><a href=\"#masuk\">Pintu masuk peran</a><a href=\"/verify\">Verifikasi dokumen</a><a href=\"/contact\">Bantuan</a></div><div><h4>Hubungi</h4><a href=\"/contact\">Hubungi sekolah</a><a href=\"#berita\">Berita</a><a href=\"#faq\">Pertanyaan</a><a href=\"/login\">Masuk portal</a></div></div></div><div class=\"sf-wrap sf-footer-note\"><h4>Kebijakan sekolah</h4><p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, " · Portal WESMK</span><span>Tahun ajaran ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var35 string
-		templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.JoinStringErrs(ui.SchoolName())
+		templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.JoinStringErrs(page.AcademicYear)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 369, Col: 86}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 371, Col: 131}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var35))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, " menerima siswa tanpa memandang suku, agama, jenis kelamin, atau keadaan apapun dalam seluruh program dan kegiatan sekolah.</p></div><div class=\"sf-wrap sf-footer-bottom\"><span>© ")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var36 string
-		templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(ui.SchoolName())
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 370, Col: 68}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, " · Portal WESMK</span><span>Tahun ajaran ")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var37 string
-		templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs(page.AcademicYear)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/home.templ`, Line: 370, Col: 131}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "</span></div></footer></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "</span></div></footer></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

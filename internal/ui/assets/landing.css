@@ -62,7 +62,7 @@
 }
 .sf-btn-sm { min-height: 36px; padding: 8px 20px; font-size: 0.82rem; }
 .sf-btn-round { border-radius: 100px; }
-.sf-btn-primary { background: var(--sf-primary); color: #fff; border-color: var(--sf-primary); }
+.sf-body .sf-btn-primary, .sf-btn-primary { background: var(--sf-primary); color: #fff; border-color: var(--sf-primary); }
 .sf-btn-primary:hover { background: #9e0a38; border-color: #9e0a38; color: #fff; }
 .sf-btn-white { background: #fff; color: var(--sf-ink); border-color: #fff; border-radius: 100px; }
 .sf-btn-white:hover { background: #f4ceda; color: var(--sf-ink); }
@@ -89,7 +89,7 @@
 .sf-logo-text strong { font-size: 1.05rem; font-weight: 800; color: var(--sf-ink); }
 .sf-logo-text small { font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--sf-muted); }
 .sf-nav { display: flex; align-items: center; gap: 2px; margin-left: auto; }
-.sf-nav > a, .sf-drop > summary { display: inline-flex; align-items: center; padding: 10px 12px; font-size: 0.92rem; font-weight: 600; color: var(--sf-ink); cursor: pointer; list-style: none; white-space: nowrap; }
+.sf-nav > a, .sf-drop > summary { display: inline-flex; align-items: center; padding: 10px 12px; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--sf-ink); cursor: pointer; list-style: none; white-space: nowrap; }
 .sf-nav > a:hover, .sf-drop > summary:hover { color: var(--sf-primary); }
 .sf-drop { position: relative; }
 .sf-drop summary::-webkit-details-marker { display: none; }
@@ -137,6 +137,20 @@
   0%, 22% { opacity: 1; }
   27%, 100% { opacity: 0; }
 }
+/* School identity card: white block overlapping header + hero. */
+.sf-brandcard { position: absolute; z-index: 70; top: 40px; left: 50px; width: 270px; height: 240px; padding: 18px 20px; background: #fff; border-bottom-right-radius: 150px; display: flex; flex-direction: column; justify-content: space-between; gap: 10px; color: var(--sf-ink); }
+.sf-brandcard:hover { color: var(--sf-ink); }
+.sf-brandmark { display: grid; grid-template-columns: repeat(2, 26px); grid-template-rows: repeat(2, 26px); gap: 2px; width: 54px; height: 54px; }
+.sf-brandmark i { display: block; }
+.sf-brandmark i:nth-child(1) { background: #faa21b; border-radius: 26px 0 0 0; }
+.sf-brandmark i:nth-child(2) { background: #c60c46; border-radius: 0 26px 0 0; }
+.sf-brandmark i:nth-child(3) { background: #e48ea9; border-radius: 0 0 0 26px; }
+.sf-brandmark i:nth-child(4) { background: #00afa9; border-radius: 0 0 26px 0; }
+.sf-brandwords { display: flex; flex-direction: column; font-weight: 800; font-size: 1.05rem; line-height: 1.18; letter-spacing: 0.06em; text-transform: uppercase; color: #181818; }
+.sf-nav { padding-left: 250px; }
+.sf-utility-right .sf-btn-outline-light { background: #faa21b; border-color: #faa21b; color: #181818; border-radius: 100px; }
+.sf-utility-right .sf-btn-white { background: #00afa9; border-color: #00afa9; color: #fff; border-radius: 100px; }
+.sf-utility .sf-btn-white:hover { color: #fff; background: #008c87; }
 .sf-dots { position: absolute; top: 50%; right: 45px; bottom: auto; left: auto; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; z-index: 3; }
 .sf-dots span { width: 12px; height: 12px; border-radius: 50%; border: 1px solid #fff; background: transparent; }
 
@@ -280,6 +294,10 @@
   .sf-hero { margin-left: 0; width: 100%; }
   .sf-dots { top: auto; right: auto; bottom: 22px; left: 50%; transform: translateX(-50%); flex-direction: row; }
   .sf-body .sf-caption { right: 0; width: 100%; }
+  .sf-brandcard { position: relative; top: auto; left: auto; width: auto; height: auto; padding: 8px 16px; border-bottom-right-radius: 60px; flex-direction: row; align-items: center; gap: 8px; }
+  .sf-brandmark { grid-template-columns: repeat(2, 16px); grid-template-rows: repeat(2, 16px); width: 34px; height: 34px; }
+  .sf-brandwords { font-size: 0.68rem; }
+  .sf-nav { padding-left: 0; }
   .sf-body .sf-hero-inner { padding: 40px 16px 60px; }
   .sf-body .sf-hero-captions { height: auto; min-height: 180px; }
   .sf-nav { display: none; }
