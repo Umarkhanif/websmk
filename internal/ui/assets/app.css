@@ -5217,19 +5217,6 @@ html:has(.home-body) {
   margin-top: 28px;
 }
 
-.home-hero a.home-pill-ghost {
-  background: rgba(255, 255, 255, 0.08);
-  color: #FFFFFF;
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  box-shadow: none;
-}
-
-.home-hero a.home-pill-ghost:hover {
-  background: rgba(255, 255, 255, 0.18);
-  color: #FFFFFF;
-  transform: translateY(-1px);
-}
-
 /* Wide screens have the pill navigation; the hamburger is redundant. */
 @media (min-width: 901px) {
   .home-menu {
