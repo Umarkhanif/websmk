@@ -34,14 +34,12 @@ templ Home(page ui.HomePage) {
 			<link rel="apple-touch-icon" href="/ui-assets/apple-touch-icon.png"/>
 			<meta name="apple-mobile-web-app-capable" content="yes"/>
 			<meta name="apple-mobile-web-app-title" content="WESMK"/>
-			<link rel="preload" href="/ui-assets/fonts/source-serif-4-latin.woff2" as="font" type="font/woff2" crossorigin/>
-			<link rel="preload" href="/ui-assets/fonts/plus-jakarta-sans-latin.woff2" as="font" type="font/woff2" crossorigin/>
+			<link rel="preload" href="/ui-assets/fonts/poppins-400-latin.woff2" as="font" type="font/woff2" crossorigin/>
+			<link rel="preload" href="/ui-assets/fonts/poppins-700-latin.woff2" as="font" type="font/woff2" crossorigin/>
+			<link rel="preload" href="/ui-assets/fonts/pt-serif-400-latin.woff2" as="font" type="font/woff2" crossorigin/>
 			<link rel="preload" href="/ui-assets/images/home-hero.jpg" as="image"/>
-			<link rel="preconnect" href="https://fonts.googleapis.com"/>
-			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-			<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap"/>
 			<link rel="stylesheet" href="/ui-assets/app.css?v=20261127o"/>
-			<link rel="stylesheet" href="/ui-assets/landing.css?v=20261127d"/>
+			<link rel="stylesheet" href="/ui-assets/landing.css?v=20261127e"/>
 			<script src="/ui-assets/app.js?v=20261127o" defer></script>
 		</head>
 		<body class="sf-body">
@@ -117,6 +115,7 @@ templ Home(page ui.HomePage) {
 			</div>
 
 			<main id="main-content">
+				<h1 class="sf-sr-only">{ ui.SchoolName() }</h1>
 				<!-- Slider bergaya SFS: banner lebar, teks kanan, dots, fade. -->
 				<section class="sf-hero" aria-label="Sorotan">
 					<div class="sf-hero-track" aria-hidden="true">

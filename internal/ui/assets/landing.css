@@ -1,3 +1,15 @@
+/* Self-hosted fonts (CSP style-src 'self'; no external stylesheet). */
+@font-face { font-family: "Poppins"; font-style: normal; font-weight: 400; font-display: swap; src: url("/ui-assets/fonts/poppins-400-latin.woff2") format("woff2"); }
+@font-face { font-family: "Poppins"; font-style: normal; font-weight: 500; font-display: swap; src: url("/ui-assets/fonts/poppins-500-latin.woff2") format("woff2"); }
+@font-face { font-family: "Poppins"; font-style: normal; font-weight: 600; font-display: swap; src: url("/ui-assets/fonts/poppins-600-latin.woff2") format("woff2"); }
+@font-face { font-family: "Poppins"; font-style: normal; font-weight: 700; font-display: swap; src: url("/ui-assets/fonts/poppins-700-latin.woff2") format("woff2"); }
+@font-face { font-family: "Poppins"; font-style: normal; font-weight: 800; font-display: swap; src: url("/ui-assets/fonts/poppins-800-latin.woff2") format("woff2"); }
+@font-face { font-family: "Poppins"; font-style: normal; font-weight: 900; font-display: swap; src: url("/ui-assets/fonts/poppins-900-latin.woff2") format("woff2"); }
+@font-face { font-family: "PT Serif"; font-style: normal; font-weight: 400; font-display: swap; src: url("/ui-assets/fonts/pt-serif-400-latin.woff2") format("woff2"); }
+@font-face { font-family: "PT Serif"; font-style: normal; font-weight: 700; font-display: swap; src: url("/ui-assets/fonts/pt-serif-700-latin.woff2") format("woff2"); }
+@font-face { font-family: "PT Serif"; font-style: italic; font-weight: 400; font-display: swap; src: url("/ui-assets/fonts/pt-serif-400-italic-latin.woff2") format("woff2"); }
+@font-face { font-family: "PT Serif"; font-style: italic; font-weight: 700; font-display: swap; src: url("/ui-assets/fonts/pt-serif-700-italic-latin.woff2") format("woff2"); }
+
 /* ===========================================================================
    Public landing ("/") — SFS-style shell for WESMK. Scoped to .sf-body.
    Warna mengikuti referensi: crimson #C60C46, teal #00AFA9, amber #FAA21B,
@@ -39,6 +51,7 @@
 .sf-narrow { max-width: 840px; margin-inline: auto; }
 .sf-eyebrow { color: var(--sf-muted); font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
 .sf-muted { color: var(--sf-muted); }
+.sf-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
 /* ---- buttons ---- */
 .sf-btn {
