@@ -1375,4 +1375,24 @@
     initMysteryOrb();
     initMobileCards();
   });
+
+  // Public landing popup (SFS-style): 2s delay, remembered for 7 days.
+  (function () {
+    var popup = document.querySelector(".sf-popup");
+    if (!popup) return;
+    var CNAME = "WESMK_LANDING_POPUP";
+    function readCookie() { return document.cookie.indexOf(CNAME + "=read") !== -1; }
+    function setCookie() {
+      var d = new Date();
+      d.setTime(d.getTime() + 7 * 24 * 60 * 60 * 1000);
+      document.cookie = CNAME + "=read;expires=" + d.toUTCString() + ";path=/";
+    }
+    function close() { popup.className = "sf-popup"; popup.setAttribute("aria-hidden", "true"); }
+    function open() { popup.className = "sf-popup active"; popup.setAttribute("aria-hidden", "false"); }
+    if (!readCookie()) window.setTimeout(open, 2000);
+    popup.querySelector(".sf-popup-close").addEventListener("click", function () { setCookie(); close(); });
+    popup.querySelector(".sf-popup-backdrop").addEventListener("click", function () { setCookie(); close(); });
+    popup.querySelector(".sf-popup-dialog a").addEventListener("click", function () { setCookie(); close(); });
+    document.addEventListener("keydown", function (event) { if (event.key === "Escape") close(); });
+  })();
 })();

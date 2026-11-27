@@ -37,8 +37,11 @@ templ Home(page ui.HomePage) {
 			<link rel="preload" href="/ui-assets/fonts/source-serif-4-latin.woff2" as="font" type="font/woff2" crossorigin/>
 			<link rel="preload" href="/ui-assets/fonts/plus-jakarta-sans-latin.woff2" as="font" type="font/woff2" crossorigin/>
 			<link rel="preload" href="/ui-assets/images/home-hero.jpg" as="image"/>
+			<link rel="preconnect" href="https://fonts.googleapis.com"/>
+			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+			<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap"/>
 			<link rel="stylesheet" href="/ui-assets/app.css?v=20261127o"/>
-			<link rel="stylesheet" href="/ui-assets/landing.css?v=20261127c"/>
+			<link rel="stylesheet" href="/ui-assets/landing.css?v=20261127d"/>
 			<script src="/ui-assets/app.js?v=20261127o" defer></script>
 		</head>
 		<body class="sf-body">
@@ -98,6 +101,20 @@ templ Home(page ui.HomePage) {
 					</div>
 				</div>
 			</header>
+
+			<!-- Popup info (SFS-style): muncul 2 detik setelah load, cookie 7 hari. -->
+			<div class="sf-popup" id="sf-popup" aria-hidden="true">
+				<div class="sf-popup-backdrop"></div>
+				<div class="sf-popup-dialog" role="dialog" aria-modal="true" aria-labelledby="sf-popup-title">
+					<button class="sf-popup-close" type="button" aria-label="Tutup popup">×</button>
+					<img src="/ui-assets/images/home-hero.jpg" alt="Siswa di laboratorium komputer" width="1392" height="752" loading="lazy" decoding="async"/>
+					<div class="sf-popup-body">
+						<h2 id="sf-popup-title">Pengenalan sekolah &amp; tur kampus dibuka</h2>
+						<p>Kenali program keahlian, fasilitas praktik, dan cara mendapatkan akun portal sekolah.</p>
+						<a class="sf-btn sf-btn-primary sf-btn-round" href="#pendaftaran">Lihat cara dapat akun</a>
+					</div>
+				</div>
+			</div>
 
 			<main id="main-content">
 				<!-- Slider bergaya SFS: banner lebar, teks kanan, dots, fade. -->

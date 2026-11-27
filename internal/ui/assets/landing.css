@@ -18,13 +18,13 @@
   --sf-fourth: #5c6770;
   --sf-rule: rgba(0, 0, 0, 0.14);
   --sf-rule-soft: rgba(0, 0, 0, 0.08);
-  --sf-serif: var(--font-serif, "PT Serif", Georgia, serif);
-  --sf-sans: var(--font-sans, "Plus Jakarta Sans", system-ui, sans-serif);
+  --sf-serif: "PT Serif", var(--font-serif, Georgia, serif);
+  --sf-sans: "Poppins", var(--font-sans, system-ui, sans-serif);
   background: var(--sf-white);
   color: var(--sf-text);
   font-family: var(--sf-sans);
-  font-size: 17px;
-  line-height: 1.55;
+  font-size: 18px;
+  line-height: 1.5;
   margin: 0;
 }
 
@@ -239,7 +239,7 @@
 .sf-reach { padding: 90px 45px; background: var(--sf-paper); }
 
 /* ---- footer: light slate, 3 columns + non-discrimination ---- */
-.sf-footer { background: #373e43; color: #fff; border-radius: 0 200px 0 0; padding: 70px 0 30px; }
+.sf-footer { background: #373e43; color: #fff; border-radius: 0 200px 0 0; padding: 140px 0 55px; }
 .sf-footer-main { display: grid; grid-template-columns: 1fr 2fr; gap: 50px; }
 .sf-footer .sf-logo-mark { background: #fff; color: #373e43; }
 .sf-footer .sf-logo-text strong { color: #fff; }
@@ -252,9 +252,9 @@
 .sf-footer h4 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 14px; }
 .sf-footer a { display: block; padding: 4px 0; color: var(--sf-fourth); }
 .sf-footer a:hover { color: #fff; }
-.sf-footer-note { margin-top: 40px; padding-top: 22px; border-top: 1px solid rgba(255,255,255,0.2); }
+.sf-footer-note { margin-top: 60px; padding-top: 22px; border-top: 1px solid rgba(255,255,255,0.2); }
 .sf-footer-note p { font-size: 0.8rem; margin: 0; }
-.sf-footer-bottom { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 30px; font-size: 0.8rem; }
+.sf-footer-bottom { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 50px; font-size: 0.8rem; }
 
 /* ---- responsive ---- */
 @media (max-width: 1080px) {
@@ -288,3 +288,17 @@
   .sf-caption:first-child { opacity: 1; }
   .sf-card-hover { transition: none; }
 }
+
+/* ---- admissions popup ---- */
+.sf-popup { display: none; position: fixed; inset: 0; z-index: 200; }
+.sf-popup.active { display: block; }
+.sf-popup-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.7); }
+.sf-popup-dialog { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(560px, calc(100vw - 32px)); max-height: calc(100dvh - 40px); overflow-y: auto; background: #fff; box-shadow: 0 24px 80px rgba(0,0,0,0.4); }
+.sf-popup-dialog img { width: 100%; height: auto; }
+.sf-popup-body { padding: 28px; text-align: center; }
+.sf-popup-body h2 { font-size: 1.6rem; margin-bottom: 12px; }
+.sf-popup-body p { color: var(--sf-text); margin: 0 0 20px; }
+.sf-popup-close { position: absolute; top: 10px; right: 10px; width: 36px; height: 36px; border: 0; border-radius: 50%; background: #fff; color: var(--sf-ink); font-size: 1.5rem; line-height: 1; cursor: pointer; z-index: 2; }
+.sf-popup-close:hover { background: var(--sf-primary); color: #fff; }
+@media (max-width: 560px) { .sf-footer { border-radius: 0 80px 0 0; } }
+@media (prefers-reduced-motion: reduce) { .sf-popup-dialog { transition: none; } }
