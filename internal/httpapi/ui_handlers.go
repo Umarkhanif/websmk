@@ -876,7 +876,9 @@ func (s *Server) handleLogoutForm(w http.ResponseWriter, r *http.Request) {
 	}
 	_ = s.authSvc.Logout(r.Context(), token)
 	s.clearSessionCookie(w)
-	http.Redirect(w, r, "/login", http.StatusSeeOther)
+	// Back to the public landing page: signing out should not drop the visitor
+	// straight into the login form (and in demo mode /login bounces to a portal).
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func (s *Server) handleResetStateForm(w http.ResponseWriter, r *http.Request) {

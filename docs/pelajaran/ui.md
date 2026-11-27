@@ -81,3 +81,9 @@ Masalah: Kartu brand landing menampilkan "SMK Cendekia Nusantara" (sisa sekolah 
 Penyebab: Wordmark 3 baris ditulis hardcoded di `home.templ`, tidak mengikuti `WESMK_SCHOOL_NAME`.
 Perbaikan: `ui.SchoolLines()` memecah `SchoolName()` jadi 3 baris; templ merender hasilnya.
 Verifikasi: `templ generate`, `go vet ./...`, `go test ./...`; render `/` menunjukkan "SMK / Negeri 1 / Rekayasa".
+
+## 2026-11-28 — logout-kembali-ke-login
+Masalah: Setelah "Keluar dari portal", pengunjung mendarat di `/login` (dan di mode demo `/login` langsung memantul ke portal lagi), jadi landing page tidak pernah terlihat.
+Penyebab: `handleLogoutForm` mengarahkan ke `/login`, bukan halaman publik.
+Perbaikan: Logout sekarang redirect ke `/` (landing page).
+Verifikasi: `go vet ./...`, `go test ./internal/httpapi/...`; POST `/logout` → 303 `/`, GET `/` → 200 landing.
