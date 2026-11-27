@@ -194,10 +194,10 @@
 .sf-color-fourth { --c: var(--sf-fourth); }
 .sf-card-media { position: absolute; inset: 0; }
 .sf-card-media img, .sf-card-photo { width: 100%; height: 100%; object-fit: cover; }
-.sf-card:nth-child(1) .sf-card-photo { background: url('/ui-assets/images/home-hero.jpg') center/cover; }
-.sf-card:nth-child(2) .sf-card-photo { background: url('/ui-assets/images/login-hero.jpg') center/cover; }
-.sf-card:nth-child(3) .sf-card-photo { background: url('/ui-assets/images/login-lab.jpg') center/cover; }
-.sf-card:nth-child(4) .sf-card-photo { background: url('/ui-assets/images/home-workshop.jpg') center/cover; }
+.sf-card:nth-child(1) .sf-card-photo { background: url('/ui-assets/images/fiction-lab.jpg') center/cover; }
+.sf-card:nth-child(2) .sf-card-photo { background: url('/ui-assets/images/fiction-workshop.jpg') center/cover; }
+.sf-card:nth-child(3) .sf-card-photo { background: url('/ui-assets/images/fiction-community.jpg') center/cover; }
+.sf-card:nth-child(4) .sf-card-photo { background: url('/ui-assets/images/fiction-campus.jpg') center/cover; }
 .sf-card-base, .sf-card-hover { position: absolute; inset: auto 0 0 0; padding: 22px; }
 .sf-card-base { background: var(--c); color: #fff; z-index: 2; }
 .sf-card-base h3 { color: #fff; font-size: 1.5rem; font-weight: 700; }
