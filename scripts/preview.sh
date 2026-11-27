@@ -53,6 +53,7 @@ DATABASE_URL="postgres://wesmk:wesmk@localhost:5432/$DB?sslmode=disable" \
 REDIS_URL="redis://localhost:6379/1" \
 WESMK_SCHOOL_NAME="$SCHOOL" \
 WESMK_USERS="$WESMK_USERS" \
+WESMK_DEMO_NOAUTH=false \
 "$BIN" &
 APP_PID=$!
 trap 'kill "$APP_PID" 2>/dev/null || true' EXIT
