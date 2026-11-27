@@ -39,7 +39,7 @@ templ Home(page ui.HomePage) {
 			<link rel="preload" href="/ui-assets/fonts/pt-serif-400-latin.woff2" as="font" type="font/woff2" crossorigin/>
 			<link rel="preload" href="/ui-assets/images/fiction-hero.jpg" as="image"/>
 			<link rel="stylesheet" href="/ui-assets/app.css?v=20261127o"/>
-			<link rel="stylesheet" href="/ui-assets/landing.css?v=20261127s"/>
+			<link rel="stylesheet" href="/ui-assets/landing.css?v=20261127u"/>
 			<script src="/ui-assets/app.js?v=20261127o" defer></script>
 		</head>
 		<body class="sf-body">
@@ -48,7 +48,24 @@ templ Home(page ui.HomePage) {
 			<header id="header-area">
 				<!-- Kartu identitas sekolah: menimpa header & hero, sudut kanan-bawah membulat. -->
 				<a class="sf-brandcard" href="/" aria-label={ ui.SchoolName() + " beranda" }>
-					<span class="sf-brandmark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+					<span class="sf-brandmark" aria-hidden="true">
+						<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+							<!-- left circle -->
+							<path d="M50 55 A25 25 0 0 0 0 55 Z" fill="#FAA21B"/>
+							<path d="M0 55 L25 55 L0 80 Z" fill="#FFD568"/>
+							<path d="M50 55 A25 25 0 0 1 0 55 L25 80 Z" fill="#00AFA9"/>
+							<path d="M25 80 A25 25 0 0 0 50 55 L25 55 Z" fill="#008C87"/>
+							<!-- centre bar + yellow corner + crimson quarter -->
+							<rect x="50" y="8" width="20" height="70" fill="#C60C46"/>
+							<path d="M50 8 L70 8 L50 28 Z" fill="#FDD18D"/>
+							<path d="M70 8 A20 20 0 0 1 90 28 L70 28 Z" fill="#C60C46"/>
+							<!-- right circle -->
+							<path d="M70 55 A25 25 0 0 1 120 55 Z" fill="#FAA21B"/>
+							<path d="M70 55 L95 55 L70 80 Z" fill="#00AFA9"/>
+							<path d="M95 55 A25 25 0 0 1 120 55 L95 80 Z" fill="#008C87"/>
+							<path d="M70 55 A25 25 0 0 0 95 30 L95 55 Z" fill="#C60C46"/>
+						</svg>
+					</span>
 					<span class="sf-brandwords"><span>SMK</span><span>Cendekia</span><span>Nusantara</span></span>
 				</a>
 
