@@ -75,3 +75,9 @@ Masalah: Dengan `WESMK_DEMO_NOAUTH=true`, `/` dan `/login` langsung 302 ke dashb
 Penyebab: `attachAuth` menempelkan user demo ke semua path, termasuk halaman publik.
 Perbaikan: Halaman tamu (`/`, `/contact`, `/verify*`) tidak lagi memakai user demo, sesi nyata selalu diutamakan, dan tautan portal di landing tetap membuka portal demo.
 Verifikasi: `go vet ./...`, `go test ./...`; mode demo `/` 200 landing, `/login?tab=staff` 302 ke `/teacher/dashboard` 200.
+
+## 2026-11-28 — wordmark-landing-hardcoded
+Masalah: Kartu brand landing menampilkan "SMK Cendekia Nusantara" (sisa sekolah fiksi) padahal judul dan isi halaman memakai nama sekolah asli.
+Penyebab: Wordmark 3 baris ditulis hardcoded di `home.templ`, tidak mengikuti `WESMK_SCHOOL_NAME`.
+Perbaikan: `ui.SchoolLines()` memecah `SchoolName()` jadi 3 baris; templ merender hasilnya.
+Verifikasi: `templ generate`, `go vet ./...`, `go test ./...`; render `/` menunjukkan "SMK / Negeri 1 / Rekayasa".

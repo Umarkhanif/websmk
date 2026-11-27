@@ -66,7 +66,11 @@ templ Home(page ui.HomePage) {
 							<path d="M70 55 A25 25 0 0 0 95 30 L95 55 Z" fill="#C60C46"/>
 						</svg>
 					</span>
-					<span class="sf-brandwords"><span>SMK</span><span>Cendekia</span><span>Nusantara</span></span>
+					<span class="sf-brandwords">
+						for _, line := range ui.SchoolLines() {
+							<span>{ line }</span>
+						}
+					</span>
 				</a>
 
 				<div class="sf-header-main">

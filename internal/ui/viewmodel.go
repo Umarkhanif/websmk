@@ -409,6 +409,21 @@ func SchoolName() string {
 	return "SMK Negeri 1 Rekayasa"
 }
 
+// SchoolLines splits the school name into the stacked wordmark used on the
+// landing page header, so the header follows WESMK_SCHOOL_NAME instead of a
+// hardcoded name.
+func SchoolLines() []string {
+	words := strings.Fields(SchoolName())
+	switch len(words) {
+	case 0:
+		return []string{"WESMK"}
+	case 1, 2:
+		return words
+	default:
+		return []string{words[0], strings.Join(words[1:len(words)-1], " "), words[len(words)-1]}
+	}
+}
+
 func Initials(name string) string {
 	parts := strings.Fields(strings.TrimSpace(name))
 	if len(parts) == 0 {
