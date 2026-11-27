@@ -108,10 +108,10 @@
 .sf-menu-panel .sf-btn { margin-top: 8px; color: #fff; }
 
 /* ---- hero: wide banner, right-aligned title, dots, fade slider ---- */
-.sf-hero { position: relative; isolation: isolate; overflow: hidden; margin-left: 80px; width: calc(100% - 80px); height: clamp(420px, 60vh, 650px); background: var(--sf-black); color: #fff; display: flex; align-items: center; justify-content: flex-end; }
+.sf-hero { position: relative; isolation: isolate; overflow: hidden; margin-left: 80px; width: calc(100% - 80px); height: clamp(420px, 60vh, 650px); background: transparent; color: #fff; display: flex; align-items: center; justify-content: flex-end; }
 .sf-hero-track { position: absolute; inset: 0; z-index: -2; display: flex; width: 400%; height: 100%; animation: sf-slide 16s infinite; }
-.sf-slide { width: 25%; height: 100%; background-size: cover; background-position: center; }
-.sf-body .sf-hero-overlay { position: absolute; inset: 0; z-index: -1; background: rgba(0, 0, 0, 0.3); }
+.sf-slide { width: 25%; height: 100%; background-size: cover; background-position: center; border-radius: 0 0 0 300px; }
+.sf-body .sf-hero-overlay { position: absolute; inset: 0; z-index: -1; background: rgba(0, 0, 0, 0.3); border-radius: 0 0 0 300px; }
 .sf-body .sf-hero-inner { width: 100%; max-width: none; margin: 0; height: 100%; padding: 100px 0 70px; display: flex; align-items: center; }
 .sf-body .sf-hero-captions { position: relative; width: 100%; height: 245px; display: flex; align-items: center; justify-content: flex-end; align-self: flex-end; margin-bottom: 29px; }
 .sf-caption { position: absolute; right: 0; width: min(660px, 100%); margin: 0; text-align: right; font-family: var(--sf-sans); font-weight: 800; font-size: clamp(2.2rem, 1rem + 3.4vw, 4.25rem); font-weight: 900; line-height: 1.2; text-transform: uppercase; color: #fff; opacity: 0; animation: sf-caption 16s infinite; }
