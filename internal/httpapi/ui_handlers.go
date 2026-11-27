@@ -235,6 +235,9 @@ func (s *Server) handleUIAsset(w http.ResponseWriter, r *http.Request) {
 	case "app.css":
 		w.Header().Set("Content-Type", "text/css; charset=utf-8")
 		w.Header().Set("Cache-Control", "no-cache, must-revalidate")
+	case "landing.css":
+		w.Header().Set("Content-Type", "text/css; charset=utf-8")
+		w.Header().Set("Cache-Control", "no-cache, must-revalidate")
 	case "favicon.svg":
 		w.Header().Set("Content-Type", "image/svg+xml")
 	case "manifest.webmanifest":
@@ -260,7 +263,7 @@ func (s *Server) handleUIAsset(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	if name != "app.js" && name != "app.css" && name != "manifest.webmanifest" && !strings.HasPrefix(name, "fonts/") {
+	if name != "app.js" && name != "app.css" && name != "landing.css" && name != "manifest.webmanifest" && !strings.HasPrefix(name, "fonts/") {
 		w.Header().Set("Cache-Control", "public, max-age=3600")
 	}
 	w.WriteHeader(http.StatusOK)

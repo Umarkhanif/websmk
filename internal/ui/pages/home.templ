@@ -9,6 +9,10 @@ import (
 
 // Home is the public front door of the school. It answers "sekolah apa ini dan
 // apa yang bisa saya lakukan di sini" before asking anyone to log in.
+//
+// Public marketing shell restyled after an SFS-style layout; sign-in, roles and
+// the app itself are unchanged. Only links to real routes / in-page anchors are
+// used. School facts come from the database; no invented numbers or news.
 templ Home(page ui.HomePage) {
 	<!DOCTYPE html>
 	<html lang="id">
@@ -38,100 +42,130 @@ templ Home(page ui.HomePage) {
 			<link rel="preload" href="/ui-assets/fonts/plus-jakarta-sans-latin.woff2" as="font" type="font/woff2" crossorigin/>
 			<link rel="preload" href="/ui-assets/images/home-hero.jpg" as="image"/>
 			<link rel="stylesheet" href="/ui-assets/app.css?v=20261127o"/>
-			<script src="/ui-assets/app.js?v=20261127l" defer></script>
+			<link rel="stylesheet" href="/ui-assets/landing.css?v=20261127a"/>
+			<script src="/ui-assets/app.js?v=20261127o" defer></script>
 		</head>
-		<body class="home-body">
+		<body class="sf-body">
 			<a class="skip-link" href="#main-content">Lewati ke konten utama</a>
 
-			<nav class="home-nav" aria-label="Navigasi utama">
-				<a href="#layanan">Layanan</a>
-				if len(page.Majors) > 0 {
-					<a href="#jurusan">Program keahlian</a>
-				}
-				if len(page.Partners) > 0 {
-					<a href="#mitra">Mitra industri</a>
-				}
-				<a href="#faq">Pertanyaan</a>
-				<a class="home-pill-cta" href="/login">Masuk ke portal</a>
-			</nav>
+			<!-- Utility strip (SFS-style): only real routes. -->
+			<div class="sf-utility">
+				<div class="sf-wrap sf-utility-inner">
+					<a class="sf-utility-brand" href="/">{ ui.SchoolName() }</a>
+					<nav class="sf-utility-links" aria-label="Tautan cepat">
+						<a href="/verify">Verifikasi dokumen</a>
+						<a href="/contact">Bantuan &amp; laporan</a>
+						<a class="sf-utility-cta" href="/login">Masuk ke portal</a>
+					</nav>
+				</div>
+			</div>
 
-			<a class="home-dock-login" href="/login" aria-label="Masuk ke portal">
-				@components.Icon("user", "icon")
-			</a>
-			<details class="home-menu">
-				<summary class="home-menu-btn">
-					<span class="home-menu-bars" aria-hidden="true"></span>
-					<span class="sr-only">Buka menu</span>
-				</summary>
-				<nav class="home-menu-panel" aria-label="Navigasi selengkapnya">
-					<a class="home-menu-cta" href="/login">Masuk ke portal</a>
-					<a href="#layanan">Layanan</a>
-					if len(page.Majors) > 0 {
-						<a href="#jurusan">Program keahlian</a>
-					}
-					if len(page.Partners) > 0 {
-						<a href="#mitra">Mitra industri</a>
-					}
-					<a href="#keamanan">Keamanan &amp; kepercayaan</a>
-					<a href="#akun">Cara dapat akun</a>
-					<a href="#faq">Pertanyaan</a>
-					<a href="/verify">Verifikasi dokumen</a>
-					<a href="/contact">Bantuan &amp; laporan</a>
-				</nav>
-			</details>
+			<header class="sf-header">
+				<div class="sf-wrap sf-header-inner">
+					<a class="sf-logo" href="/" aria-label={ ui.SchoolName() + " beranda" }>
+						<span class="sf-logo-mark" aria-hidden="true">{ ui.Initials(ui.SchoolName()) }</span>
+						<span class="sf-logo-text">{ ui.SchoolName() }</span>
+					</a>
+
+					<nav class="sf-nav" aria-label="Navigasi utama">
+						<details class="sf-drop">
+							<summary>Tentang</summary>
+							<div class="sf-drop-panel">
+								<a href="#tentang">Tentang sekolah</a>
+								<a href="#layanan">Layanan portal</a>
+								<a href="#keamanan">Keamanan &amp; kepercayaan</a>
+								<a href="/contact">Kontak</a>
+							</div>
+						</details>
+						<details class="sf-drop">
+							<summary>Program</summary>
+							<div class="sf-drop-panel">
+								<a href="#program">Program keahlian</a>
+								<a href="#mitra">Mitra industri</a>
+							</div>
+						</details>
+						<details class="sf-drop">
+							<summary>Kehidupan siswa</summary>
+							<div class="sf-drop-panel">
+								<a href="#siswa">Praktik &amp; bengkel</a>
+								<a href="#mitra">PKL &amp; bursa kerja</a>
+							</div>
+						</details>
+						<details class="sf-drop">
+							<summary>Pendaftaran</summary>
+							<div class="sf-drop-panel">
+								<a href="#pendaftaran">Cara dapat akun</a>
+								<a href="#masuk">Pintu masuk peran</a>
+								<a href="#faq">Pertanyaan umum</a>
+							</div>
+						</details>
+						<a href="#layanan">Layanan portal</a>
+					</nav>
+
+					<div class="sf-header-actions">
+						<a class="sf-btn sf-btn-ghost" href="#pendaftaran">Cara dapat akun</a>
+						<a class="sf-btn sf-btn-primary" href="/login">Masuk ke portal</a>
+						<details class="sf-menu">
+							<summary class="sf-menu-btn" aria-label="Buka menu">
+								<span class="sf-menu-bars" aria-hidden="true"></span>
+							</summary>
+							<nav class="sf-menu-panel" aria-label="Navigasi selengkapnya">
+								<a href="#tentang">Tentang</a>
+								<a href="#program">Program keahlian</a>
+								<a href="#siswa">Kehidupan siswa</a>
+								<a href="#mitra">Mitra industri</a>
+								<a href="#layanan">Layanan portal</a>
+								<a href="#masuk">Pintu masuk peran</a>
+								<a href="#pendaftaran">Cara dapat akun</a>
+								<a href="#keamanan">Keamanan</a>
+								<a href="#faq">Pertanyaan</a>
+								<a href="/verify">Verifikasi dokumen</a>
+								<a href="/contact">Bantuan &amp; laporan</a>
+								<a class="sf-btn sf-btn-primary" href="/login">Masuk ke portal</a>
+							</nav>
+						</details>
+					</div>
+				</div>
+			</header>
 
 			<main id="main-content">
-				<section class="home-hero">
-					<div class="home-hero-bg">
-						<img
-							src="/ui-assets/images/home-hero.jpg"
-							alt="Siswa SMK memeriksa perangkat jaringan di laboratorium komputer bersama guru"
-							width="1392"
-							height="752"
-							fetchpriority="high"
-							decoding="async"
-						/>
+				<!-- Hero: full-bleed, CSS-only slideshow, fixed school name + tagline. -->
+				<section class="sf-hero" aria-label="Sorotan">
+					<div class="sf-hero-track" aria-hidden="true">
+						<div class="sf-slide" style="background-image:url('/ui-assets/images/home-hero.jpg')"></div>
+						<div class="sf-slide" style="background-image:url('/ui-assets/images/home-workshop.jpg')"></div>
+						<div class="sf-slide" style="background-image:url('/ui-assets/images/login-campus.jpg')"></div>
+						<div class="sf-slide" style="background-image:url('/ui-assets/images/login-hero.jpg')"></div>
 					</div>
-					<div class="home-hero-inner">
-						<a class="home-brand" href="/">
-							<span class="home-brand-name">
-								<span class="home-brand-line">{ ui.SchoolName() }</span>
-							</span>
-						</a>
-						<div class="home-hero-foot">
-							<p class="home-hero-kicker">Tahun ajaran { page.AcademicYear }</p>
-							<h1>Portal layanan sekolah</h1>
-							<div class="home-hero-actions">
-								<a class="home-pill" href="/login">
-									<span>Masuk ke portal</span>
-									@components.Icon("arrow-right", "icon")
-								</a>
-							</div>
+					<div class="sf-hero-overlay"></div>
+					<div class="sf-wrap sf-hero-content">
+						<p class="sf-kicker">Tahun ajaran { page.AcademicYear }</p>
+						<h1 class="sf-hero-name">{ ui.SchoolName() }</h1>
+						<p class="sf-hero-tagline">Mencetak talenta siap kerja. Membentuk karakter.</p>
+						<div class="sf-hero-actions">
+							<a class="sf-btn sf-btn-primary sf-btn-lg" href="/login">Masuk ke portal</a>
+							<a class="sf-btn sf-btn-ghost-light sf-btn-lg" href="#program">Lihat program keahlian</a>
 						</div>
 					</div>
-					<p class="home-scroll" aria-hidden="true">Gulir</p>
 				</section>
 
-				<section class="home-intro">
-					<div class="home-wrap home-intro-grid">
-						<div class="home-intro-copy">
-							<p class="home-label">Tentang portal</p>
+				<!-- Mission / intro. -->
+				<section class="sf-section sf-mission" id="tentang">
+					<div class="sf-wrap sf-grid-2">
+						<div class="sf-prose">
+							<p class="sf-eyebrow">Tentang sekolah</p>
 							<h2>Sekolah kejuruan untuk kerja, kuliah, dan berwirausaha.</h2>
+							<p>
+								{ ui.SchoolName() } membentuk siswa berkarakter dengan pembelajaran
+								praktik di laboratorium dan bengkel, kurikulum yang mengikuti dunia
+								usaha dan industri, serta mitra industri untuk PKL dan penyaluran kerja.
+							</p>
 							<p>
 								Akademik, keuangan, PKL, dan komunikasi sekolah dalam satu portal.
 								Satu akun untuk siswa, guru, orang tua, dan staf sekolah.
 							</p>
-							<p>
-								Tidak ada pendaftaran mandiri: akun dibuat oleh admin sekolah dari
-								data induk, lalu dipakai untuk kegiatan belajar dan administrasi
-								sehari-hari.
-							</p>
-							<a class="home-pill" href="/login">
-								<span>Masuk ke portal</span>
-								@components.Icon("arrow-right", "icon")
-							</a>
 						</div>
-						<figure class="home-intro-media">
+						<figure class="sf-figure">
 							<img
 								src="/ui-assets/images/login-hero.jpg"
 								alt="Siswa mengerjakan tugas di ruang kelas"
@@ -144,145 +178,90 @@ templ Home(page ui.HomePage) {
 					</div>
 				</section>
 
-				<section class="home-facts" aria-label="Sekolah dalam angka">
-					<div class="home-wrap">
-						<dl class="home-facts-grid">
-							<div class="home-fact">
-								<dt>Tahun ajaran</dt>
-								<dd class="home-fact-text">{ page.AcademicYear }</dd>
+				<!-- "Magic" feature cards (SFS-style), mapped to vocational school strengths. -->
+				<section class="sf-section sf-alt" id="siswa">
+					<div class="sf-wrap">
+						<header class="sf-head">
+							<p class="sf-eyebrow">Kehidupan siswa</p>
+							<h2>Belajar lewat praktik, bukan hanya teori</h2>
+						</header>
+						<div class="sf-cards">
+							<article class="sf-card">
+								<h3>Pembelajaran praktik</h3>
+								<p>Setiap program keahlian punya laboratorium atau bengkel; jam produktif untuk bekerja, bukan sekadar membaca modul.</p>
+								<a class="sf-card-link" href="#program">Lihat program</a>
+							</article>
+							<article class="sf-card">
+								<h3>Karakter &amp; kerja sama</h3>
+								<p>Pembinaan karakter, kerja tim, dan proyek nyata membentuk siswa yang tangguh dan saling menghormati.</p>
+								<a class="sf-card-link" href="#tentang">Tentang sekolah</a>
+							</article>
+							<article class="sf-card">
+								<h3>Kurikulum relevan</h3>
+								<p>Kompetensi keahlian mengikuti kebutuhan dunia usaha dan industri agar siswa siap kerja.</p>
+								<a class="sf-card-link" href="#program">Program keahlian</a>
+							</article>
+							<article class="sf-card">
+								<h3>Bimbingan karier</h3>
+								<p>PKL, bursa kerja (BKK), dan mitra industri membantu siswa memilih langkah selanjutnya.</p>
+								<a class="sf-card-link" href="#mitra">Mitra industri</a>
+							</article>
+						</div>
+					</div>
+				</section>
+
+				<!-- Real stats from the database. -->
+				if len(page.Stats) > 0 || page.AcademicYear != "" {
+					<section class="sf-stats" aria-label="Sekolah dalam angka">
+						<div class="sf-wrap sf-stats-grid">
+							<div class="sf-stat">
+								<strong>{ page.AcademicYear }</strong>
+								<span>Tahun ajaran</span>
 							</div>
 							for _, stat := range page.Stats {
-								<div class="home-fact">
-									<dt>{ stat.Label }</dt>
-									<dd class="mono">{ stat.Value }</dd>
+								<div class="sf-stat">
+									<strong>{ stat.Value }</strong>
+									<span>{ stat.Label }</span>
 								</div>
 							}
-						</dl>
-						<p class="home-facts-note">Angka diambil langsung dari data sekolah.</p>
-					</div>
-				</section>
-
-				<section class="home-gates" id="masuk">
-					<div class="home-wrap home-gates-grid">
-						<div class="home-gates-head">
-							<p class="home-label">Pintu masuk</p>
-							<h2>Masuk sesuai peran Anda</h2>
-							<p class="home-gates-lead">
-								Setiap peran punya ruang kerjanya sendiri. Tidak ada data orang lain
-								yang ikut terkirim ke layar Anda.
-							</p>
-							<div class="home-gate-utils">
-								<a class="home-util" href="/verify">
-									<span>Verifikasi dokumen</span>
-									<span aria-hidden="true">→</span>
-								</a>
-								<a class="home-util" href="/contact">
-									<span>Bantuan &amp; laporan</span>
-									<span aria-hidden="true">→</span>
-								</a>
-							</div>
 						</div>
+					</section>
+				}
 
-						<div class="home-gates-list">
-							<a class="home-gate" href="/login?tab=staff">
-								<span class="home-gate-name">Siswa, guru &amp; staf</span>
-								<span class="home-gate-note">Masuk dengan NISN atau NIP</span>
-								<span class="home-gate-tags">Presensi · jadwal · tugas · ujian CBT · nilai</span>
-								<span class="home-gate-arrow" aria-hidden="true">→</span>
-							</a>
-							<a class="home-gate" href="/login?tab=parent">
-								<span class="home-gate-name">Orang tua &amp; wali</span>
-								<span class="home-gate-note">Masuk dengan nomor WhatsApp terdaftar</span>
-								<span class="home-gate-tags">Perkembangan anak · tagihan SPP · izin · komunikasi</span>
-								<span class="home-gate-arrow" aria-hidden="true">→</span>
-							</a>
-						</div>
-					</div>
-				</section>
-
-				<section class="home-services" id="layanan">
-					<div class="home-wrap">
-						<header class="home-head">
-							<p class="home-label">Layanan</p>
-							<h2>Satu portal untuk keperluan sekolah sehari-hari</h2>
-							<p>
-								Fitur yang dipakai sekolah setiap hari, dari presensi sampai
-								penyaluran kerja.
-							</p>
-						</header>
-
-						<ul class="home-services-list">
-							<li class="home-service">
-								<strong>Presensi &amp; jurnal</strong>
-								<p>Kehadiran harian dan jurnal mengajar guru tercatat rapi.</p>
-							</li>
-							<li class="home-service">
-								<strong>Kuis, tugas, dan nilai</strong>
-								<p>Tugas, kuis, dan penilaian siswa dalam satu alur.</p>
-							</li>
-							<li class="home-service">
-								<strong>Ujian CBT</strong>
-								<p>Ujian berbasis komputer dengan sesi dan pemantauan.</p>
-							</li>
-							<li class="home-service">
-								<strong>Keuangan &amp; SPP</strong>
-								<p>Tagihan, pembayaran, dan kwitansi yang bisa diverifikasi.</p>
-							</li>
-							<li class="home-service">
-								<strong>PKL &amp; bursa kerja</strong>
-								<p>Penempatan PKL, jurnal harian, dan penyaluran kerja (BKK).</p>
-							</li>
-							<li class="home-service">
-								<strong>Administrasi akademik</strong>
-								<p>Data kelas, jadwal, dan wali kelas yang selalu terbarui.</p>
-							</li>
-						</ul>
-					</div>
-				</section>
-
+				<!-- Programs / divisions (SFS divisions), real master data. -->
 				if len(page.Majors) > 0 {
-					<section class="home-majors" id="jurusan">
-						<div class="home-wrap">
-							<header class="home-head">
-								<p class="home-label">Program keahlian</p>
-								<h2>Belajar lewat praktik, bukan hanya teori</h2>
-								<p>Jalur kejuruan dengan mitra industri untuk PKL dan penyaluran kerja.</p>
+					<section class="sf-section" id="program">
+						<div class="sf-wrap">
+							<header class="sf-head">
+								<p class="sf-eyebrow">Program keahlian</p>
+								<h2>Pilih jalur keahlianmu</h2>
+								<p>Jalur kejuruan dengan laboratorium/bengkel dan mitra industri untuk PKL dan penyaluran kerja.</p>
 							</header>
-
-							<ul class="home-major-list">
+							<ul class="sf-program-list">
 								for _, major := range page.Majors {
-									<li class="home-major">
-										<span class="home-major-code mono">{ major.Code }</span>
-										<span class="home-major-body">
+									<li class="sf-program">
+										<span class="sf-program-code">{ major.Code }</span>
+										<div class="sf-program-body">
 											<strong>{ major.Name }</strong>
 											if major.Detail != "" {
-												<span class="home-major-lab">
+												<span class="sf-program-detail">
 													@components.Icon("monitor", "icon-xs")
 													<span>{ major.Detail }</span>
 												</span>
 											}
 											if major.Head != "" {
-												<span class="home-major-head">Ka. program: { major.Head }</span>
+												<span class="sf-program-head">Ka. program: { major.Head }</span>
 											}
-										</span>
-										<span class="home-major-meta">
+										</div>
+										<span class="sf-program-meta">
 											if major.Classes > 0 {
-												<span>
-													<span>Rombel</span>
-													<strong class="mono">{ strconv.Itoa(major.Classes) }</strong>
-												</span>
+												<span><strong>{ strconv.Itoa(major.Classes) }</strong>Rombel</span>
 											}
 											if major.Students > 0 {
-												<span>
-													<span>Siswa</span>
-													<strong class="mono">{ strconv.Itoa(major.Students) }</strong>
-												</span>
+												<span><strong>{ strconv.Itoa(major.Students) }</strong>Siswa</span>
 											}
 											if major.Partners > 0 {
-												<span>
-													<span>Mitra DUDI</span>
-													<strong class="mono">{ strconv.Itoa(major.Partners) }</strong>
-												</span>
+												<span><strong>{ strconv.Itoa(major.Partners) }</strong>Mitra DUDI</span>
 											}
 										</span>
 									</li>
@@ -291,46 +270,47 @@ templ Home(page ui.HomePage) {
 						</div>
 					</section>
 
-					<section class="home-band">
-						<img
-							src="/ui-assets/images/home-workshop.jpg"
-							alt="Guru mendampingi siswa memeriksa mesin mobil di bengkel sekolah"
-							width="1392"
-							height="752"
-							loading="lazy"
-							decoding="async"
-						/>
-						<div class="home-band-inner">
-							<p class="home-label home-label-light">Fasilitas praktik</p>
+					<section class="sf-band">
+						<img src="/ui-assets/images/home-workshop.jpg" alt="Guru mendampingi siswa memeriksa mesin mobil di bengkel sekolah" width="1392" height="752" loading="lazy" decoding="async"/>
+						<div class="sf-wrap sf-band-inner">
+							<p class="sf-eyebrow">Fasilitas praktik</p>
 							<h2>Ruang praktik yang dipakai setiap hari</h2>
-							<p>
-								Setiap program keahlian punya laboratorium atau bengkel sendiri,
-								jadi jam produktif benar-benar dipakai untuk bekerja — bukan
-								sekadar membaca modul.
-							</p>
-							<a class="home-pill" href="#jurusan">
-								<span>Lihat program keahlian</span>
-								@components.Icon("arrow-right", "icon")
-							</a>
+							<a class="sf-btn sf-btn-primary" href="#program">Lihat program keahlian</a>
 						</div>
 					</section>
 				}
 
-				if len(page.Partners) > 0 {
-					<section class="home-partners" id="mitra">
-						<div class="home-wrap">
-							<header class="home-head">
-								<p class="home-label">Mitra industri</p>
-								<h2>Tempat siswa belajar bekerja</h2>
-								<p>
-									Perusahaan yang sudah menerima siswa PKL. Nama pembimbing dan
-									nomor kontaknya tetap di dalam portal.
-								</p>
-							</header>
+				<!-- WESMK portal services — kept; this is what login unlocks. -->
+				<section class="sf-section sf-alt" id="layanan">
+					<div class="sf-wrap">
+						<header class="sf-head">
+							<p class="sf-eyebrow">Layanan portal</p>
+							<h2>Satu portal untuk keperluan sekolah sehari-hari</h2>
+							<p>Fitur yang dipakai sekolah setiap hari, dari presensi sampai penyaluran kerja. Butuh akun — dibuat oleh sekolah.</p>
+						</header>
+						<ul class="sf-services">
+							<li><strong>Presensi &amp; jurnal</strong><p>Kehadiran harian dan jurnal mengajar guru tercatat rapi.</p></li>
+							<li><strong>Kuis, tugas, dan nilai</strong><p>Tugas, kuis, dan penilaian siswa dalam satu alur.</p></li>
+							<li><strong>Ujian CBT</strong><p>Ujian berbasis komputer dengan sesi dan pemantauan.</p></li>
+							<li><strong>Keuangan &amp; SPP</strong><p>Tagihan, pembayaran, dan kwitansi yang bisa diverifikasi.</p></li>
+							<li><strong>PKL &amp; bursa kerja</strong><p>Penempatan PKL, jurnal harian, dan penyaluran kerja (BKK).</p></li>
+							<li><strong>Administrasi akademik</strong><p>Data kelas, jadwal, dan wali kelas yang selalu terbaru.</p></li>
+						</ul>
+					</div>
+				</section>
 
-							<ul class="home-partner-list">
+				<!-- Industry partners + head of school. -->
+				if len(page.Partners) > 0 {
+					<section class="sf-section" id="mitra">
+						<div class="sf-wrap">
+							<header class="sf-head">
+								<p class="sf-eyebrow">Mitra industri</p>
+								<h2>Tempat siswa belajar bekerja</h2>
+								<p>Perusahaan yang sudah menerima siswa PKL. Nama pembimbing dan nomor kontaknya tetap di dalam portal.</p>
+							</header>
+							<ul class="sf-partners">
 								for _, partner := range page.Partners {
-									<li class="home-partner">
+									<li>
 										<strong>{ partner.Name }</strong>
 										if partner.Sector != "" {
 											<span>{ partner.Sector }</span>
@@ -338,17 +318,13 @@ templ Home(page ui.HomePage) {
 									</li>
 								}
 							</ul>
-
 							if page.Headmaster != "" {
-								<div class="home-lead-note">
-									<span class="home-lead-avatar" aria-hidden="true">{ ui.Initials(page.Headmaster) }</span>
+								<div class="sf-lead">
+									<span class="sf-lead-avatar" aria-hidden="true">{ ui.Initials(page.Headmaster) }</span>
 									<div>
-										<p class="home-lead-role">Kepala sekolah</p>
-										<p class="home-lead-name">{ page.Headmaster }</p>
-										<p class="home-lead-line">
-											Menandatangani dokumen resmi secara elektronik dan memantau
-											mutu akademik lewat portal yang sama.
-										</p>
+										<p class="sf-eyebrow">Kepala sekolah</p>
+										<p class="sf-lead-name">{ page.Headmaster }</p>
+										<p>Menandatangani dokumen resmi secara elektronik dan memantau mutu akademik lewat portal yang sama.</p>
 									</div>
 								</div>
 							}
@@ -356,193 +332,132 @@ templ Home(page ui.HomePage) {
 					</section>
 				}
 
-				<section class="home-trust" id="keamanan">
-					<div class="home-wrap">
-						<header class="home-head home-trust-head">
-							<p class="home-label">Keamanan &amp; kepercayaan</p>
+				<!-- Trust / security. -->
+				<section class="sf-section sf-alt" id="keamanan">
+					<div class="sf-wrap">
+						<header class="sf-head">
+							<p class="sf-eyebrow">Keamanan &amp; kepercayaan</p>
 							<h2>Akun aman, data tetap terbatas</h2>
-							<p>
-								Portal menyimpan data pribadi siswa, jadi aksesnya dijaga berlapis
-								dan setiap dokumen bisa dilacak.
-							</p>
+							<p>Portal menyimpan data pribadi siswa, jadi aksesnya dijaga berlapis dan setiap dokumen bisa dilacak.</p>
 						</header>
-
-						<ul class="home-trust-list">
-							<li>
-								<span class="home-trust-icon">@components.Icon("lock", "icon")</span>
-								<span>
-									<strong>Verifikasi dua langkah</strong>
-									<span>Akun staf butuh lapisan kedua saat masuk, di luar kata sandi.</span>
-								</span>
-							</li>
-							<li>
-								<span class="home-trust-icon">@components.Icon("eye", "icon")</span>
-								<span>
-									<strong>Akses per peran</strong>
-									<span>Siswa, guru, dan orang tua hanya menerima datanya sendiri.</span>
-								</span>
-							</li>
-							<li>
-								<span class="home-trust-icon">@components.Icon("file-check", "icon")</span>
-								<span>
-									<strong>Tanda tangan elektronik</strong>
-									<span>Surat dan kwitansi resmi ditandatangani secara elektronik.</span>
-								</span>
-							</li>
-							<li>
-								<span class="home-trust-icon">@components.Icon("shield-alert", "icon")</span>
-								<span>
-									<strong>Verifikasi publik</strong>
-									<span>Nomor dokumen bisa dicek siapa saja lewat halaman verifikasi.</span>
-								</span>
-							</li>
+						<ul class="sf-trust">
+							<li><span class="sf-trust-icon">@components.Icon("lock", "icon")</span><span><strong>Verifikasi dua langkah</strong><span>Akun staf butuh lapisan kedua saat masuk, di luar kata sandi.</span></span></li>
+							<li><span class="sf-trust-icon">@components.Icon("eye", "icon")</span><span><strong>Akses per peran</strong><span>Siswa, guru, dan orang tua hanya menerima datanya sendiri.</span></span></li>
+							<li><span class="sf-trust-icon">@components.Icon("file-check", "icon")</span><span><strong>Tanda tangan elektronik</strong><span>Surat dan kwitansi resmi ditandatangani secara elektronik.</span></span></li>
+							<li><span class="sf-trust-icon">@components.Icon("shield-alert", "icon")</span><span><strong>Verifikasi publik</strong><span>Nomor dokumen bisa dicek siapa saja lewat halaman verifikasi.</span></span></li>
 						</ul>
 					</div>
 				</section>
 
-				<section class="home-steps" id="akun">
-					<div class="home-wrap">
-						<header class="home-head">
-							<p class="home-label">Cara dapat akun</p>
-							<h2>Tidak ada pendaftaran mandiri</h2>
-							<p>
-								Akun dibuat oleh sekolah supaya hanya orang yang benar-benar
-								terdaftar yang bisa masuk. Tiga langkahnya:
+				<!-- Entry points per role. -->
+				<section class="sf-section" id="masuk">
+					<div class="sf-wrap sf-grid-2">
+						<div class="sf-prose">
+							<p class="sf-eyebrow">Pintu masuk</p>
+							<h2>Masuk sesuai peran Anda</h2>
+							<p>Setiap peran punya ruang kerjanya sendiri. Tidak ada data orang lain yang ikut terkirim ke layar Anda.</p>
+							<p class="sf-muted">
+								<a href="/verify">Verifikasi dokumen</a> · <a href="/contact">Bantuan &amp; laporan</a>
 							</p>
-						</header>
-
-						<ol class="home-step-list">
-							<li class="home-step">
-								<span class="home-step-num mono">01</span>
-								<h3>Sekolah mendaftarkan Anda</h3>
-								<p>Admin TU membuat akun dari data induk: siswa, guru, staf, atau wali murid.</p>
-							</li>
-							<li class="home-step">
-								<span class="home-step-num mono">02</span>
-								<h3>Terima identitas masuk</h3>
-								<p>NISN atau NIP untuk siswa dan guru, nomor WhatsApp terdaftar untuk orang tua.</p>
-							</li>
-							<li class="home-step">
-								<span class="home-step-num mono">03</span>
-								<h3>Masuk dan amankan akun</h3>
-								<p>Ganti kata sandi awal, lalu aktifkan verifikasi dua langkah untuk akun staf.</p>
-							</li>
-						</ol>
-
-						<p class="home-steps-foot">
-							Belum punya akun atau datanya salah?
-							<a href="/contact">Kirim laporan lewat halaman bantuan</a>.
-						</p>
-					</div>
-				</section>
-
-				<section class="home-faq" id="faq">
-					<div class="home-wrap home-faq-wrap">
-						<header class="home-head">
-							<p class="home-label">Pertanyaan</p>
-							<h2>Hal yang paling sering ditanyakan</h2>
-						</header>
-
-						<div class="home-faq-list">
-							<details class="home-faq-item">
-								<summary>Bagaimana cara mendapatkan akun?</summary>
-								<p>
-									Akun dibuat oleh sekolah, bukan lewat pendaftaran mandiri. Hubungi
-									Admin TU atau wali kelas untuk didaftarkan.
-								</p>
-							</details>
-							<details class="home-faq-item">
-								<summary>Saya lupa kata sandi.</summary>
-								<p>
-									Buka halaman <a href="/contact">Bantuan &amp; laporan</a> dan sebutkan
-									peran serta identitas Anda. Admin akan mengatur ulang kata sandi.
-								</p>
-							</details>
-							<details class="home-faq-item">
-								<summary>NISN atau NIP saya tidak dikenali.</summary>
-								<p>
-									Pastikan nomor yang dipakai sama dengan data induk sekolah. Kalau
-									masih gagal, laporkan lewat halaman bantuan agar Admin TU memeriksa
-									data Anda.
-								</p>
-							</details>
-							<details class="home-faq-item">
-								<summary>Orang tua tidak punya WhatsApp?</summary>
-								<p>
-									Portal keluarga memakai nomor WhatsApp wali yang terdaftar. Minta
-									sekolah mengganti nomornya bila wali memakai nomor lain.
-								</p>
-							</details>
-							<details class="home-faq-item">
-								<summary>Bagaimana memastikan kwitansi atau surat itu asli?</summary>
-								<p>
-									Buka <a href="/verify">Verifikasi dokumen</a>, lalu masukkan nomor
-									dokumen yang tertera. Sistem mencocokkan tanda tangan elektroniknya.
-								</p>
-							</details>
 						</div>
-					</div>
-				</section>
-
-				<section class="home-reach">
-					<div class="home-wrap home-reach-grid">
-						<div class="home-reach-copy">
-							<p class="home-reach-label">Bantuan</p>
-							<h2>Ada pertanyaan?</h2>
-							<p>
-								Lupa kata sandi, kendala akun, atau data yang perlu diperbaiki —
-								sampaikan lewat halaman bantuan agar admin sekolah bisa menindaklanjuti.
-							</p>
-							<a class="home-pill" href="/contact">
-								<span>Hubungi sekolah</span>
-								@components.Icon("arrow-right", "icon")
+						<div class="sf-gates">
+							<a class="sf-gate" href="/login?tab=staff">
+								<strong>Siswa, guru &amp; staf</strong>
+								<span>Masuk dengan NISN atau NIP</span>
+								<span class="sf-gate-tags">Presensi · jadwal · tugas · ujian CBT · nilai</span>
+							</a>
+							<a class="sf-gate" href="/login?tab=parent">
+								<strong>Orang tua &amp; wali</strong>
+								<span>Masuk dengan nomor WhatsApp terdaftar</span>
+								<span class="sf-gate-tags">Perkembangan anak · tagihan SPP · izin · komunikasi</span>
 							</a>
 						</div>
-						<figure class="home-reach-media">
-							<img
-								src="/ui-assets/images/login-campus.jpg"
-								alt="Upacara bendera di halaman sekolah"
-								width="1100"
-								height="730"
-								loading="lazy"
-								decoding="async"
-							/>
+					</div>
+				</section>
+
+				<!-- Admissions / how to get an account. -->
+				<section class="sf-section sf-alt" id="pendaftaran">
+					<div class="sf-wrap">
+						<header class="sf-head">
+							<p class="sf-eyebrow">Pendaftaran</p>
+							<h2>Tidak ada pendaftaran mandiri</h2>
+							<p>Akun dibuat oleh sekolah supaya hanya orang yang benar-benar terdaftar yang bisa masuk. Tiga langkahnya:</p>
+						</header>
+						<ol class="sf-steps">
+							<li><span class="sf-step-num">01</span><h3>Sekolah mendaftarkan Anda</h3><p>Admin TU membuat akun dari data induk: siswa, guru, staf, atau wali murid.</p></li>
+							<li><span class="sf-step-num">02</span><h3>Terima identitas masuk</h3><p>NISN atau NIP untuk siswa dan guru, nomor WhatsApp terdaftar untuk orang tua.</p></li>
+							<li><span class="sf-step-num">03</span><h3>Masuk dan amankan akun</h3><p>Ganti kata sandi awal, lalu aktifkan verifikasi dua langkah untuk akun staf.</p></li>
+						</ol>
+						<p class="sf-muted">Belum punya akun atau datanya salah? <a href="/contact">Kirim laporan lewat halaman bantuan</a>.</p>
+					</div>
+				</section>
+
+				<!-- FAQ. -->
+				<section class="sf-section" id="faq">
+					<div class="sf-wrap sf-faq-wrap">
+						<header class="sf-head">
+							<p class="sf-eyebrow">Pertanyaan</p>
+							<h2>Hal yang paling sering ditanyakan</h2>
+						</header>
+						<div class="sf-faq">
+							<details><summary>Bagaimana cara mendapatkan akun?</summary><p>Akun dibuat oleh sekolah, bukan lewat pendaftaran mandiri. Hubungi Admin TU atau wali kelas untuk didaftarkan.</p></details>
+							<details><summary>Saya lupa kata sandi.</summary><p>Buka halaman <a href="/contact">Bantuan &amp; laporan</a> dan sebutkan peran serta identitas Anda. Admin akan mengatur ulang kata sandi.</p></details>
+							<details><summary>NISN atau NIP saya tidak dikenali.</summary><p>Pastikan nomor yang dipakai sama dengan data induk sekolah. Kalau masih gagal, laporkan lewat halaman bantuan agar Admin TU memeriksa data Anda.</p></details>
+							<details><summary>Orang tua tidak punya WhatsApp?</summary><p>Portal keluarga memakai nomor WhatsApp wali yang terdaftar. Minta sekolah mengganti nomornya bila wali memakai nomor lain.</p></details>
+							<details><summary>Bagaimana memastikan kwitansi atau surat itu asli?</summary><p>Buka <a href="/verify">Verifikasi dokumen</a>, lalu masukkan nomor dokumen yang tertera. Sistem mencocokkan tanda tangan elektroniknya.</p></details>
+						</div>
+					</div>
+				</section>
+
+				<!-- Reach / contact. -->
+				<section class="sf-reach">
+					<div class="sf-wrap sf-grid-2">
+						<div class="sf-prose">
+							<p class="sf-eyebrow">Bantuan</p>
+							<h2>Ada pertanyaan?</h2>
+							<p>Lupa kata sandi, kendala akun, atau data yang perlu diperbaiki — sampaikan lewat halaman bantuan agar admin sekolah bisa menindaklanjuti.</p>
+							<a class="sf-btn sf-btn-primary" href="/contact">Hubungi sekolah</a>
+						</div>
+						<figure class="sf-figure">
+							<img src="/ui-assets/images/login-campus.jpg" alt="Upacara bendera di halaman sekolah" width="1100" height="730" loading="lazy" decoding="async"/>
 						</figure>
 					</div>
 				</section>
 			</main>
 
-			<footer class="home-footer">
-				<div class="home-wrap home-footer-top">
-					<div class="home-footer-brand">
-						<a class="home-brand" href="/">
-							<span class="home-brand-name">{ ui.SchoolName() }</span>
-							<span class="home-brand-sub">Portal layanan sekolah</span>
+			<footer class="sf-footer">
+				<div class="sf-wrap sf-footer-top">
+					<div class="sf-footer-brand">
+						<a class="sf-logo" href="/">
+							<span class="sf-logo-mark" aria-hidden="true">{ ui.Initials(ui.SchoolName()) }</span>
+							<span class="sf-logo-text">{ ui.SchoolName() }</span>
 						</a>
-						<p class="home-footer-note">
-							Akademik, keuangan, PKL, dan komunikasi sekolah dalam satu akun
-							untuk siswa, guru, orang tua, dan staf.
-						</p>
+						<p>Akademik, keuangan, PKL, dan komunikasi sekolah dalam satu akun untuk siswa, guru, orang tua, dan staf.</p>
 					</div>
 					<div>
-						<p class="home-footer-title">Portal</p>
-						<a href="/login">Masuk</a>
+						<h4>Tentang</h4>
+						<a href="#tentang">Tentang sekolah</a>
+						<a href="#program">Program keahlian</a>
+						<a href="#layanan">Layanan portal</a>
+						<a href="#keamanan">Keamanan</a>
+					</div>
+					<div>
+						<h4>Portal</h4>
+						<a href="/login">Masuk ke portal</a>
+						<a href="#masuk">Pintu masuk peran</a>
+						<a href="#pendaftaran">Cara dapat akun</a>
 						<a href="/verify">Verifikasi dokumen</a>
 						<a href="/contact">Bantuan &amp; laporan</a>
 					</div>
 					<div>
-						<p class="home-footer-title">Jelajahi</p>
-						<a href="#layanan">Layanan</a>
-						if len(page.Majors) > 0 {
-							<a href="#jurusan">Program keahlian</a>
-						}
-						if len(page.Partners) > 0 {
-							<a href="#mitra">Mitra industri</a>
-						}
+						<h4>Jelajahi</h4>
+						<a href="#siswa">Kehidupan siswa</a>
+						<a href="#mitra">Mitra industri</a>
 						<a href="#faq">Pertanyaan</a>
+						<a href="#pendaftaran">Pendaftaran</a>
 					</div>
 				</div>
-				<div class="home-wrap home-footer-bottom">
+				<div class="sf-wrap sf-footer-bottom">
 					<span>© { ui.SchoolName() }</span>
 					<span>Portal WESMK · Tahun ajaran { page.AcademicYear }</span>
 				</div>

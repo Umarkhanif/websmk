@@ -16,7 +16,7 @@
   // 0b. The public landing menu is a <details>; close it once a link is picked
   // so the panel does not stay on top of the section it just scrolled to.
   function closeHomeMenu() {
-    document.querySelectorAll(".home-menu[open]").forEach(function (menu) {
+    document.querySelectorAll(".home-menu[open], .sf-menu[open], .sf-drop[open]").forEach(function (menu) {
       menu.removeAttribute("open");
     });
   }
@@ -24,8 +24,15 @@
   document.addEventListener("click", function (event) {
     var target = event.target;
     if (!target || !target.closest) return;
-    if (target.closest(".home-menu")) {
-      if (target.closest(".home-menu-panel a")) closeHomeMenu();
+    var menu = target.closest(".home-menu, .sf-menu, .sf-drop");
+    if (menu) {
+      if (target.closest(".home-menu-panel a, .sf-menu-panel a, .sf-drop-panel a")) {
+        menu.removeAttribute("open");
+      }
+      // clicking outside any open menu closes the rest
+      document.querySelectorAll(".home-menu[open], .sf-menu[open], .sf-drop[open]").forEach(function (open) {
+        if (open !== menu) open.removeAttribute("open");
+      });
       return;
     }
     closeHomeMenu();
