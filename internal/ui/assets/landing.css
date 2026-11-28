@@ -206,6 +206,15 @@ html { scroll-behavior: smooth; }
 .sf-card-hover .sf-muted { color: rgba(255,255,255,0.8); }
 .sf-card-hover .sf-btn { margin-top: 6px; }
 
+/* Desktop hover panels carry the program name, code, detail, head and button.
+   Let that content size the card so the panel is never clipped; the photo
+   ratio still governs the touch layout below. */
+@media (min-width: 1081px) {
+  .sf-card { display: grid; aspect-ratio: auto; }
+  .sf-card > * { grid-area: 1 / 1; }
+  .sf-card-hover { position: relative; inset: auto; }
+}
+
 /* ---- stats: white background, crimson numbers ---- */
 .sf-stats { padding: 24px 45px 52px; }
 .sf-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 30px; text-align: center; align-items: start; }

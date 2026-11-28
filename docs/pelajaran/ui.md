@@ -123,3 +123,9 @@ Masalah: Detail kartu program tidak pernah muncul di ponsel karena interaksi han
 Penyebab: Gaya reveal hanya didefinisikan untuk `:hover`, sementara layar sentuh tidak memiliki keadaan hover yang stabil.
 Perbaikan: `@media (hover: none)` menampilkan detail secara permanen dan menumpuk kartu tanpa memotong teks.
 Verifikasi: Playwright 390px `hasTouch` → teks kartu terbaca penuh dan tidak ada luapan horizontal.
+
+## 2026-11-28 — kartu-program-terpotong-saat-hover
+Masalah: Tombol "Lihat layanan" terpotong di tepi bawah kartu program saat overlay hover muncul.
+Penyebab: Rasio tetap `650/488` + `overflow: hidden` mengunci tinggi kartu 175–205px, sedangkan isi overlay butuh hingga ~320px pada 4 kolom.
+Perbaikan: `@media (min-width: 1081px)` memakai grid + `aspect-ratio: auto` agar isi overlay menentukan tinggi kartu; blok `hover: none` tetap menang di layar sentuh.
+Verifikasi: Playwright 1440/1280/1200/1120/1081 → sela tombol 22–36px tanpa luapan; 1024/390 tetap memakai tata letak lama.
