@@ -94,6 +94,12 @@ Penyebab: Aset gambar di-embed lewat pola `images/*.jpg` saja, dan `handleUIAsse
 Perbaikan: Tambah `images/*.png` ke `//go:embed`, izinkan `.png` dengan `Content-Type: image/png`, lalu ganti isi `.sf-brandcard` dengan satu `<img>` lambang (600×542, `object-fit: contain`) tanpa wordmark.
 Verifikasi: `templ generate`, `go vet ./...`, `go test ./...`; `/ui-assets/images/logo-crest.png` 200 `image/png`, kartu 270×240 dengan gambar 234×208, mobile lambang 46px.
 
+## 2026-11-28 — slide-hero-keluar-border
+Masalah: Saat slider hero berganti gambar, gambar lama masih terlihat menonjol di area sudut kiri-bawah (seperti keluar dari border melengkung).
+Penyebab: `border-radius: 0 0 0 300px` dipasang di tiap `.sf-slide`, bukan di container; saat track bergeser, slide yang sedang tampil tidak lagi sejajar dengan sudut sehingga potongannya ikut bergeser.
+Perbaikan: Radius dipindah ke `.sf-hero` (yang sudah `overflow: hidden`), radius di `.sf-slide` dan `.sf-hero-overlay` dihapus, dan breakpoint 900px memakai radius 150px di `.sf-hero` langsung.
+Verifikasi: `templ generate`, `go vet ./...`; animasi dibekukan di tengah transisi (delay -3.75s, paused) → track `matrix(... -1360, 0)` dan sudut hero tetap terpotong rapi di desktop & mobile.
+
 ## 2026-11-28 — kartu-logo-teks-terpotong
 Masalah: Setelah kartu logo hanya memakai lambang, teks "SMK / ENGINEERING FOR A BRIGHTER FUTURE" di bawah lambang hilang dari halaman.
 Penyebab: PNG `logo-crest.png` dipotong hanya pada area lambang (y 97–839), bukan seluruh konten file asal (y 97–1090).
