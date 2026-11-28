@@ -2980,7 +2980,7 @@ func (s *Server) handleContactPage(w http.ResponseWriter, r *http.Request) {
 		SchoolName:   ui.SchoolName(),
 		AcademicYear: s.activeAcademicYearLabel(r.Context()),
 		ActiveTab:    "contact",
-		PageTitle:    "Hubungi & Lapor Bug",
+		PageTitle:    "Bantuan & Laporan",
 		CSRFToken:    s.csrfTokenFor("contact"),
 		Flash:        r.URL.Query().Get("flash"),
 		FlashKind:    r.URL.Query().Get("kind"),
@@ -3062,5 +3062,5 @@ func (s *Server) handleContactReportBugForm(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	redirectWithFlash(w, r, "/contact", fmt.Sprintf("Laporan masalah (#%s) berhasil dikirim langsung ke Dasbor Admin Developer WESMK. Terima kasih atas bantuan Anda!", reportID), "success")
+	redirectWithFlash(w, r, "/contact", fmt.Sprintf("Laporan (#%s) berhasil dikirim ke tim teknis sekolah. Terima kasih atas bantuan Anda!", reportID), "success")
 }

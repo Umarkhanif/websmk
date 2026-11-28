@@ -261,11 +261,11 @@ func MobileNav(shell ui.RoleShell) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = Icon("bug", "icon").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Icon("help", "icon").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<span class=\"nav-copy\">Kontak &amp; Lapor Bug</span></a></div><form method=\"post\" action=\"/logout\" class=\"drawer-logout\"><input type=\"hidden\" name=\"_csrf\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<span class=\"nav-copy\">Bantuan &amp; Laporan</span></a></div><form method=\"post\" action=\"/logout\" class=\"drawer-logout\"><input type=\"hidden\" name=\"_csrf\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

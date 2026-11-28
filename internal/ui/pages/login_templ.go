@@ -60,7 +60,7 @@ func Login(page ui.LoginPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\"><link rel=\"icon\" type=\"image/svg+xml\" href=\"/ui-assets/favicon.svg\"><link rel=\"manifest\" href=\"/ui-assets/manifest.webmanifest\"><link rel=\"apple-touch-icon\" href=\"/ui-assets/apple-touch-icon.png\"><meta name=\"apple-mobile-web-app-capable\" content=\"yes\"><meta name=\"apple-mobile-web-app-title\" content=\"WESMK\"><link rel=\"preload\" href=\"/ui-assets/fonts/poppins-400-latin.woff2\" as=\"font\" type=\"font/woff2\" crossorigin><link rel=\"preload\" href=\"/ui-assets/fonts/poppins-700-latin.woff2\" as=\"font\" type=\"font/woff2\" crossorigin><link rel=\"preload\" href=\"/ui-assets/fonts/pt-serif-400-latin.woff2\" as=\"font\" type=\"font/woff2\" crossorigin><link rel=\"stylesheet\" href=\"/ui-assets/app.css?v=20261128a\"><script src=\"/ui-assets/app.js?v=20261127l\" defer></script></head><body class=\"login-body\"><main class=\"login-shell\"><section class=\"login-visual\" aria-label=\"Identitas sekolah\"><div class=\"login-visual-inner\"><div class=\"login-school-lockup\"><strong>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\"><link rel=\"icon\" type=\"image/svg+xml\" href=\"/ui-assets/favicon.svg\"><link rel=\"manifest\" href=\"/ui-assets/manifest.webmanifest\"><link rel=\"apple-touch-icon\" href=\"/ui-assets/apple-touch-icon.png\"><meta name=\"apple-mobile-web-app-capable\" content=\"yes\"><meta name=\"apple-mobile-web-app-title\" content=\"WESMK\"><link rel=\"preload\" href=\"/ui-assets/fonts/poppins-400-latin.woff2\" as=\"font\" type=\"font/woff2\" crossorigin><link rel=\"preload\" href=\"/ui-assets/fonts/poppins-700-latin.woff2\" as=\"font\" type=\"font/woff2\" crossorigin><link rel=\"preload\" href=\"/ui-assets/fonts/pt-serif-400-latin.woff2\" as=\"font\" type=\"font/woff2\" crossorigin><link rel=\"stylesheet\" href=\"/ui-assets/app.css?v=20261128b\"><script src=\"/ui-assets/app.js?v=20261128p\" defer></script></head><body class=\"login-body\"><main class=\"login-shell\"><section class=\"login-visual\" aria-label=\"Identitas sekolah\"><div class=\"login-visual-inner\"><div class=\"login-school-lockup\"><strong>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -358,11 +358,11 @@ func Login(page ui.LoginPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.Icon("bug", "icon icon-xs").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.Icon("help", "icon icon-xs").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<span>Hubungi &amp; Laporkan Bug</span></a></div></div></section></main></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<span>Bantuan &amp; Laporan</span></a></div></div></section></main></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

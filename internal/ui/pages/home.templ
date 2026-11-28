@@ -38,9 +38,9 @@ templ Home(page ui.HomePage) {
 			<link rel="preload" href="/ui-assets/fonts/poppins-700-latin.woff2" as="font" type="font/woff2" crossorigin/>
 			<link rel="preload" href="/ui-assets/fonts/pt-serif-400-latin.woff2" as="font" type="font/woff2" crossorigin/>
 			<link rel="preload" href="/ui-assets/images/fiction-hero.jpg" as="image"/>
-			<link rel="stylesheet" href="/ui-assets/app.css?v=20261128a"/>
-			<link rel="stylesheet" href="/ui-assets/landing.css?v=20261128m"/>
-			<script src="/ui-assets/app.js?v=20261127o" defer></script>
+			<link rel="stylesheet" href="/ui-assets/app.css?v=20261128b"/>
+			<link rel="stylesheet" href="/ui-assets/landing.css?v=20261128o"/>
+			<script src="/ui-assets/app.js?v=20261128p" defer></script>
 		</head>
 		<body class="sf-body">
 			<a class="skip-link" href="#main-content">Lewati ke konten utama</a>
@@ -49,7 +49,7 @@ templ Home(page ui.HomePage) {
 				<div class="sf-wrap sf-header-inner">
 					<a class="sf-logo" href="/" aria-label={ ui.SchoolName() + " beranda" }>
 						<img class="sf-logo-emblem" src="/ui-assets/images/logo-emblem.png" alt="" width="120" height="108"/>
-						<span class="sf-logo-text"><strong>SMK</strong><small>ENGINEERING FOR A BRIGHTER FUTURE</small></span>
+						<span class="sf-logo-text"><strong>{ ui.SchoolName() }</strong><small>Portal Layanan Sekolah</small></span>
 					</a>
 						<nav class="sf-nav" aria-label="Navigasi utama">
 							<details class="sf-drop"><summary>Tentang</summary><div class="sf-drop-panel">
@@ -88,11 +88,11 @@ templ Home(page ui.HomePage) {
 				<div class="sf-popup-backdrop"></div>
 				<div class="sf-popup-dialog" role="dialog" aria-modal="true" aria-labelledby="sf-popup-title">
 					<button class="sf-popup-close" type="button" aria-label="Tutup popup">×</button>
-					<img src="/ui-assets/images/fiction-hero.jpg" alt="Siswa di laboratorium komputer" width="1392" height="752" loading="lazy" decoding="async"/>
+					<img src="/ui-assets/images/fiction-campus.jpg" alt="Suasana kampus sekolah" width="1100" height="730" loading="lazy" decoding="async"/>
 					<div class="sf-popup-body">
-						<h2 id="sf-popup-title">Pengenalan sekolah &amp; tur kampus dibuka</h2>
-						<p>Kenali program keahlian, fasilitas praktik, dan cara mendapatkan akun portal sekolah.</p>
-						<a class="sf-btn sf-btn-primary sf-btn-round" href="#pendaftaran">Lihat cara dapat akun</a>
+						<h2 id="sf-popup-title">Kenali { ui.SchoolName() } lebih dekat</h2>
+						<p>Lihat program keahlian, ruang praktik, dan cara mendapatkan akun portal sekolah.</p>
+						<a class="sf-btn sf-btn-primary sf-btn-round" href="#program">Lihat program keahlian</a>
 					</div>
 				</div>
 			</div>
@@ -108,8 +108,9 @@ templ Home(page ui.HomePage) {
 						<div class="sf-slide" style="background-image:url('/ui-assets/images/fiction-campus.jpg')"></div>
 					</div>
 					<div class="sf-hero-overlay"></div>
+					<button class="sf-hero-toggle" type="button" aria-pressed="false">Jeda sorotan</button>
 					<div class="sf-wrap sf-hero-inner">
-						<div class="sf-hero-captions">
+						<div class="sf-hero-captions" aria-hidden="true">
 							<h2 class="sf-caption"><span>Tumbuhkan</span><span>Potensi.</span><span>Bersama.</span></h2>
 							<h2 class="sf-caption"><span>Belajar</span><span>Dengan</span><span>Gembira.</span></h2>
 							<h2 class="sf-caption"><span>Praktik</span><span>Nyata.</span><span>Siap Karya.</span></h2>
@@ -133,14 +134,14 @@ templ Home(page ui.HomePage) {
 				<section class="sf-section sf-section-alt" id="magic">
 					<div class="sf-wrap">
 						<div class="sf-head-center">
-							<h2>The Magic of { ui.SchoolName() }</h2>
+							<h2>Keistimewaan { ui.SchoolName() }</h2>
 							<p>Di { ui.SchoolName() }, pembelajaran yang menyenangkan tumbuh karena setiap siswa dilihat dan didukung oleh komunitas yang beragam dan dekat. Lewat praktik, seni, dan proyek nyata, kami menumbuhkan kebaikan, kreativitas, kolaborasi, dan keunggulan.</p>
 						</div>
 						<div class="sf-cards">
 							<article class="sf-card sf-color-primary">
 								<div class="sf-card-media"><img src="/ui-assets/images/fiction-lab.jpg" alt="Siswa belajar di kelas" width="1800" height="1200" loading="lazy" decoding="async"/></div>
 								<div class="sf-card-base"><h3>Karakter &amp; kepedulian</h3></div>
-								<div class="sf-card-hover"><h3>Karakter &amp; kepedulian</h3><p>Dari kurikulum karakter until nilai inti, kami membentuk warga yang baik dan berani.</p><a class="sf-btn sf-btn-white sf-btn-sm" href="#tentang">Pelajari</a></div>
+								<div class="sf-card-hover"><h3>Karakter &amp; kepedulian</h3><p>Dari kurikulum karakter sampai nilai inti, kami membentuk warga yang baik dan berani.</p><a class="sf-btn sf-btn-white sf-btn-sm" href="#tentang">Pelajari</a></div>
 							</article>
 							<article class="sf-card sf-color-secondary">
 								<div class="sf-card-media"><img src="/ui-assets/images/fiction-community.jpg" alt="Siswa bekerja di laboratorium" width="1000" height="667" loading="lazy" decoding="async"/></div>
@@ -176,7 +177,7 @@ templ Home(page ui.HomePage) {
 
 				<section class="sf-section" id="program">
 					<div class="sf-wrap">
-						<div class="sf-head-center"><h2>Program keahlian</h2><p>Baik siswa bergabung di TKJ, RPL, TBSM, atau AKL, mereka disambut dalam program keahlian yang membangkitkan semangat belajar.</p></div>
+						<div class="sf-head-center"><h2>Program keahlian</h2><p>Baik siswa bergabung di TKJ, RPL, TKR, atau AKL, mereka disambut dalam program keahlian yang membangkitkan semangat belajar.</p></div>
 						if len(page.Majors) > 0 {
 							<div class="sf-cards sf-cards-3">
 								for _, major := range page.Majors {
@@ -231,17 +232,17 @@ templ Home(page ui.HomePage) {
 					<div class="sf-wrap">
 						<div class="sf-head-center"><h2>Berita &amp; kegiatan</h2></div>
 						<div class="sf-posts">
-							<a class="sf-post" href="#berita">
+							<a class="sf-post" href="#mitra">
 								<img src="/ui-assets/images/fiction-workshop.jpg" alt="Siswa praktik mesin di bengkel" width="1392" height="752" loading="lazy" decoding="async"/>
-								<div class="sf-post-body"><p class="sf-post-date">21 September 2026</p><h3>Siswa mengikuti pelatihan jaringan bersama mitra industri</h3><p>Siswa belajar langsung di laboratorium dan bengkel mitra sebagai bagian dari PKL.</p><span class="sf-btn sf-btn-outline sf-btn-round sf-btn-sm">Baca selengkapnya</span></div>
+								<div class="sf-post-body"><p class="sf-post-date">21 September 2026</p><h3>Siswa mengikuti pelatihan jaringan bersama mitra industri</h3><p>Siswa belajar langsung di laboratorium dan bengkel mitra sebagai bagian dari PKL.</p><span class="sf-btn sf-btn-outline sf-btn-round sf-btn-sm">Lihat mitra industri</span></div>
 							</a>
-							<a class="sf-post" href="#berita">
+							<a class="sf-post" href="#siswa">
 								<img src="/ui-assets/images/fiction-campus.jpg" alt="Upacara bendera" width="1100" height="730" loading="lazy" decoding="async"/>
-								<div class="sf-post-body"><p class="sf-post-date">29 Agustus 2026</p><h3>Upacara dan kegiatan komunitas sekolah</h3><p>Warga sekolah berkumpul untuk kegiatan bersama yang menumbuhkan rasa memiliki.</p><span class="sf-btn sf-btn-outline sf-btn-round sf-btn-sm">Baca selengkapnya</span></div>
+								<div class="sf-post-body"><p class="sf-post-date">29 Agustus 2026</p><h3>Upacara dan kegiatan komunitas sekolah</h3><p>Warga sekolah berkumpul untuk kegiatan bersama yang menumbuhkan rasa memiliki.</p><span class="sf-btn sf-btn-outline sf-btn-round sf-btn-sm">Lihat kehidupan siswa</span></div>
 							</a>
-							<a class="sf-post" href="#berita">
+							<a class="sf-post" href="#program">
 								<img src="/ui-assets/images/fiction-lab.jpg" alt="Siswa mengerjakan tugas di kelas" width="1800" height="1200" loading="lazy" decoding="async"/>
-								<div class="sf-post-body"><p class="sf-post-date">27 Maret 2026</p><h3>Proyek kolaboratif siswa dalam pelajaran</h3><p>Belajar lewat proyek membantu siswa berpikir kritis dan bekerja tim.</p><span class="sf-btn sf-btn-outline sf-btn-round sf-btn-sm">Baca selengkapnya</span></div>
+								<div class="sf-post-body"><p class="sf-post-date">27 Maret 2026</p><h3>Proyek kolaboratif siswa dalam pelajaran</h3><p>Belajar lewat proyek membantu siswa berpikir kritis dan bekerja tim.</p><span class="sf-btn sf-btn-outline sf-btn-round sf-btn-sm">Lihat program keahlian</span></div>
 							</a>
 						</div>
 					</div>
@@ -344,22 +345,13 @@ templ Home(page ui.HomePage) {
 					</div>
 					<div class="sf-footer-cols">
 						<div><h4>Tentang</h4><a href="#tentang">Tentang sekolah</a><a href="#magic">Nilai &amp; pembelajaran</a><a href="#program">Program keahlian</a><a href="/contact">Kontak</a></div>
-						<div><h4>Get involved</h4><a href="#pendaftaran">Cara dapat akun</a><a href="#masuk">Pintu masuk peran</a><a href="/verify">Verifikasi dokumen</a><a href="/contact">Bantuan</a></div>
-						<div><h4>Hubungi</h4><a href="/contact">Hubungi sekolah</a><a href="#berita">Berita</a><a href="#faq">Pertanyaan</a><a href="/login">Masuk portal</a></div>
+						<div><h4>Terlibat</h4><a href="#pendaftaran">Cara dapat akun</a><a href="#masuk">Pintu masuk peran</a><a href="/verify">Verifikasi dokumen</a><a href="/contact">Bantuan</a></div>
+						<div><h4>Bantuan</h4><a href="/contact">Hubungi sekolah</a><a href="#berita">Berita</a><a href="#faq">Pertanyaan</a><a href="/login">Masuk portal</a></div>
 					</div>
 				</div>
 				<div class="sf-wrap sf-footer-note"><h4>Kebijakan sekolah</h4><p>{ ui.SchoolName() } menerima siswa tanpa memandang suku, agama, jenis kelamin, atau keadaan apapun dalam seluruh program dan kegiatan sekolah.</p></div>
 				<div class="sf-wrap sf-footer-bottom"><span>© { ui.SchoolName() } · Portal WESMK</span><span>Tahun ajaran { page.AcademicYear }</span></div>
 			</footer>
-			<script>
-				(function () {
-					var h = document.getElementById('header-area');
-					if (!h) return;
-					function update() { h.classList.toggle('is-scrolled', window.scrollY > 80); }
-					update();
-					window.addEventListener('scroll', update, { passive: true });
-				})();
-			</script>
 		</body>
 	</html>
 }

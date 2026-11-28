@@ -34,12 +34,25 @@ func MFA(page ui.MFAPage) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"id\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, viewport-fit=cover\"><meta name=\"color-scheme\" content=\"light\"><meta name=\"theme-color\" content=\"#C60C46\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>Verifikasi MFA — WESMK</title><link rel=\"icon\" type=\"image/svg+xml\" href=\"/ui-assets/favicon.svg\"><link rel=\"manifest\" href=\"/ui-assets/manifest.webmanifest\"><link rel=\"apple-touch-icon\" href=\"/ui-assets/apple-touch-icon.png\"><meta name=\"apple-mobile-web-app-capable\" content=\"yes\"><meta name=\"apple-mobile-web-app-title\" content=\"WESMK\"><link rel=\"preload\" href=\"/ui-assets/fonts/poppins-400-latin.woff2\" as=\"font\" type=\"font/woff2\" crossorigin><link rel=\"preload\" href=\"/ui-assets/fonts/poppins-700-latin.woff2\" as=\"font\" type=\"font/woff2\" crossorigin><link rel=\"stylesheet\" href=\"/ui-assets/app.css?v=20261128a\"></head><body class=\"login-body\"><main class=\"login-shell mfa-shell\"><section class=\"login-panel\" aria-label=\"Verifikasi dua langkah\"><div class=\"login-panel-inner\"><div class=\"login-panel-head\"><span class=\"eyebrow\">Keamanan akun</span><h2>Verifikasi dua langkah</h2><p>Masukkan kode 6 digit dari aplikasi autentikator, atau salah satu recovery code sekali pakai bila perangkat hilang.</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"id\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, viewport-fit=cover\"><meta name=\"color-scheme\" content=\"light\"><meta name=\"theme-color\" content=\"#C60C46\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>Verifikasi MFA — ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var2 string
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(ui.SchoolName())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/mfa.templ`, Line: 17, Col: 46}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><link rel=\"icon\" type=\"image/svg+xml\" href=\"/ui-assets/favicon.svg\"><link rel=\"manifest\" href=\"/ui-assets/manifest.webmanifest\"><link rel=\"apple-touch-icon\" href=\"/ui-assets/apple-touch-icon.png\"><meta name=\"apple-mobile-web-app-capable\" content=\"yes\"><meta name=\"apple-mobile-web-app-title\" content=\"WESMK\"><link rel=\"preload\" href=\"/ui-assets/fonts/poppins-400-latin.woff2\" as=\"font\" type=\"font/woff2\" crossorigin><link rel=\"preload\" href=\"/ui-assets/fonts/poppins-700-latin.woff2\" as=\"font\" type=\"font/woff2\" crossorigin><link rel=\"stylesheet\" href=\"/ui-assets/app.css?v=20261128b\"></head><body class=\"login-body\"><main class=\"login-shell mfa-shell\"><section class=\"login-panel\" aria-label=\"Verifikasi dua langkah\"><div class=\"login-panel-inner\"><div class=\"login-panel-head\"><span class=\"eyebrow\">Keamanan akun</span><h2>Verifikasi dua langkah</h2><p>Masukkan kode 6 digit dari aplikasi autentikator, atau salah satu recovery code sekali pakai bila perangkat hilang.</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if page.Error != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"alert alert-danger\" role=\"alert\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"alert alert-danger\" role=\"alert\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -47,51 +60,51 @@ func MFA(page ui.MFAPage) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<span>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var2 string
-			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(page.Error)
+			var templ_7745c5c3_Var3 string
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(page.Error)
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/mfa.templ`, Line: 39, Col: 26}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</span></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</span></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<form method=\"post\" action=\"/login/mfa\" class=\"form-stack\"><input type=\"hidden\" name=\"_csrf\" value=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(page.CSRFToken)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/mfa.templ`, Line: 43, Col: 63}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"><div class=\"field\"><label class=\"field-label\" for=\"mfa-code\">Kode autentikator atau recovery code</label> <input id=\"mfa-code\" class=\"input input-mono\" type=\"text\" name=\"code\" autocomplete=\"one-time-code\" placeholder=\"000000 atau XXXX-XXXX\" maxlength=\"12\" required autofocus></div><button class=\"button button-primary button-block\" type=\"submit\">Verifikasi &amp; Masuk</button></form><form method=\"post\" action=\"/login/mfa/cancel\" class=\"login-mfa-cancel\"><input type=\"hidden\" name=\"_csrf\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<form method=\"post\" action=\"/login/mfa\" class=\"form-stack\"><input type=\"hidden\" name=\"_csrf\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(page.CSRFToken)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/mfa.templ`, Line: 51, Col: 63}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/mfa.templ`, Line: 43, Col: 63}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\"> <button class=\"button button-ghost button-small\" type=\"submit\">Batal, login ulang</button></form></div></section></main></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\"><div class=\"field\"><label class=\"field-label\" for=\"mfa-code\">Kode autentikator atau recovery code</label> <input id=\"mfa-code\" class=\"input input-mono\" type=\"text\" name=\"code\" autocomplete=\"one-time-code\" placeholder=\"000000 atau XXXX-XXXX\" maxlength=\"12\" required autofocus></div><button class=\"button button-primary button-block\" type=\"submit\">Verifikasi &amp; Masuk</button></form><form method=\"post\" action=\"/login/mfa/cancel\" class=\"login-mfa-cancel\"><input type=\"hidden\" name=\"_csrf\" value=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var5 string
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(page.CSRFToken)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/mfa.templ`, Line: 51, Col: 63}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\"> <button class=\"button button-ghost button-small\" type=\"submit\">Batal, login ulang</button></form></div></section></main></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

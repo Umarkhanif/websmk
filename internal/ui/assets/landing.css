@@ -10,6 +10,9 @@
 @font-face { font-family: "PT Serif"; font-style: italic; font-weight: 400; font-display: swap; src: url("/ui-assets/fonts/pt-serif-400-italic-latin.woff2") format("woff2"); }
 @font-face { font-family: "PT Serif"; font-style: italic; font-weight: 700; font-display: swap; src: url("/ui-assets/fonts/pt-serif-700-italic-latin.woff2") format("woff2"); }
 
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
 /* ===========================================================================
    Public landing ("/") — SFS-style shell for WESMK. Scoped to .sf-body.
    Warna mengikuti referensi: crimson #C60C46, teal #00AFA9, amber #FAA21B,
@@ -23,7 +26,7 @@
   --sf-surface: #fff;
   --sf-text: #5c6770;
   --sf-ink: #181818;
-  --sf-muted: #889096;
+  --sf-muted: #667078;
   --sf-primary: #c60c46;
   --sf-secondary: #faa21b;
   --sf-third: #00afa9;
@@ -111,13 +114,15 @@
 .sf-hero { position: relative; isolation: isolate; overflow: hidden; border-radius: 0 0 0 300px; margin-left: 80px; width: calc(100% - 80px); height: 650px; background: transparent; color: #fff; display: flex; align-items: center; justify-content: flex-end; }
 .sf-hero-track { position: absolute; inset: 0; z-index: -2; display: flex; width: 400%; height: 100%; animation: sf-slide 16s infinite; }
 .sf-slide { width: 25%; height: 100%; background-size: cover; background-position: center; }
-.sf-body .sf-hero-overlay { position: absolute; inset: 0; z-index: -1; background: rgba(0, 0, 0, 0.3); }
+.sf-body .sf-hero-overlay { position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(0, 0, 0, 0.18) 0%, rgba(0, 0, 0, 0.34) 45%, rgba(0, 0, 0, 0.6) 100%), linear-gradient(0deg, rgba(0, 0, 0, 0.38) 0%, transparent 55%); }
 .sf-body .sf-hero-inner { width: 100%; max-width: none; margin: 0; height: 100%; padding: 100px 0 50px; display: flex; align-items: center; }
 .sf-body .sf-hero-captions { position: relative; width: 100%; height: 245px; display: flex; align-items: flex-end; justify-content: flex-end; align-self: flex-end; margin-bottom: 0; }
-.sf-caption { position: absolute; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); top: auto; bottom: 0; right: 0; width: min(660px, 100%); margin: 0; text-align: right; font-family: var(--sf-sans); font-weight: 800; font-size: clamp(2.2rem, 1rem + 3.4vw, 4.25rem); font-weight: 900; line-height: 1.2; text-transform: uppercase; color: #fff; opacity: 0; animation: sf-caption 16s infinite; }
-.sf-body .sf-caption span { display: block; }
-.sf-body .sf-caption span { display: block; }
-.sf-body .sf-caption { color: #fff; font-weight: 900; font-size: 68px; width: min(800px, 100%); right: 35px; }
+.sf-hero .sf-caption { position: absolute; top: auto; bottom: 0; right: 35px; width: min(800px, 100%); margin: 0; text-align: right; font-family: var(--sf-sans); font-weight: 900; font-size: clamp(2.2rem, 1rem + 3.4vw, 4.25rem); line-height: 1.15; text-transform: uppercase; color: #fff; text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45); opacity: 0; animation: sf-caption 16s infinite; }
+.sf-caption span { display: block; }
+.sf-hero-toggle { position: absolute; top: 24px; left: 24px; z-index: 2; min-height: 36px; padding: 8px 16px; border: 1px solid rgba(255, 255, 255, 0.55); border-radius: 100px; background: rgba(24, 24, 24, 0.3); color: #fff; font-family: var(--sf-sans); font-size: 0.76rem; font-weight: 600; letter-spacing: 0.02em; cursor: pointer; backdrop-filter: blur(6px); transition: background 0.2s ease; }
+.sf-hero-toggle:hover { background: rgba(24, 24, 24, 0.55); }
+.sf-hero.is-paused .sf-hero-track,
+.sf-hero.is-paused .sf-caption { animation-play-state: paused; }
 .sf-caption:nth-child(1) { animation-delay: 0s; }
 .sf-caption:nth-child(2) { animation-delay: 4s; }
 .sf-caption:nth-child(3) { animation-delay: 8s; }
@@ -134,16 +139,15 @@
   27%, 100% { opacity: 0; }
 }
 /* Header: logo horizontal + nav + aksi, garis bawah tipis. */
-#header-area { position: relative; z-index: 60; background: #fff; border-bottom: 1px solid var(--sf-rule-soft); transition: box-shadow .2s ease; }
-.sf-header-inner { width: min(1180px, 100% - 90px); margin: 0 auto; min-height: 100px; display: flex; align-items: center; gap: 24px; transition: min-height .2s ease; }
-#header-area.is-scrolled .sf-header-inner { min-height: 72px; }
+#header-area { position: sticky; top: 0; z-index: 60; background: #fff; border-bottom: 1px solid var(--sf-rule-soft); transition: box-shadow .2s ease; }
+.sf-header-inner { width: min(1180px, 100% - 90px); margin: 0 auto; min-height: 100px; display: flex; align-items: center; gap: 24px; }
+#header-area.is-scrolled { box-shadow: 0 10px 30px rgba(24, 24, 24, 0.09); }
 .sf-logo { display: inline-flex; align-items: center; gap: 10px; color: var(--sf-ink); text-decoration: none; }
 .sf-logo:hover { color: var(--sf-ink); }
-.sf-logo-emblem { display: block; width: 44px; height: 40px; object-fit: contain; transition: width .2s ease, height .2s ease; }
-#header-area.is-scrolled .sf-logo-emblem { width: 36px; height: 33px; }
+.sf-logo-emblem { display: block; width: 44px; height: 40px; object-fit: contain; }
 .sf-logo-text { display: flex; flex-direction: column; line-height: 1.05; }
-.sf-logo-text strong { font-size: 1.05rem; font-weight: 900; letter-spacing: 0.02em; }
-.sf-logo-text small { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.1em; color: var(--sf-muted); }
+.sf-logo-text strong { font-size: 1rem; font-weight: 900; letter-spacing: 0.01em; }
+.sf-logo-text small { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sf-muted); }
 .sf-nav { margin-left: auto; }
 
 /* ---- intro + section rhythm ---- */
@@ -186,6 +190,7 @@
 .sf-color-fourth { --c: var(--sf-fourth); }
 .sf-card-media { position: absolute; inset: 0; }
 .sf-card-media img, .sf-card-photo { width: 100%; height: 100%; object-fit: cover; }
+.sf-card-photo { background: url('/ui-assets/images/fiction-lab.jpg') center/cover; }
 .sf-card:nth-child(1) .sf-card-photo { background: url('/ui-assets/images/fiction-lab.jpg') center/cover; }
 .sf-card:nth-child(2) .sf-card-photo { background: url('/ui-assets/images/fiction-workshop.jpg') center/cover; }
 .sf-card:nth-child(3) .sf-card-photo { background: url('/ui-assets/images/fiction-community.jpg') center/cover; }
@@ -201,10 +206,19 @@
 .sf-card-hover .sf-muted { color: rgba(255,255,255,0.8); }
 .sf-card-hover .sf-btn { margin-top: 6px; }
 
+/* Desktop hover panels carry the program name, code, detail, head and button.
+   Let that content size the card so the panel is never clipped; the photo
+   ratio still governs the touch layout below. */
+@media (min-width: 1081px) {
+  .sf-card { display: grid; aspect-ratio: auto; }
+  .sf-card > * { grid-area: 1 / 1; }
+  .sf-card-hover { position: relative; inset: auto; }
+}
+
 /* ---- stats: white background, crimson numbers ---- */
 .sf-stats { padding: 24px 45px 52px; }
 .sf-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 30px; text-align: center; align-items: start; }
-.sf-stat strong { display: block; font-size: clamp(2.2rem, 1.4rem + 2.6vw, 64px); line-height: 1.05; font-weight: 900; color: var(--sf-third); }
+.sf-stat strong { display: block; font-size: clamp(2.2rem, 1.4rem + 2.6vw, 64px); line-height: 1.05; font-weight: 900; color: var(--sf-primary); }
 .sf-stat span { display: block; color: var(--sf-fourth); font-size: 1.06rem; margin-top: 10px; }
 .sf-stat-year strong { font-size: clamp(1.9rem, 1.3rem + 1.8vw, 46px); }
 
@@ -215,9 +229,10 @@
 
 /* ---- posts: horizontal cards, outline button ---- */
 .sf-posts { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 30px; }
-.sf-post { display: grid; grid-template-columns: minmax(0,1fr); gap: 0; color: var(--sf-ink); }
-.sf-post:hover { color: var(--sf-ink); border-color: var(--sf-primary); }
-.sf-post img { width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 0 24px 0 0; }
+.sf-post { display: grid; grid-template-columns: minmax(0,1fr); gap: 0; color: var(--sf-ink); transition: color 0.2s ease; }
+.sf-post:hover { color: var(--sf-ink); }
+.sf-post:hover h3 { color: var(--sf-primary); }
+.sf-post img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 0 24px 0 0; }
 .sf-post-date { color: var(--sf-muted); font-size: 0.82rem; margin: 0 0 8px; }
 .sf-post h3 { font-size: 1.35rem; line-height: 1.3; font-weight: 700; margin-bottom: 10px; }
 .sf-post-body > p:not(.sf-post-date) { color: var(--sf-text); margin: 0 0 16px; }
@@ -270,16 +285,30 @@
 .sf-social { display: flex; gap: 14px; margin-top: 22px; }
 .sf-footer-cols { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 30px; }
 .sf-footer h4 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 14px; }
-.sf-footer a { display: block; padding: 4px 0; color: var(--sf-fourth); }
-.sf-body .sf-footer a { color: #fff; }
+.sf-footer a { color: #fff; }
+.sf-footer .sf-logo { display: inline-flex; padding: 0; }
+.sf-footer-cols a { display: block; padding: 4px 0; }
 .sf-footer a:hover { color: #fdd18d; }
 .sf-footer-note { margin-top: 60px; padding-top: 22px; border-top: 1px solid rgba(255,255,255,0.2); }
 .sf-footer-note p { font-size: 0.8rem; margin: 0; }
 .sf-footer-bottom { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 50px; font-size: 0.8rem; }
 
+/* Touch devices cannot hover: stack the card content so every detail stays readable. */
+@media (hover: none) {
+  .sf-card { aspect-ratio: auto; display: flex; flex-direction: column; border-radius: 0 38px 0 0; }
+  .sf-card-media { position: relative; inset: auto; width: 100%; height: auto; aspect-ratio: 16 / 10; }
+  .sf-card-base { display: none; }
+  .sf-card-hover { position: static; inset: auto; opacity: 1; transform: none; padding: 22px; }
+  .sf-card-hover .sf-btn { margin-top: 8px; }
+}
+
 /* ---- responsive ---- */
 @media (max-width: 1080px) {
   .sf-wrap { width: min(1180px, 100% - 50px); }
+  .sf-header-inner { gap: 16px; }
+  .sf-nav > a, .sf-drop > summary { padding: 10px 8px; font-size: 0.76rem; }
+  .sf-logo-text strong { font-size: 0.94rem; }
+  .sf-logo-text small { font-size: 0.52rem; }
   .sf-cards { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .sf-partners, .sf-trust { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .sf-footer-main { grid-template-columns: 1fr; }
@@ -296,6 +325,7 @@
   .sf-header-actions { gap: 0; }
   .sf-body .sf-hero-inner { padding: 40px 30px 50px; }
   .sf-body .sf-hero-captions { height: auto; min-height: 180px; }
+  .sf-hero-toggle { top: 14px; left: 14px; font-size: 0.7rem; padding: 6px 12px; }
   .sf-nav { display: none; }
   .sf-menu { display: inline-flex; }
   .sf-header-actions > .sf-btn { display: none; }
@@ -307,6 +337,11 @@
   .sf-wrap { width: calc(100% - 32px); }
   .sf-section, .sf-intro, .sf-reach { padding: 60px 16px; }
   .sf-stats, .sf-quote { padding: 30px 16px 60px; }
+  .sf-logo-text strong { font-size: 0.88rem; }
+  .sf-logo-text small { font-size: 0.46rem; }
+  .sf-footer { padding: 90px 0 40px; }
+  .sf-popup-body { padding: 22px; }
+  .sf-popup-body h2 { font-size: 1.35rem; }
   .sf-cards, .sf-cards-3, .sf-services, .sf-steps, .sf-partners, .sf-trust, .sf-posts, .sf-post, .sf-footer-cols { grid-template-columns: minmax(0,1fr); }
   .sf-post img { aspect-ratio: 16 / 10; }
 }
@@ -315,19 +350,21 @@
   .sf-hero-track .sf-slide:not(:first-child) { display: none; }
   .sf-caption { animation: none; opacity: 0; }
   .sf-caption:first-child { opacity: 1; }
+  .sf-hero-toggle { display: none; }
   .sf-card-hover { transition: none; }
 }
 
 /* ---- admissions popup ---- */
+body.sf-popup-open { overflow: hidden; }
 .sf-popup { display: none; position: fixed; inset: 0; z-index: 200; }
 .sf-popup.active { display: block; }
 .sf-popup-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.7); }
-.sf-popup-dialog { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(560px, calc(100vw - 32px)); max-height: calc(100dvh - 40px); overflow-y: auto; background: #fff; box-shadow: 0 24px 80px rgba(0,0,0,0.4); }
+.sf-popup-dialog { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(560px, calc(100vw - 32px)); max-height: calc(100dvh - 40px); overflow-y: auto; overflow-x: hidden; background: #fff; border-radius: 0 28px 0 0; box-shadow: 0 24px 80px rgba(0,0,0,0.4); }
 .sf-popup-dialog img { width: 100%; height: auto; }
 .sf-popup-body { padding: 28px; text-align: center; }
 .sf-popup-body h2 { font-size: 1.6rem; margin-bottom: 12px; }
 .sf-popup-body p { color: var(--sf-text); margin: 0 0 20px; }
-.sf-popup-close { position: absolute; top: 10px; right: 10px; width: 36px; height: 36px; border: 0; border-radius: 50%; background: #fff; color: var(--sf-ink); font-size: 1.5rem; line-height: 1; cursor: pointer; z-index: 2; }
+.sf-popup-close { position: absolute; top: 10px; right: 10px; width: 36px; height: 36px; border: 0; border-radius: 100px; background: #fff; color: var(--sf-ink); font-size: 1.5rem; line-height: 1; cursor: pointer; z-index: 2; }
 .sf-popup-close:hover { background: var(--sf-primary); color: #fff; }
 @media (max-width: 560px) { .sf-footer { border-radius: 0 100px 0 0; } }
 @media (prefers-reduced-motion: reduce) { .sf-popup-dialog { transition: none; } }

@@ -105,3 +105,27 @@ Masalah: Setelah kartu logo hanya memakai lambang, teks "SMK / ENGINEERING FOR A
 Penyebab: PNG `logo-crest.png` dipotong hanya pada area lambang (y 97–839), bukan seluruh konten file asal (y 97–1090).
 Perbaikan: PNG dibuat ulang dari file asal dengan bbox seluruh konten + margin 8px (720×799), templ memakai `width="720" height="799"`, dan `object-fit: contain` mengecilkannya agar lambang + teks muat dalam kartu (tinggi mobile 52px).
 Verifikasi: `templ generate`, `go vet ./...`, `go test ./...`; `/ui-assets/images/logo-crest.png` 200 `image/png` 458087 byte; kartu desktop 270×240 berisi gambar 234×208, mobile gambar 46.8×52.
+
+## 2026-11-28 — header-scroll-diblokir-csp
+Masalah: Header landing tidak menempel atau berbayang saat digulir, tanpa pesan galat apa pun di antarmuka.
+Penyebab: Skrip inline di `home.templ` diblokir CSP `script-src 'self' 'unsafe-eval'`, sehingga listener scroll tidak pernah terpasang.
+Perbaikan: Logika dipindah ke `app.js` (toggle `is-scrolled` pada `[data-header]`); templ hanya menyisakan markup.
+Verifikasi: Playwright 1440/1024/390 → `#header-area` tetap di top 0, tinggi konstan 101px, kelas `is-scrolled` muncul setelah scroll.
+
+## 2026-11-28 — selektor-footer-menimpa-logo
+Masalah: Merek footer menumpuk vertikal dan pil sosial kehilangan padding setelah tautan footer dirapikan.
+Penyebab: `.sf-footer a { display:block; padding:4px 0 }` menimpa `.sf-logo` dan `.sf-social a` karena selektornya terlalu luas.
+Perbaikan: Aturan dipersempit menjadi warna saja; tata letak dipindah ke `.sf-footer .sf-logo` dan `.sf-footer-cols a`.
+Verifikasi: `display:inline-flex` pada logo, mark 46px dan teks sejajar mendatar; pil sosial kembali `padding: 0 10px`.
+
+## 2026-11-28 — kartu-program-hanya-hover
+Masalah: Detail kartu program tidak pernah muncul di ponsel karena interaksi hanya tersedia pada `:hover`.
+Penyebab: Gaya reveal hanya didefinisikan untuk `:hover`, sementara layar sentuh tidak memiliki keadaan hover yang stabil.
+Perbaikan: `@media (hover: none)` menampilkan detail secara permanen dan menumpuk kartu tanpa memotong teks.
+Verifikasi: Playwright 390px `hasTouch` → teks kartu terbaca penuh dan tidak ada luapan horizontal.
+
+## 2026-11-28 — kartu-program-terpotong-saat-hover
+Masalah: Tombol "Lihat layanan" terpotong di tepi bawah kartu program saat overlay hover muncul.
+Penyebab: Rasio tetap `650/488` + `overflow: hidden` mengunci tinggi kartu 175–205px, sedangkan isi overlay butuh hingga ~320px pada 4 kolom.
+Perbaikan: `@media (min-width: 1081px)` memakai grid + `aspect-ratio: auto` agar isi overlay menentukan tinggi kartu; blok `hover: none` tetap menang di layar sentuh.
+Verifikasi: Playwright 1440/1280/1200/1120/1081 → sela tombol 22–36px tanpa luapan; 1024/390 tetap memakai tata letak lama.

@@ -42,6 +42,38 @@
     if (event.key === "Escape") closeHomeMenu();
   });
 
+  // 0d. Sticky landing header: add a shadow after the page starts scrolling.
+  // Kept in this external bundle because the CSP forbids inline scripts.
+  (function () {
+    var header = document.getElementById("header-area");
+    if (!header) return;
+    var ticking = false;
+    function update() {
+      header.classList.toggle("is-scrolled", window.scrollY > 12);
+      ticking = false;
+    }
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(update);
+    }
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+  })();
+
+  // 0e. Let visitors pause the automatic hero rotation (WCAG 2.2.2).
+  (function () {
+    var hero = document.querySelector(".sf-hero");
+    if (!hero) return;
+    var toggle = hero.querySelector(".sf-hero-toggle");
+    if (!toggle) return;
+    toggle.addEventListener("click", function () {
+      var paused = hero.classList.toggle("is-paused");
+      toggle.setAttribute("aria-pressed", paused ? "true" : "false");
+      toggle.textContent = paused ? "Putar sorotan" : "Jeda sorotan";
+    });
+  })();
+
   // 0c. The floating landing controls tuck away while the page is read
   // downwards and return on the first upward scroll, so they never sit on a
   // heading (on a phone the menu button otherwise lands on body copy).
@@ -1376,23 +1408,72 @@
     initMobileCards();
   });
 
-  // Public landing popup (SFS-style): 2s delay, remembered for 7 days.
+  // Public landing popup (SFS-style): 5s delay, remembered for 7 days.
+  // Focus stays inside the dialog, Escape closes it, and the page behind it
+  // does not scroll while it is open.
   (function () {
     var popup = document.querySelector(".sf-popup");
     if (!popup) return;
+    var dialog = popup.querySelector(".sf-popup-dialog");
+    var closeBtn = popup.querySelector(".sf-popup-close");
     var CNAME = "WESMK_LANDING_POPUP";
+    var lastFocus = null;
+    var isOpen = false;
+
     function readCookie() { return document.cookie.indexOf(CNAME + "=read") !== -1; }
     function setCookie() {
       var d = new Date();
       d.setTime(d.getTime() + 7 * 24 * 60 * 60 * 1000);
-      document.cookie = CNAME + "=read;expires=" + d.toUTCString() + ";path=/";
+      document.cookie = CNAME + "=read;expires=" + d.toUTCString() + ";path=/;SameSite=Lax";
     }
-    function close() { popup.className = "sf-popup"; popup.setAttribute("aria-hidden", "true"); }
-    function open() { popup.className = "sf-popup active"; popup.setAttribute("aria-hidden", "false"); }
-    if (!readCookie()) window.setTimeout(open, 2000);
-    popup.querySelector(".sf-popup-close").addEventListener("click", function () { setCookie(); close(); });
-    popup.querySelector(".sf-popup-backdrop").addEventListener("click", function () { setCookie(); close(); });
-    popup.querySelector(".sf-popup-dialog a").addEventListener("click", function () { setCookie(); close(); });
-    document.addEventListener("keydown", function (event) { if (event.key === "Escape") close(); });
+    function focusable() {
+      if (!dialog) return [];
+      return dialog.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])');
+    }
+    function open() {
+      if (isOpen) return;
+      isOpen = true;
+      lastFocus = document.activeElement;
+      popup.className = "sf-popup active";
+      popup.setAttribute("aria-hidden", "false");
+      document.body.classList.add("sf-popup-open");
+      if (closeBtn) closeBtn.focus();
+    }
+    function close() {
+      if (!isOpen) return;
+      isOpen = false;
+      popup.className = "sf-popup";
+      popup.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("sf-popup-open");
+      if (lastFocus && typeof lastFocus.focus === "function") lastFocus.focus();
+    }
+    function dismiss() { setCookie(); close(); }
+
+    if (!readCookie()) {
+      window.setTimeout(function () {
+        if (window.scrollY < 600) open();
+      }, 5000);
+    }
+    if (closeBtn) closeBtn.addEventListener("click", dismiss);
+    popup.querySelector(".sf-popup-backdrop").addEventListener("click", dismiss);
+    var dialogLink = popup.querySelector(".sf-popup-dialog a");
+    if (dialogLink) dialogLink.addEventListener("click", dismiss);
+
+    document.addEventListener("keydown", function (event) {
+      if (!isOpen) return;
+      if (event.key === "Escape") { dismiss(); return; }
+      if (event.key !== "Tab") return;
+      var items = focusable();
+      if (!items.length) return;
+      var first = items[0];
+      var last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
   })();
 })();
