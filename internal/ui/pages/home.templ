@@ -39,7 +39,7 @@ templ Home(page ui.HomePage) {
 			<link rel="preload" href="/ui-assets/fonts/pt-serif-400-latin.woff2" as="font" type="font/woff2" crossorigin/>
 			<link rel="preload" href="/ui-assets/images/fiction-hero.jpg" as="image"/>
 			<link rel="stylesheet" href="/ui-assets/app.css?v=20261128a"/>
-			<link rel="stylesheet" href="/ui-assets/landing.css?v=20261128l"/>
+			<link rel="stylesheet" href="/ui-assets/landing.css?v=20261128m"/>
 			<script src="/ui-assets/app.js?v=20261127o" defer></script>
 		</head>
 		<body class="sf-body">
@@ -351,6 +351,15 @@ templ Home(page ui.HomePage) {
 				<div class="sf-wrap sf-footer-note"><h4>Kebijakan sekolah</h4><p>{ ui.SchoolName() } menerima siswa tanpa memandang suku, agama, jenis kelamin, atau keadaan apapun dalam seluruh program dan kegiatan sekolah.</p></div>
 				<div class="sf-wrap sf-footer-bottom"><span>© { ui.SchoolName() } · Portal WESMK</span><span>Tahun ajaran { page.AcademicYear }</span></div>
 			</footer>
+			<script>
+				(function () {
+					var h = document.getElementById('header-area');
+					if (!h) return;
+					function update() { h.classList.toggle('is-scrolled', window.scrollY > 80); }
+					update();
+					window.addEventListener('scroll', update, { passive: true });
+				})();
+			</script>
 		</body>
 	</html>
 }

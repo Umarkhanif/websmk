@@ -134,11 +134,13 @@
   27%, 100% { opacity: 0; }
 }
 /* Header: logo horizontal + nav + aksi, garis bawah tipis. */
-#header-area { position: relative; z-index: 60; background: #fff; border-bottom: 1px solid var(--sf-rule-soft); }
-.sf-header-inner { width: min(1180px, 100% - 90px); margin: 0 auto; min-height: 84px; display: flex; align-items: center; gap: 24px; }
+#header-area { position: relative; z-index: 60; background: #fff; border-bottom: 1px solid var(--sf-rule-soft); transition: box-shadow .2s ease; }
+.sf-header-inner { width: min(1180px, 100% - 90px); margin: 0 auto; min-height: 100px; display: flex; align-items: center; gap: 24px; transition: min-height .2s ease; }
+#header-area.is-scrolled .sf-header-inner { min-height: 72px; }
 .sf-logo { display: inline-flex; align-items: center; gap: 10px; color: var(--sf-ink); text-decoration: none; }
 .sf-logo:hover { color: var(--sf-ink); }
-.sf-logo-emblem { display: block; width: 44px; height: 40px; object-fit: contain; }
+.sf-logo-emblem { display: block; width: 44px; height: 40px; object-fit: contain; transition: width .2s ease, height .2s ease; }
+#header-area.is-scrolled .sf-logo-emblem { width: 36px; height: 33px; }
 .sf-logo-text { display: flex; flex-direction: column; line-height: 1.05; }
 .sf-logo-text strong { font-size: 1.05rem; font-weight: 900; letter-spacing: 0.02em; }
 .sf-logo-text small { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.1em; color: var(--sf-muted); }
