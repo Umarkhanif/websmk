@@ -39,21 +39,18 @@ templ Home(page ui.HomePage) {
 			<link rel="preload" href="/ui-assets/fonts/pt-serif-400-latin.woff2" as="font" type="font/woff2" crossorigin/>
 			<link rel="preload" href="/ui-assets/images/fiction-hero.jpg" as="image"/>
 			<link rel="stylesheet" href="/ui-assets/app.css?v=20261128a"/>
-			<link rel="stylesheet" href="/ui-assets/landing.css?v=20261128k"/>
+			<link rel="stylesheet" href="/ui-assets/landing.css?v=20261128l"/>
 			<script src="/ui-assets/app.js?v=20261127o" defer></script>
 		</head>
 		<body class="sf-body">
 			<a class="skip-link" href="#main-content">Lewati ke konten utama</a>
 
 			<header id="header-area">
-				<!-- Kartu identitas sekolah: menimpa header & hero, sudut kanan-bawah membulat. -->
-				<a class="sf-brandcard" href="/" aria-label={ ui.SchoolName() + " beranda" }>
-					<!-- Logo lengkap (lambang + nama sekolah): diskalakan agar muat di kartu. -->
-					<img class="sf-brandcard-logo" src="/ui-assets/images/logo-crest.png?v=20261128b" alt={ ui.SchoolName() } width="720" height="799"/>
-				</a>
-
-				<div class="sf-header-main">
-					<div class="sf-wrap sf-header-inner">
+				<div class="sf-wrap sf-header-inner">
+					<a class="sf-logo" href="/" aria-label={ ui.SchoolName() + " beranda" }>
+						<img class="sf-logo-emblem" src="/ui-assets/images/logo-emblem.png" alt="" width="120" height="108"/>
+						<span class="sf-logo-text"><strong>SMK</strong><small>ENGINEERING FOR A BRIGHTER FUTURE</small></span>
+					</a>
 						<nav class="sf-nav" aria-label="Navigasi utama">
 							<details class="sf-drop"><summary>Tentang</summary><div class="sf-drop-panel">
 								<a href="#tentang">Tentang sekolah</a><a href="#magic">Nilai &amp; pembelajaran</a><a href="#keamanan">Keamanan</a><a href="/contact">Kontak</a>
@@ -84,7 +81,6 @@ templ Home(page ui.HomePage) {
 							</details>
 						</div>
 					</div>
-				</div>
 			</header>
 
 			<!-- Popup info (SFS-style): muncul 2 detik setelah load, cookie 7 hari. -->
