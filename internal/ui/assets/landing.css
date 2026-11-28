@@ -114,12 +114,6 @@
 .sf-body .sf-hero-overlay { position: absolute; inset: 0; z-index: -1; background: rgba(0, 0, 0, 0.3); }
 .sf-body .sf-hero-inner { width: 100%; max-width: none; margin: 0; height: 100%; padding: 100px 0 50px; display: flex; align-items: center; }
 .sf-body .sf-hero-captions { position: relative; width: 100%; height: 245px; display: flex; align-items: flex-end; justify-content: flex-end; align-self: flex-end; margin-bottom: 0; }
-.sf-hero-stage { position: relative; }
-/* Ornamen banner (rasio asli 299×183): teal setengah lingkaran di atas, pink
-   seperempat lingkaran di kiri-bawah, menggantung melewati tepi banner. */
-.sf-hero-deco { position: absolute; z-index: 9; left: 340px; bottom: -30px; width: 299px; height: 183px; pointer-events: none; }
-.sf-hero-deco::before { content: ""; position: absolute; top: 0; left: 67px; width: 232px; height: 116px; background: var(--sf-third); opacity: 0.6; border-radius: 116px 116px 0 0; }
-.sf-hero-deco::after { content: ""; position: absolute; top: 116px; left: 0; width: 67px; height: 67px; background: #f4ceda; border-bottom-left-radius: 100%; }
 .sf-caption { position: absolute; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); top: auto; bottom: 0; right: 0; width: min(660px, 100%); margin: 0; text-align: right; font-family: var(--sf-sans); font-weight: 800; font-size: clamp(2.2rem, 1rem + 3.4vw, 4.25rem); font-weight: 900; line-height: 1.2; text-transform: uppercase; color: #fff; opacity: 0; animation: sf-caption 16s infinite; }
 .sf-body .sf-caption span { display: block; }
 .sf-body .sf-caption span { display: block; }
@@ -144,8 +138,6 @@
 .sf-brandcard:hover { color: var(--sf-ink); }
 .sf-brandcard-logo { display: block; width: 100%; height: 100%; object-fit: contain; }
 .sf-nav { padding-left: 250px; }
-.sf-dots { position: absolute; top: 50%; right: 45px; bottom: auto; left: auto; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; z-index: 3; }
-.sf-dots span { width: 12px; height: 12px; border-radius: 50%; border: 1px solid #fff; background: transparent; }
 
 /* ---- intro + section rhythm ---- */
 .sf-intro { padding: 76px 45px 44px; text-align: center; }
@@ -288,8 +280,6 @@
 @media (max-width: 900px) {
   .sf-hero { margin-left: 0; width: 100%; }
   .sf-hero { height: 380px; border-radius: 0 0 0 150px; }
-  .sf-hero-deco { left: 20px; bottom: -20px; transform: scale(0.5); transform-origin: bottom left; }
-  .sf-dots { top: auto; right: auto; bottom: 22px; left: 50%; transform: translateX(-50%); flex-direction: row; }
   .sf-body .sf-caption { right: 0; width: 100%; font-size: clamp(30px, 5vw, 40px); line-height: 1.2; }
   #header-area { display: flex; align-items: center; gap: 8px; padding: 10px 16px; }
   .sf-brandcard { position: static; width: auto; height: auto; padding: 0; background: transparent; border-radius: 0; flex: 1 1 auto; align-items: center; justify-content: flex-start; }
