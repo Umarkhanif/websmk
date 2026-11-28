@@ -93,3 +93,9 @@ Masalah: Kartu logo landing memakai emblem SVG kecil + tiga baris wordmark, pada
 Penyebab: Aset gambar di-embed lewat pola `images/*.jpg` saja, dan `handleUIAsset` hanya mengizinkan ekstensi `.jpg` di bawah `images/`.
 Perbaikan: Tambah `images/*.png` ke `//go:embed`, izinkan `.png` dengan `Content-Type: image/png`, lalu ganti isi `.sf-brandcard` dengan satu `<img>` lambang (600×542, `object-fit: contain`) tanpa wordmark.
 Verifikasi: `templ generate`, `go vet ./...`, `go test ./...`; `/ui-assets/images/logo-crest.png` 200 `image/png`, kartu 270×240 dengan gambar 234×208, mobile lambang 46px.
+
+## 2026-11-28 — kartu-logo-teks-terpotong
+Masalah: Setelah kartu logo hanya memakai lambang, teks "SMK / ENGINEERING FOR A BRIGHTER FUTURE" di bawah lambang hilang dari halaman.
+Penyebab: PNG `logo-crest.png` dipotong hanya pada area lambang (y 97–839), bukan seluruh konten file asal (y 97–1090).
+Perbaikan: PNG dibuat ulang dari file asal dengan bbox seluruh konten + margin 8px (720×799), templ memakai `width="720" height="799"`, dan `object-fit: contain` mengecilkannya agar lambang + teks muat dalam kartu (tinggi mobile 52px).
+Verifikasi: `templ generate`, `go vet ./...`, `go test ./...`; `/ui-assets/images/logo-crest.png` 200 `image/png` 458087 byte; kartu desktop 270×240 berisi gambar 234×208, mobile gambar 46.8×52.
