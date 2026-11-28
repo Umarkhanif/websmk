@@ -13,8 +13,8 @@ templ Base(shell ui.RoleShell, content templ.Component) {
 			<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 			<meta name="color-scheme" content="light"/>
 			<meta name="theme-color" content="#C60C46"/>
-			<title>{ shell.PageTitle } — WESMK</title>
-			<meta name="description" content="Portal layanan sekolah WESMK: akademik, keuangan, PKL, dan komunikasi sekolah dalam satu tempat."/>
+			<title>{ shell.PageTitle } — { shell.SchoolName }</title>
+			<meta name="description" content={ "Portal layanan " + shell.SchoolName + ": akademik, keuangan, PKL, dan komunikasi sekolah dalam satu tempat." }/>
 			<link rel="icon" type="image/svg+xml" href="/ui-assets/favicon.svg"/>
 			<link rel="manifest" href="/ui-assets/manifest.webmanifest"/>
 			<link rel="apple-touch-icon" href="/ui-assets/apple-touch-icon.png"/>
@@ -23,10 +23,10 @@ templ Base(shell ui.RoleShell, content templ.Component) {
 			<link rel="preload" href="/ui-assets/fonts/poppins-400-latin.woff2" as="font" type="font/woff2" crossorigin/>
 			<link rel="preload" href="/ui-assets/fonts/poppins-700-latin.woff2" as="font" type="font/woff2" crossorigin/>
 			<link rel="preload" href="/ui-assets/fonts/pt-serif-400-latin.woff2" as="font" type="font/woff2" crossorigin/>
-			<link rel="stylesheet" href="/ui-assets/app.css?v=20261128a"/>
+			<link rel="stylesheet" href="/ui-assets/app.css?v=20261128b"/>
 			<script src="/ui-assets/htmx.min.js" defer></script>
 			<script src="/ui-assets/alpine.min.js" defer></script>
-			<script src="/ui-assets/app.js?v=20261124p" defer></script>
+			<script src="/ui-assets/app.js?v=20261128p" defer></script>
 		</head>
 		<body class="app-body" hx-headers={ `{"X-CSRF-Token":"` + shell.CSRFToken + `"}` }>
 			<a class="skip-link" href="#main-content">Lewati ke konten utama</a>

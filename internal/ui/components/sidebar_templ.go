@@ -168,15 +168,15 @@ func Sidebar(shell ui.RoleShell) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<a href=\"/contact\" class=\"nav-link\" aria-label=\"Hubungi &amp; Laporkan Bug\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<a href=\"/contact\" class=\"nav-link\" aria-label=\"Bantuan &amp; Laporan\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = Icon("bug", "icon").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Icon("help", "icon").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<span class=\"nav-copy\">Kontak &amp; Lapor Bug</span></a></nav><div class=\"sidebar-footer\"><div class=\"school-card\"><span class=\"school-card-mark\" aria-hidden=\"true\">SMK</span><div><strong>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<span class=\"nav-copy\">Bantuan &amp; Laporan</span></a></nav><div class=\"sidebar-footer\"><div class=\"school-card\"><span class=\"school-card-mark\" aria-hidden=\"true\">SMK</span><div><strong>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

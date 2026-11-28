@@ -86,7 +86,7 @@ func Topbar(shell ui.RoleShell) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<span>Sesi aman</span></span> <a class=\"topbar-link\" href=\"/verify\">Verifikasi publik</a> <a class=\"topbar-link\" href=\"/contact\">Lapor Bug / Kontak</a> <details class=\"user-menu topbar-account-menu\"><summary aria-label=\"Buka menu akun\"><span class=\"avatar avatar-sm\" aria-hidden=\"true\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<span>Sesi aman</span></span> <a class=\"topbar-link\" href=\"/verify\">Verifikasi publik</a> <a class=\"topbar-link\" href=\"/contact\">Bantuan &amp; Laporan</a> <details class=\"user-menu topbar-account-menu\"><summary aria-label=\"Buka menu akun\"><span class=\"avatar avatar-sm\" aria-hidden=\"true\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

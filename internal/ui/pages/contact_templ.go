@@ -34,15 +34,15 @@ func Contact(data ui.ContactPage) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"page-stack\"><section class=\"card form-stack\"><div class=\"stat-card-head\"><div><span class=\"eyebrow\">Dukungan Pengguna &amp; Bug Tracker</span><h2>Hubungi Tim Developer &amp; Laporkan Masalah</h2></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"page-stack\"><section class=\"card form-stack\"><div class=\"stat-card-head\"><div><span class=\"eyebrow\">Bantuan Pengguna</span><h2>Hubungi Sekolah &amp; Laporkan Kendala</h2></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.InfoBubble("Laporan Anda langsung diteruskan ke Dasbor Admin Developer WESMK untuk investigasi teknis dan perbaikan segera.").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.InfoBubble("Laporan diteruskan ke tim teknis sekolah untuk ditelusuri dan ditindaklanjuti.").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><p class=\"muted\">Menemukan kendala pada ujian CBT, perbedaan data presensi RFID, kesulitan akses, atau bug tampilan? Kirimkan detailnya melalui form di bawah ini agar tim teknis kami dapat mendiagnosis log server dan menyelesaikannya.</p><form method=\"post\" action=\"/contact/report-bug\" class=\"form-stack\"><input type=\"hidden\" name=\"_csrf\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><p class=\"muted\">Mengalami kendala saat masuk, presensi, ujian, atau pembayaran? Sampaikan detailnya melalui form di bawah ini agar tim teknis sekolah dapat menelusuri penyebabnya dan menindaklanjuti dengan tepat.</p><form method=\"post\" action=\"/contact/report-bug\" class=\"form-stack\"><input type=\"hidden\" name=\"_csrf\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -195,7 +195,7 @@ func Contact(data ui.ContactPage) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, ">Pengunjung / Tamu</option></select></label> <label class=\"field\"><div class=\"field-head\"><span class=\"field-label\">Kategori Masalah</span>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, ">Pengunjung / Tamu</option></select></label> <label class=\"field\"><div class=\"field-head\"><span class=\"field-label\">Kategori kendala</span>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -203,7 +203,7 @@ func Contact(data ui.ContactPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</div><select class=\"input\" name=\"category\"><option value=\"CBT_EXAM\" selected>Ujian Online (CBT / Kiosk / Kunci Layar)</option> <option value=\"ATTENDANCE_GATE\">Presensi Gerbang &amp; Tap Kartu RFID</option> <option value=\"RAPOR_HOLISTIK\">e-Rapor 360° &amp; Nilai Siswa</option> <option value=\"FINANCE_SPP\">Keuangan, SPP &amp; Kwitansi Digital</option> <option value=\"UI_UX\">Tampilan / UI / Responsif di HP</option> <option value=\"AUTH_ACCESS\">Login, Sandi, &amp; Hak Akses Akun</option> <option value=\"OTHER\">Lainnya / Pertanyaan Umum</option></select></label></div><div class=\"grid-2\"><label class=\"field\"><div class=\"field-head\"><span class=\"field-label\">Tingkat Keparahan (Severity)</span>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</div><select class=\"input\" name=\"category\"><option value=\"CBT_EXAM\" selected>Ujian Online (CBT / Kiosk / Kunci Layar)</option> <option value=\"ATTENDANCE_GATE\">Presensi Gerbang &amp; Tap Kartu RFID</option> <option value=\"RAPOR_HOLISTIK\">e-Rapor 360° &amp; Nilai Siswa</option> <option value=\"FINANCE_SPP\">Keuangan, SPP &amp; Kwitansi Digital</option> <option value=\"UI_UX\">Tampilan di HP / perangkat</option> <option value=\"AUTH_ACCESS\">Masuk, kata sandi, &amp; akses akun</option> <option value=\"OTHER\">Lainnya / Pertanyaan Umum</option></select></label></div><div class=\"grid-2\"><label class=\"field\"><div class=\"field-head\"><span class=\"field-label\">Tingkat urgensi</span>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -211,11 +211,11 @@ func Contact(data ui.ContactPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</div><select class=\"input\" name=\"severity\"><option value=\"medium\" selected>Sedang - Kendala reguler, fungsi utama masih berjalan</option> <option value=\"critical\">Kritis - Sistem down / Ujian terhenti total</option> <option value=\"major\">Tinggi - Fungsi penting tidak merespons</option> <option value=\"low\">Rendah - Usulan perbaikan atau kendala visual kecil</option></select></label> <label class=\"field\"><div class=\"field-head\"><span class=\"field-label\">URL / Halaman Terkait</span>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</div><select class=\"input\" name=\"severity\"><option value=\"medium\" selected>Sedang — kendala biasa, layanan utama masih berjalan</option> <option value=\"critical\">Kritis — ujian atau layanan berhenti total</option> <option value=\"major\">Tinggi — fungsi penting tidak merespons</option> <option value=\"low\">Rendah — usulan perbaikan atau kendala tampilan kecil</option></select></label> <label class=\"field\"><div class=\"field-head\"><span class=\"field-label\">Halaman terkait</span>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.InfoBubble("Halaman tempat error muncul (otomatis dari browser jika ada).").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.InfoBubble("Halaman tempat kendala muncul (otomatis dari browser jika ada).").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -232,23 +232,23 @@ func Contact(data ui.ContactPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "\" placeholder=\"/student/exam-kiosk\"></label></div><label class=\"field\"><div class=\"field-head\"><span class=\"field-label\">Judul Masalah / Ringkasan Bug</span>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "\" placeholder=\"/student/exam-kiosk\"></label></div><label class=\"field\"><div class=\"field-head\"><span class=\"field-label\">Ringkasan kendala</span>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.InfoBubble("Deskripsi singkat 1 kalimat mengenai gejala kendala.").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.InfoBubble("Deskripsi singkat satu kalimat mengenai gejala kendala.").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</div><input class=\"input\" name=\"title\" placeholder=\"Contoh: Tombol reset ujian tidak merespons pada siswa nomor meja 14\" required></label> <label class=\"field\"><div class=\"field-head\"><span class=\"field-label\">Detail Deskripsi &amp; Langkah Reproduksi</span>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</div><input class=\"input\" name=\"title\" placeholder=\"Contoh: Tombol mulai ujian tidak merespons pada siswa nomor meja 14\" required></label> <label class=\"field\"><div class=\"field-head\"><span class=\"field-label\">Detail kendala</span>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.InfoBubble("Ceritakan kronologi: apa yang Anda klik, apa yang terjadi, dan pesan kesalahan jika ada.").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.InfoBubble("Ceritakan kronologi: apa yang Anda klik, apa yang terjadi, dan pesan kendala jika ada.").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</div><textarea class=\"input\" name=\"description\" rows=\"5\" placeholder=\"1. Saya membuka menu Pengawasan Ujian&#10;2. Menekan tombol Buka Kunci untuk siswa NISN 0058471292&#10;3. Muncul notifikasi error dan layar siswa tetap terkunci\" required></textarea></label><div class=\"field-actions\" style=\"display:flex; justify-content:flex-end; gap:10px; margin-top:8px;\"><a href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</div><textarea class=\"input\" name=\"description\" rows=\"5\" placeholder=\"1. Saya membuka menu Pengawasan Ujian&#10;2. Menekan tombol Buka Kunci untuk siswa NISN 0058471292&#10;3. Muncul pesan kendala dan layar siswa tetap terkunci\" required></textarea></label><div class=\"field-actions\"><a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -265,19 +265,19 @@ func Contact(data ui.ContactPage) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.Icon("bug", "icon-xs").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.Icon("help", "icon-xs").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<span>Kirim Laporan Bug</span></button></div></form></section><!-- Developer SLA & Direct Channel Info --><section class=\"card note-card\" style=\"display:flex; gap:16px; align-items:flex-start;\"><div class=\"note-icon\" style=\"flex-shrink:0;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<span>Kirim Laporan</span></button></div></form></section><!-- Tindak lanjut laporan --><section class=\"card note-card\" style=\"display:flex; gap:16px; align-items:flex-start;\"><div class=\"note-icon\" style=\"flex-shrink:0;\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.Icon("sliders", "icon").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.Icon("shield-alert", "icon").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</div><div><h4>Saluran Pengembang Resmi WESMK</h4><p class=\"muted\" style=\"margin-top:4px;\">Semua laporan yang dikirimkan terintegrasi secara otomatis ke Dasbor Developer Admin internal. Tiket berkategori <strong>Kritis</strong> (seperti kendala server saat CBT berlangsung) dimonitor langsung oleh tim on-call. Untuk demo pengujian tim pengembang, akun demo khusus <code>developer.admin</code> dapat diakses melalui switcher peran di pojok atas.</p></div></section></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</div><div><h4>Tindak lanjut laporan</h4><p class=\"muted\" style=\"margin-top:4px;\">Setiap laporan dicatat dan diteruskan ke tim teknis sekolah. Kendala yang menghentikan ujian atau mengancam data siswa ditangani lebih dahulu.</p></div></section></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

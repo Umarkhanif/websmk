@@ -15,7 +15,8 @@ templ PublicVerify(data ui.PublicVerifyPage) {
 			<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 			<meta name="color-scheme" content="light"/>
 			<meta name="theme-color" content="#C60C46"/>
-			<title>Verifikasi Publik &amp; Portal DUDI — WESMK</title>
+			<title>Verifikasi Dokumen — { ui.SchoolName() }</title>
+			<meta name="description" content={ "Verifikasi keaslian surat, kwitansi, dan jurnal PKL " + ui.SchoolName() + "." }/>
 			<link rel="icon" type="image/svg+xml" href="/ui-assets/favicon.svg"/>
 			<link rel="manifest" href="/ui-assets/manifest.webmanifest"/>
 			<link rel="apple-touch-icon" href="/ui-assets/apple-touch-icon.png"/>
@@ -23,16 +24,29 @@ templ PublicVerify(data ui.PublicVerifyPage) {
 			<meta name="apple-mobile-web-app-title" content="WESMK"/>
 			<link rel="preload" href="/ui-assets/fonts/poppins-400-latin.woff2" as="font" type="font/woff2" crossorigin/>
 			<link rel="preload" href="/ui-assets/fonts/poppins-700-latin.woff2" as="font" type="font/woff2" crossorigin/>
-			<link rel="stylesheet" href="/ui-assets/app.css?v=20261128a"/>
+			<link rel="stylesheet" href="/ui-assets/app.css?v=20261128b"/>
 			<script src="/ui-assets/htmx.min.js" defer></script>
-			<script src="/ui-assets/app.js?v=20261124p" defer></script>
+			<script src="/ui-assets/app.js?v=20261128p" defer></script>
 		</head>
 		<body class="app-body">
-			<main class="page">
+			<header class="public-topbar">
+				<div class="public-topbar-inner">
+					<a class="public-brand" href="/" aria-label={ ui.SchoolName() + " beranda" }>
+						<img src="/ui-assets/images/logo-emblem.png" alt="" width="120" height="108"/>
+						<span><strong>{ ui.SchoolName() }</strong><small>Portal Layanan Sekolah</small></span>
+					</a>
+					<nav class="public-topbar-nav" aria-label="Navigasi publik">
+						<a href="/">Beranda</a>
+						<a href="/contact">Bantuan</a>
+						<a class="button button-primary button-small" href="/login">Masuk</a>
+					</nav>
+				</div>
+			</header>
+			<main class="page public-main">
 				<div class="page-stack">
 					<section class="identity-card">
 						<div class="identity-main">
-							<span class="brand-mark brand-mark-lg">W</span>
+							<span class="brand-mark brand-mark-lg">{ ui.Initials(ui.SchoolName()) }</span>
 							<div class="identity-copy">
 								<span class="eyebrow">Verifikasi Dokumen &amp; Mitra PKL</span>
 								<h2>Pemeriksaan Keaslian Dokumen Resmi</h2>
@@ -43,8 +57,8 @@ templ PublicVerify(data ui.PublicVerifyPage) {
 					</section>
 
 					<div class="login-tabs" role="tablist">
-						<a href="/verify?tab=verify" class={ loginTabClass(data.ActiveTab, "verify") }>Verifikasi Dokumen &amp; Kwitansi</a>
-						<a href="/verify?tab=dudi" class={ loginTabClass(data.ActiveTab, "dudi") }>Persetujuan Jurnal Magang</a>
+						<a href="/verify?tab=verify" class={ loginTabClass(data.ActiveTab, "verify") }>Verifikasi Dokumen</a>
+						<a href="/verify?tab=dudi" class={ loginTabClass(data.ActiveTab, "dudi") }>Jurnal PKL</a>
 					</div>
 
 					if data.Error != "" {
@@ -74,10 +88,10 @@ templ PublicVerify(data ui.PublicVerifyPage) {
 								<input type="hidden" name="tab" value="dudi"/>
 								<div class="field">
 									<div class="field-head">
-										<label class="field-label">Kode Jurnal PKL</label>
+										<label class="field-label" for="dudi-query">Kode Jurnal PKL</label>
 										@components.InfoBubble("Kode jurnal tercantum pada tautan atau QR jurnal yang dikirim sekolah kepada supervisor mitra.")
 									</div>
-									<input class="input input-mono" type="text" name="q" value={ data.Query } placeholder="Mis. pkl-jrn-0001" required/>
+									<input id="dudi-query" class="input input-mono" type="text" name="q" value={ data.Query } placeholder="Mis. pkl-jrn-0001" required/>
 								</div>
 								<button type="submit" class="button button-primary">
 									@components.Icon("file-check", "icon")
@@ -124,10 +138,10 @@ templ PublicVerify(data ui.PublicVerifyPage) {
 										<input type="hidden" name="journal_id" value={ data.SelectedJournal.ID }/>
 										<div class="field">
 											<div class="field-head">
-												<label class="field-label">PIN Supervisor DUDI</label>
+												<label class="field-label" for="dudi-pin">PIN Supervisor DUDI</label>
 												@components.InfoBubble("Masukkan PIN resmi dari nota kerja sama sekolah dengan mitra industri.")
 											</div>
-											<input class="input input-mono" type="password" name="pin" placeholder="••••••" required/>
+											<input id="dudi-pin" class="input input-mono" type="password" name="pin" placeholder="••••••" required/>
 										</div>
 										<button type="submit" class="button button-primary">
 											@components.Icon("check", "icon")
@@ -142,10 +156,10 @@ templ PublicVerify(data ui.PublicVerifyPage) {
 							<form method="get" action="/verify" class="form-stack">
 								<div class="field">
 									<div class="field-head">
-										<label class="field-label">Nomor Dokumen / Kwitansi / Kode Validasi</label>
+										<label class="field-label" for="verify-query">Nomor Dokumen / Kwitansi / Kode Validasi</label>
 										@components.InfoBubble("Masukkan nomor surat resmi, nomor kwitansi pembayaran, atau kode hash HMAC.")
 									</div>
-									<input class="input input-mono" type="text" name="q" value={ data.Query } placeholder="Mis. SURAT/2026/048 atau KWT-202610-001..." required/>
+									<input id="verify-query" class="input input-mono" type="text" name="q" value={ data.Query } placeholder="Mis. SURAT/2026/048 atau KWT-202610-001..." required/>
 								</div>
 								<button type="submit" class="button button-primary">
 									@components.Icon("file-check", "icon")
@@ -196,6 +210,12 @@ templ PublicVerify(data ui.PublicVerifyPage) {
 					}
 				</div>
 			</main>
+			<footer class="public-foot">
+				<div class="public-foot-inner">
+					<span>© { ui.SchoolName() } · Portal WESMK</span>
+					<span><a href="/">Beranda</a> · <a href="/contact">Bantuan</a> · <a href="/login">Masuk</a></span>
+				</div>
+			</footer>
 		</body>
 	</html>
 }
