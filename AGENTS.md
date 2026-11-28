@@ -70,3 +70,7 @@ internal/ui/      templ + HTMX + assets
 
 ## 11. Catat pelajaran
 Setelah fix bug, tambahkan 1 entri singkat di `docs/pelajaran/<area>.md` (jika ada) dalam commit yang sama. Maksimal 5 baris per entri, hanya bug nyata.
+
+## 12. Style visual (wajib)
+Style UI wajib mengikuti **AI.md** (referensi https://sfschool.org/About-Us, "SFS skin").
+Jangan ganti palet/font/radius/komponen tanpa persetujuan user.
